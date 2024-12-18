@@ -4,7 +4,6 @@ on:
   issue_comment:
     types: [created]
 
-
 jobs:
   post-job-comment: 
     if: ${{ startsWith(github.event.comment.body, 'publish') }}
