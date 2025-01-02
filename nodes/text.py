@@ -1,6 +1,9 @@
 import re
 
 import torch
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+
 
 from .categories import TEXT_CAT
 from .shared import any_type
@@ -308,3 +311,62 @@ class TextConcatenate:
         text1 = kwargs.get("text1", "")
         text2 = kwargs.get("text2", "")
         return (text1 + text2,)
+    
+
+class RenderText:
+    """Renders text onto an existing image at specified coordinates.
+
+    Overlays text on an input image using a specified font and position,
+    returning the modified image with the rendered text.
+
+    Args:
+        image (torch.Tensor): The input image to overlay text on
+        text (str): The text to render
+        x (int): X coordinate for text placement
+        y (int): Y coordinate for text placement 
+        font_path (str): Path to the font file (.ttf, .otf)
+        font_size (int): Size of the font in pixels
+        color (str): Color of the text in hex format (e.g. "#FFFFFF")
+
+    Returns:
+        torch.Tensor - Modified image tensor with text overlay
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+                "text": ("STRING", {"default": "Text"}),
+                "x": ("INT", {"default": 100, "min": 0}),
+                "y": ("INT", {"default": 100, "min": 0}),
+                "font_path": ("STRING", {"default": ""}),
+                "font_size": ("INT", {"default": 300, "min": 1, "max": 1000}),
+                "color": ("STRING", {"default": "#FFFFFF"})
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE")
+    FUNCTION = "execute"
+    CATEGORY = TEXT_CAT
+
+    def execute(self, image, text, x, y, font_path, font_size, color):
+        input_image = Image.fromarray((image[0].cpu().numpy() * 255).astype(np.uint8))
+        
+        if input_image.mode != 'RGBA':
+            input_image = input_image.convert('RGBA')
+
+        # Load font
+        try:
+            font = ImageFont.truetype(font_path, font_size)
+        except:
+            font = ImageFont.load_default(size=font_size)
+
+        draw = ImageDraw.Draw(input_image)
+        draw.text((x, y), text, font=font, fill=color)
+        img_tensor = torch.from_numpy(np.array(input_image).astype(np.float32) / 255.0)
+
+        if len(img_tensor.shape) == 3:
+            img_tensor = img_tensor.unsqueeze(0)
+
+        return (img_tensor,)
