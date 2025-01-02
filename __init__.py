@@ -49,6 +49,8 @@ if "custom_nodes" in script_folder:
         if exists(dst):
             remove(dst)
         copyfile(src, dst)
+else:
+    console.log("Signature Nodes: Signature Bridge not available")
 
 
 def get_node_class_mappings(nodes_directory: str):
