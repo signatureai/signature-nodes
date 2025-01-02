@@ -286,7 +286,6 @@ function getCleanWorkflow() {
 }
 
 function cleanLocalStorage() {
-  const cleanWorkflow = getCleanWorkflow();
   const keysToRemove = [];
   // Iterate through all keys in session storage
   for (let i = 0; i < localStorage.length; i++) {
@@ -302,26 +301,6 @@ function cleanLocalStorage() {
   keysToRemove.forEach((key) => {
     localStorage.removeItem(key);
     // localStorage.setItem(key, cleanWorkflow)
-  });
-}
-
-function cleanSessionStorage() {
-  const cleanWorkflow = getCleanWorkflow();
-  const keysToRemove = [];
-  // Iterate through all keys in session storage
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i);
-
-    // Check if the key is related to workflow data
-    if (key.startsWith("Comfy.PreviousWorkflow") || key.startsWith("workflow")) {
-      keysToRemove.push(key);
-    }
-  }
-
-  // Remove the identified keys
-  keysToRemove.forEach((key) => {
-    sessionStorage.removeItem(key);
-    // localStsessionStorageorage.setItem(key, cleanWorkflow)
   });
 }
 
@@ -356,24 +335,12 @@ const ext = {
   // Unique name for the extension
   name: "signature.bridge",
   async init(app) {
-    // if (isInvalid) {
-    //   cleanLocalStorage();
-    //   cleanSessionStorage();
-    // }
-
+    cleanLocalStorage();
     deleteElement("comfyui-logo");
-    window.addEventListener("message", (event) => {
-      console.log(":::::Event", event);
-    });
-
-    deleteElement("comfyui-logo");
-    window.addEventListener("message", (event) => {
-      console.log(":::::Event", event);
-    });
   },
   async setup(app) {
     // await instance.loadGraphData(empty_workflow, true, true);
-    await loadWorkflow(app, url);
+    // await loadWorkflow(app, url);
     if (app.menu) {
       // Ensure the ComfyAppMenu is available
       if (app.bodyTop) {
