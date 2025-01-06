@@ -1,15 +1,40 @@
 import importlib
 import inspect
+import logging
+import os
 import re
+import sys
 from os import remove, walk
 from os.path import abspath, dirname, exists, join, realpath, sep
 from shutil import copyfile
 
 from dotenv import load_dotenv
-from signature_core import __version__
-from signature_core.logger import console
+
+SIGNATURE_CORE_AVAILABLE = False
+SIGNATURE_FLOWS_AVAILABLE = False
+
+try:
+    from signature_core import __version__
+    from signature_core.logger import console
+
+    SIGNATURE_CORE_AVAILABLE = True
+except ImportError:
+    raise ImportError("signature_core package not available")
+
+try:
+    import signature_flows  # type: ignore
+
+    SIGNATURE_FLOWS_AVAILABLE = True
+except ImportError:
+    logging.warning("signature_flows package not available")
 
 load_dotenv()
+
+BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
+SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("src")[0]
+
+MAX_INT: int = sys.maxsize
+MAX_FLOAT: float = sys.float_info.max
 
 script_file = realpath(__file__)
 script_folder = dirname(script_file)
@@ -24,6 +49,8 @@ if "custom_nodes" in script_folder:
         if exists(dst):
             remove(dst)
         copyfile(src, dst)
+else:
+    console.log("Signature Nodes: Signature Bridge not available")
 
 
 def get_node_class_mappings(nodes_directory: str):
@@ -90,3 +117,7 @@ MANIFEST = {
     "author": "Marco, Frederico, Anderson",
     "description": "SIG Nodes",
 }
+
+from .services.signature_flow_service import SignatureFlowService
+
+SignatureFlowService.setup_routes()
