@@ -1,9 +1,8 @@
 import re
 
-import torch
 import numpy as np
+import torch
 from PIL import Image, ImageDraw, ImageFont
-
 
 from .categories import TEXT_CAT
 from .shared import any_type
@@ -311,7 +310,7 @@ class TextConcatenate:
         text1 = kwargs.get("text1", "")
         text2 = kwargs.get("text2", "")
         return (text1 + text2,)
-    
+
 
 class RenderText:
     """Renders text onto an existing image at specified coordinates.
@@ -323,7 +322,7 @@ class RenderText:
         image (torch.Tensor): The input image to overlay text on
         text (str): The text to render
         x (int): X coordinate for text placement
-        y (int): Y coordinate for text placement 
+        y (int): Y coordinate for text placement
         font_path (str): Path to the font file (.ttf, .otf)
         font_size (int): Size of the font in pixels
         color (str): Color of the text in hex format (e.g. "#FFFFFF")
@@ -342,24 +341,31 @@ class RenderText:
                 "y": ("INT", {"default": 100, "min": 0}),
                 "font_path": ("STRING", {"default": ""}),
                 "font_size": ("INT", {"default": 300, "min": 1, "max": 1000}),
-                "color": ("STRING", {"default": "#FFFFFF"})
+                "color": ("STRING", {"default": "#FFFFFF"}),
             }
         }
 
-    RETURN_TYPES = ("IMAGE")
+    RETURN_TYPES = "IMAGE"
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, image, text, x, y, font_path, font_size, color):
+    def execute(self, **kwargs):
+        image = kwargs.get("image")
+        text = kwargs.get("text")
+        x = kwargs.get("x")
+        y = kwargs.get("y")
+        font_path = kwargs.get("font_path")
+        font_size = kwargs.get("font_size")
+        color = kwargs.get("color")
         input_image = Image.fromarray((image[0].cpu().numpy() * 255).astype(np.uint8))
-        
-        if input_image.mode != 'RGBA':
-            input_image = input_image.convert('RGBA')
+
+        if input_image.mode != "RGBA":
+            input_image = input_image.convert("RGBA")
 
         # Load font
         try:
             font = ImageFont.truetype(font_path, font_size)
-        except:
+        except (OSError, ImportError):
             font = ImageFont.load_default(size=font_size)
 
         draw = ImageDraw.Draw(input_image)
