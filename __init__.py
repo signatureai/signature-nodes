@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import logging
 import re
 from os import remove, walk
 from os.path import abspath, dirname, exists, join, realpath, sep
@@ -8,6 +9,16 @@ from shutil import copyfile
 from dotenv import load_dotenv
 from signature_core import __version__
 from signature_core.logger import console
+
+logger = logging.getLogger(__name__)
+NEUROCHAIN_AVAILABLE = False
+
+try:
+    import neurochain
+
+    NEUROCHAIN_AVAILABLE = True
+except ImportError:
+    logger.warning("neurochain package not available")
 
 load_dotenv()
 
@@ -41,6 +52,9 @@ def get_node_class_mappings(nodes_directory: str):
     for plugin_file_path in plugin_file_paths:
         plugin_rel_path = plugin_file_path.replace(".py", "").replace(sep, ".")
         plugin_rel_path = plugin_rel_path.split("signature-core-nodes.nodes.")[-1]
+
+        if not NEUROCHAIN_AVAILABLE and plugin_rel_path.startswith("neurochain"):
+            continue
 
         try:
             module = importlib.import_module("signature-core-nodes.nodes." + plugin_rel_path)
