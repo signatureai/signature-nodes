@@ -336,61 +336,94 @@ const ext = {
   name: "signature.bridge",
   async init(app) {
     cleanLocalStorage();
-    deleteElement("comfyui-logo");
   },
   async setup(app) {
-    // await instance.loadGraphData(empty_workflow, true, true);
-    // await loadWorkflow(app, url);
     if (app.menu) {
-      // Ensure the ComfyAppMenu is available
-      if (app.bodyTop) {
-        const menuItems =
-          app.bodyTop.children[0].children[0].children[1].children[0].children[1]
-            .children;
-        for (let i = 0; i < menuItems.length; i++) {
-          const element = menuItems[i];
-          if (
-            element.ariaLabel === "Save As" ||
-            element.innerText === "Browse Templates"
-          ) {
-            element.parentNode.removeChild(element);
-          }
-          // if (element.ariaLabel === 'Open') {
-          //   const link = element.children[0].children[0];
-          //   const label = link.children[1];
-          //   label.textContent = "Open from Signature";
-          //   link.onclick = async function (event) {
-          //     event.preventDefault();
-          //     event.stopPropagation();
-          //     console.log("open workflow");
-          //     // await saveWorkflow(app);
-          //   };
-          // }
-          if (element.ariaLabel === "Save") {
-            const link = element.children[0].children[0];
-            const icon = link.children[0];
-            const label = link.children[1];
-            icon.className = "p-menubar-item-icon pi pi-upload";
-            label.textContent = "Publish to Signature";
+      // Find the menu list
+      const menuList = document.querySelector("#pv_id_8_0_list");
 
-            link.onclick = async function (event) {
-              event.preventDefault();
-              event.stopPropagation();
-              console.log("save workflow");
-              await saveWorkflow(app);
-            };
-          }
-        }
-      }
-      if (app.bodyLeft) {
-        const menuItems = app.bodyLeft.children[0].children;
-        for (let i = 0; i < menuItems.length; i++) {
-          const element = menuItems[i];
-          if (element.ariaLabel === "Workflows") {
-            element.parentNode.removeChild(element);
-            break;
-          }
-        }
+      if (menuList) {
+        // First add a separator
+        const separator = document.createElement("li");
+        separator.className = "p-menubar-separator";
+        separator.setAttribute("role", "separator");
+        menuList.appendChild(separator);
+
+        // Create "Open from Signature" menu item
+        const openMenuItem = document.createElement("li");
+        openMenuItem.className = "p-menubar-item relative";
+        openMenuItem.setAttribute("role", "menuitem");
+        openMenuItem.setAttribute("aria-label", "Open from Signature");
+
+        const openItemContent = document.createElement("div");
+        openItemContent.className = "p-menubar-item-content";
+
+        const openItemLink = document.createElement("a");
+        openItemLink.className = "p-menubar-item-link";
+        openItemLink.setAttribute("data-v-6fecd137", "");
+
+        const openIcon = document.createElement("span");
+        openIcon.className = "p-menubar-item-icon pi pi-cloud-download";
+
+        const openLabel = document.createElement("span");
+        openLabel.className = "p-menubar-item-label";
+        openLabel.textContent = "Open from Signature";
+
+        openItemLink.appendChild(openIcon);
+        openItemLink.appendChild(openLabel);
+        openItemContent.appendChild(openItemLink);
+        openMenuItem.appendChild(openItemContent);
+
+        // Add click handler for Open
+        openItemLink.onclick = async function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          console.log("open from signature");
+        };
+
+        // Add Open menu item
+        menuList.appendChild(openMenuItem);
+
+        // Create Deploy menu item (existing code)
+        const newMenuItem = document.createElement("li");
+        newMenuItem.className = "p-menubar-item relative";
+        newMenuItem.setAttribute("role", "menuitem");
+        newMenuItem.setAttribute("aria-label", "Deploy to Signature");
+
+        // Create the item content
+        const itemContent = document.createElement("div");
+        itemContent.className = "p-menubar-item-content";
+
+        // Create the link
+        const itemLink = document.createElement("a");
+        itemLink.className = "p-menubar-item-link";
+        itemLink.setAttribute("data-v-6fecd137", "");
+
+        // Create the icon
+        const icon = document.createElement("span");
+        icon.className = "p-menubar-item-icon pi pi-cloud-upload";
+
+        // Create the label
+        const label = document.createElement("span");
+        label.className = "p-menubar-item-label";
+        label.textContent = "Deploy to Signature";
+
+        // Assemble the elements
+        itemLink.appendChild(icon);
+        itemLink.appendChild(label);
+        itemContent.appendChild(itemLink);
+        newMenuItem.appendChild(itemContent);
+
+        // Add click handler
+        itemLink.onclick = async function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          console.log("deploy to signature");
+          await saveWorkflow(app);
+        };
+
+        // Add to the end of the menu
+        menuList.appendChild(newMenuItem);
       }
     }
   },
