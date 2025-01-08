@@ -17,8 +17,8 @@ from signature_core.img.tensor_image import TensorImage
 
 from nodes import SaveImage  # type: ignore
 
+from .. import MAX_INT
 from .categories import MASK_CAT
-from .shared import MAX_INT
 
 
 class BaseMask:
