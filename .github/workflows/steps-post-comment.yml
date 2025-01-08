@@ -1,28 +1,25 @@
-name: Comment link to Github Actions Run 
+name: Comment link to Github Actions Run
 
 on:
   workflow_call:
     inputs:
       EVENT_COMMENT_ID:
-        description: 'The working directory for the environment'
+        description: "The working directory for the environment"
         required: true
         type: string
       EVENT_ISSUE_NUMBER:
-        description: 'The working directory for the environment'
+        description: "The working directory for the environment"
         required: true
         type: string
       GITHUB_RUN_ID:
-        description: 'The working directory for the environment'
+        description: "The working directory for the environment"
         required: true
         type: string
       GITHUB_REPOSITORY:
-        description: 'The working directory for the environment'
+        description: "The working directory for the environment"
         required: true
         type: string
-    # secrets:
-    #   GITHUB_TOKEN:
-    #     required: true
-    
+
 jobs:
   post-comments-steps:
     runs-on: ubuntu-latest
@@ -34,7 +31,7 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
-        
+
       - name: Install jq
         run: sudo apt-get install -y jq
 
