@@ -10,24 +10,6 @@ from shutil import copyfile
 
 from dotenv import load_dotenv
 
-SIGNATURE_CORE_AVAILABLE = False
-SIGNATURE_FLOWS_AVAILABLE = False
-
-try:
-    from signature_core import __version__
-    from signature_core.logger import console
-
-    SIGNATURE_CORE_AVAILABLE = True
-except ImportError:
-    raise ImportError("signature_core package not available")
-
-try:
-    import signature_flows  # type: ignore
-
-    SIGNATURE_FLOWS_AVAILABLE = True
-except ImportError:
-    logging.warning("signature_flows package not available")
-
 load_dotenv()
 
 BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
@@ -49,8 +31,25 @@ if "custom_nodes" in script_folder:
         if exists(dst):
             remove(dst)
         copyfile(src, dst)
-else:
-    console.log("Signature Nodes: Signature Bridge not available")
+
+SIGNATURE_CORE_AVAILABLE = False
+SIGNATURE_FLOWS_AVAILABLE = False
+
+try:
+    from signature_core import __version__
+    from signature_core.logger import console
+
+    SIGNATURE_CORE_AVAILABLE = True
+except ImportError:
+    raise ImportError("signature_core package not available")
+
+try:
+    import signature_flows  # type: ignore
+
+    os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
+    SIGNATURE_FLOWS_AVAILABLE = True
+except ImportError:
+    logging.warning("signature_flows package not available")
 
 
 def get_node_class_mappings(nodes_directory: str):
