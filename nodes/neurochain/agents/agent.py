@@ -1,8 +1,8 @@
 import uuid
-from typing import Optional
+from typing import Callable, Optional
 
 import torch
-from neurochain.agents.agent_new import AgentNew as AgentNewNeurochain
+from neurochain.agents.agent import Agent as AgentNeurochain
 from neurochain.agents.tools.entities import BaseAgentTool
 from neurochain.llms.entities import BaseLLM
 from neurochain.memory.entities import BaseMemory
@@ -25,6 +25,7 @@ class Agent:
                 "memory": ("BaseMemory", {}),
                 "system": ("STRING", {"default": "", "multiline": True}),
                 "json_schema": ("STRING", {"default": "", "multiline": True}),
+                "validators": ("LIST", {}),
             },
         }
 
@@ -50,6 +51,7 @@ class Agent:
         memory: Optional[BaseMemory] = None,
         system: Optional[str] = None,
         json_schema: Optional[str] = None,
+        validators: Optional[list[Callable[[str], bool]]] = None,
     ) -> tuple:
         base64_images = None
         if images:
@@ -63,12 +65,13 @@ class Agent:
             if neurochain_system == "":
                 neurochain_system = None
 
-        agent = AgentNewNeurochain(
+        agent = AgentNeurochain(
             llm=llm,
             tools=tools,
             system=neurochain_system,
             memory=memory,
             json_schema=json_schema,
+            validators=validators,
         )
         response = agent.execute(
             prompt, images=base64_images, conversation_id=str(self.conversation_id)
