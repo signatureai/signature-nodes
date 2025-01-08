@@ -118,6 +118,7 @@ MANIFEST = {
     "description": "SIG Nodes",
 }
 
-from .services.signature_flow_service import SignatureFlowService
+if SIGNATURE_FLOWS_AVAILABLE:
+    from .services.signature_flow_service import SignatureFlowService
 
-SignatureFlowService.setup_routes()
+    SignatureFlowService.setup_routes()
