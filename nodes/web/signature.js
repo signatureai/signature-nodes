@@ -1,4 +1,4 @@
-import { app } from "../scripts/app.js";
+import { app } from "../../scripts/app.js";
 
 const urlParams = new URLSearchParams(window.location.search);
 const env = urlParams.get("env");
