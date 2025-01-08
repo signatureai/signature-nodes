@@ -31,19 +31,57 @@ function showMessage(
   color,
   detailedInfo = null,
   backgroundColor = "#00000000",
+  extraBody = null,
 ) {
   let dialogContent = `
-      <div>
-        <p style="padding: 0px; color: ${color}; style="text-align: center": font-size: 20px; max-height: 50vh; overflow: auto; background-color:${backgroundColor};">
+      <div style="
+        text-align: center;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+      ">
+        ${extraBody || ""}
+        <p style="
+          color: ${color};
+          font-size: 20px;
+          margin: 0;
+          text-align: center;
+          background-color: ${backgroundColor};
+        ">
           ${message}
-        </p>`;
+        </p>
+        ${detailedInfo || ""}
+      </div>`;
 
-  if (detailedInfo) {
-    dialogContent += detailedInfo;
+  app.ui.dialog.show(dialogContent);
+}
+
+// Add a utility function for the spinner
+function getLoadingSpinner(color) {
+  if (!document.querySelector("#spinner-animation")) {
+    const style = document.createElement("style");
+    style.id = "spinner-animation";
+    style.textContent = `
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
   }
 
-  dialogContent += "</div>";
-  app.ui.dialog.show(dialogContent);
+  return `
+    <span class="loading-spinner" style="
+      display: block;
+      width: 80px;
+      height: 80px;
+      border: 3px solid ${color};
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    "></span>
+  `;
 }
 
 async function loadWorkflow(app, url) {
@@ -134,81 +172,80 @@ async function getIO(workflow) {
 
 async function saveWorkflow(app) {
   try {
-    // Save the workflow
-
     const workflow = app.graph.serialize();
+    const workflow_api = await app.graphToPrompt();
 
-    console.log("Serialized workflow:", workflow);
+    const form = await showForm();
+    // Update to find the submit button using a more reliable selector
+    const submitButton = form.querySelector('a[href="#"]');
+    submitButton.onclick = async (e) => {
+      try {
+        e.preventDefault();
+        const formData = {
+          name: form.querySelector('input[type="text"]').value,
+          description: form.querySelector("textarea").value,
+          type: form.querySelector("select").value,
+          coverImage: form.querySelector('input[type="file"]').files[0],
+        };
+        app.ui.dialog.close();
 
-    // showIframe("https://platform.signature.ai/org");
-    showMessage("Generating Manifest", "#ffffffff");
-    // // Get the IO
-    // const io = await getIO(workflow_api);
-    // console.log("Generated IO:", io);
+        showMessage(
+          "Generating manifest...",
+          "#ffffff",
+          null,
+          "#00000000",
+          getLoadingSpinner("#00ff00"),
+        );
 
-    // Get the manifest
-    const manifest = await getManifest(workflow);
-    console.log("Generated manifest:", manifest);
+        const submitData = new FormData();
+        submitData.append("workflowName", formData.name);
+        submitData.append("workflowDescription", formData.description);
+        submitData.append("workflowType", formData.type.toLowerCase());
+        submitData.append(
+          "coverImage",
+          formData.coverImage ||
+            new File([new Blob([""], { type: "image/png" })], "default.png"),
+        );
 
-    // let output_data = {
-    //   workflow: workflow,
-    //   workflow_api: workflow_api,
-    //   manifest: JSON.parse(manifest),
-    //   io: io,
-    // };
+        const workflowBlob = new Blob([JSON.stringify(workflow)], {
+          type: "application/json",
+        });
+        submitData.append("workflowJson", workflowBlob, "workflow.json");
 
-    const dataStr = encodeURIComponent(manifest);
-    const dialogContent = `
-        <a href="data:application/json;charset=utf-8,${dataStr}"
-           download="workflow-details.json"
-           style="
-             display: flex;
-             align-items: center;
-             gap: 8px;
-             margin: 10px;
-             padding: 12px 24px;
-             background-color: #2D9CDB;
-             color: white;
-             border: none;
-             border-radius: 6px;
-             cursor: pointer;
-             text-decoration: none;
-             font-size: 16px;
-             transition: background-color 0.2s ease;
-           "
-           onmouseover="this.style.backgroundColor='#2486BE'"
-           onmouseout="this.style.backgroundColor='#2D9CDB'"
-        >
-          <div style="text-align: center">Download Details</div>
-        </a>`;
+        const workflowApiBlob = new Blob([JSON.stringify(workflow_api)], {
+          type: "application/json",
+        });
+        submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
-    showMessage("Manifest generated", "#00ff00ff", dialogContent);
+        const manifest = await getManifest(workflow);
+        const manifestBlob = new Blob([JSON.stringify(manifest)], {
+          type: "application/json",
+        });
+        submitData.append("manifest", manifestBlob, "manifest.json");
 
-    // const data = {
-    //   workflow: JSON.stringify(workflow),
-    //   workflow_api: JSON.stringify(workflow_api["output"]),
-    //   manifest: manifest
-    // };
+        const url = window.location.href + "flow/submit_workflow";
+        const response = await fetch(url, {
+          method: "POST",
+          body: submitData,
+        });
 
-    // const response = await fetch(url, {
-    //   method: "PUT",
-    //   headers: headers,
-    //   body: JSON.stringify(data),
-    // });
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`${response.status} - ${errorText}`);
+        }
 
-    // if (response.ok) {
-    //   showMessage("Workflow deployed to Signature", "#00ff00ff");
-    // } else {
-    //   showMessage(
-    //     "An Error occurred while deploying the workflow to Signature",
-    //     "#ff0000ff",
-    //   );
-    // }
+        showMessage("Workflow submitted successfully!", "#00ff00");
+      } catch (error) {
+        console.error("Error submitting workflow:", error);
+        showMessage(error.message, "#ff0000");
+      }
+    };
   } catch (error) {
     console.error("Error in saveWorkflow:", error);
     showMessage(
-      "An Error occurred while deploying the workflow to Signature",
+      "An error occurred while submitting the workflow",
       "#ff0000ff",
+      error.message,
     );
   }
 }
@@ -331,6 +368,135 @@ function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
   );
 }
 
+function showForm() {
+  const formContent = $el("div", [
+    // Add title
+    $el("h2", {
+      style: {
+        textAlign: "center",
+        marginBottom: "20px",
+        color: "#ffffff",
+        width: "500px",
+      },
+      textContent: "Workflow Submission",
+    }),
+    $el(
+      "div",
+      {
+        style: {
+          width: "500px",
+        },
+      },
+      [
+        // Name field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Name",
+          }),
+          $el("input", {
+            type: "text",
+            style: {
+              width: "100%",
+              padding: "5px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            },
+          }),
+        ]),
+        // Description field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Description",
+          }),
+          $el("textarea", {
+            style: {
+              width: "100%",
+              padding: "5px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              minHeight: "100px",
+            },
+          }),
+        ]),
+        // Type field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Type",
+          }),
+          $el(
+            "select",
+            {
+              style: {
+                width: "100%",
+                padding: "5px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                backgroundColor: "#1e1e1e",
+                color: "white",
+                height: "32px",
+              },
+            },
+            [
+              $el("option", { value: "standard", textContent: "Standard" }),
+              $el("option", { value: "training", textContent: "Training" }),
+            ],
+          ),
+        ]),
+        // Cover Image field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Cover Image",
+          }),
+          $el("input", {
+            type: "file",
+            accept: "image/*",
+            style: {
+              width: "100%",
+              padding: "5px",
+            },
+          }),
+        ]),
+        // Submit button
+        $el("div", {
+          innerHTML: `
+          <a href="#"
+             style="
+               display: flex;
+               align-items: center;
+               gap: 8px;
+               margin: 10px;
+               padding: 12px 24px;
+               background-color: #2D9CDB;
+               color: white;
+               border: none;
+               border-radius: 6px;
+               cursor: pointer;
+               text-decoration: none;
+               font-size: 16px;
+               transition: background-color 0.2s ease;
+               justify-content: center;
+             "
+             onmouseover="this.style.backgroundColor='#2486BE'"
+             onmouseout="this.style.backgroundColor='#2D9CDB'"
+          >
+            <div style="text-align: center">Submit</div>
+          </a>
+        `,
+        }),
+      ],
+    ),
+  ]);
+
+  // Don't convert to HTML string, just show the element directly
+  app.ui.dialog.show(formContent);
+  // Return the form content element directly
+  return formContent;
+}
+
 const ext = {
   // Unique name for the extension
   name: "signature.bridge",
@@ -376,7 +542,6 @@ const ext = {
             link.onclick = async function (event) {
               event.preventDefault();
               event.stopPropagation();
-              console.log("save workflow");
               await saveWorkflow(app);
             };
           }

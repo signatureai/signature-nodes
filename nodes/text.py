@@ -349,6 +349,7 @@ class RenderText:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
+    # * Fred please use the TensorImage class to manage the image
     def execute(self, **kwargs):
         image = kwargs.get("image")
         text = kwargs.get("text")
@@ -357,7 +358,7 @@ class RenderText:
         font_path = kwargs.get("font_path")
         font_size = kwargs.get("font_size")
         color = kwargs.get("color")
-        input_image = Image.fromarray((image[0].cpu().numpy() * 255).astype(np.uint8))
+        input_image = Image.fromarray((image[0].cpu().numpy() * 255).astype(np.uint8))  # type: ignore
 
         if input_image.mode != "RGBA":
             input_image = input_image.convert("RGBA")
