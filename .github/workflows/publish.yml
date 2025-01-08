@@ -1,15 +1,11 @@
 name: Build and Publish Package
 
-
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "nodes/**"
+  issue_comment:
+    types: [created]
 
 jobs:
-  post-job-comment: 
+  post-job-comment:
     if: ${{ startsWith(github.event.comment.body, 'publish') }}
     name: Comment PR
     uses: ./.github/workflows/steps-post-comment.yml
@@ -63,24 +59,54 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TYPE: ${{ needs.determine-version-bump.outputs.version }}
         with:
+          dry_run: ${{ needs.process-comment.outputs.environment != 'production' }}
           semantic_version: 19
           extra_plugins: |
             @semantic-release/git
             @semantic-release/changelog
             @semantic-release/exec
+
+      - name: Build package
+        env:
+          PACKAGE_VERSION:
+            ${{ steps.semantic.outputs.new_release_version }}${{
+            needs.process-comment.outputs.environment != 'production' && '.dev0' || ''
+            }}
+        run: python -m build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_ACCOUNT_REGION }}
+
+      - name: Upload to CodeArtifact
+        run: |
+          REPOSITORY_NAME="signature-ml"
+          twine upload --repository-url https://signature-ml-packages-${{ needs.process-comment.outputs.environment }}-992382511592.d.codeartifact.${{ secrets.AWS_ACCOUNT_REGION }}.amazonaws.com/pypi/$REPOSITORY_NAME/ \
+          --username aws \
+          --password $(aws codeartifact get-authorization-token --domain signature-ml-packages-${{ needs.process-comment.outputs.environment }} --region ${{ secrets.AWS_ACCOUNT_REGION }} --query authorizationToken --output text) \
+          dist/*
