@@ -122,7 +122,6 @@ __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "MANIFEST"]
 MANIFEST = {
     "name": NAME,
     "version": __version__,
-    "author": "Marco, Frederico, Anderson",
     "description": "SIG Nodes",
 }
 
