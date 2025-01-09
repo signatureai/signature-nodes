@@ -22,26 +22,27 @@ class FilterDataFrame:
     OUTPUT_NODE = True
 
     def process(self, dataframe: pd.DataFrame, column: str, operator: str, value: str):
+        value_transformed: str | list[str] | float = value
         if operator in ["in", "not in"]:
-            value = [v.strip() for v in value.split(",")]
+            value_transformed = [v.strip() for v in value.split(",")]
         elif dataframe[column].dtype in ["int64", "float64"]:
-            value = float(value)
+            value_transformed = float(value)
 
         if operator == "==":
-            filtered_df = dataframe[dataframe[column] == value]
+            filtered_df = dataframe[dataframe[column] == value_transformed]
         elif operator == "!=":
-            filtered_df = dataframe[dataframe[column] != value]
+            filtered_df = dataframe[dataframe[column] != value_transformed]
         elif operator == ">":
-            filtered_df = dataframe[dataframe[column] > value]
+            filtered_df = dataframe[dataframe[column] > value_transformed]
         elif operator == "<":
-            filtered_df = dataframe[dataframe[column] < value]
+            filtered_df = dataframe[dataframe[column] < value_transformed]
         elif operator == ">=":
-            filtered_df = dataframe[dataframe[column] >= value]
+            filtered_df = dataframe[dataframe[column] >= value_transformed]
         elif operator == "<=":
-            filtered_df = dataframe[dataframe[column] <= value]
-        elif operator == "in":
-            filtered_df = dataframe[dataframe[column].isin(value)]
-        elif operator == "not in":
-            filtered_df = dataframe[~dataframe[column].isin(value)]
+            filtered_df = dataframe[dataframe[column] <= value_transformed]
+        elif operator == "in" and isinstance(value_transformed, list):
+            filtered_df = dataframe[dataframe[column].isin(value_transformed)]
+        elif operator == "not in" and isinstance(value_transformed, list):
+            filtered_df = dataframe[~dataframe[column].isin(value_transformed)]
 
         return (filtered_df,)

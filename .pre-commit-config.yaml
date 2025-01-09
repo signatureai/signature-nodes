@@ -19,10 +19,11 @@ repos:
     rev: 1.8.0
     hooks:
       - id: bandit
+        args: ["-c", "pyproject.toml"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.6
     hooks:
-      - id: ruff  # linter
+      - id: ruff # linter
         args: ["--fix"]
-      - id: ruff-format  # formatter
+      - id: ruff-format # formatter

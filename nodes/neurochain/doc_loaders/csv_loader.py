@@ -5,7 +5,7 @@ from ...categories import LOADERS_CAT
 
 class CsvLoader:
     @classmethod
-    def INPUT_TYPES(s):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "path": ("STRING", {"default": ""}),
