@@ -218,7 +218,7 @@ async function saveWorkflow(app) {
         submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
         const manifest = await getManifest(workflow);
-        const manifestBlob = new Blob([JSON.stringify(manifest)], {
+        const manifestBlob = new Blob([manifest], {
           type: "application/json",
         });
         submitData.append("manifest", manifestBlob, "manifest.json");
