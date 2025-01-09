@@ -23,7 +23,7 @@ cd ComfyUI/custom_nodes/
 2. Clone the repository:
 
 ```bash
-git clone https://github.com/signatureai/signature-core-nodes.git ComfyUI/custom_nodes/signature-core-nodes
+git clone https://github.com/signatureai/signature-core-nodes.git
 ```
 
 3. Install the required dependencies:

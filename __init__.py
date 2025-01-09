@@ -10,6 +10,8 @@ from shutil import copyfile
 
 from dotenv import load_dotenv
 
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
@@ -32,16 +34,24 @@ if "custom_nodes" in script_folder:
             remove(dst)
         copyfile(src, dst)
 
+
 SIGNATURE_CORE_AVAILABLE = False
 SIGNATURE_FLOWS_AVAILABLE = False
+NEUROCHAIN_AVAILABLE = False
 
 try:
     from signature_core import __version__
-    from signature_core.logger import console
 
     SIGNATURE_CORE_AVAILABLE = True
 except ImportError:
     raise ImportError("signature_core package not available")
+
+try:
+    import neurochain  # type: ignore
+
+    NEUROCHAIN_AVAILABLE = True
+except ImportError:
+    logger.warning("neurochain package not available")
 
 try:
     import signature_flows  # type: ignore
@@ -67,6 +77,9 @@ def get_node_class_mappings(nodes_directory: str):
     for plugin_file_path in plugin_file_paths:
         plugin_rel_path = plugin_file_path.replace(".py", "").replace(sep, ".")
         plugin_rel_path = plugin_rel_path.split("signature-core-nodes.nodes.")[-1]
+
+        if not NEUROCHAIN_AVAILABLE and plugin_rel_path.startswith("neurochain"):
+            continue
 
         try:
             module = importlib.import_module("signature-core-nodes.nodes." + plugin_rel_path)
@@ -96,7 +109,7 @@ def get_node_class_mappings(nodes_directory: str):
                     item_name = re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z]{2})(?=[A-Z][a-z])", " ", item)
                     node_display_name_mappings[key] = f"SIG {item_name}"
         except ImportError as e:
-            console.log(f"[red]Error importing {plugin_rel_path}: {e}")
+            logger.info(f"[red]Error importing {plugin_rel_path}: {e}")
 
     return node_class_mappings, node_display_name_mappings
 

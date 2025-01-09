@@ -1,0 +1,24 @@
+[project]
+name = "signature-core-nodes"
+version = "0.1.0"
+description = "Signature Core Nodes"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.0.1",
+    "uuid7>=0.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "isort>=5.13.2",
+    "pre-commit>=4.0.1",
+]
+doc = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.5.49",
+]
+
+[tool.isort]
+profile = "black"
