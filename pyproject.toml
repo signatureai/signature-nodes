@@ -5,20 +5,33 @@ description = "Signature Core Nodes"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "boto3>=1.35.95",
+    "httpx>=0.28.1",
     "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "torch>=2.5.1",
     "uuid7>=0.1.0",
 ]
 
 [dependency-groups]
 dev = [
-    "black>=24.10.0",
-    "isort>=5.13.2",
+    "bandit>=1.8.0",
     "pre-commit>=4.0.1",
+    "ruff>=0.8.6",
 ]
 doc = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.5.49",
 ]
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+line-length = 120
+
+# Set of rules taken from https://docs.astral.sh/ruff/linter/#rule-selection
+# Default rules here: https://docs.astral.sh/ruff/configuration/
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle
+    "F",  # Pyflakes
+    "I",  # isort
+]
