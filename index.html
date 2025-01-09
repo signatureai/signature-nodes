@@ -14,7 +14,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.6f8fc17f.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#signature-core-nodes-documentation" class="md-skip">
+        <a href="#signature-for-comfyui" class="md-skip">
           Skip to content
         </a>
       
@@ -732,7 +732,7 @@
         
   
   <span class="md-ellipsis">
-    🧠 Logic
+    💡 Logic
   </span>
   
 
@@ -889,8 +889,8 @@
                   
 
 
-<h1 id="signature-core-nodes-documentation">Signature Core Nodes Documentation</h1>
-<p><img alt="GitHub" src="https://img.shields.io/github/license/signatureai/signature-core-nodes" />
+<h1 id="signature-for-comfyui">Signature for ComfyUI</h1>
+<p><img alt="GitHub" src="https://img.shields.io/github/license/signatureai/signature-nodes" />
 <img alt="Python" src="https://img.shields.io/badge/python-3.8%2B-blue" />
 <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&amp;logo=PyTorch&amp;logoColor=white" />
 <img alt="NumPy" src="https://img.shields.io/badge/numpy-%23013243.svg?&amp;logo=numpy&amp;logoColor=white" />
@@ -898,7 +898,7 @@
 <img alt="ComfyUI" src="https://img.shields.io/badge/ComfyUI-compatible-green" /></p>
 <p>A powerful collection of custom nodes for ComfyUI that provides essential image
 processing, data handling, and workflow management capabilities.</p>
-<p>📚 <strong><a href="https://signatureai.github.io/signature-core-nodes/">View Full Documentation</a></strong></p>
+<p>📚 <strong><a href="https://signatureai.github.io/signature-nodes/">View Full Documentation</a></strong></p>
 <h2 id="installation">🚀 Installation</h2>
 <ol>
 <li>Navigate to your ComfyUI custom nodes directory:</li>
@@ -908,7 +908,7 @@ processing, data handling, and workflow management capabilities.</p>
 <ol>
 <li>Clone the repository:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/signatureai/signature-core-nodes.git<span class="w"> </span>ComfyUI/custom_nodes/signature-core-nodes
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/signatureai/signature-nodes.git
 </code></pre></div>
 <ol>
 <li>Install the required dependencies:</li>
@@ -935,7 +935,7 @@ processing, data handling, and workflow management capabilities.</p>
 <li>🧬 Loras - LoRA model handling and integration</li>
 </ul>
 <h2 id="usage">💻 Usage</h2>
-<p>After installation, the Signature Core nodes will be available in your ComfyUI workspace
+<p>After installation, the Signature nodes will be available in your ComfyUI workspace
 under the "🔲 Signature Nodes" category. Each node is designed to be intuitive and
 includes proper input validation and error handling.</p>
 <h3 id="example-workflow">Example Workflow</h3>
@@ -958,28 +958,25 @@ includes proper input validation and error handling.</p>
 </ul>
 <h2 id="development-setup">🛠 Development Setup</h2>
 <ol>
-<li>Install development dependencies:</li>
+<li>Install uv if not already installed:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>dev-requirements.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
 </code></pre></div>
 <ol>
-<li>Install pre-commit hooks:</li>
+<li>Install the python environment:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pre-commit<span class="w"> </span>install
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>uv<span class="w"> </span>sync
 </code></pre></div>
-<p>The project uses pre-commit hooks for:</p>
-<ul>
-<li>Code formatting and linting</li>
-<li>Syntax checking</li>
-<li>Security checks</li>
-<li>
-<p>File consistency</p>
-</li>
-<li>
-<p>Generate documentation:</p>
-</li>
-</ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>scripts/generate_docs.py
+<ol>
+<li>Install the pre-commit hooks for checks and file format fixed (after doing this, git will "remember" that this uv
+   environment is the python environment which should be used to run the pre-commit hooks):</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
+</code></pre></div>
+<ol>
+<li>Generate documentation:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/generate_docs.py
 </code></pre></div>
 <h2 id="documentation">📚 Documentation</h2>
 <p>Documentation is built using MkDocs with the Material theme. To view the documentation
@@ -987,12 +984,12 @@ locally:</p>
 <ol>
 <li>Install MkDocs and dependencies:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs<span class="w"> </span>mkdocs-material
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--group<span class="w"> </span>doc
 </code></pre></div>
 <ol>
 <li>Serve the documentation:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mkdocs<span class="w"> </span>serve
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve
 </code></pre></div>
 <p>The documentation will be available at <code>http://localhost:8000</code>.</p>
 <h2 id="contributing">🤝 Contributing</h2>
@@ -1052,7 +1049,7 @@ locally:</p>
     <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "toc.follow"], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>

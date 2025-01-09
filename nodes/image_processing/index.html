@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -854,7 +854,7 @@
         
   
   <span class="md-ellipsis">
-    🧠 Logic
+    💡 Logic
   </span>
   
 
@@ -1134,9 +1134,9 @@
 <h1 id="image-processing-nodes">Image Processing Nodes</h1>
 <h2 id="autocrop">AutoCrop</h2>
 <p>Automatically crops an image based on a mask content.</p>
-<p>This node detects non-zero regions in a mask and crops both the image and mask to those
-regions, with optional padding. Useful for removing empty space around subjects or
-focusing on specific masked areas.</p>
+<p>This node detects non-zero regions in a mask and crops both the image and mask
+to those regions, with optional padding. Useful for removing empty space around
+subjects or focusing on specific masked areas.</p>
 <h3 id="inputs">Inputs</h3>
 <table>
 <thead>
@@ -1488,9 +1488,9 @@ maintaining aspect ratio is important.</p>
 </details>
 <h2 id="resize">Resize</h2>
 <p>Resizes images and masks to specific dimensions with multiple sizing modes.</p>
-<p>A versatile resizing node that supports multiple modes for handling aspect ratio and
-provides fine control over interpolation methods. Suitable for preparing images for
-specific size requirements while maintaining quality.</p>
+<p>A versatile resizing node that supports multiple modes for handling aspect ratio
+and provides fine control over interpolation methods. Suitable for preparing
+images for specific size requirements while maintaining quality.</p>
 <h3 id="inputs_2">Inputs</h3>
 <table>
 <thead>
@@ -1675,9 +1675,9 @@ specific size requirements while maintaining quality.</p>
 </details>
 <h2 id="rotate">Rotate</h2>
 <p>Rotates images and masks by a specified angle with optional zoom adjustment.</p>
-<p>Performs rotation of images and masks with control over whether to zoom to fit the
-entire rotated content. Useful for reorienting content while managing the trade-off
-between content preservation and output size.</p>
+<p>Performs rotation of images and masks with control over whether to zoom to fit
+the entire rotated content. Useful for reorienting content while managing the
+trade-off between content preservation and output size.</p>
 <h3 id="inputs_3">Inputs</h3>
 <table>
 <thead>
@@ -1820,9 +1820,9 @@ between content preservation and output size.</p>
 </details>
 <h2 id="cutout">Cutout</h2>
 <p>Creates masked cutouts from images with both RGB and RGBA outputs.</p>
-<p>Extracts portions of an image based on a mask, providing both RGB and RGBA versions of
-the result. Useful for isolating subjects or creating transparent cutouts for
-compositing.</p>
+<p>Extracts portions of an image based on a mask, providing both RGB and RGBA
+versions of the result. Useful for isolating subjects or creating transparent
+cutouts for compositing.</p>
 <h3 id="inputs_4">Inputs</h3>
 <table>
 <thead>
@@ -1940,10 +1940,10 @@ compositing.</p>
 </details>
 <h2 id="upscaleimage">UpscaleImage</h2>
 <p>AI-powered image upscaling with tiled processing and flexible scaling modes.</p>
-<p>A comprehensive image upscaling node that leverages AI models for high-quality image
-enlargement. Supports both factor-based rescaling and target size resizing while
-efficiently managing GPU memory through tiled processing. Compatible with various AI
-upscaling models and includes multiple resampling methods for final adjustments.</p>
+<p>A comprehensive image upscaling node that leverages AI models for high-quality image enlargement.
+Supports both factor-based rescaling and target size resizing while efficiently managing GPU
+memory through tiled processing. Compatible with various AI upscaling models and includes
+multiple resampling methods for final adjustments.</p>
 <h3 id="inputs_5">Inputs</h3>
 <table>
 <thead>
@@ -1966,7 +1966,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
 <tr>
 <td>required</td>
 <td>upscale_model</td>
-<td><code>&lt;ast.Call object at 0x7f1c09080f10&gt;</code></td>
+<td><code>&lt;ast.Call object at 0x7f2b30237070&gt;</code></td>
 <td></td>
 <td></td>
 </tr>
@@ -1994,7 +1994,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
 <tr>
 <td>required</td>
 <td>resampling_method</td>
-<td><code>&lt;ast.Name object at 0x7f1c09083a30&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302341c0&gt;</code></td>
 <td></td>
 <td></td>
 </tr>
@@ -2094,7 +2094,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
 <a id="__codelineno-5-68" name="__codelineno-5-68" href="#__codelineno-5-68"></a>        <span class="n">sd</span> <span class="o">=</span> <span class="n">comfy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">load_torch_file</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">safe_load</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <a id="__codelineno-5-69" name="__codelineno-5-69" href="#__codelineno-5-69"></a>        <span class="k">if</span> <span class="s2">&quot;module.layers.0.residual_group.blocks.0.norm1.weight&quot;</span> <span class="ow">in</span> <span class="n">sd</span><span class="p">:</span>
 <a id="__codelineno-5-70" name="__codelineno-5-70" href="#__codelineno-5-70"></a>            <span class="n">sd</span> <span class="o">=</span> <span class="n">comfy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">state_dict_prefix_replace</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;module.&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
-<a id="__codelineno-5-71" name="__codelineno-5-71" href="#__codelineno-5-71"></a>        <span class="n">out</span> <span class="o">=</span> <span class="n">ModelLoader</span><span class="p">()</span><span class="o">.</span><span class="n">load_from_state_dict</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<a id="__codelineno-5-71" name="__codelineno-5-71" href="#__codelineno-5-71"></a>        <span class="n">out</span> <span class="o">=</span> <span class="n">ModelLoader</span><span class="p">()</span><span class="o">.</span><span class="n">load_from_state_dict</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span>
 <a id="__codelineno-5-72" name="__codelineno-5-72" href="#__codelineno-5-72"></a>
 <a id="__codelineno-5-73" name="__codelineno-5-73" href="#__codelineno-5-73"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ImageModelDescriptor</span><span class="p">):</span>
 <a id="__codelineno-5-74" name="__codelineno-5-74" href="#__codelineno-5-74"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Upscale model must be a single-image model.&quot;</span><span class="p">)</span>
@@ -2266,7 +2266,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>

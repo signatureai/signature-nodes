@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -905,7 +905,7 @@
         
   
   <span class="md-ellipsis">
-    🧠 Logic
+    💡 Logic
   </span>
   
 
@@ -1236,8 +1236,8 @@
 <h1 id="file-nodes">File Nodes</h1>
 <h2 id="imagefromweb">ImageFromWeb</h2>
 <p>Fetches and converts web images to ComfyUI-compatible tensors.</p>
-<p>Downloads an image from a URL and processes it into ComfyUI's expected tensor format.
-Handles both RGB and RGBA images with automatic mask generation for transparency.</p>
+<p>Downloads an image from a URL and processes it into ComfyUI's expected tensor format. Handles both RGB
+and RGBA images with automatic mask generation for transparency.</p>
 <h3 id="inputs">Inputs</h3>
 <table>
 <thead>
@@ -1325,8 +1325,8 @@ Handles both RGB and RGBA images with automatic mask generation for transparency
 </details>
 <h2 id="imagefrombase64">ImageFromBase64</h2>
 <p>Converts base64 image strings to ComfyUI-compatible tensors.</p>
-<p>Processes base64-encoded image data into tensor format suitable for ComfyUI operations.
-Handles both RGB and RGBA images with proper mask generation.</p>
+<p>Processes base64-encoded image data into tensor format suitable for ComfyUI operations. Handles
+both RGB and RGBA images with proper mask generation.</p>
 <h3 id="inputs_1">Inputs</h3>
 <table>
 <thead>
@@ -1414,8 +1414,8 @@ Handles both RGB and RGBA images with proper mask generation.</p>
 </details>
 <h2 id="base64fromimage">Base64FromImage</h2>
 <p>Converts ComfyUI image tensors to base64-encoded strings.</p>
-<p>Transforms image tensors from ComfyUI's format into base64-encoded strings, suitable for
-web transmission or storage in text format.</p>
+<p>Transforms image tensors from ComfyUI's format into base64-encoded strings, suitable for web
+transmission or storage in text format.</p>
 <h3 id="inputs_2">Inputs</h3>
 <table>
 <thead>
@@ -1499,8 +1499,8 @@ web transmission or storage in text format.</p>
 </details>
 <h2 id="fileloader">FileLoader</h2>
 <p>Processes string input into ComfyUI-compatible file data.</p>
-<p>Converts JSON-formatted string data into file references with proper paths for ComfyUI
-processing. Handles both single files and multiple files separated by '&amp;&amp;'.</p>
+<p>Converts JSON-formatted string data into file references with proper paths for ComfyUI processing.
+Handles both single files and multiple files separated by '&amp;&amp;'.</p>
 <h3 id="inputs_3">Inputs</h3>
 <table>
 <thead>
@@ -1598,8 +1598,8 @@ processing. Handles both single files and multiple files separated by '&amp;&amp
 </details>
 <h2 id="folderloader">FolderLoader</h2>
 <p>Processes folder paths into ComfyUI-compatible file data.</p>
-<p>Converts folder path information into properly formatted file references for ComfyUI
-processing. Supports both single and multiple folder paths.</p>
+<p>Converts folder path information into properly formatted file references for ComfyUI processing.
+Supports both single and multiple folder paths.</p>
 <h3 id="inputs_4">Inputs</h3>
 <table>
 <thead>
@@ -1696,8 +1696,8 @@ processing. Supports both single and multiple folder paths.</p>
 </details>
 <h2 id="file2imagelist">File2ImageList</h2>
 <p>Converts file references to a list of image tensors.</p>
-<p>Processes a list of file references, extracting and converting supported image files
-into ComfyUI-compatible tensor format.</p>
+<p>Processes a list of file references, extracting and converting supported image files into
+ComfyUI-compatible tensor format.</p>
 <h3 id="inputs_5">Inputs</h3>
 <table>
 <thead>
@@ -1875,8 +1875,8 @@ into ComfyUI-compatible tensor format.</p>
 </details>
 <h2 id="rotate">Rotate</h2>
 <p>Rotates an image and mask by a specified angle.</p>
-<p>This node provides functionality to rotate images and masks while optionally adjusting
-the output size to fit the entire rotated content.</p>
+<p>This node provides functionality to rotate images and masks while optionally adjusting the output
+size to fit the entire rotated content.</p>
 <details class="note">
 <summary>Source code in file.py</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">class</span> <span class="nc">Rotate</span><span class="p">:</span>
@@ -1908,8 +1908,8 @@ the output size to fit the entire rotated content.</p>
 </details>
 <h2 id="maskgaussianblur">MaskGaussianBlur</h2>
 <p>Applies Gaussian blur to a mask.</p>
-<p>This node performs Gaussian blur on mask inputs with configurable radius, sigma and
-iteration parameters. Useful for softening mask edges or creating smooth transitions.</p>
+<p>This node performs Gaussian blur on mask inputs with configurable radius, sigma and iteration
+parameters. Useful for softening mask edges or creating smooth transitions.</p>
 <details class="note">
 <summary>Source code in file.py</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span> <span class="nc">MaskGaussianBlur</span><span class="p">:</span>
@@ -1997,7 +1997,7 @@ iteration parameters. Useful for softening mask edges or creating smooth transit
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>

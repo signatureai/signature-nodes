@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -986,7 +986,7 @@
         
   
   <span class="md-ellipsis">
-    🧠 Logic
+    💡 Logic
   </span>
   
 
@@ -1398,8 +1398,8 @@
 <h1 id="image-nodes">Image Nodes</h1>
 <h2 id="imagebasecolor">ImageBaseColor</h2>
 <p>Creates a solid color image with specified dimensions.</p>
-<p>This node generates a uniform color image using a hex color code. The output is a tensor
-in BWHC format (Batch, Width, Height, Channels) with the specified dimensions.</p>
+<p>This node generates a uniform color image using a hex color code. The output is a tensor in BWHC
+format (Batch, Width, Height, Channels) with the specified dimensions.</p>
 <h3 id="inputs">Inputs</h3>
 <table>
 <thead>
@@ -1522,9 +1522,8 @@ in BWHC format (Batch, Width, Height, Channels) with the specified dimensions.</
 </details>
 <h2 id="imagegaussianblur">ImageGaussianBlur</h2>
 <p>Applies Gaussian blur filter to an input image.</p>
-<p>This node performs Gaussian blur using a configurable kernel size and sigma value.
-Multiple passes can be applied for stronger blur effects. The blur is applied uniformly
-across all color channels.</p>
+<p>This node performs Gaussian blur using a configurable kernel size and sigma value. Multiple passes
+can be applied for stronger blur effects. The blur is applied uniformly across all color channels.</p>
 <h3 id="inputs_1">Inputs</h3>
 <table>
 <thead>
@@ -1648,9 +1647,8 @@ across all color channels.</p>
 </details>
 <h2 id="imageunsharpmask">ImageUnsharpMask</h2>
 <p>Enhances image sharpness using unsharp mask technique.</p>
-<p>This node applies an unsharp mask filter to enhance edge details in the image. It works
-by subtracting a blurred version of the image from the original, creating a sharpening
-effect.</p>
+<p>This node applies an unsharp mask filter to enhance edge details in the image. It works by
+subtracting a blurred version of the image from the original, creating a sharpening effect.</p>
 <h3 id="inputs_2">Inputs</h3>
 <table>
 <thead>
@@ -1774,9 +1772,8 @@ effect.</p>
 </details>
 <h2 id="imagesoftlight">ImageSoftLight</h2>
 <p>Applies soft light blend mode between two images.</p>
-<p>Implements the soft light blending mode similar to photo editing software. The effect
-creates a subtle, soft lighting effect based on the interaction between the top and
-bottom layers.</p>
+<p>Implements the soft light blending mode similar to photo editing software. The effect creates a
+subtle, soft lighting effect based on the interaction between the top and bottom layers.</p>
 <h3 id="inputs_3">Inputs</h3>
 <table>
 <thead>
@@ -1877,8 +1874,8 @@ bottom layers.</p>
 </details>
 <h2 id="imageaverage">ImageAverage</h2>
 <p>Calculates the average color of an input image.</p>
-<p>Computes the mean color values across all pixels in the image, resulting in a uniform
-color image representing the average color of the input.</p>
+<p>Computes the mean color values across all pixels in the image, resulting in a uniform color
+image representing the average color of the input.</p>
 <h3 id="inputs_4">Inputs</h3>
 <table>
 <thead>
@@ -1963,8 +1960,8 @@ color image representing the average color of the input.</p>
 </details>
 <h2 id="imagesubtract">ImageSubtract</h2>
 <p>Computes the absolute difference between two images.</p>
-<p>Performs pixel-wise subtraction between two images and takes the absolute value of the
-result, useful for comparing images or creating difference maps.</p>
+<p>Performs pixel-wise subtraction between two images and takes the absolute value of the result,
+useful for comparing images or creating difference maps.</p>
 <h3 id="inputs_5">Inputs</h3>
 <table>
 <thead>
@@ -2065,8 +2062,8 @@ result, useful for comparing images or creating difference maps.</p>
 </details>
 <h2 id="imagetranspose">ImageTranspose</h2>
 <p>Transforms and composites an overlay image onto a base image.</p>
-<p>Provides comprehensive image composition capabilities including resizing, positioning,
-rotation, and edge feathering of an overlay image onto a base image.</p>
+<p>Provides comprehensive image composition capabilities including resizing, positioning, rotation,
+and edge feathering of an overlay image onto a base image.</p>
 <h3 id="inputs_6">Inputs</h3>
 <table>
 <thead>
@@ -2303,9 +2300,8 @@ rotation, and edge feathering of an overlay image onto a base image.</p>
 </details>
 <h2 id="imagelist2batch">ImageList2Batch</h2>
 <p>Converts a list of individual images into a batched tensor.</p>
-<p>Combines multiple images into a single batched tensor, handling different input sizes
-through various resize modes. Supports multiple interpolation methods for optimal
-quality.</p>
+<p>Combines multiple images into a single batched tensor, handling different input sizes through
+various resize modes. Supports multiple interpolation methods for optimal quality.</p>
 <h3 id="inputs_7">Inputs</h3>
 <table>
 <thead>
@@ -2446,8 +2442,8 @@ quality.</p>
 </details>
 <h2 id="imagebatch2list">ImageBatch2List</h2>
 <p>Splits a batched tensor of images into individual images.</p>
-<p>Converts a batch of images stored in a single tensor into a list of separate image
-tensors, useful for processing images individually after batch operations.</p>
+<p>Converts a batch of images stored in a single tensor into a list of separate image tensors,
+useful for processing images individually after batch operations.</p>
 <h3 id="inputs_8">Inputs</h3>
 <table>
 <thead>
@@ -2530,8 +2526,8 @@ tensors, useful for processing images individually after batch operations.</p>
 </details>
 <h2 id="getimageshape">GetImageShape</h2>
 <p>Analyzes and returns the dimensions of an input image.</p>
-<p>Extracts and returns detailed shape information from an input image tensor, providing
-both individual dimensions and a formatted string representation.</p>
+<p>Extracts and returns detailed shape information from an input image tensor, providing both
+individual dimensions and a formatted string representation.</p>
 <h3 id="inputs_9">Inputs</h3>
 <table>
 <thead>
@@ -2687,7 +2683,7 @@ both individual dimensions and a formatted string representation.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>

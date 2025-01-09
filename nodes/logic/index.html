@@ -16,15 +16,15 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
-        <title>🧠 Logic - Signature Nodes Documentation</title>
+        <title>💡 Logic - Signature Nodes Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              🧠 Logic
+              💡 Logic
             
           </span>
         </div>
@@ -625,7 +625,7 @@
           
   
   <span class="md-ellipsis">
-    🧠 Logic
+    💡 Logic
   </span>
   
 
@@ -636,7 +636,7 @@
         
   
   <span class="md-ellipsis">
-    🧠 Logic
+    💡 Logic
   </span>
   
 
@@ -936,10 +936,9 @@
 <h1 id="logic-nodes">Logic Nodes</h1>
 <h2 id="switch">Switch</h2>
 <p>Switches between two input values based on a boolean condition.</p>
-<p>A logic gate that selects between two inputs of any type based on a boolean condition.
-When the condition is True, it returns the 'true' value; otherwise, it returns the
-'false' value. This node is useful for creating conditional workflows and dynamic value
-selection.</p>
+<p>A logic gate that selects between two inputs of any type based on a boolean condition. When the
+condition is True, it returns the 'true' value; otherwise, it returns the 'false' value. This node
+is useful for creating conditional workflows and dynamic value selection.</p>
 <h3 id="inputs">Inputs</h3>
 <table>
 <thead>
@@ -962,14 +961,14 @@ selection.</p>
 <tr>
 <td>required</td>
 <td>on_true</td>
-<td><code>&lt;ast.Name object at 0x7f1c090836d0&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302d5a20&gt;</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>required</td>
 <td>on_false</td>
-<td><code>&lt;ast.Name object at 0x7f1c09083d60&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302d59c0&gt;</code></td>
 <td></td>
 <td></td>
 </tr>
@@ -1035,9 +1034,9 @@ selection.</p>
 </details>
 <h2 id="blocker">Blocker</h2>
 <p>Controls flow execution based on a boolean condition.</p>
-<p>A utility node that blocks or allows execution flow based on a boolean flag. When the
-continue flag is False, it blocks execution by returning an ExecutionBlocker. When True,
-it passes through the input value unchanged.</p>
+<p>A utility node that blocks or allows execution flow based on a boolean flag. When the continue
+flag is False, it blocks execution by returning an ExecutionBlocker. When True, it passes through
+the input value unchanged.</p>
 <h3 id="inputs_1">Inputs</h3>
 <table>
 <thead>
@@ -1060,7 +1059,7 @@ it passes through the input value unchanged.</p>
 <tr>
 <td>required</td>
 <td>in</td>
-<td><code>&lt;ast.Name object at 0x7f1c090837c0&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302d4670&gt;</code></td>
 <td>None</td>
 <td></td>
 </tr>
@@ -1110,10 +1109,9 @@ it passes through the input value unchanged.</p>
 </details>
 <h2 id="compare">Compare</h2>
 <p>Compares two input values based on a specified comparison operation.</p>
-<p>A logic gate that evaluates a comparison between two inputs of any type. The comparison
-is determined by the specified operation, which can include equality, inequality, and
-relational comparisons. This node is useful for implementing conditional logic based on
-the relationship between two values.</p>
+<p>A logic gate that evaluates a comparison between two inputs of any type. The comparison is determined
+by the specified operation, which can include equality, inequality, and relational comparisons. This
+node is useful for implementing conditional logic based on the relationship between two values.</p>
 <h3 id="inputs_2">Inputs</h3>
 <table>
 <thead>
@@ -1129,21 +1127,21 @@ the relationship between two values.</p>
 <tr>
 <td>required</td>
 <td>a</td>
-<td><code>&lt;ast.Name object at 0x7f1c09083160&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302fb190&gt;</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>required</td>
 <td>b</td>
-<td><code>&lt;ast.Name object at 0x7f1c09081ae0&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302fb130&gt;</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>required</td>
 <td>comparison</td>
-<td><code>&lt;ast.Name object at 0x7f1c09082ad0&gt;</code></td>
+<td><code>&lt;ast.Name object at 0x7f2b302fb0d0&gt;</code></td>
 <td>a == b</td>
 <td></td>
 </tr>
@@ -1245,10 +1243,9 @@ the relationship between two values.</p>
 </details>
 <h2 id="loopstart">LoopStart</h2>
 <p>Initiates a loop with optional initial values for each iteration.</p>
-<p>A control node that starts a loop, allowing for a specified number of iterations. It can
-accept optional initial values for each iteration, which can be used within the loop.
-This node is useful for creating iterative workflows where the same set of operations is
-performed multiple times.</p>
+<p>A control node that starts a loop, allowing for a specified number of iterations. It can accept
+optional initial values for each iteration, which can be used within the loop. This node is useful
+for creating iterative workflows where the same set of operations is performed multiple times.</p>
 <details class="note">
 <summary>Source code in logic.py</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">class</span> <span class="nc">LoopStart</span><span class="p">:</span>
@@ -1293,10 +1290,9 @@ performed multiple times.</p>
 </details>
 <h2 id="loopend">LoopEnd</h2>
 <p>Ends a loop and returns the final values after the loop execution.</p>
-<p>A control node that signifies the end of a loop initiated by a <code>LoopStart</code> node. It
-processes the flow control signal and can return the final values from the loop
-iterations. This node is useful for managing the completion of iterative workflows and
-retrieving results after looping.</p>
+<p>A control node that signifies the end of a loop initiated by a <code>LoopStart</code> node. It processes the
+flow control signal and can return the final values from the loop iterations. This node is useful
+for managing the completion of iterative workflows and retrieving results after looping.</p>
 <details class="note">
 <summary>Source code in logic.py</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">class</span> <span class="nc">LoopEnd</span><span class="p">:</span>
@@ -1472,7 +1468,7 @@ retrieving results after looping.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>
