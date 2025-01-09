@@ -1,31 +1,5 @@
 import { app } from "../../scripts/app.js";
 
-const urlParams = new URLSearchParams(window.location.search);
-const env = urlParams.get("env");
-const workflow_id = urlParams.get("workflow_id");
-const token = urlParams.get("token");
-
-const isInvalid = !env || !workflow_id || !token;
-if (isInvalid) {
-  console.log(
-    "Signature Bridge: Missing required URL parameters (env, workflow_id, token). Extension not loaded.",
-  );
-}
-let main_url = "https://api.signature.ai/api/v1";
-if (env === "staging") {
-  main_url = "https://api-staging.signature.ai/api/v1";
-}
-const url = main_url + `/workflows/${workflow_id}`;
-const headers = getHeaders(token);
-
-function getHeaders(token) {
-  const headers = new Headers();
-  headers.append("Content-Type", "application/json");
-  headers.append("Access-Control-Allow-Origin", "*");
-  headers.append("Authorization", `Bearer ${token}`);
-  return headers;
-}
-
 function showMessage(
   message,
   color,
@@ -38,21 +12,42 @@ function showMessage(
         text-align: center;
         padding: 20px;
         display: flex;
+        flex-direction: column;
         align-items: center;
         gap: 20px;
         width: 100%;
       ">
-        ${extraBody || ""}
-        <p style="
-          color: ${color};
-          font-size: 20px;
-          margin: 0;
-          text-align: center;
-          background-color: ${backgroundColor};
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: 20px;
         ">
-          ${message}
-        </p>
-        ${detailedInfo || ""}
+          ${extraBody || ""}
+          <p style="
+            color: ${color};
+            font-size: 20px;
+            margin: 0;
+            text-align: center;
+            background-color: ${backgroundColor};
+          ">
+            ${message}
+          </p>
+        </div>
+        ${
+          detailedInfo
+            ? `
+          <pre style="
+            text-align: left;
+            white-space: pre-wrap;
+            margin: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+          ">${detailedInfo}</pre>
+        `
+            : ""
+        }
       </div>`;
 
   app.ui.dialog.show(dialogContent);
@@ -84,35 +79,6 @@ function getLoadingSpinner(color) {
   `;
 }
 
-async function loadWorkflow(app, url) {
-  if (isInvalid) {
-    return;
-  }
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: headers,
-    });
-
-    // Parse the workflow
-    const get_workflow = await response.json();
-    const get_workflow_data = JSON.parse(get_workflow["workflow"]);
-    if (
-      get_workflow_data &&
-      get_workflow_data.version &&
-      get_workflow_data.nodes &&
-      get_workflow_data.extra
-    ) {
-      await app.loadGraphData(get_workflow_data, true, true);
-    }
-  } catch (error) {
-    showMessage(
-      "An Error occurred while loading the workflow from Signature",
-      "#ff0000ff",
-    );
-  }
-}
-
 async function getManifest(workflow) {
   try {
     const url = window.location.href + "flow/create_manifest";
@@ -142,41 +108,12 @@ async function getManifest(workflow) {
   }
 }
 
-async function getIO(workflow) {
-  try {
-    const url = window.location.href + "flow/workflow_data";
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        workflow: workflow,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Error getting IO:", errorText);
-      throw new Error(`Failed to get IO: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    // Parse the JSON strings back into objects
-    return data;
-  } catch (error) {
-    console.error("Error in getIO:", error);
-    throw error;
-  }
-}
-
 async function saveWorkflow(app) {
   try {
     const workflow = app.graph.serialize();
     const workflow_api = await app.graphToPrompt();
 
     const form = await showForm();
-    // Update to find the submit button using a more reliable selector
     const submitButton = form.querySelector('a[href="#"]');
     submitButton.onclick = async (e) => {
       try {
@@ -196,6 +133,27 @@ async function saveWorkflow(app) {
           "#00000000",
           getLoadingSpinner("#00ff00"),
         );
+
+        // Get manifest and check for missing dependencies
+        const manifest = await getManifest(workflow);
+        const manifestData = JSON.parse(manifest);
+
+        if (manifestData.missing_nodes?.length || manifestData.missing_models?.length) {
+          let errorMessage = "Cannot submit workflow due to missing dependencies:\n\n";
+          let detailedInfo = "";
+
+          if (manifestData.missing_nodes?.length) {
+            detailedInfo +=
+              "Missing Nodes:\n- " + manifestData.missing_nodes.join("\n- ") + "\n\n";
+          }
+
+          if (manifestData.missing_models?.length) {
+            detailedInfo +=
+              "Missing Models:\n- " + manifestData.missing_models.join("\n- ");
+          }
+          showMessage(errorMessage, "#ff0000", detailedInfo);
+          return;
+        }
 
         const submitData = new FormData();
         submitData.append("workflowName", formData.name);
@@ -217,7 +175,6 @@ async function saveWorkflow(app) {
         });
         submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
-        const manifest = await getManifest(workflow);
         const manifestBlob = new Blob([manifest], {
           type: "application/json",
         });
@@ -288,38 +245,6 @@ function $el(tag, propsOrChildren, children) {
     }
   }
   return element;
-}
-
-function deleteElement(name) {
-  const element = document.getElementsByClassName(name);
-  // Check if any elements were found
-  if (element.length > 0) {
-    // Loop through each element and remove it from the DOM
-    Array.from(element).forEach((el) => el.remove());
-  }
-}
-
-function getCleanWorkflow() {
-  const jsonString = `{
-        "last_node_id": 0,
-        "last_link_id": 0,
-        "nodes": [],
-        "links": [],
-        "groups": [],
-        "config": {},
-        "extra": {
-          "ds": {
-          "scale": 0.5644739300537778,
-          "offset": [
-            581.6344764174625,
-            97.05710697162648
-          ]
-          }
-        },
-        "version": 0.4
-        }`;
-
-  return JSON.stringify(JSON.parse(jsonString));
 }
 
 function cleanLocalStorage() {
@@ -497,6 +422,38 @@ function showForm() {
   return formContent;
 }
 
+function createMenuItem(label, iconClass, onClick) {
+  const menuItem = $el(
+    "li",
+    {
+      className: "p-menubar-item relative",
+      role: "menuitem",
+      "aria-label": label,
+    },
+    [
+      $el("div", { className: "p-menubar-item-content" }, [
+        $el(
+          "a",
+          {
+            className: "p-menubar-item-link",
+            "data-v-6fecd137": "",
+            onclick: (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onClick();
+            },
+          },
+          [
+            $el("span", { className: `p-menubar-item-icon pi ${iconClass}` }),
+            $el("span", { className: "p-menubar-item-label", textContent: label }),
+          ],
+        ),
+      ]),
+    ],
+  );
+  return menuItem;
+}
+
 const ext = {
   // Unique name for the extension
   name: "signature.bridge",
@@ -509,82 +466,27 @@ const ext = {
       const menuList = document.querySelector("#pv_id_8_0_list");
 
       if (menuList) {
-        // First add a separator
-        const separator = document.createElement("li");
-        separator.className = "p-menubar-separator";
-        separator.setAttribute("role", "separator");
-        menuList.appendChild(separator);
+        // Add separator
+        menuList.appendChild(
+          $el("li", {
+            className: "p-menubar-separator",
+            role: "separator",
+          }),
+        );
 
-        // Create "Open from Signature" menu item
-        const openMenuItem = document.createElement("li");
-        openMenuItem.className = "p-menubar-item relative";
-        openMenuItem.setAttribute("role", "menuitem");
-        openMenuItem.setAttribute("aria-label", "Open from Signature");
+        // Add Open from Signature menu item
+        menuList.appendChild(
+          createMenuItem("Open from Signature", "pi-cloud-download", () =>
+            console.log("open from signature"),
+          ),
+        );
 
-        const openItemContent = document.createElement("div");
-        openItemContent.className = "p-menubar-item-content";
-
-        const openItemLink = document.createElement("a");
-        openItemLink.className = "p-menubar-item-link";
-        openItemLink.setAttribute("data-v-6fecd137", "");
-
-        const openIcon = document.createElement("span");
-        openIcon.className = "p-menubar-item-icon pi pi-cloud-download";
-
-        const openLabel = document.createElement("span");
-        openLabel.className = "p-menubar-item-label";
-        openLabel.textContent = "Open from Signature";
-
-        openItemLink.appendChild(openIcon);
-        openItemLink.appendChild(openLabel);
-        openItemContent.appendChild(openItemLink);
-        openMenuItem.appendChild(openItemContent);
-
-        // Add click handler for Open
-        openItemLink.onclick = async function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          console.log("open from signature");
-        };
-
-        // Add Open menu item
-        menuList.appendChild(openMenuItem);
-
-        // Create Deploy menu item
-        const newMenuItem = document.createElement("li");
-        newMenuItem.className = "p-menubar-item relative";
-        newMenuItem.setAttribute("role", "menuitem");
-        newMenuItem.setAttribute("aria-label", "Deploy to Signature");
-
-        const itemContent = document.createElement("div");
-        itemContent.className = "p-menubar-item-content";
-
-        const itemLink = document.createElement("a");
-        itemLink.className = "p-menubar-item-link";
-        itemLink.setAttribute("data-v-6fecd137", "");
-
-        const icon = document.createElement("span");
-        icon.className = "p-menubar-item-icon pi pi-cloud-upload";
-
-        const label = document.createElement("span");
-        label.className = "p-menubar-item-label";
-        label.textContent = "Deploy to Signature";
-
-        // Assemble the Deploy menu item
-        itemLink.appendChild(icon);
-        itemLink.appendChild(label);
-        itemContent.appendChild(itemLink);
-        newMenuItem.appendChild(itemContent);
-
-        // Add click handler for Deploy
-        itemLink.onclick = async function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          await saveWorkflow(app);
-        };
-
-        // Add Deploy menu item
-        menuList.appendChild(newMenuItem);
+        // Add Deploy to Signature menu item
+        menuList.appendChild(
+          createMenuItem("Deploy to Signature", "pi-cloud-upload", () =>
+            saveWorkflow(app),
+          ),
+        );
       }
     }
   },
