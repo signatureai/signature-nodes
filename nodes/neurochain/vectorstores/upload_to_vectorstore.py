@@ -25,7 +25,6 @@ class UploadToVectorstore:
     OUTPUT_NODE = True
 
     def process(self, tenant_id: str, chunks):
-
         environment = os.environ.get("ENVIRONMENT", "staging")
         host = f"https://signature-generate.signature-eks-{environment}.signature.ai"
 

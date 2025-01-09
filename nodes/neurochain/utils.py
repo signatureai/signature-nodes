@@ -49,7 +49,6 @@ def overlay_bboxes(img_np, bboxes, labels: list | None = None):
     image_bgr = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
 
     for idx, bbox in enumerate(bboxes):
-
         x1, y1, x2, y2 = map(int, bbox)
         cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
@@ -113,7 +112,6 @@ def draw_polygons(image, prediction, is_bin_mask=False, fill_mask=False):
 
     # Iterate over polygons and labels
     for polygons, label in zip(prediction["polygons"], prediction["labels"]):
-
         color = 255 if is_bin_mask else (0, 255, 255)
 
         for _polygon in polygons:

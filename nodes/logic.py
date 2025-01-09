@@ -47,7 +47,6 @@ class Switch:
     CATEGORY = LOGIC_CAT
 
     def check_lazy_status(self, condition, on_true=None, on_false=None):
-
         if condition and on_true is None:
             on_true = ["on_true"]
             if isinstance(on_true, ExecutionBlocker):

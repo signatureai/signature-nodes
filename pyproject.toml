@@ -1,7 +1,7 @@
 [project]
-name = "signature-core-nodes"
+name = "signature-nodes"
 version = "0.1.0"
-description = "Signature Core Nodes"
+description = "Signature Nodes"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

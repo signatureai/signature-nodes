@@ -4,21 +4,22 @@
 
 Converts JSON strings to Python dictionaries for workflow integration.
 
-A node that takes JSON-formatted strings and parses them into Python dictionaries,
-enabling seamless data integration within the workflow. Handles nested JSON structures
-and validates input format.
+A node that takes JSON-formatted strings and parses them into Python dictionaries, enabling
+seamless data integration within the workflow. Handles nested JSON structures and validates
+input format.
 
 ### Inputs
 
-| Group    | Name     | Type     | Default | Extras          |
-| -------- | -------- | -------- | ------- | --------------- |
-| required | json_str | `STRING` |         | forceInput=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | json_str | `STRING` |  | forceInput=True |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | dict | `DICT` |
+
 
 ??? note "Source code in data.py"
 
@@ -79,20 +80,21 @@ and validates input format.
 
 Converts Python dictionaries to JSON strings for data interchange.
 
-A node that serializes Python dictionaries into JSON-formatted strings, facilitating
-data export and communication with external systems that require JSON format.
+A node that serializes Python dictionaries into JSON-formatted strings, facilitating data
+export and communication with external systems that require JSON format.
 
 ### Inputs
 
-| Group    | Name | Type   | Default | Extras |
-| -------- | ---- | ------ | ------- | ------ |
-| required | dict | `DICT` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in data.py"
 
@@ -151,26 +153,26 @@ data export and communication with external systems that require JSON format.
 
 Extracts a single image from an image list by index.
 
-A node designed for batch image processing that allows selective access to individual
-images within a collection, enabling targeted processing of specific images in a
-sequence.
+A node designed for batch image processing that allows selective access to individual images
+within a collection, enabling targeted processing of specific images in a sequence.
 
 ### Inputs
 
-| Group    | Name   | Type    | Default | Extras |
-| -------- | ------ | ------- | ------- | ------ |
-| required | images | `IMAGE` |         |        |
-| required | index  | `INT`   | 0       |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | images | `IMAGE` |  |  |
+| required | index | `INT` | 0 |  |
 
 ### Returns
 
 | Name | Type |
-| ---- | ---- |
-| i    | `I`  |
-| m    | `M`  |
-| a    | `A`  |
-| g    | `G`  |
-| e    | `E`  |
+|------|------|
+| i | `I` |
+| m | `M` |
+| a | `A` |
+| g | `G` |
+| e | `E` |
+
 
 ??? note "Source code in data.py"
 
@@ -240,15 +242,15 @@ sequence.
 
 Retrieves and types items from any list by index position.
 
-A versatile node that provides access to list elements while also determining their
-Python type, enabling dynamic type handling and conditional processing in workflows.
+A versatile node that provides access to list elements while also determining their Python
+type, enabling dynamic type handling and conditional processing in workflows.
 
 ### Inputs
 
-| Group    | Name  | Type   | Default | Extras |
-| -------- | ----- | ------ | ------- | ------ |
-| required | list  | `LIST` |         |        |
-| required | index | `INT`  | 0       |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | list | `LIST` |  |  |
+| required | index | `INT` | 0 |  |
 
 ??? note "Source code in data.py"
 
@@ -317,15 +319,15 @@ Python type, enabling dynamic type handling and conditional processing in workfl
 
 Retrieves and types dictionary values using string keys.
 
-A node that provides key-based access to dictionary values while determining their
-Python type, enabling dynamic type handling and conditional processing in workflows.
+A node that provides key-based access to dictionary values while determining their Python
+type, enabling dynamic type handling and conditional processing in workflows.
 
 ### Inputs
 
-| Group    | Name | Type     | Default | Extras |
-| -------- | ---- | -------- | ------- | ------ |
-| required | dict | `DICT`   |         |        |
-| required | key  | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
+| required | key | `STRING` |  |  |
 
 ??? note "Source code in data.py"
 

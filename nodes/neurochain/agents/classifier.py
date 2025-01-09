@@ -112,7 +112,6 @@ class Classifier:
         category_20: Optional[list] = None,
         description_20: Optional[list] = None,
     ):
-
         categories = [
             category_1,
             category_2,

@@ -1,10 +1,9 @@
 import os
 
+import folder_paths
 from huggingface_hub import snapshot_download
 from neurochain.agents.text_similarity import TextSimilarity
 from transformers import AutoModel, AutoTokenizer
-
-import folder_paths
 
 from ...categories import NEUROCHAIN_UTILS_CAT
 

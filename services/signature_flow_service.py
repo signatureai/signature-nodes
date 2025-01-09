@@ -19,10 +19,8 @@ sys.path.append(current_dir)
 
 
 class SignatureFlowService:
-
     @classmethod
     def setup_routes(cls):
-
         @PromptServer.instance.routes.post("/flow/create_manifest")
         async def create_manifest(request):
             try:

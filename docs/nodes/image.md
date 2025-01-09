@@ -4,22 +4,23 @@
 
 Creates a solid color image with specified dimensions.
 
-This node generates a uniform color image using a hex color code. The output is a tensor
-in BWHC format (Batch, Width, Height, Channels) with the specified dimensions.
+This node generates a uniform color image using a hex color code. The output is a tensor in BWHC
+format (Batch, Width, Height, Channels) with the specified dimensions.
 
 ### Inputs
 
-| Group    | Name      | Type     | Default | Extras |
-| -------- | --------- | -------- | ------- | ------ |
-| required | hex_color | `STRING` | #FFFFFF |        |
-| required | width     | `INT`    | 1024    |        |
-| required | height    | `INT`    | 1024    |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | hex_color | `STRING` | #FFFFFF |  |
+| required | width | `INT` | 1024 |  |
+| required | height | `INT` | 1024 |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -98,24 +99,24 @@ in BWHC format (Batch, Width, Height, Channels) with the specified dimensions.
 
 Applies Gaussian blur filter to an input image.
 
-This node performs Gaussian blur using a configurable kernel size and sigma value.
-Multiple passes can be applied for stronger blur effects. The blur is applied uniformly
-across all color channels.
+This node performs Gaussian blur using a configurable kernel size and sigma value. Multiple passes
+can be applied for stronger blur effects. The blur is applied uniformly across all color channels.
 
 ### Inputs
 
-| Group    | Name        | Type    | Default | Extras |
-| -------- | ----------- | ------- | ------- | ------ |
-| required | image       | `IMAGE` |         |        |
-| required | radius      | `INT`   | 13      |        |
-| required | sigma       | `FLOAT` | 10.5    |        |
-| required | interations | `INT`   | 1       |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | radius | `INT` | 13 |  |
+| required | sigma | `FLOAT` | 10.5 |  |
+| required | interations | `INT` | 1 |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -188,24 +189,24 @@ across all color channels.
 
 Enhances image sharpness using unsharp mask technique.
 
-This node applies an unsharp mask filter to enhance edge details in the image. It works
-by subtracting a blurred version of the image from the original, creating a sharpening
-effect.
+This node applies an unsharp mask filter to enhance edge details in the image. It works by
+subtracting a blurred version of the image from the original, creating a sharpening effect.
 
 ### Inputs
 
-| Group    | Name        | Type    | Default | Extras |
-| -------- | ----------- | ------- | ------- | ------ |
-| required | image       | `IMAGE` |         |        |
-| required | radius      | `INT`   | 3       |        |
-| required | sigma       | `FLOAT` | 1.5     |        |
-| required | interations | `INT`   | 1       |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | radius | `INT` | 3 |  |
+| required | sigma | `FLOAT` | 1.5 |  |
+| required | interations | `INT` | 1 |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -278,22 +279,22 @@ effect.
 
 Applies soft light blend mode between two images.
 
-Implements the soft light blending mode similar to photo editing software. The effect
-creates a subtle, soft lighting effect based on the interaction between the top and
-bottom layers.
+Implements the soft light blending mode similar to photo editing software. The effect creates a
+subtle, soft lighting effect based on the interaction between the top and bottom layers.
 
 ### Inputs
 
-| Group    | Name   | Type    | Default | Extras |
-| -------- | ------ | ------- | ------- | ------ |
-| required | top    | `IMAGE` |         |        |
-| required | bottom | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | top | `IMAGE` |  |  |
+| required | bottom | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -357,20 +358,21 @@ bottom layers.
 
 Calculates the average color of an input image.
 
-Computes the mean color values across all pixels in the image, resulting in a uniform
-color image representing the average color of the input.
+Computes the mean color values across all pixels in the image, resulting in a uniform color
+image representing the average color of the input.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -425,21 +427,22 @@ color image representing the average color of the input.
 
 Computes the absolute difference between two images.
 
-Performs pixel-wise subtraction between two images and takes the absolute value of the
-result, useful for comparing images or creating difference maps.
+Performs pixel-wise subtraction between two images and takes the absolute value of the result,
+useful for comparing images or creating difference maps.
 
 ### Inputs
 
-| Group    | Name    | Type    | Default | Extras |
-| -------- | ------- | ------- | ------- | ------ |
-| required | image_0 | `IMAGE` |         |        |
-| required | image_1 | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image_0 | `IMAGE` |  |  |
+| required | image_1 | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -503,28 +506,29 @@ result, useful for comparing images or creating difference maps.
 
 Transforms and composites an overlay image onto a base image.
 
-Provides comprehensive image composition capabilities including resizing, positioning,
-rotation, and edge feathering of an overlay image onto a base image.
+Provides comprehensive image composition capabilities including resizing, positioning, rotation,
+and edge feathering of an overlay image onto a base image.
 
 ### Inputs
 
-| Group    | Name          | Type    | Default | Extras                   |
-| -------- | ------------- | ------- | ------- | ------------------------ |
-| required | image         | `IMAGE` |         |                          |
-| required | image_overlay | `IMAGE` |         |                          |
-| required | width         | `INT`   |         | max=48000, step=1        |
-| required | height        | `INT`   |         | max=48000, step=1        |
-| required | X             | `INT`   | 0       | min=0, max=48000, step=1 |
-| required | Y             | `INT`   | 0       | min=0, max=48000, step=1 |
-| required | rotation      | `INT`   | 0       | max=360, step=1          |
-| required | feathering    | `INT`   | 0       | min=0, max=100, step=1   |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | image_overlay | `IMAGE` |  |  |
+| required | width | `INT` |  | max=48000, step=1 |
+| required | height | `INT` |  | max=48000, step=1 |
+| required | X | `INT` | 0 | min=0, max=48000, step=1 |
+| required | Y | `INT` | 0 | min=0, max=48000, step=1 |
+| required | rotation | `INT` | 0 | max=360, step=1 |
+| required | feathering | `INT` | 0 | min=0, max=100, step=1 |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -678,23 +682,23 @@ rotation, and edge feathering of an overlay image onto a base image.
 
 Converts a list of individual images into a batched tensor.
 
-Combines multiple images into a single batched tensor, handling different input sizes
-through various resize modes. Supports multiple interpolation methods for optimal
-quality.
+Combines multiple images into a single batched tensor, handling different input sizes through
+various resize modes. Supports multiple interpolation methods for optimal quality.
 
 ### Inputs
 
-| Group    | Name          | Type    | Default | Extras |
-| -------- | ------------- | ------- | ------- | ------ |
-| required | images        | `IMAGE` |         |        |
-| required | mode          | `LIST`  |         |        |
-| required | interpolation | `LIST`  |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | images | `IMAGE` |  |  |
+| required | mode | `LIST` |  |  |
+| required | interpolation | `LIST` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -791,20 +795,21 @@ quality.
 
 Splits a batched tensor of images into individual images.
 
-Converts a batch of images stored in a single tensor into a list of separate image
-tensors, useful for processing images individually after batch operations.
+Converts a batch of images stored in a single tensor into a list of separate image tensors,
+useful for processing images individually after batch operations.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
+
 
 ??? note "Source code in image.py"
 
@@ -857,24 +862,25 @@ tensors, useful for processing images individually after batch operations.
 
 Analyzes and returns the dimensions of an input image.
 
-Extracts and returns detailed shape information from an input image tensor, providing
-both individual dimensions and a formatted string representation.
+Extracts and returns detailed shape information from an input image tensor, providing both
+individual dimensions and a formatted string representation.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
-| int    | `INT`    |
-| int    | `INT`    |
-| int    | `INT`    |
-| int    | `INT`    |
+| Name | Type |
+|------|------|
+| int | `INT` |
+| int | `INT` |
+| int | `INT` |
+| int | `INT` |
 | string | `STRING` |
+
 
 ??? note "Source code in image.py"
 

@@ -12,7 +12,6 @@ from ...categories import GRAPH_CAT
 
 
 class ScatterPlot:
-
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -38,7 +37,6 @@ class ScatterPlot:
     def process(
         self, x_values: list, y_values: list, labels: list, title: str, x_label: str, y_label: str, marker: str = "o"
     ):
-
         if len(x_values) != len(y_values) or len(x_values) != len(labels):
             raise ValueError(
                 f"Length of x_values ({len(x_values)}), y_values ({len(y_values)}), and labels ({len(labels)}) must match"

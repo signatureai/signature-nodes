@@ -344,9 +344,7 @@ class Mask2Trimap:
         trimap_im[inner_mask == 1.0] = 1.0
         batch_size = step.shape[0]
 
-        trimap = torch.zeros(
-            batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device
-        )
+        trimap = torch.zeros(batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device)
         for i in range(batch_size):
             tar_trimap = trimap_im[i][0]
             trimap[i][1][tar_trimap == 1] = 1

@@ -6,11 +6,11 @@ matplotlib.use("Agg")
 import io
 import random
 
+import folder_paths  # type: ignore
 import matplotlib.pyplot as plt
 from signature_core.functional.color import rgba_to_rgb
 from signature_core.img.tensor_image import TensorImage
 
-import folder_paths  # type: ignore
 from nodes import SaveImage  # type: ignore
 
 

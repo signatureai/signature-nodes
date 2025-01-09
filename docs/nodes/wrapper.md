@@ -4,9 +4,9 @@
 
 A wrapper class for handling workflow execution and communication with a remote server.
 
-This class provides functionality to execute workflows, process inputs/outputs, and
-handle communication with a remote server. It supports uploading files, running workflow
-jobs, and processing various types of data including images, masks, and primitive types.
+This class provides functionality to execute workflows, process inputs/outputs, and handle
+communication with a remote server. It supports uploading files, running workflow jobs, and
+processing various types of data including images, masks, and primitive types.
 
 ??? note "Source code in wrapper.py"
 

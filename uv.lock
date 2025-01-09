@@ -862,7 +862,7 @@ wheels = [
 ]
 
 [[package]]
-name = "signature-core-nodes"
+name = "signature-nodes"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

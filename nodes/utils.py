@@ -526,7 +526,6 @@ class ListBuilder:
 
     @classmethod
     def INPUT_TYPES(cls):
-
         inputs = {
             "required": {
                 "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),

@@ -26,7 +26,6 @@ class QueryVectorstore:
     OUTPUT_NODE = True
 
     def process(self, prompt: str, tenant_id: str, k: int = 3):
-
         environment = os.environ.get("ENVIRONMENT", "staging")
         host = f"https://signature-generate.signature-eks-{environment}.signature.ai"
 

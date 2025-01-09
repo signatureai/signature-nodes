@@ -4,24 +4,24 @@
 
 Applies multiple LoRA models sequentially to a base model and CLIP in ComfyUI.
 
-This node takes a base model, CLIP, and a stack of LoRA models as input. It applies each
-LoRA in the stack sequentially using specified weights for both model and CLIP
-components.
+This node takes a base model, CLIP, and a stack of LoRA models as input. It applies each LoRA
+in the stack sequentially using specified weights for both model and CLIP components.
 
 ### Inputs
 
-| Group    | Name       | Type         | Default | Extras |
-| -------- | ---------- | ------------ | ------- | ------ |
-| required | model      | `MODEL`      |         |        |
-| required | clip       | `CLIP`       |         |        |
-| required | lora_stack | `LORA_STACK` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | model | `MODEL` |  |  |
+| required | clip | `CLIP` |  |  |
+| required | lora_stack | `LORA_STACK` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | model | `MODEL` |
-| clip  | `CLIP`  |
+| clip | `CLIP` |
+
 
 ??? note "Source code in lora.py"
 
@@ -114,9 +114,10 @@ weight controls and two operating modes for simple or advanced weight management
 
 ### Returns
 
-| Name       | Type         |
-| ---------- | ------------ |
+| Name | Type |
+|------|------|
 | lora_stack | `LORA_STACK` |
+
 
 ??? note "Source code in lora.py"
 
@@ -213,33 +214,33 @@ weight controls and two operating modes for simple or advanced weight management
 
 Creates a configurable stack of up to 3 LoRA models with adjustable weights.
 
-Provides a user interface to enable/disable and configure up to three LoRA models with
-independent weights for both model and CLIP components. Can extend an existing
-LORA_STACK.
+Provides a user interface to enable/disable and configure up to three LoRA models with independent
+weights for both model and CLIP components. Can extend an existing LORA_STACK.
 
 ### Inputs
 
-| Group    | Name           | Type                                  | Default | Extras              |
-| -------- | -------------- | ------------------------------------- | ------- | ------------------- |
-| required | switch_1       | `LIST`                                |         |                     |
-| required | lora_name_1    | `<ast.Name object at 0x7f1c0902ce50>` |         |                     |
-| required | model_weight_1 | `FLOAT`                               | 1.0     | max=10.0, step=0.01 |
-| required | clip_weight_1  | `FLOAT`                               | 1.0     | max=10.0, step=0.01 |
-| required | switch_2       | `LIST`                                |         |                     |
-| required | lora_name_2    | `<ast.Name object at 0x7f1c0902f1c0>` |         |                     |
-| required | model_weight_2 | `FLOAT`                               | 1.0     | max=10.0, step=0.01 |
-| required | clip_weight_2  | `FLOAT`                               | 1.0     | max=10.0, step=0.01 |
-| required | switch_3       | `LIST`                                |         |                     |
-| required | lora_name_3    | `<ast.Name object at 0x7f1c0902d360>` |         |                     |
-| required | model_weight_3 | `FLOAT`                               | 1.0     | max=10.0, step=0.01 |
-| required | clip_weight_3  | `FLOAT`                               | 1.0     | max=10.0, step=0.01 |
-| optional | lora_stack     | `LORA_STACK`                          |         |                     |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | switch_1 | `LIST` |  |  |
+| required | lora_name_1 | `<ast.Name object at 0x7f2b302e4340>` |  |  |
+| required | model_weight_1 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
+| required | clip_weight_1 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
+| required | switch_2 | `LIST` |  |  |
+| required | lora_name_2 | `<ast.Name object at 0x7f2b302e47c0>` |  |  |
+| required | model_weight_2 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
+| required | clip_weight_2 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
+| required | switch_3 | `LIST` |  |  |
+| required | lora_name_3 | `<ast.Name object at 0x7f2b302e5cc0>` |  |  |
+| required | model_weight_3 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
+| required | clip_weight_3 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
+| optional | lora_stack | `LORA_STACK` |  |  |
 
 ### Returns
 
-| Name       | Type         |
-| ---------- | ------------ |
+| Name | Type |
+|------|------|
 | lora_stack | `LORA_STACK` |
+
 
 ??? note "Source code in lora.py"
 
@@ -422,14 +423,15 @@ LORA_STACK.
 
 Converts a list of LoRA configuration dictionaries into a LORA_STACK format.
 
-Transforms a list of dictionaries containing LoRA configurations into the tuple format
-required for LORA_STACK operations. Can optionally extend an existing stack.
+Transforms a list of dictionaries containing LoRA configurations into the tuple format required
+for LORA_STACK operations. Can optionally extend an existing stack.
 
 ### Returns
 
-| Name       | Type         |
-| ---------- | ------------ |
+| Name | Type |
+|------|------|
 | lora_stack | `LORA_STACK` |
+
 
 ??? note "Source code in lora.py"
 
@@ -499,25 +501,26 @@ required for LORA_STACK operations. Can optionally extend an existing stack.
 
 Saves images and captions in a format suitable for LoRA training.
 
-Creates a structured dataset directory containing images and their corresponding caption
-files, with support for multiple captions and optional text modifications.
+Creates a structured dataset directory containing images and their corresponding caption files,
+with support for multiple captions and optional text modifications.
 
 ### Inputs
 
-| Group    | Name         | Type     | Default | Extras          |
-| -------- | ------------ | -------- | ------- | --------------- |
-| required | dataset_name | `STRING` |         |                 |
-| required | repeats      | `INT`    | 5       | min=1           |
-| required | images       | `IMAGE`  |         |                 |
-| required | labels       | `STRING` |         | forceInput=True |
-| optional | prefix       | `STRING` |         |                 |
-| optional | suffix       | `STRING` |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dataset_name | `STRING` |  |  |
+| required | repeats | `INT` | 5 | min=1 |
+| required | images | `IMAGE` |  |  |
+| required | labels | `STRING` |  | forceInput=True |
+| optional | prefix | `STRING` |  |  |
+| optional | suffix | `STRING` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in lora.py"
 
