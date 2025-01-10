@@ -22,7 +22,7 @@ class BarPlot(SaveImage):
         self.compress_level = 1
 
     @classmethod
-    def INPUT_TYPES(s):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "values": ("LIST", {}),
@@ -45,7 +45,7 @@ class BarPlot(SaveImage):
             label = str(item)
             value_counts[label] = value_counts.get(label, 0) + 1
 
-        ax.bar(value_counts.keys(), value_counts.values())
+        ax.bar(list(value_counts.keys()), list(value_counts.values()))
 
         ax.set_ylabel("Frequency")
         ax.set_title(title)

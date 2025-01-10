@@ -172,13 +172,14 @@ class Classifier:
         if ENVIRONMENT == "dev":
             llm = OllamaLLM()
         else:
-            llm = GPTQModelEXP(uri="ws://54.75.240.180:9997/api/v1/stream")
+            llm = GPTQModelEXP(host="ws://54.75.240.180:9997/api/v1/stream")
 
         client, retriever = init_weaviate(WEAVIATE_URL, OPENAI_API_KEY, k=1)
 
         classifier = ClassifierNode(
             name=name,
-            llm=llm,
+            # TODO: Use our new BaseLLM class here
+            llm=llm,  # type: ignore
             api_url=WEBSERVICE_URL,
             client=client,
             retriever=retriever,

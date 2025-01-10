@@ -29,11 +29,14 @@ class QueryVectorstore:
         environment = os.environ.get("ENVIRONMENT", "staging")
         host = f"https://signature-generate.signature-eks-{environment}.signature.ai"
 
-        session = boto3.session.Session()
+        session = boto3.Session()
         backend_cognito_secret = get_secret(
             session,
             os.environ.get("BACKEND_COGNITO_SECRET", f"{environment}_backend_cognito_oauth"),
         )
+        if backend_cognito_secret is None:
+            raise ValueError("Backend Cognito Secret not found")
+
         client_id = backend_cognito_secret["client_id"]
         client_secret = backend_cognito_secret["client_secret"]
         client_scope = backend_cognito_secret["scope"]

@@ -78,7 +78,7 @@ class Florence2:
 
         inputs["text_prompt"] = text_prompt
 
-        secret_name = "signature-ml-development-models-api-secret-key"
+        secret_name = "signature-ml-development-models-api-secret-key"  # nosec
         secretsmanager_client = boto3.client("secretsmanager")
         secret_value = secretsmanager_client.get_secret_value(SecretId=secret_name)
         model_api_key = secret_value["SecretString"]

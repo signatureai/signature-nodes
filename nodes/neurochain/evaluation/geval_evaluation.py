@@ -2,7 +2,8 @@ from neurochain.evaluation.geval import Geval
 
 from ...categories import EVALUATION_CAT
 
-DEFAULT_EVALUATION_STEPS = """Read the input document carefully and identify the main topic and key points. The output must be a summary of the input document.
+DEFAULT_EVALUATION_STEPS = """Read the input document carefully and identify the main topic and key points. The output \
+must be a summary of the input document.
 Check if the output covers the main topic and key points of the input document.
 Check if the output presents the main topics of the input document in a clear and logical order.
 Check if the output contains any factual errors that are not supported by the input document.

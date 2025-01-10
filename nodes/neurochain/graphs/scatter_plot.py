@@ -13,7 +13,7 @@ from ...categories import GRAPH_CAT
 
 class ScatterPlot:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "x_values": ("LIST", {}),
@@ -39,7 +39,8 @@ class ScatterPlot:
     ):
         if len(x_values) != len(y_values) or len(x_values) != len(labels):
             raise ValueError(
-                f"Length of x_values ({len(x_values)}), y_values ({len(y_values)}), and labels ({len(labels)}) must match"
+                f"Length of x_values ({len(x_values)}), y_values ({len(y_values)}), "
+                f"and labels ({len(labels)}) must match"
             )
 
         # Create the scatter plot
@@ -47,12 +48,12 @@ class ScatterPlot:
 
         # Get unique labels and assign colors
         unique_labels = list(set(labels))
-        colors = plt.cm.rainbow(np.linspace(0, 1, len(unique_labels)))
+        colors = matplotlib.colormaps["rainbow"](np.linspace(0, 1, len(unique_labels)))
         label_to_color = dict(zip(unique_labels, colors))
 
         # Plot points for each unique label
         for label in unique_labels:
-            mask = [l == label for l in labels]
+            mask = [label == label for label in labels]
             x = [x_values[i] for i in range(len(x_values)) if mask[i]]
             y = [y_values[i] for i in range(len(y_values)) if mask[i]]
             ax.scatter(x, y, color=label_to_color[label], marker=marker, label=label)

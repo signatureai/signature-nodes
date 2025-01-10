@@ -1,3 +1,5 @@
+from typing import Literal
+
 import pandas as pd
 
 from ...categories import TABULAR_CAT
@@ -22,7 +24,7 @@ class RemoveNaNRows:
     CATEGORY = TABULAR_CAT
     OUTPUT_NODE = True
 
-    def process(self, dataframe: pd.DataFrame, subset: str = "", how: str = "any"):
+    def process(self, dataframe: pd.DataFrame, subset: str = "", how: Literal["any", "all"] = "any"):
         if subset:
             subset_columns = [col.strip() for col in subset.split(",")]
             if not all(col in dataframe.columns for col in subset_columns):
@@ -30,5 +32,8 @@ class RemoveNaNRows:
         else:
             subset_columns = None
 
-        cleaned_df = dataframe.dropna(subset=subset_columns, how=how)
+        if subset_columns:
+            cleaned_df = dataframe.dropna(subset=subset_columns, how=how)
+        else:
+            cleaned_df = dataframe.dropna(how=how)
         return (cleaned_df,)

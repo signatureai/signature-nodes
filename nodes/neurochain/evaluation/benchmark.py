@@ -14,7 +14,7 @@ from ...categories import EVALUATION_CAT
 
 class Benchmark:
     @classmethod
-    def INPUT_TYPES(s):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "dataset_name": ("STRING", {"default": "financial_phrasebank"}),
@@ -40,7 +40,7 @@ class Benchmark:
         if ENVIRONMENT == "dev":
             llm = OllamaLLM()
         else:
-            llm = GPTQModelEXP(uri="ws://54.75.240.180:9997/api/v1/stream")
+            llm = GPTQModelEXP(host="ws://54.75.240.180:9997/api/v1/stream")
 
         client, retriever = init_weaviate(WEAVIATE_URL, OPENAI_API_KEY, k=1)
 
@@ -54,7 +54,8 @@ class Benchmark:
 
         classifier = Classifier(
             name="classifier_test",
-            llm=llm,
+            # TODO: Use our new BaseLLM class here
+            llm=llm,  # type: ignore
             api_url=WEBSERVICE_URL,
             client=client,
             retriever=retriever,
@@ -68,15 +69,15 @@ class Benchmark:
         accuracy = 0
 
         loop_obj = tqdm(
-            range(len(dataset)),
+            dataset,
             desc=f"Accuracy: {round(accuracy, 4)} | Correct: {num_correct} | Total: {total} ",
         )
 
-        for i in loop_obj:
+        for i, item in enumerate(loop_obj):
             loop_obj.set_description(f"Accuracy: {round(accuracy, 4)} | Correct: {num_correct} | Total: {total} ")
 
-            prompt = dataset[i]["sentence"]
-            gt_label_id = int(dataset[i]["label"])
+            prompt = item["sentence"]
+            gt_label_id = int(item["label"])
             gt_class = None
             for c in classes:
                 if int(c["id"]) == gt_label_id:
@@ -95,7 +96,7 @@ class Benchmark:
             log_entry = pd.DataFrame.from_dict(
                 {
                     "prompt": [prompt],
-                    "ground_truth": [gt_class["name"]],
+                    "ground_truth": [gt_class["name"]] if gt_class else [],
                     "predicted": [pred_class["name"]],
                     "llm_thought": [llm_thought],
                     "correct": [pred_label_id == gt_label_id],

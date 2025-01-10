@@ -1,8 +1,7 @@
 import json
 import os
-import random
 import time
-import urllib
+from urllib.parse import urlparse
 
 import cv2
 import numpy as np
@@ -24,9 +23,9 @@ WILDCARD = AnyType("*")
 
 
 def get_async_output(output_location, wait_interval: float = 0.5, timeout: int = 20):
-    sagemaker_session = sagemaker.session.Session()
+    sagemaker_session = sagemaker.Session()
     count = 0
-    output_url = urllib.parse.urlparse(output_location)
+    output_url = urlparse(output_location)
     bucket = output_url.netloc
     key = output_url.path[1:]
     start_time = time.time()
@@ -104,15 +103,12 @@ def draw_polygons(image, prediction, is_bin_mask=False, fill_mask=False):
     # Set up scale factor if needed (use 1 if not scaling)
     scale = 1
 
-    # Define a colormap (you may want to customize this)
-    colormap = [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for _ in range(100)]
-
     # Create an overlay for transparency
     overlay = image.copy()
 
     # Iterate over polygons and labels
     for polygons, label in zip(prediction["polygons"], prediction["labels"]):
-        color = 255 if is_bin_mask else (0, 255, 255)
+        color = [255] if is_bin_mask else [0, 255, 255]
 
         for _polygon in polygons:
             _polygon = np.array(_polygon).reshape((-1, 1, 2))

@@ -1,6 +1,6 @@
 import os
 
-import folder_paths
+import folder_paths  # type: ignore
 from huggingface_hub import snapshot_download
 from neurochain.agents.text_similarity import TextSimilarity
 from transformers import AutoModel, AutoTokenizer
