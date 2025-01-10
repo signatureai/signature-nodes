@@ -1,14 +1,15 @@
-import json
+import os
 from typing import Optional, Tuple
 
-import boto3
-import requests
+import folder_paths  # type: ignore
 import torch
+from neurochain.agents.florence2 import Florence2 as Florence2Neurochain
 from signature_core.img.tensor_image import TensorImage
 
 from ....categories import AGENT_CAT
 from ...florence_utils import FLORENCE_PROCESSORS
-from ...utils import get_async_output
+
+SIG_MODELS_DIR = "sig_models"
 
 
 class Florence2:
@@ -16,13 +17,14 @@ class Florence2:
     def INPUT_TYPES(s):  # type: ignore
         return {
             "required": {
+                "local_model": ("BOOLEAN", {"default": False}),
                 "endpoint_name": (
                     "STRING",
-                    {"default": "Florence-2-large-10-11-2024-15-59-19-endpoint"},
+                    {"default": "Florence-2-large"},
                 ),
                 "infer_endpoint": (
                     "STRING",
-                    {"default": "https://d9w8eb8b1b.execute-api.eu-west-1.amazonaws.com/development/invoke_model"},
+                    {"default": "https://ml-platform-inference.signature.ai/invoke_model"},
                 ),
                 "image": ("IMAGE",),
                 "task_token": (
@@ -58,49 +60,29 @@ class Florence2:
 
     def process(
         self,
+        local_model: bool,
         endpoint_name: str,
         infer_endpoint: str,
-        task_token: str,
         image: torch.Tensor,
+        task_token: str,
         num_beams: int,
         text_prompt: Optional[str] = None,
     ):
+        base_model_path = None
+        if local_model:
+            base_model_path = os.path.join(folder_paths.models_dir, SIG_MODELS_DIR)
+            if not os.path.exists(base_model_path):
+                os.makedirs(base_model_path)
+
         tensor_img = TensorImage.from_BWHC(data=image)
         base64_string = tensor_img.get_base64()
-
-        inputs: dict[str, Optional[str]] = {
-            "task_token": task_token,
-            "image_b64": base64_string,
-        }
 
         if text_prompt == "undefined" or text_prompt == "":
             text_prompt = None
 
-        inputs["text_prompt"] = text_prompt
+        florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path)
+        raw_task_resp = florence2.generate(base64_string, task_token, text_prompt, num_beams)
 
-        secret_name = "signature-ml-development-models-api-secret-key"  # nosec
-        secretsmanager_client = boto3.client("secretsmanager")
-        secret_value = secretsmanager_client.get_secret_value(SecretId=secret_name)
-        model_api_key = secret_value["SecretString"]
-
-        headersList = {
-            "Accept": "*/*",
-            "X-Api-Key": model_api_key,
-            "Content-Type": "application/json",
-        }
-
-        payload = {
-            "endpoint_name": endpoint_name,
-            "parameters": {"max_new_tokens": 1024, "num_beams": num_beams},
-            "inputs": inputs,
-        }
-        payload = json.dumps(payload)
-
-        infer_req_response = requests.request("POST", infer_endpoint, data=payload, headers=headersList).json()
-
-        response = get_async_output(infer_req_response["output_location"])
-        response_json = json.loads(response)
-        raw_task_resp = response_json[task_token]
         final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], str] = (
             image,
             image,
