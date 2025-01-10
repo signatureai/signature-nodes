@@ -484,7 +484,7 @@ def copy_readme_to_index(project_base_dir: Path):
     with open(readme_path, encoding="utf-8") as f:
         content = f.read()
 
-    content = content.replace("# Signature Core for ComfyUI", "# Signature Core Nodes Documentation")
+    content = content.replace("# Signature for ComfyUI", "# Signature Nodes Documentation")
 
     os.makedirs(project_base_dir / "docs", exist_ok=True)
 

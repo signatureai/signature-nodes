@@ -33,9 +33,8 @@ function showMessage(
             ${message}
           </p>
         </div>
-        ${
-          detailedInfo
-            ? `
+        ${detailedInfo
+      ? `
           <pre style="
             text-align: left;
             white-space: pre-wrap;
@@ -46,8 +45,8 @@ function showMessage(
             width: 100%;
           ">${detailedInfo}</pre>
         `
-            : ""
-        }
+      : ""
+    }
       </div>`;
 
   app.ui.dialog.show(dialogContent);
@@ -111,7 +110,8 @@ async function getManifest(workflow) {
 async function saveWorkflow(app) {
   try {
     const workflow = app.graph.serialize();
-    const workflow_api = await app.graphToPrompt();
+    const graph_api = await app.graphToPrompt();
+    const workflow_api = graph_api["output"];
 
     const form = await showForm();
     const submitButton = form.querySelector('a[href="#"]');
@@ -133,10 +133,9 @@ async function saveWorkflow(app) {
           "#00000000",
           getLoadingSpinner("#00ff00"),
         );
-
         // Get manifest and check for missing dependencies
-        const manifest = await getManifest(workflow);
-        const manifestData = JSON.parse(manifest);
+        const manifestResponse = await getManifest(workflow_api);
+        const manifestData = JSON.parse(manifestResponse);
 
         if (manifestData.missing_nodes?.length || manifestData.missing_models?.length) {
           let errorMessage = "Cannot submit workflow due to missing dependencies:\n\n";
@@ -162,7 +161,7 @@ async function saveWorkflow(app) {
         submitData.append(
           "coverImage",
           formData.coverImage ||
-            new File([new Blob([""], { type: "image/png" })], "default.png"),
+          new File([new Blob([""], { type: "image/png" })], "default.png"),
         );
 
         const workflowBlob = new Blob([JSON.stringify(workflow)], {
@@ -175,6 +174,7 @@ async function saveWorkflow(app) {
         });
         submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
+        const manifest = await getManifest(workflow_api);
         const manifestBlob = new Blob([manifest], {
           type: "application/json",
         });

@@ -4,15 +4,15 @@
 
 Processes and generates a preview of text inputs, supporting both strings and tensors.
 
-This node takes a list of text inputs and generates a formatted preview string. For
-tensor inputs, it includes shape information in the preview. The node is designed to
-handle multiple input types and provide a consistent preview format.
+This node takes a list of text inputs and generates a formatted preview string. For tensor inputs,
+it includes shape information in the preview. The node is designed to handle multiple input types
+and provide a consistent preview format.
 
 ### Inputs
 
-| Group    | Name  | Type                                  | Default | Extras |
-| -------- | ----- | ------------------------------------- | ------- | ------ |
-| required | value | `<ast.Name object at 0x7f1c090bd7b0>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `<ast.Name object at 0x7f2b30292440>` |  |  |
 
 ??? note "Source code in text.py"
 
@@ -72,21 +72,22 @@ handle multiple input types and provide a consistent preview format.
 
 Transforms text case according to specified formatting rules.
 
-A utility node that provides various case transformation options for input text,
-including lowercase, uppercase, capitalization, and title case conversion.
+A utility node that provides various case transformation options for input text, including
+lowercase, uppercase, capitalization, and title case conversion.
 
 ### Inputs
 
-| Group    | Name | Type     | Default | Extras          |
-| -------- | ---- | -------- | ------- | --------------- |
-| required | text | `STRING` |         | forceInput=True |
-| required | case | `LIST`   |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  | forceInput=True |
+| required | case | `LIST` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in text.py"
 
@@ -147,21 +148,22 @@ including lowercase, uppercase, capitalization, and title case conversion.
 
 Removes whitespace from text according to specified trimming rules.
 
-A utility node that trims whitespace from text input, offering options to remove
-whitespace from the beginning, end, or both sides of the text.
+A utility node that trims whitespace from text input, offering options to remove whitespace
+from the beginning, end, or both sides of the text.
 
 ### Inputs
 
-| Group    | Name      | Type     | Default | Extras          |
-| -------- | --------- | -------- | ------- | --------------- |
-| required | text      | `STRING` |         | forceInput=True |
-| required | trim_type | `LIST`   |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  | forceInput=True |
+| required | trim_type | `LIST` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in text.py"
 
@@ -223,16 +225,17 @@ creating a list of substrings.
 
 ### Inputs
 
-| Group    | Name      | Type     | Default | Extras          |
-| -------- | --------- | -------- | ------- | --------------- |
-| required | text      | `STRING` |         | forceInput=True |
-| required | delimiter | `STRING` |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  | forceInput=True |
+| required | delimiter | `STRING` |   |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in text.py"
 
@@ -282,22 +285,23 @@ creating a list of substrings.
 
 Performs pattern-based text replacement using regular expressions.
 
-A powerful text processing node that uses regex patterns to find and replace text
-patterns, supporting complex pattern matching and replacement operations.
+A powerful text processing node that uses regex patterns to find and replace text patterns,
+supporting complex pattern matching and replacement operations.
 
 ### Inputs
 
-| Group    | Name        | Type     | Default | Extras          |
-| -------- | ----------- | -------- | ------- | --------------- |
-| required | text        | `STRING` |         | forceInput=True |
-| required | pattern     | `STRING` |         |                 |
-| required | replacement | `STRING` |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  | forceInput=True |
+| required | pattern | `STRING` |  |  |
+| required | replacement | `STRING` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in text.py"
 
@@ -354,17 +358,18 @@ another substring, using exact matching.
 
 ### Inputs
 
-| Group    | Name    | Type     | Default | Extras |
-| -------- | ------- | -------- | ------- | ------ |
-| required | text    | `STRING` |         |        |
-| required | find    | `STRING` |         |        |
-| required | replace | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  |  |
+| required | find | `STRING` |  |  |
+| required | replace | `STRING` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in text.py"
 
@@ -421,16 +426,17 @@ without any separator between them.
 
 ### Inputs
 
-| Group    | Name  | Type     | Default | Extras |
-| -------- | ----- | -------- | ------- | ------ |
-| required | text1 | `STRING` |         |        |
-| required | text2 | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text1 | `STRING` |  |  |
+| required | text2 | `STRING` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in text.py"
 
@@ -471,5 +477,107 @@ without any separator between them.
             text1 = kwargs.get("text1", "")
             text2 = kwargs.get("text2", "")
             return (text1 + text2,)
+
+
+    ```
+
+## RenderText
+
+Renders text onto an existing image at specified coordinates.
+
+Overlays text on an input image using a specified font and position,
+returning the modified image with the rendered text.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | text | `STRING` | Text |  |
+| required | x | `INT` | 100 | min=0 |
+| required | y | `INT` | 100 | min=0 |
+| required | font_path | `STRING` |  |  |
+| required | font_size | `INT` | 300 | min=1, max=1000 |
+| required | color | `STRING` | #FFFFFF |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| i | `I` |
+| m | `M` |
+| a | `A` |
+| g | `G` |
+| e | `E` |
+
+
+??? note "Source code in text.py"
+
+    ```python
+    class RenderText:
+        """Renders text onto an existing image at specified coordinates.
+
+        Overlays text on an input image using a specified font and position,
+        returning the modified image with the rendered text.
+
+        Args:
+            image (torch.Tensor): The input image to overlay text on
+            text (str): The text to render
+            x (int): X coordinate for text placement
+            y (int): Y coordinate for text placement
+            font_path (str): Path to the font file (.ttf, .otf)
+            font_size (int): Size of the font in pixels
+            color (str): Color of the text in hex format (e.g. "#FFFFFF")
+
+        Returns:
+            torch.Tensor - Modified image tensor with text overlay
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "image": ("IMAGE",),
+                    "text": ("STRING", {"default": "Text"}),
+                    "x": ("INT", {"default": 100, "min": 0}),
+                    "y": ("INT", {"default": 100, "min": 0}),
+                    "font_path": ("STRING", {"default": ""}),
+                    "font_size": ("INT", {"default": 300, "min": 1, "max": 1000}),
+                    "color": ("STRING", {"default": "#FFFFFF"}),
+                }
+            }
+
+        RETURN_TYPES = "IMAGE"
+        FUNCTION = "execute"
+        CATEGORY = TEXT_CAT
+
+        # * Fred please use the TensorImage class to manage the image
+        def execute(self, **kwargs):
+            image = kwargs.get("image")
+            text = kwargs.get("text")
+            x = kwargs.get("x")
+            y = kwargs.get("y")
+            font_path = kwargs.get("font_path")
+            font_size = kwargs.get("font_size")
+            color = kwargs.get("color")
+            input_image = Image.fromarray((image[0].cpu().numpy() * 255).astype(np.uint8))  # type: ignore
+
+            if input_image.mode != "RGBA":
+                input_image = input_image.convert("RGBA")
+
+            # Load font
+            try:
+                font = ImageFont.truetype(font_path, font_size)
+            except (OSError, ImportError):
+                font = ImageFont.load_default(size=font_size)
+
+            draw = ImageDraw.Draw(input_image)
+            draw.text((x, y), text, font=font, fill=color)
+            img_tensor = torch.from_numpy(np.array(input_image).astype(np.float32) / 255.0)
+
+            if len(img_tensor.shape) == 3:
+                img_tensor = img_tensor.unsqueeze(0)
+
+            return (img_tensor,)
 
     ```

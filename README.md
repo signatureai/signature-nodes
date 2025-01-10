@@ -1,6 +1,6 @@
-# Signature Core for ComfyUI
+# Signature for ComfyUI
 
-![GitHub](https://img.shields.io/github/license/signatureai/signature-core-nodes)
+![GitHub](https://img.shields.io/github/license/signatureai/signature-nodes)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&logo=PyTorch&logoColor=white)
 ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?&logo=numpy&logoColor=white)
@@ -10,7 +10,7 @@
 A powerful collection of custom nodes for ComfyUI that provides essential image
 processing, data handling, and workflow management capabilities.
 
-📚 **[View Full Documentation](https://signatureai.github.io/signature-core-nodes/)**
+📚 **[View Full Documentation](https://signatureai.github.io/signature-nodes/)**
 
 ## 🚀 Installation
 
@@ -23,7 +23,7 @@ cd ComfyUI/custom_nodes/
 2. Clone the repository:
 
 ```bash
-git clone https://github.com/signatureai/signature-core-nodes.git
+git clone https://github.com/signatureai/signature-nodes.git
 ```
 
 3. Install the required dependencies:
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 ## 💻 Usage
 
-After installation, the Signature Core nodes will be available in your ComfyUI workspace
+After installation, the Signature nodes will be available in your ComfyUI workspace
 under the "🔲 Signature Nodes" category. Each node is designed to be intuitive and
 includes proper input validation and error handling.
 

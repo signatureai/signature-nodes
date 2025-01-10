@@ -53,9 +53,7 @@ class Agent:
     ) -> tuple:
         base64_images = None
         if images:
-            base64_images = [
-                TensorImage.from_BWHC(image).get_base64() for image in images
-            ]
+            base64_images = [TensorImage.from_BWHC(image).get_base64() for image in images]
 
         neurochain_system = system
         if neurochain_system:
@@ -70,9 +68,7 @@ class Agent:
             memory=memory,
             json_schema=json_schema,
         )
-        response = agent.execute(
-            prompt, images=base64_images, conversation_id=str(self.conversation_id)
-        )
+        response = agent.execute(prompt, images=base64_images, conversation_id=str(self.conversation_id))
         return (
             response,
             agent,

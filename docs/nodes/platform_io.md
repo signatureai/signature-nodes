@@ -4,22 +4,21 @@
 
 Processes and validates image inputs from various sources for the platform.
 
-This class handles image input processing, supporting both single and multiple images
-from URLs or base64 strings. It includes functionality for alpha channel management and
-mask generation.
+This class handles image input processing, supporting both single and multiple images from URLs or
+base64 strings. It includes functionality for alpha channel management and mask generation.
 
 ### Inputs
 
-| Group    | Name          | Type                                  | Default     | Extras         |
-| -------- | ------------- | ------------------------------------- | ----------- | -------------- |
-| required | title         | `STRING`                              | Input Image |                |
-| required | subtype       | `LIST`                                |             |                |
-| required | required      | `BOOLEAN`                             | True        |                |
-| required | include_alpha | `BOOLEAN`                             | False       |                |
-| required | multiple      | `BOOLEAN`                             | False       |                |
-| required | value         | `STRING`                              |             |                |
-| required | metadata      | `STRING`                              | {}          | multiline=True |
-| optional | fallback      | `<ast.Name object at 0x7f1c090936d0>` |             |                |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Image |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | include_alpha | `BOOLEAN` | False |  |
+| required | multiple | `BOOLEAN` | False |  |
+| required | value | `STRING` |  |  |
+| required | metadata | `STRING` | {} | multiline=True |
+| optional | fallback | `<ast.Name object at 0x7f2b302c20e0>` |  |  |
 
 ??? note "Source code in platform_io.py"
 
@@ -167,27 +166,28 @@ mask generation.
 
 Manages file downloads from external services using authentication tokens.
 
-Handles connections to external services (currently Google Drive) to download files
-using provided authentication tokens and file identifiers.
+Handles connections to external services (currently Google Drive) to download files using provided
+authentication tokens and file identifiers.
 
 ### Inputs
 
-| Group    | Name      | Type      | Default         | Extras         |
-| -------- | --------- | --------- | --------------- | -------------- |
-| required | title     | `STRING`  | Input Connector |                |
-| required | subtype   | `LIST`    |                 |                |
-| required | required  | `BOOLEAN` | True            |                |
-| required | override  | `BOOLEAN` | False           |                |
-| required | token     | `STRING`  |                 |                |
-| required | mime_type | `STRING`  | image/png       |                |
-| required | value     | `STRING`  |                 |                |
-| required | metadata  | `STRING`  | {}              | multiline=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Connector |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | override | `BOOLEAN` | False |  |
+| required | token | `STRING` |  |  |
+| required | mime_type | `STRING` | image/png |  |
+| required | value | `STRING` |  |  |
+| required | metadata | `STRING` | {} | multiline=True |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | file | `FILE` |
+
 
 ??? note "Source code in platform_io.py"
 
@@ -270,25 +270,26 @@ using provided authentication tokens and file identifiers.
 
 Processes text input with fallback support.
 
-Handles text input processing with support for different subtypes and optional fallback
-values when input is empty.
+Handles text input processing with support for different subtypes and optional fallback values
+when input is empty.
 
 ### Inputs
 
-| Group    | Name     | Type      | Default    | Extras          |
-| -------- | -------- | --------- | ---------- | --------------- |
-| required | title    | `STRING`  | Input Text |                 |
-| required | subtype  | `LIST`    |            |                 |
-| required | required | `BOOLEAN` | True       |                 |
-| required | value    | `STRING`  |            | multiline=True  |
-| required | metadata | `STRING`  | {}         | multiline=True  |
-| optional | fallback | `STRING`  |            | forceInput=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Text |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `STRING` |  | multiline=True |
+| required | metadata | `STRING` | {} | multiline=True |
+| optional | fallback | `STRING` |  | forceInput=True |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
+
 
 ??? note "Source code in platform_io.py"
 
@@ -355,18 +356,18 @@ values when input is empty.
 
 Processes numeric inputs with type conversion.
 
-Handles numeric input processing with support for both integer and float values,
-including automatic type conversion based on the specified subtype.
+Handles numeric input processing with support for both integer and float values, including
+automatic type conversion based on the specified subtype.
 
 ### Inputs
 
-| Group    | Name     | Type      | Default      | Extras                   |
-| -------- | -------- | --------- | ------------ | ------------------------ |
-| required | title    | `STRING`  | Input Number |                          |
-| required | subtype  | `LIST`    |              |                          |
-| required | required | `BOOLEAN` | True         |                          |
-| required | value    | `FLOAT`   | 0            | max=18446744073709551615 |
-| required | metadata | `STRING`  | {}           | multiline=True           |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Number |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `FLOAT` | 0 | max=18446744073709551615 |
+| required | metadata | `STRING` | {} | multiline=True |
 
 ??? note "Source code in platform_io.py"
 
@@ -436,19 +437,20 @@ Handles boolean input processing with validation and type checking.
 
 ### Inputs
 
-| Group    | Name     | Type      | Default       | Extras         |
-| -------- | -------- | --------- | ------------- | -------------- |
-| required | title    | `STRING`  | Input Boolean |                |
-| required | subtype  | `LIST`    |               |                |
-| required | required | `BOOLEAN` | True          |                |
-| required | value    | `BOOLEAN` | False         |                |
-| required | metadata | `STRING`  | {}            | multiline=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Boolean |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `BOOLEAN` | False |  |
+| required | metadata | `STRING` | {} | multiline=True |
 
 ### Returns
 
-| Name    | Type      |
-| ------- | --------- |
+| Name | Type |
+|------|------|
 | boolean | `BOOLEAN` |
+
 
 ??? note "Source code in platform_io.py"
 
@@ -507,18 +509,18 @@ Handles boolean input processing with validation and type checking.
 
 Manages output processing and file saving for various data types.
 
-Handles the processing and saving of different output types including images, masks,
-numbers, and strings. Includes support for thumbnail generation and metadata management.
+Handles the processing and saving of different output types including images, masks, numbers, and
+strings. Includes support for thumbnail generation and metadata management.
 
 ### Inputs
 
-| Group    | Name        | Type                                  | Default      | Extras         |
-| -------- | ----------- | ------------------------------------- | ------------ | -------------- |
-| required | title       | `STRING`                              | Output Image |                |
-| required | subtype     | `LIST`                                |              |                |
-| required | metadata    | `STRING`                              | {}           | multiline=True |
-| required | value       | `<ast.Name object at 0x7f1c0908e590>` |              |                |
-| hidden   | output_path | `STRING`                              | output       |                |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Output Image |  |
+| required | subtype | `LIST` |  |  |
+| required | metadata | `STRING` | {} | multiline=True |
+| required | value | `<ast.Name object at 0x7f2b30285900>` |  |  |
+| hidden | output_path | `STRING` | output |  |
 
 ??? note "Source code in platform_io.py"
 

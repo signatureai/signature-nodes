@@ -4,26 +4,27 @@
 
 Applies random crop augmentation to images with configurable dimensions and frequency.
 
-This node performs random cropping operations on input images. It allows precise control
-over the crop dimensions through minimum and maximum window sizes, target dimensions,
-and application probability.
+This node performs random cropping operations on input images. It allows precise control over the
+crop dimensions through minimum and maximum window sizes, target dimensions, and application
+probability.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras           |
-| -------- | ------------ | -------------- | ------- | ---------------- |
-| required | height       | `INT`          | 1024    | min=32, step=32  |
-| required | width        | `INT`          | 1024    | min=32, step=32  |
-| required | min_window   | `INT`          | 256     | step=32          |
-| required | max_window   | `INT`          | 1024    | step=32          |
-| required | percent      | `FLOAT`        | 1.0     | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | height | `INT` | 1024 | min=32, step=32 |
+| required | width | `INT` | 1024 | min=32, step=32 |
+| required | min_window | `INT` | 256 | step=32 |
+| required | max_window | `INT` | 1024 | step=32 |
+| required | percent | `FLOAT` | 1.0 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -97,25 +98,25 @@ and application probability.
 
 ## FlipAugmentation
 
-Applies horizontal or vertical flip augmentation to images with configurable
-probability.
+Applies horizontal or vertical flip augmentation to images with configurable probability.
 
-This node performs random flip transformations on input images. It supports both
-horizontal and vertical flip operations with adjustable probability of application.
+This node performs random flip transformations on input images. It supports both horizontal and
+vertical flip operations with adjustable probability of application.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default    | Extras           |
-| -------- | ------------ | -------------- | ---------- | ---------------- |
-| required | flip         | `LIST`         | horizontal |                  |
-| required | percent      | `FLOAT`        | 0.5        | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None       |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | flip | `LIST` | horizontal |  |
+| required | percent | `FLOAT` | 0.5 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -177,29 +178,28 @@ horizontal and vertical flip operations with adjustable probability of applicati
 
 ## ComposeAugmentation
 
-Combines and applies multiple augmentation operations with consistent random
-transformations.
+Combines and applies multiple augmentation operations with consistent random transformations.
 
-This node orchestrates the application of multiple augmentation operations to images and
-masks. It provides control over sample generation and reproducibility through seed
-management.
+This node orchestrates the application of multiple augmentation operations to images and masks. It
+provides control over sample generation and reproducibility through seed management.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras                |
-| -------- | ------------ | -------------- | ------- | --------------------- |
-| required | augmentation | `AUGMENTATION` |         |                       |
-| required | samples      | `INT`          | 1       | min=1                 |
-| required | seed         | `INT`          |         | max=10000000000000000 |
-| optional | image        | `IMAGE`        | None    |                       |
-| optional | mask         | `MASK`         | None    |                       |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | augmentation | `AUGMENTATION` |  |  |
+| required | samples | `INT` | 1 | min=1 |
+| required | seed | `INT` |  | max=10000000000000000 |
+| optional | image | `IMAGE` | None |  |
+| optional | mask | `MASK` | None |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -304,23 +304,24 @@ management.
 
 Applies brightness and contrast adjustments to images.
 
-This node provides controls for adjusting image brightness and contrast with
-configurable limits and probability of application.
+This node provides controls for adjusting image brightness and contrast with configurable
+limits and probability of application.
 
 ### Inputs
 
-| Group    | Name             | Type           | Default | Extras           |
-| -------- | ---------------- | -------------- | ------- | ---------------- |
-| required | brightness_limit | `FLOAT`        | 0.2     | min=0.0, max=1.0 |
-| required | contrast_limit   | `FLOAT`        | 0.2     | min=0.0, max=1.0 |
-| required | percent          | `FLOAT`        | 0.5     | min=0.0, max=1.0 |
-| optional | augmentation     | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | brightness_limit | `FLOAT` | 0.2 | min=0.0, max=1.0 |
+| required | contrast_limit | `FLOAT` | 0.2 | min=0.0, max=1.0 |
+| required | percent | `FLOAT` | 0.5 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -390,17 +391,18 @@ application probability.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras           |
-| -------- | ------------ | -------------- | ------- | ---------------- |
-| required | limit        | `INT`          | 45      | min=0, max=180   |
-| required | percent      | `FLOAT`        | 0.5     | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | limit | `INT` | 45 | min=0, max=180 |
+| required | percent | `FLOAT` | 0.5 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -462,19 +464,20 @@ softening effects.
 
 ### Inputs
 
-| Group    | Name           | Type           | Default  | Extras           |
-| -------- | -------------- | -------------- | -------- | ---------------- |
-| required | blur_type      | `LIST`         | gaussian |                  |
-| required | blur_limit_min | `INT`          | 3        | min=3, step=3    |
-| required | blur_limit_max | `INT`          | 87       | min=3, step=3    |
-| required | percent        | `FLOAT`        | 0.3      | min=0.0, max=1.0 |
-| optional | augmentation   | `AUGMENTATION` | None     |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | blur_type | `LIST` | gaussian |  |
+| required | blur_limit_min | `INT` | 3 | min=3, step=3 |
+| required | blur_limit_max | `INT` | 87 | min=3, step=3 |
+| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -509,7 +512,10 @@ softening effects.
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "blur_type": (["gaussian", "motion", "median"], {"default": "gaussian"}),
+                    "blur_type": (
+                        ["gaussian", "motion", "median"],
+                        {"default": "gaussian"},
+                    ),
                     "blur_limit_min": ("INT", {"default": 3, "min": 3, "step": 3}),
                     "blur_limit_max": ("INT", {"default": 87, "min": 3, "step": 3}),
                     "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
@@ -530,7 +536,10 @@ softening effects.
             percent = kwargs.get("percent") or 0.3
             augmentation = kwargs.get("augmentation")
             augmentation = blur_augmentation(
-                blur_type=blur_type, blur_limit=blur_limit, percent=percent, augmentation=augmentation
+                blur_type=blur_type,
+                blur_limit=blur_limit,
+                percent=percent,
+                augmentation=augmentation,
             )
             return (augmentation,)
 
@@ -546,18 +555,19 @@ quality loss scenarios.
 
 ### Inputs
 
-| Group    | Name          | Type           | Default     | Extras           |
-| -------- | ------------- | -------------- | ----------- | ---------------- |
-| required | quality_type  | `LIST`         | compression |                  |
-| required | quality_limit | `INT`          | 60          | min=1, max=100   |
-| required | percent       | `FLOAT`        | 0.2         | min=0.0, max=1.0 |
-| optional | augmentation  | `AUGMENTATION` | None        |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | quality_type | `LIST` | compression |  |
+| required | quality_limit | `INT` | 60 | min=1, max=100 |
+| required | percent | `FLOAT` | 0.2 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -590,7 +600,10 @@ quality loss scenarios.
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "quality_type": (["compression", "downscale"], {"default": "compression"}),
+                    "quality_type": (
+                        ["compression", "downscale"],
+                        {"default": "compression"},
+                    ),
                     "quality_limit": ("INT", {"default": 60, "min": 1, "max": 100}),
                     "percent": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
                 },
@@ -610,7 +623,10 @@ quality loss scenarios.
             percent = kwargs.get("percent") or 0.2
             augmentation = kwargs.get("augmentation")
             augmentation = quality_augmentation(
-                quality_type=quality_type, quality_limit=quality_limit, percent=percent, augmentation=augmentation
+                quality_type=quality_type,
+                quality_limit=quality_limit,
+                percent=percent,
+                augmentation=augmentation,
             )
             return (augmentation,)
 
@@ -621,23 +637,24 @@ quality loss scenarios.
 
 Applies geometric distortion effects to images.
 
-This node provides various types of geometric distortion with configurable severity and
-application probability.
+This node provides various types of geometric distortion with configurable severity
+and application probability.
 
 ### Inputs
 
-| Group    | Name            | Type           | Default | Extras           |
-| -------- | --------------- | -------------- | ------- | ---------------- |
-| required | distortion_type | `LIST`         | optical |                  |
-| required | severity        | `INT`          | 1       | min=1, max=5     |
-| required | percent         | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
-| optional | augmentation    | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | distortion_type | `LIST` | optical |  |
+| required | severity | `INT` | 1 | min=1, max=5 |
+| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -671,7 +688,10 @@ application probability.
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "distortion_type": (["optical", "grid", "elastic"], {"default": "optical"}),
+                    "distortion_type": (
+                        ["optical", "grid", "elastic"],
+                        {"default": "optical"},
+                    ),
                     "severity": ("INT", {"default": 1, "min": 1, "max": 5}),
                     "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
                 },
@@ -691,7 +711,10 @@ application probability.
             percent = kwargs.get("percent") or 0.3
             augmentation = kwargs.get("augmentation")
             augmentation = distortion_augmentation(
-                distortion_type=distortion_type, severity=severity, percent=percent, augmentation=augmentation
+                distortion_type=distortion_type,
+                severity=severity,
+                percent=percent,
+                augmentation=augmentation,
             )
             return (augmentation,)
 
@@ -702,24 +725,25 @@ application probability.
 
 Applies random shifting, scaling, and rotation transformations.
 
-This node combines multiple geometric transformations with configurable ranges and
-probability.
+This node combines multiple geometric transformations with configurable ranges
+and probability.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras           |
-| -------- | ------------ | -------------- | ------- | ---------------- |
-| required | shift_limit  | `FLOAT`        | 0.1     | min=0.0, max=1.0 |
-| required | scale_limit  | `FLOAT`        | 0.2     | min=0.0, max=1.0 |
-| required | rotate_limit | `INT`          | 45      | min=0, max=180   |
-| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | shift_limit | `FLOAT` | 0.1 | min=0.0, max=1.0 |
+| required | scale_limit | `FLOAT` | 0.2 | min=0.0, max=1.0 |
+| required | rotate_limit | `INT` | 45 | min=0, max=180 |
+| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -794,18 +818,19 @@ useful for regularization and robustness training.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras           |
-| -------- | ------------ | -------------- | ------- | ---------------- |
-| required | num_holes    | `INT`          | 8       | min=1, max=20    |
-| required | max_size     | `INT`          | 30      | min=1, max=100   |
-| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | num_holes | `INT` | 8 | min=1, max=20 |
+| required | max_size | `INT` | 30 | min=1, max=100 |
+| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -857,7 +882,10 @@ useful for regularization and robustness training.
             percent = kwargs.get("percent") or 0.3
             augmentation = kwargs.get("augmentation")
             augmentation = cutout_augmentation(
-                num_holes=num_holes, max_size=max_size, percent=percent, augmentation=augmentation
+                num_holes=num_holes,
+                max_size=max_size,
+                percent=percent,
+                augmentation=augmentation,
             )
             return (augmentation,)
 
@@ -873,18 +901,19 @@ effects.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras           |
-| -------- | ------------ | -------------- | ------- | ---------------- |
-| required | grid_type    | `LIST`         | shuffle |                  |
-| required | grid_size    | `INT`          | 3       | min=2, max=10    |
-| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None    |                  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | grid_type | `LIST` | shuffle |  |
+| required | grid_size | `INT` | 3 | min=2, max=10 |
+| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 
@@ -938,7 +967,10 @@ effects.
             percent = kwargs.get("percent") or 0.3
             augmentation = kwargs.get("augmentation")
             augmentation = grid_augmentation(
-                grid_type=grid_type, grid_size=grid_size, percent=percent, augmentation=augmentation
+                grid_type=grid_type,
+                grid_size=grid_size,
+                percent=percent,
+                augmentation=augmentation,
             )
             return (augmentation,)
 
@@ -954,18 +986,19 @@ with configurable strength and probability.
 
 ### Inputs
 
-| Group    | Name         | Type           | Default | Extras            |
-| -------- | ------------ | -------------- | ------- | ----------------- |
-| required | scale        | `FLOAT`        | 0.05    | min=0.01, max=0.5 |
-| required | keep_size    | `BOOLEAN`      | True    |                   |
-| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0  |
-| optional | augmentation | `AUGMENTATION` | None    |                   |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | scale | `FLOAT` | 0.05 | min=0.01, max=0.5 |
+| required | keep_size | `BOOLEAN` | True |  |
+| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None |  |
 
 ### Returns
 
-| Name         | Type           |
-| ------------ | -------------- |
+| Name | Type |
+|------|------|
 | augmentation | `AUGMENTATION` |
+
 
 ??? note "Source code in augmentations.py"
 

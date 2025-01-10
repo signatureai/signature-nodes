@@ -76,21 +76,17 @@ def get_node_class_mappings(nodes_directory: str):
 
     for plugin_file_path in plugin_file_paths:
         plugin_rel_path = plugin_file_path.replace(".py", "").replace(sep, ".")
-        plugin_rel_path = plugin_rel_path.split("signature-core-nodes.nodes.")[-1]
+        plugin_rel_path = plugin_rel_path.split("signature-nodes.nodes.")[-1]
 
         if not NEUROCHAIN_AVAILABLE and plugin_rel_path.startswith("neurochain"):
             continue
 
         try:
-            module = importlib.import_module("signature-core-nodes.nodes." + plugin_rel_path)
+            module = importlib.import_module("signature-nodes.nodes." + plugin_rel_path)
 
             for item in dir(module):
                 value = getattr(module, item)
-                if (
-                    not value
-                    or not inspect.isclass(value)
-                    or not value.__module__.startswith("signature-core-nodes.nodes.")
-                ):
+                if not value or not inspect.isclass(value) or not value.__module__.startswith("signature-nodes.nodes."):
                     continue
 
                 if hasattr(value, "FUNCTION"):
@@ -126,7 +122,6 @@ __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "MANIFEST"]
 MANIFEST = {
     "name": NAME,
     "version": __version__,
-    "author": "Marco, Frederico, Anderson",
     "description": "SIG Nodes",
 }
 
