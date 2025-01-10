@@ -168,9 +168,7 @@ class Wrapper:
         return output
 
     def process_outputs(self, job_outputs, node_outputs):
-
         def process_data(node_output: dict, job_output: dict):
-
             node_type = node_output.get("type")
             value = job_output.get("value")
             if value is None or not isinstance(node_type, str):
@@ -230,7 +228,6 @@ class Wrapper:
     CATEGORY = LABS_CAT
 
     def execute(self, **kwargs):
-
         data = kwargs.get("data")
         # console.log(f"kwargs: {kwargs}")
 

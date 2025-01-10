@@ -7,7 +7,7 @@ from ...categories import CLEARML_CAT
 
 class ReportImage:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "task": ("CLEARML_TASK", {}),

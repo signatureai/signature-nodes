@@ -1,287 +1,495 @@
-import { app } from "../scripts/app.js";
+import { app } from "../../scripts/app.js";
 
-const urlParams = new URLSearchParams(window.location.search);
-const env = urlParams.get("env");
-const workflow_id = urlParams.get("workflow_id");
-const token = urlParams.get("token");
+function showMessage(
+  message,
+  color,
+  detailedInfo = null,
+  backgroundColor = "#00000000",
+  extraBody = null,
+) {
+  let dialogContent = `
+      <div style="
+        text-align: center;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+      ">
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        ">
+          ${extraBody || ""}
+          <p style="
+            color: ${color};
+            font-size: 20px;
+            margin: 0;
+            text-align: center;
+            background-color: ${backgroundColor};
+          ">
+            ${message}
+          </p>
+        </div>
+        ${detailedInfo
+      ? `
+          <pre style="
+            text-align: left;
+            white-space: pre-wrap;
+            margin: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+          ">${detailedInfo}</pre>
+        `
+      : ""
+    }
+      </div>`;
 
-// Exit early if required parameters are missing
-if (!env || !workflow_id || !token) {
-  console.log(
-    "Signature Bridge: Missing required URL parameters (env, workflow_id, token). Extension not loaded.",
-  );
-} else {
-  let main_url = "https://api.signature.ai/api/v1";
-  if (env === "staging") {
-    main_url = "https://api-staging.signature.ai/api/v1";
+  app.ui.dialog.show(dialogContent);
+}
+
+// Add a utility function for the spinner
+function getLoadingSpinner(color) {
+  if (!document.querySelector("#spinner-animation")) {
+    const style = document.createElement("style");
+    style.id = "spinner-animation";
+    style.textContent = `
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
   }
-  const url = main_url + `/workflows/${workflow_id}`;
-  const headers = getHeaders(token);
 
-  function getHeaders(token) {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Access-Control-Allow-Origin", "*");
-    headers.append("Authorization", `Bearer ${token}`);
-    return headers;
+  return `
+    <span class="loading-spinner" style="
+      display: block;
+      width: 80px;
+      height: 80px;
+      border: 3px solid ${color};
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    "></span>
+  `;
+}
+
+async function getManifest(workflow) {
+  try {
+    const url = window.location.href + "flow/create_manifest";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        workflow: workflow,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error getting manifest:", errorText);
+      throw new Error(
+        `Failed to get manifest: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in getManifest:", error);
+    throw error;
   }
+}
 
-  function showMessage(message, color) {
-    app.ui.dialog.show(
-      $el("div", [
-        $el("p", {
-          style: {
-            padding: "5px",
-            color: color,
-            fontSize: "20px",
-            maxHeight: "50vh",
-            overflow: "auto",
-            backgroundColor: "rgba(0,0,0,0.2)",
-          },
-          textContent: message,
-        }),
-      ]).outerHTML,
+async function saveWorkflow(app) {
+  try {
+    const workflow = app.graph.serialize();
+    const graph_api = await app.graphToPrompt();
+    const workflow_api = graph_api["output"];
+
+    const form = await showForm();
+    const submitButton = form.querySelector('a[href="#"]');
+    submitButton.onclick = async (e) => {
+      try {
+        e.preventDefault();
+        const formData = {
+          name: form.querySelector('input[type="text"]').value,
+          description: form.querySelector("textarea").value,
+          type: form.querySelector("select").value,
+          coverImage: form.querySelector('input[type="file"]').files[0],
+        };
+        app.ui.dialog.close();
+
+        showMessage(
+          "Generating manifest...",
+          "#ffffff",
+          null,
+          "#00000000",
+          getLoadingSpinner("#00ff00"),
+        );
+        // Get manifest and check for missing dependencies
+        const manifestResponse = await getManifest(workflow_api);
+        const manifestData = JSON.parse(manifestResponse);
+
+        if (manifestData.missing_nodes?.length || manifestData.missing_models?.length) {
+          let errorMessage = "Cannot submit workflow due to missing dependencies:\n\n";
+          let detailedInfo = "";
+
+          if (manifestData.missing_nodes?.length) {
+            detailedInfo +=
+              "Missing Nodes:\n- " + manifestData.missing_nodes.join("\n- ") + "\n\n";
+          }
+
+          if (manifestData.missing_models?.length) {
+            detailedInfo +=
+              "Missing Models:\n- " + manifestData.missing_models.join("\n- ");
+          }
+          showMessage(errorMessage, "#ff0000", detailedInfo);
+          return;
+        }
+
+        const submitData = new FormData();
+        submitData.append("workflowName", formData.name);
+        submitData.append("workflowDescription", formData.description);
+        submitData.append("workflowType", formData.type.toLowerCase());
+        submitData.append(
+          "coverImage",
+          formData.coverImage ||
+          new File([new Blob([""], { type: "image/png" })], "default.png"),
+        );
+
+        const workflowBlob = new Blob([JSON.stringify(workflow)], {
+          type: "application/json",
+        });
+        submitData.append("workflowJson", workflowBlob, "workflow.json");
+
+        const workflowApiBlob = new Blob([JSON.stringify(workflow_api)], {
+          type: "application/json",
+        });
+        submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
+
+        const manifest = await getManifest(workflow_api);
+        const manifestBlob = new Blob([manifest], {
+          type: "application/json",
+        });
+        submitData.append("manifest", manifestBlob, "manifest.json");
+
+        const url = window.location.href + "flow/submit_workflow";
+        const response = await fetch(url, {
+          method: "POST",
+          body: submitData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`${response.status} - ${errorText}`);
+        }
+
+        showMessage("Workflow submitted successfully!", "#00ff00");
+      } catch (error) {
+        console.error("Error submitting workflow:", error);
+        showMessage(error.message, "#ff0000");
+      }
+    };
+  } catch (error) {
+    console.error("Error in saveWorkflow:", error);
+    showMessage(
+      "An error occurred while submitting the workflow",
+      "#ff0000ff",
+      error.message,
     );
   }
+}
 
-  async function loadWorkflow(app, url) {
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: headers,
-      });
-
-      // Parse the workflow
-      const get_workflow = await response.json();
-      const get_workflow_data = JSON.parse(get_workflow["workflow"]);
-      console.log(get_workflow);
-      console.log(get_workflow_data);
-      if (
-        get_workflow_data &&
-        get_workflow_data.version &&
-        get_workflow_data.nodes &&
-        get_workflow_data.extra
-      ) {
-        await app.loadGraphData(get_workflow_data, true, true);
+function $el(tag, propsOrChildren, children) {
+  const split = tag.split(".");
+  const element = document.createElement(split.shift());
+  if (split.length > 0) {
+    element.classList.add(...split);
+  }
+  if (propsOrChildren) {
+    if (typeof propsOrChildren === "string") {
+      propsOrChildren = { textContent: propsOrChildren };
+    } else if (propsOrChildren instanceof Element) {
+      propsOrChildren = [propsOrChildren];
+    }
+    if (Array.isArray(propsOrChildren)) {
+      element.append(...propsOrChildren);
+    } else {
+      const { parent, $: cb, dataset, style, ...rest } = propsOrChildren;
+      if (rest.for) {
+        element.setAttribute("for", rest.for);
       }
-    } catch (error) {
-      showMessage(
-        "An Error occurred while loading the workflow from Signature",
-        "#ff0000ff",
-      );
+      if (style) {
+        Object.assign(element.style, style);
+      }
+      if (dataset) {
+        Object.assign(element.dataset, dataset);
+      }
+      Object.assign(element, rest);
+      if (children) {
+        element.append(...(Array.isArray(children) ? children : [children]));
+      }
+      if (parent) {
+        parent.append(element);
+      }
+      if (cb) {
+        cb(element);
+      }
+    }
+  }
+  return element;
+}
+
+function cleanLocalStorage() {
+  const keysToRemove = [];
+  // Iterate through all keys in session storage
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+
+    // Check if the key is related to workflow data
+    if (key.startsWith("Comfy.PreviousWorkflow") || key.startsWith("workflow")) {
+      keysToRemove.push(key);
     }
   }
 
-  async function saveWorkflow(app) {
-    try {
-      // Save the workflow
-      const workflow = app.graph.serialize();
-      const workflow_api = await app.graphToPrompt();
+  // Remove the identified keys
+  keysToRemove.forEach((key) => {
+    localStorage.removeItem(key);
+    // localStorage.setItem(key, cleanWorkflow)
+  });
+}
 
-      const data = {
-        workflow: JSON.stringify(workflow),
-        workflow_api: JSON.stringify(workflow_api["output"]),
-      };
+function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
+  app.ui.dialog.show(
+    $el("div", [
+      $el("div", {
+        style: {
+          padding: padding,
+          maxWidth: width,
+          maxHeight: height,
+          overflow: "hidden",
+          backgroundColor: "rgba(0,0,0,0.2)",
+        },
+        innerHTML: `
+            <iframe
+              src="${url}"
+              style="
+                width: ${width};
+                height: ${height};
+                border: none;
+                border-radius: 4px;
+              "
+            ></iframe>
+          `,
+      }),
+    ]).outerHTML,
+  );
+}
 
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: headers,
-        body: JSON.stringify(data),
-      });
+function showForm() {
+  const formContent = $el("div", [
+    // Add title
+    $el("h2", {
+      style: {
+        textAlign: "center",
+        marginBottom: "20px",
+        color: "#ffffff",
+        width: "500px",
+      },
+      textContent: "Workflow Submission",
+    }),
+    $el(
+      "div",
+      {
+        style: {
+          width: "500px",
+        },
+      },
+      [
+        // Name field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Name",
+          }),
+          $el("input", {
+            type: "text",
+            style: {
+              width: "100%",
+              padding: "5px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            },
+          }),
+        ]),
+        // Description field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Description",
+          }),
+          $el("textarea", {
+            style: {
+              width: "100%",
+              padding: "5px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              minHeight: "100px",
+            },
+          }),
+        ]),
+        // Type field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Type",
+          }),
+          $el(
+            "select",
+            {
+              style: {
+                width: "100%",
+                padding: "5px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                backgroundColor: "#1e1e1e",
+                color: "white",
+                height: "32px",
+              },
+            },
+            [
+              $el("option", { value: "standard", textContent: "Standard" }),
+              $el("option", { value: "training", textContent: "Training" }),
+            ],
+          ),
+        ]),
+        // Cover Image field
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Cover Image",
+          }),
+          $el("input", {
+            type: "file",
+            accept: "image/*",
+            style: {
+              width: "100%",
+              padding: "5px",
+            },
+          }),
+        ]),
+        // Submit button
+        $el("div", {
+          innerHTML: `
+          <a href="#"
+             style="
+               display: flex;
+               align-items: center;
+               gap: 8px;
+               margin: 10px;
+               padding: 12px 24px;
+               background-color: #2D9CDB;
+               color: white;
+               border: none;
+               border-radius: 6px;
+               cursor: pointer;
+               text-decoration: none;
+               font-size: 16px;
+               transition: background-color 0.2s ease;
+               justify-content: center;
+             "
+             onmouseover="this.style.backgroundColor='#2486BE'"
+             onmouseout="this.style.backgroundColor='#2D9CDB'"
+          >
+            <div style="text-align: center">Submit</div>
+          </a>
+        `,
+        }),
+      ],
+    ),
+  ]);
 
-      if (response.ok) {
-        showMessage("Workflow deployed to Signature", "#00ff00ff");
-      } else {
-        showMessage(
-          "An Error occurerd while deploying the workflow to Signature",
-          "#ff0000ff",
+  // Don't convert to HTML string, just show the element directly
+  app.ui.dialog.show(formContent);
+  // Return the form content element directly
+  return formContent;
+}
+
+function createMenuItem(label, iconClass, onClick) {
+  const menuItem = $el(
+    "li",
+    {
+      className: "p-menubar-item relative",
+      role: "menuitem",
+      "aria-label": label,
+    },
+    [
+      $el("div", { className: "p-menubar-item-content" }, [
+        $el(
+          "a",
+          {
+            className: "p-menubar-item-link",
+            "data-v-6fecd137": "",
+            onclick: (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onClick();
+            },
+          },
+          [
+            $el("span", { className: `p-menubar-item-icon pi ${iconClass}` }),
+            $el("span", { className: "p-menubar-item-label", textContent: label }),
+          ],
+        ),
+      ]),
+    ],
+  );
+  return menuItem;
+}
+
+const ext = {
+  // Unique name for the extension
+  name: "signature.bridge",
+  async init(app) {
+    cleanLocalStorage();
+  },
+  async setup(app) {
+    if (app.menu) {
+      // Find the menu list
+      const menuList = document.querySelector("#pv_id_8_0_list");
+
+      if (menuList) {
+        // Add separator
+        menuList.appendChild(
+          $el("li", {
+            className: "p-menubar-separator",
+            role: "separator",
+          }),
+        );
+
+        // Add Open from Signature menu item
+        menuList.appendChild(
+          createMenuItem("Open from Signature", "pi-cloud-download", () =>
+            console.log("open from signature"),
+          ),
+        );
+
+        // Add Deploy to Signature menu item
+        menuList.appendChild(
+          createMenuItem("Deploy to Signature", "pi-cloud-upload", () =>
+            saveWorkflow(app),
+          ),
         );
       }
-    } catch (error) {
-      showMessage(
-        "An Error occurerd while deploying the workflow to Signature",
-        "#ff0000ff",
-      );
     }
-  }
+  },
+};
 
-  function $el(tag, propsOrChildren, children) {
-    const split = tag.split(".");
-    const element = document.createElement(split.shift());
-    if (split.length > 0) {
-      element.classList.add(...split);
-    }
-    if (propsOrChildren) {
-      if (typeof propsOrChildren === "string") {
-        propsOrChildren = { textContent: propsOrChildren };
-      } else if (propsOrChildren instanceof Element) {
-        propsOrChildren = [propsOrChildren];
-      }
-      if (Array.isArray(propsOrChildren)) {
-        element.append(...propsOrChildren);
-      } else {
-        const { parent, $: cb, dataset, style, ...rest } = propsOrChildren;
-        if (rest.for) {
-          element.setAttribute("for", rest.for);
-        }
-        if (style) {
-          Object.assign(element.style, style);
-        }
-        if (dataset) {
-          Object.assign(element.dataset, dataset);
-        }
-        Object.assign(element, rest);
-        if (children) {
-          element.append(...(Array.isArray(children) ? children : [children]));
-        }
-        if (parent) {
-          parent.append(element);
-        }
-        if (cb) {
-          cb(element);
-        }
-      }
-    }
-    return element;
-  }
-
-  function deleteElement(name) {
-    const element = document.getElementsByClassName(name);
-    // Check if any elements were found
-    if (element.length > 0) {
-      // Loop through each element and remove it from the DOM
-      Array.from(element).forEach((el) => el.remove());
-    }
-  }
-
-  function getCleanWorkflow() {
-    const jsonString = `{
-        "last_node_id": 0,
-        "last_link_id": 0,
-        "nodes": [],
-        "links": [],
-        "groups": [],
-        "config": {},
-        "extra": {
-          "ds": {
-          "scale": 0.5644739300537778,
-          "offset": [
-            581.6344764174625,
-            97.05710697162648
-          ]
-          }
-        },
-        "version": 0.4
-        }`;
-
-    return JSON.stringify(JSON.parse(jsonString));
-  }
-
-  function cleanLocalStorage() {
-    const cleanWorkflow = getCleanWorkflow();
-    const keysToRemove = [];
-    // Iterate through all keys in session storage
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-
-      // Check if the key is related to workflow data
-      if (key.startsWith("Comfy.PreviousWorkflow") || key.startsWith("workflow")) {
-        keysToRemove.push(key);
-      }
-    }
-
-    // Remove the identified keys
-    keysToRemove.forEach((key) => {
-      localStorage.removeItem(key);
-      // localStorage.setItem(key, cleanWorkflow)
-    });
-  }
-
-  function cleanSessionStorage() {
-    const cleanWorkflow = getCleanWorkflow();
-    const keysToRemove = [];
-    // Iterate through all keys in session storage
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-
-      // Check if the key is related to workflow data
-      if (key.startsWith("Comfy.PreviousWorkflow") || key.startsWith("workflow")) {
-        keysToRemove.push(key);
-      }
-    }
-
-    // Remove the identified keys
-    keysToRemove.forEach((key) => {
-      sessionStorage.removeItem(key);
-      // localStsessionStorageorage.setItem(key, cleanWorkflow)
-    });
-  }
-
-  const ext = {
-    // Unique name for the extension
-    name: "signature.bridge",
-    async init(app) {
-      cleanLocalStorage();
-      cleanSessionStorage();
-
-      deleteElement("comfyui-logo");
-      window.addEventListener("message", (event) => {
-        console.log(":::::Event", event);
-      });
-
-      deleteElement("comfyui-logo");
-      window.addEventListener("message", (event) => {
-        console.log(":::::Event", event);
-      });
-    },
-    async setup(app) {
-      // await instance.loadGraphData(empty_workflow, true, true);
-      await loadWorkflow(app, url);
-      if (app.menu) {
-        // Ensure the ComfyAppMenu is available
-        if (app.bodyTop) {
-          const menuItems =
-            app.bodyTop.children[0].children[0].children[1].children[0].children[1]
-              .children;
-          for (let i = 0; i < menuItems.length; i++) {
-            const element = menuItems[i];
-            console.log(element.ariaLabel);
-            if (
-              element.ariaLabel === "Save As" ||
-              element.innerText === "Browse Templates"
-            ) {
-              element.parentNode.removeChild(element);
-            }
-            if (element.ariaLabel === "Save") {
-              const link = element.children[0].children[0];
-              const icon = link.children[0];
-              const label = link.children[1];
-              icon.className = "p-menubar-item-icon pi pi-upload";
-              label.textContent = "Deploy";
-
-              link.onclick = async function (event) {
-                event.preventDefault(); // Prevent default behavior (like form submission)
-                event.stopPropagation(); // Stop the event from bubbling up to parent elements
-                console.log("save workflow");
-                await saveWorkflow(app);
-              };
-            }
-          }
-        }
-        if (app.bodyLeft) {
-          const menuItems = app.bodyLeft.children[0].children;
-          for (let i = 0; i < menuItems.length; i++) {
-            const element = menuItems[i];
-            console.log(element.ariaLabel);
-            if (element.ariaLabel === "Workflows") {
-              element.parentNode.removeChild(element);
-              break;
-            }
-          }
-        }
-      }
-    },
-  };
-
-  app.registerExtension(ext);
-}
+app.registerExtension(ext);

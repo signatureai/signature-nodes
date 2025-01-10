@@ -12,7 +12,7 @@ from ...categories import GRAPH_CAT
 
 class Histogram:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "data": ("LIST", {}),

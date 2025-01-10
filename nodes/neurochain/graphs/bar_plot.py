@@ -6,11 +6,11 @@ matplotlib.use("Agg")
 import io
 import random
 
+import folder_paths  # type: ignore
 import matplotlib.pyplot as plt
 from signature_core.functional.color import rgba_to_rgb
 from signature_core.img.tensor_image import TensorImage
 
-import folder_paths  # type: ignore
 from nodes import SaveImage  # type: ignore
 
 
@@ -22,7 +22,7 @@ class BarPlot(SaveImage):
         self.compress_level = 1
 
     @classmethod
-    def INPUT_TYPES(s):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "values": ("LIST", {}),
@@ -45,7 +45,7 @@ class BarPlot(SaveImage):
             label = str(item)
             value_counts[label] = value_counts.get(label, 0) + 1
 
-        ax.bar(value_counts.keys(), value_counts.values())
+        ax.bar(list(value_counts.keys()), list(value_counts.values()))
 
         ax.set_ylabel("Frequency")
         ax.set_title(title)

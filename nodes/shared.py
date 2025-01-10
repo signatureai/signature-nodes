@@ -1,17 +1,7 @@
 import gc
-import os
 import sys
 
 import torch
-from dotenv import load_dotenv
-
-load_dotenv()
-
-BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
-SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("src")[0]
-
-MAX_INT: int = sys.maxsize
-MAX_FLOAT: float = sys.float_info.max
 
 
 class TautologyStr(str):
@@ -58,6 +48,7 @@ class AnyType(str):
 
 
 any_type = AnyType("*")
+from .. import BASE_COMFY_DIR
 
 sys.path.append(BASE_COMFY_DIR)
 import comfy  # type: ignore

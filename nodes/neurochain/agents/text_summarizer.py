@@ -15,7 +15,7 @@ Deep learning models are based on artificial [[neural networks]] (ANNs) with mul
 
 ## Key Components
 1. **[[Neural Networks]]**: The foundation of deep learning, consisting of layers of nodes (neurons) that process input data and pass it through the network.
-2. **Layers**: 
+2. **Layers**:
    - **Input Layer**: The initial layer that receives the raw data.
    - **Hidden Layers**: Intermediate layers that perform computations and extract features from the data.
    - **Output Layer**: The final layer that produces the prediction or classification result.
@@ -63,8 +63,6 @@ class TextSummarizer:
         chunk_size: int,
         chunk_overlap: int,
     ):
-        text_summarizer = TextSummarizerNeurochain(
-            llm=llm, chunk_size=chunk_size, chunk_overlap=chunk_overlap
-        )
+        text_summarizer = TextSummarizerNeurochain(llm=llm, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         response = text_summarizer.summarize(text, strategy=strategy)
         return (response,)

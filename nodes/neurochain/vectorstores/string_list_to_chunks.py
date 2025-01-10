@@ -15,7 +15,7 @@ class StringListToChunks:
     OUTPUT_NODE = True
 
     def process(self, string_list: list, metadata_list: list):
-        chunks = [None for _ in range(len(string_list))]
+        chunks: list[str | None] = [None for _ in range(len(string_list))]
         for idx, string in enumerate(string_list):
             chunks[idx] = Chunk(text=string, metadata=metadata_list[idx]).json
         return (chunks,)

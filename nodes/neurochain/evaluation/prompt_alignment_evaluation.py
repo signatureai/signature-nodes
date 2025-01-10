@@ -25,9 +25,7 @@ class PromptAlignmentEvaluation:
 
     def process(self, input: str, prompt_instructions: str, output: str):
         prompt_instructions_neurochain = [
-            instruction.strip()
-            for instruction in prompt_instructions.split("\n")
-            if instruction.strip()
+            instruction.strip() for instruction in prompt_instructions.split("\n") if instruction.strip()
         ]
         evaluator = PromptAlignment(prompt_instructions_neurochain)
         evaluation_result = evaluator.evaluate(input, output)

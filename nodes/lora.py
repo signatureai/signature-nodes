@@ -79,9 +79,7 @@ class ApplyLoraStack:
             lora_path = folder_paths.get_full_path("loras", lora_name)
             lora = utils.load_torch_file(lora_path, safe_load=True)
 
-            model_lora, clip_lora = sd.load_lora_for_models(
-                model_lora, clip_lora, lora, strength_model, strength_clip
-            )
+            model_lora, clip_lora = sd.load_lora_for_models(model_lora, clip_lora, lora, strength_model, strength_clip)
 
         return (
             model_lora,
@@ -250,13 +248,13 @@ class LoraStack:
             lora_list.extend([l for l in lora_stack if l[0] != "None"])
 
         if lora_name_1 != "None" and switch_1 == "On":
-            lora_list.extend([(lora_name_1, model_weight_1, clip_weight_1)]),  # type: ignore
+            (lora_list.extend([(lora_name_1, model_weight_1, clip_weight_1)]),)  # type: ignore
 
         if lora_name_2 != "None" and switch_2 == "On":
-            lora_list.extend([(lora_name_2, model_weight_2, clip_weight_2)]),  # type: ignore
+            (lora_list.extend([(lora_name_2, model_weight_2, clip_weight_2)]),)  # type: ignore
 
         if lora_name_3 != "None" and switch_3 == "On":
-            lora_list.extend([(lora_name_3, model_weight_3, clip_weight_3)]),  # type: ignore
+            (lora_list.extend([(lora_name_3, model_weight_3, clip_weight_3)]),)  # type: ignore
 
         return (lora_list,)
 

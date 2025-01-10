@@ -1,26 +1,24 @@
 import importlib
 import inspect
 import logging
+import os
 import re
+import sys
 from os import remove, walk
 from os.path import abspath, dirname, exists, join, realpath, sep
 from shutil import copyfile
 
 from dotenv import load_dotenv
-from signature_core import __version__
-from signature_core.logger import console
 
 logger = logging.getLogger(__name__)
-NEUROCHAIN_AVAILABLE = False
-
-try:
-    import neurochain
-
-    NEUROCHAIN_AVAILABLE = True
-except ImportError:
-    logger.warning("neurochain package not available")
 
 load_dotenv()
+
+BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
+SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("src")[0]
+
+MAX_INT: int = sys.maxsize
+MAX_FLOAT: float = sys.float_info.max
 
 script_file = realpath(__file__)
 script_folder = dirname(script_file)
@@ -37,6 +35,33 @@ if "custom_nodes" in script_folder:
         copyfile(src, dst)
 
 
+SIGNATURE_CORE_AVAILABLE = False
+SIGNATURE_FLOWS_AVAILABLE = False
+NEUROCHAIN_AVAILABLE = False
+
+try:
+    from signature_core import __version__
+
+    SIGNATURE_CORE_AVAILABLE = True
+except ImportError:
+    raise ImportError("signature_core package not available")
+
+try:
+    import neurochain  # type: ignore
+
+    NEUROCHAIN_AVAILABLE = True
+except ImportError:
+    logger.warning("neurochain package not available")
+
+try:
+    import signature_flows  # type: ignore
+
+    os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
+    SIGNATURE_FLOWS_AVAILABLE = True
+except ImportError:
+    logging.warning("signature_flows package not available")
+
+
 def get_node_class_mappings(nodes_directory: str):
     node_class_mappings = {}
     node_display_name_mappings = {}
@@ -51,21 +76,17 @@ def get_node_class_mappings(nodes_directory: str):
 
     for plugin_file_path in plugin_file_paths:
         plugin_rel_path = plugin_file_path.replace(".py", "").replace(sep, ".")
-        plugin_rel_path = plugin_rel_path.split("signature-core-nodes.nodes.")[-1]
+        plugin_rel_path = plugin_rel_path.split("signature-nodes.nodes.")[-1]
 
         if not NEUROCHAIN_AVAILABLE and plugin_rel_path.startswith("neurochain"):
             continue
 
         try:
-            module = importlib.import_module("signature-core-nodes.nodes." + plugin_rel_path)
+            module = importlib.import_module("signature-nodes.nodes." + plugin_rel_path)
 
             for item in dir(module):
                 value = getattr(module, item)
-                if (
-                    not value
-                    or not inspect.isclass(value)
-                    or not value.__module__.startswith("signature-core-nodes.nodes.")
-                ):
+                if not value or not inspect.isclass(value) or not value.__module__.startswith("signature-nodes.nodes."):
                     continue
 
                 if hasattr(value, "FUNCTION"):
@@ -84,7 +105,7 @@ def get_node_class_mappings(nodes_directory: str):
                     item_name = re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z]{2})(?=[A-Z][a-z])", " ", item)
                     node_display_name_mappings[key] = f"SIG {item_name}"
         except ImportError as e:
-            console.log(f"[red]Error importing {plugin_rel_path}: {e}")
+            logger.info(f"[red]Error importing {plugin_rel_path}: {e}")
 
     return node_class_mappings, node_display_name_mappings
 
@@ -101,6 +122,10 @@ __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "MANIFEST"]
 MANIFEST = {
     "name": NAME,
     "version": __version__,
-    "author": "Marco, Frederico, Anderson",
     "description": "SIG Nodes",
 }
+
+if SIGNATURE_FLOWS_AVAILABLE:
+    from .services.signature_flow_service import SignatureFlowService
+
+    SignatureFlowService.setup_routes()

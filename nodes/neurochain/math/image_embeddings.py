@@ -29,7 +29,7 @@ class ImageEmbeddings:
         tensor_img = TensorImage.from_BWHC(data=image)
         base64_string = tensor_img.get_base64()
 
-        secret_name = "signature-ml-development-models-api-secret-key"
+        secret_name = "signature-ml-development-models-api-secret-key"  # nosec
         secretsmanager_client = boto3.client("secretsmanager")
         secret_value = secretsmanager_client.get_secret_value(SecretId=secret_name)
         model_api_key = secret_value["SecretString"]

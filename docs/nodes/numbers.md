@@ -4,23 +4,24 @@
 
 Clamps an integer value between specified minimum and maximum bounds.
 
-This class provides functionality to constrain an integer input within a defined range.
-If the input number is less than the minimum value, it returns the minimum value. If
-it's greater than the maximum value, it returns the maximum value.
+This class provides functionality to constrain an integer input within a defined range. If the input
+number is less than the minimum value, it returns the minimum value. If it's greater than the
+maximum value, it returns the maximum value.
 
 ### Inputs
 
-| Group    | Name      | Type  | Default | Extras          |
-| -------- | --------- | ----- | ------- | --------------- |
-| required | number    | `INT` | 0       | forceInput=True |
-| required | min_value | `INT` | 0       | step=1          |
-| required | max_value | `INT` | 0       | step=1          |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | number | `INT` | 0 | forceInput=True |
+| required | min_value | `INT` | 0 | step=1 |
+| required | max_value | `INT` | 0 | step=1 |
 
 ### Returns
 
-| Name | Type  |
-| ---- | ----- |
-| int  | `INT` |
+| Name | Type |
+|------|------|
+| int | `INT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -99,23 +100,24 @@ it's greater than the maximum value, it returns the maximum value.
 
 Clamps a floating-point value between specified minimum and maximum bounds.
 
-This class provides functionality to constrain a float input within a defined range. If
-the input number is less than the minimum value, it returns the minimum value. If it's
-greater than the maximum value, it returns the maximum value.
+This class provides functionality to constrain a float input within a defined range. If the input
+number is less than the minimum value, it returns the minimum value. If it's greater than the
+maximum value, it returns the maximum value.
 
 ### Inputs
 
-| Group    | Name      | Type    | Default | Extras          |
-| -------- | --------- | ------- | ------- | --------------- |
-| required | number    | `FLOAT` | 0       | forceInput=True |
-| required | min_value | `FLOAT` | 0       | step=0.01       |
-| required | max_value | `FLOAT` | 0       | step=0.01       |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | number | `FLOAT` | 0 | forceInput=True |
+| required | min_value | `FLOAT` | 0 | step=0.01 |
+| required | max_value | `FLOAT` | 0 | step=0.01 |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -195,21 +197,21 @@ greater than the maximum value, it returns the maximum value.
 
 Converts a floating-point number to an integer through truncation.
 
-This class handles the conversion of float values to integers by removing the decimal
-portion. The conversion is performed using Python's built-in int() function, which
-truncates towards zero.
+This class handles the conversion of float values to integers by removing the decimal portion.
+The conversion is performed using Python's built-in int() function, which truncates towards zero.
 
 ### Inputs
 
-| Group    | Name   | Type    | Default | Extras          |
-| -------- | ------ | ------- | ------- | --------------- |
-| required | number | `FLOAT` | 0       | forceInput=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | number | `FLOAT` | 0 | forceInput=True |
 
 ### Returns
 
-| Name | Type  |
-| ---- | ----- |
-| int  | `INT` |
+| Name | Type |
+|------|------|
+| int | `INT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -261,20 +263,21 @@ truncates towards zero.
 
 Converts an integer to a floating-point number.
 
-This class handles the conversion of integer values to floating-point numbers using
-Python's built-in float() function.
+This class handles the conversion of integer values to floating-point numbers using Python's
+built-in float() function.
 
 ### Inputs
 
-| Group    | Name   | Type  | Default | Extras          |
-| -------- | ------ | ----- | ------- | --------------- |
-| required | number | `INT` | 0       | forceInput=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | number | `INT` | 0 | forceInput=True |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -326,23 +329,24 @@ Python's built-in float() function.
 
 Performs arithmetic operations on two floats and returns an integer result.
 
-This class supports basic arithmetic operations between two floating-point numbers and
-returns the result as an integer. The supported operations are addition, subtraction,
-multiplication, and division.
+This class supports basic arithmetic operations between two floating-point numbers and returns
+the result as an integer. The supported operations are addition, subtraction, multiplication,
+and division.
 
 ### Inputs
 
-| Group    | Name     | Type    | Default | Extras    |
-| -------- | -------- | ------- | ------- | --------- |
-| required | left     | `FLOAT` | 0       | step=0.01 |
-| required | right    | `FLOAT` | 0       | step=0.01 |
-| required | operator | `LIST`  |         |           |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | left | `FLOAT` | 0 | step=0.01 |
+| required | right | `FLOAT` | 0 | step=0.01 |
+| required | operator | `LIST` |  |  |
 
 ### Returns
 
-| Name | Type  |
-| ---- | ----- |
-| int  | `INT` |
+| Name | Type |
+|------|------|
+| int | `INT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -417,22 +421,23 @@ multiplication, and division.
 
 Performs arithmetic operations on two floating-point numbers.
 
-This class supports basic arithmetic operations between two floating-point numbers. The
-supported operations are addition, subtraction, multiplication, and division.
+This class supports basic arithmetic operations between two floating-point numbers. The supported
+operations are addition, subtraction, multiplication, and division.
 
 ### Inputs
 
-| Group    | Name     | Type    | Default | Extras    |
-| -------- | -------- | ------- | ------- | --------- |
-| required | left     | `FLOAT` | 0       | step=0.01 |
-| required | right    | `FLOAT` | 0       | step=0.01 |
-| required | operator | `LIST`  |         |           |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | left | `FLOAT` | 0 | step=0.01 |
+| required | right | `FLOAT` | 0 | step=0.01 |
+| required | operator | `LIST` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -472,7 +477,7 @@ supported operations are addition, subtraction, multiplication, and division.
                         "FLOAT",
                         {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
                     ),
-                    "operator": (["+", "-", "*", "/"],),
+                    "operator": (["+", "-", "*", "/", "%"],),
                 }
             }
 
@@ -508,22 +513,23 @@ supported operations are addition, subtraction, multiplication, and division.
 
 Determines the minimum or maximum value between two integers.
 
-This class compares two integer inputs and returns either the smaller or larger value
-based on the specified mode of operation.
+This class compares two integer inputs and returns either the smaller or larger value based on
+the specified mode of operation.
 
 ### Inputs
 
-| Group    | Name | Type   | Default | Extras          |
-| -------- | ---- | ------ | ------- | --------------- |
-| required | a    | `INT`  | 0       | forceInput=True |
-| required | b    | `INT`  | 0       | forceInput=True |
-| required | mode | `LIST` |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | a | `INT` | 0 | forceInput=True |
+| required | b | `INT` | 0 | forceInput=True |
+| required | mode | `LIST` |  |  |
 
 ### Returns
 
-| Name | Type  |
-| ---- | ----- |
-| int  | `INT` |
+| Name | Type |
+|------|------|
+| int | `INT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -585,22 +591,23 @@ based on the specified mode of operation.
 
 Determines the minimum or maximum value between two floating-point numbers.
 
-This class compares two float inputs and returns either the smaller or larger value
-based on the specified mode of operation.
+This class compares two float inputs and returns either the smaller or larger value based on
+the specified mode of operation.
 
 ### Inputs
 
-| Group    | Name | Type    | Default | Extras          |
-| -------- | ---- | ------- | ------- | --------------- |
-| required | a    | `FLOAT` | 0       | forceInput=True |
-| required | b    | `FLOAT` | 0       | forceInput=True |
-| required | mode | `LIST`  |         |                 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | a | `FLOAT` | 0.0 | forceInput=True |
+| required | b | `FLOAT` | 0.0 | forceInput=True |
+| required | mode | `LIST` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -630,8 +637,8 @@ based on the specified mode of operation.
         def INPUT_TYPES(cls):  # type: ignore
             return {
                 "required": {
-                    "a": ("FLOAT", {"default": 0, "forceInput": True}),
-                    "b": ("FLOAT", {"default": 0, "forceInput": True}),
+                    "a": ("FLOAT", {"default": 0.0, "forceInput": True}),
+                    "b": ("FLOAT", {"default": 0.0, "forceInput": True}),
                     "mode": (["min", "max"],),
                 }
             }
@@ -662,20 +669,21 @@ based on the specified mode of operation.
 
 Generates a random integer and its floating-point representation.
 
-This class produces a random integer between 0 and MAX_INT and provides both the integer
-value and its floating-point equivalent.
+This class produces a random integer between 0 and MAX_INT and provides both the integer value
+and its floating-point equivalent.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
-| ----- | ---- | ---- | ------- | ------ |
+|-------|------|------|---------|--------|
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
-| int   | `INT`   |
+| Name | Type |
+|------|------|
+| int | `INT` |
 | float | `FLOAT` |
+
 
 ??? note "Source code in numbers.py"
 
@@ -728,26 +736,26 @@ value and its floating-point equivalent.
 
 Evaluates mathematical expressions with support for variables and multiple operators.
 
-This class provides a powerful expression evaluator that supports variables (a, b, c, d)
-and various mathematical operations. It can handle arithmetic, comparison, and logical
-operations.
+This class provides a powerful expression evaluator that supports variables (a, b, c, d) and
+various mathematical operations. It can handle arithmetic, comparison, and logical operations.
 
 ### Inputs
 
-| Group    | Name  | Type     | Default | Extras         |
-| -------- | ----- | -------- | ------- | -------------- |
-| optional | a     | `FLOAT`  | 0       | step=0.01      |
-| optional | b     | `FLOAT`  | 0       | step=0.01      |
-| optional | c     | `FLOAT`  | 0       | step=0.01      |
-| optional | d     | `FLOAT`  | 0       | step=0.01      |
-| required | value | `STRING` |         | multiline=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| optional | a | `FLOAT` | 0 | step=0.01 |
+| optional | b | `FLOAT` | 0 | step=0.01 |
+| optional | c | `FLOAT` | 0 | step=0.01 |
+| optional | d | `FLOAT` | 0 | step=0.01 |
+| required | value | `STRING` |  | multiline=True |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
-| int   | `INT`   |
+| Name | Type |
+|------|------|
+| int | `INT` |
 | float | `FLOAT` |
+
 
 ??? note "Source code in numbers.py"
 

@@ -74,12 +74,8 @@ class TextGuidedSegmentationProcessor(FlorenceTaskProcessor):
     ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], str]:
         img_np = TensorImage.from_BWHC(input_img).get_numpy_image()
 
-        overlayed_img = draw_polygons(
-            image=img_np, prediction=raw_output, is_bin_mask=False, fill_mask=True
-        )
-        seg_mask = draw_polygons(
-            image=img_np, prediction=raw_output, is_bin_mask=True, fill_mask=True
-        )
+        overlayed_img = draw_polygons(image=img_np, prediction=raw_output, is_bin_mask=False, fill_mask=True)
+        seg_mask = draw_polygons(image=img_np, prediction=raw_output, is_bin_mask=True, fill_mask=True)
 
         overlayed_img = TensorImage.from_numpy(overlayed_img).get_BWHC()
         seg_mask = TensorImage.from_numpy(seg_mask).get_BWHC()

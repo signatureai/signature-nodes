@@ -39,7 +39,7 @@ class BulkFormat:
                                     t_str = t_str.replace(full_placeholder, di)
             return t_str
 
-        results = [None for _ in range(len(dict_list))]
+        results: list[str | None] = [None for _ in range(len(dict_list))]
 
         # pattern = r'\[(.*?)\]'  # Regular expression pattern to find substrings inside []
         # required_keys = re.findall(pattern, template)
