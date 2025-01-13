@@ -3,8 +3,10 @@ from ...utils import WILDCARD
 
 
 class AnyToDict:
+    """Converts any value to a dictionary."""
+
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "any_value": (WILDCARD, {}),

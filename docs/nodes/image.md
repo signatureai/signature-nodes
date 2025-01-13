@@ -22,7 +22,7 @@ format (Batch, Width, Height, Channels) with the specified dimensions.
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageBaseColor:
@@ -118,7 +118,7 @@ can be applied for stronger blur effects. The blur is applied uniformly across a
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageGaussianBlur:
@@ -208,7 +208,7 @@ subtracting a blurred version of the image from the original, creating a sharpen
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageUnsharpMask:
@@ -296,7 +296,7 @@ subtle, soft lighting effect based on the interaction between the top and bottom
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageSoftLight:
@@ -374,7 +374,7 @@ image representing the average color of the input.
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageAverage:
@@ -444,7 +444,7 @@ useful for comparing images or creating difference maps.
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageSubtract:
@@ -530,7 +530,7 @@ and edge feathering of an overlay image onto a base image.
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageTranspose:
@@ -700,7 +700,7 @@ various resize modes. Supports multiple interpolation methods for optimal qualit
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageList2Batch:
@@ -811,7 +811,7 @@ useful for processing images individually after batch operations.
 | image | `IMAGE` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class ImageBatch2List:
@@ -882,7 +882,7 @@ individual dimensions and a formatted string representation.
 | string | `STRING` |
 
 
-??? note "Source code in image.py"
+??? note "Source code"
 
     ```python
     class GetImageShape:

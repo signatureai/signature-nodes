@@ -18,9 +18,9 @@ base64 strings. It includes functionality for alpha channel management and mask 
 | required | multiple | `BOOLEAN` | False |  |
 | required | value | `STRING` |  |  |
 | required | metadata | `STRING` | {} | multiline=True |
-| optional | fallback | `<ast.Name object at 0x7f2b302c20e0>` |  |  |
+| optional | fallback | `any_type` |  |  |
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputImage:
@@ -189,7 +189,7 @@ authentication tokens and file identifiers.
 | file | `FILE` |
 
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputConnector:
@@ -257,9 +257,7 @@ authentication tokens and file identifiers.
                 raise ValueError("Override must be a boolean")
             connector = GoogleConnector(token=token)
             input_folder = os.path.join(BASE_COMFY_DIR, "input")
-            data = connector.download(
-                file_id=value, mime_type=mime_type, output_path=input_folder, override=override
-            )
+            data = connector.download(file_id=value, mime_type=mime_type, output_path=input_folder, override=override)
             clean_memory()
             return (data,)
 
@@ -291,7 +289,7 @@ when input is empty.
 | string | `STRING` |
 
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputText:
@@ -369,7 +367,7 @@ automatic type conversion based on the specified subtype.
 | required | value | `FLOAT` | 0 | max=18446744073709551615 |
 | required | metadata | `STRING` | {} | multiline=True |
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputNumber:
@@ -452,7 +450,7 @@ Handles boolean input processing with validation and type checking.
 | boolean | `BOOLEAN` |
 
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputBoolean:
@@ -519,10 +517,10 @@ strings. Includes support for thumbnail generation and metadata management.
 | required | title | `STRING` | Output Image |  |
 | required | subtype | `LIST` |  |  |
 | required | metadata | `STRING` | {} | multiline=True |
-| required | value | `<ast.Name object at 0x7f2b30285900>` |  |  |
+| required | value | `any_type` |  |  |
 | hidden | output_path | `STRING` | output |  |
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class Output:
@@ -676,9 +674,7 @@ strings. Includes support for thumbnail generation and metadata management.
                         raise ValueError(f"Unsupported output type: {type(item)}")
                 else:
                     value_json = json.dumps(item) if main_subtype == "dict" else item
-                    results.append(
-                        {"title": title, "type": main_subtype, "metadata": metadata, "value": value_json}
-                    )
+                    results.append({"title": title, "type": main_subtype, "metadata": metadata, "value": value_json})
             clean_memory()
             return {"ui": {"signature_output": results}}
 

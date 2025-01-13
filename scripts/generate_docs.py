@@ -1,31 +1,50 @@
 import ast
 import importlib.util
 import os
+import shutil
 import sys
 import traceback
 from pathlib import Path
 
-base_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(base_dir))
+BASE_DIR = Path(__file__).parent.parent
+sys.path.insert(0, str(BASE_DIR))
 
 
-# Add this function to dynamically load categories
-def load_categories():
-    categories_path = base_dir / "nodes" / "categories.py"
+def create_categories(nodes_dir: Path) -> list:
+    categories = _init_categories(nodes_dir)
+    for path in nodes_dir.rglob("*.py"):
+        if path.name not in ["__init__.py", "categories.py", "shared.py"]:
+            with open(path) as f:
+                content = f.read()
+                for name in categories:
+                    if name in content:
+                        categories[name]["files"].append(path)
+
+    return [v for v in categories.values() if v["files"]]
+
+
+def _init_categories(nodes_dir: Path) -> dict:
+    categories_path = nodes_dir / "categories.py"
     if not categories_path.exists():
         return {}
 
     spec = importlib.util.spec_from_file_location("categories", categories_path)
-    if spec is None or spec.loader is None:  # Add this check
+    if spec is None or spec.loader is None:
         return {}
 
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    return {name: value for name, value in module.__dict__.items() if name.endswith("_CAT")}
+    categories = {}
+    for name, value in module.__dict__.items():
+        if name.endswith("_CAT"):
+            output_base_name = name[:-4].lower()
+            categories[name] = {"output_base_name": output_base_name, "documentation_path": value, "files": []}
+
+    return categories
 
 
-def extract_classes_with_docs(content: str) -> list[tuple[str, str, dict]]:
+def _extract_classes_with_docs(content: str) -> list[tuple[str, str, dict]]:
     classes = []
     try:
         tree = ast.parse(content)
@@ -69,6 +88,7 @@ def _extract_class_metadata(node: ast.ClassDef) -> dict:
                     continue
                 if not isinstance(stmt.value, ast.Dict):
                     continue
+
                 input_types = _process_input_types_dict(stmt.value)
 
         else:  # ast.Assign
@@ -77,9 +97,9 @@ def _extract_class_metadata(node: ast.ClassDef) -> dict:
                     continue
 
                 if target.id == "RETURN_TYPES":
-                    return_types = extract_return_types(item)
+                    return_types = _extract_return_types(item)
                 elif target.id == "CATEGORY":
-                    category = extract_category(item)
+                    category = _extract_category(item)
 
     return {
         "input_types": input_types,
@@ -130,11 +150,13 @@ def _process_nested_dict(dict_node):
 
 def _process_param_info(tuple_node):
     param_info = {}
-    param_info["type"] = (
-        tuple_node.elts[0].value
-        if isinstance(tuple_node.elts[0], ast.Constant)
-        else getattr(tuple_node.elts[0], "s", str(tuple_node.elts[0]))
-    )
+
+    if isinstance(tuple_node.elts[0], ast.Constant):
+        param_info["type"] = tuple_node.elts[0].value
+    elif isinstance(tuple_node.elts[0], ast.Name):
+        param_info["type"] = tuple_node.elts[0].id
+    else:
+        param_info["type"] = getattr(tuple_node.elts[0], "s", str(tuple_node.elts[0]))
 
     if len(tuple_node.elts) > 1 and isinstance(tuple_node.elts[1], ast.Dict):
         for opt_k, opt_v in zip(tuple_node.elts[1].keys, tuple_node.elts[1].values):
@@ -145,14 +167,14 @@ def _process_param_info(tuple_node):
     return param_info
 
 
-def extract_return_types(node):
+def _extract_return_types(node):
     try:
         return ast.literal_eval(node.value)
     except (ValueError, SyntaxError, TypeError):
         return []
 
 
-def extract_category(node):
+def _extract_category(node):
     try:
         if isinstance(node.value, ast.Name):
             return node.value.id
@@ -161,26 +183,21 @@ def extract_category(node):
         return None
 
 
-def create_category_files(nodes_dir: str, docs_dir: str):
-    nodes_docs_dir = os.path.join(docs_dir, "nodes")
+def create_category_files(docs_dir: Path, categories: list):
+    nodes_docs_dir = docs_dir / "nodes"
     os.makedirs(nodes_docs_dir, exist_ok=True)
 
-    for file in os.listdir(nodes_dir):
-        if not _is_valid_node_file(file):
-            continue
+    for category in categories:
+        module_classes = []
+        module_content = ""
+        for file in category["files"]:
+            content = _read_file_content(file)
+            classes = _extract_classes_with_docs(content)
+            if classes or any(docstring for _, docstring, _ in classes):
+                module_classes.extend(classes)
+                module_content += content
 
-        module_name = file[:-3]
-        content = _read_file_content(os.path.join(nodes_dir, file))
-        classes = extract_classes_with_docs(content)
-
-        if not (classes and any(docstring for _, docstring, _ in classes)):
-            continue
-
-        _write_module_documentation(nodes_docs_dir, module_name, classes, content)
-
-
-def _is_valid_node_file(filename: str) -> bool:
-    return filename.endswith(".py") and filename not in ["__init__.py", "categories.py", "shared.py"]
+        _write_module_documentation(nodes_docs_dir, category["output_base_name"], module_classes, module_content)
 
 
 def _read_file_content(filepath: str) -> str:
@@ -188,8 +205,8 @@ def _read_file_content(filepath: str) -> str:
         return f.read()
 
 
-def _write_module_documentation(docs_dir: str, module_name: str, classes: list, content: str):
-    doc_file = os.path.join(docs_dir, f"{module_name}.md")
+def _write_module_documentation(docs_dir: Path, module_name: str, classes: list, content: str):
+    doc_file = docs_dir / f"{module_name}.md"
     with open(doc_file, "w") as doc:
         title = module_name.replace("_", " ").title()
         doc.write(f"# {title} Nodes\n\n")
@@ -274,7 +291,7 @@ def _write_code_documentation(doc, class_name: str, module_name: str, content: s
     tree = ast.parse(content)
 
     # Source code section
-    doc.write(f'??? note "Source code in {module_name}.py"\n\n')
+    doc.write('??? note "Source code"\n\n')
     doc.write("    ```python\n")
     for node in ast.walk(tree):
         if not isinstance(node, ast.ClassDef) or node.name != class_name:
@@ -337,77 +354,39 @@ def _write_dict_input(doc, group_name: str, name: str, type_info: dict):
     doc.write(f"| {group_name} | {name} | `{type_name}` | {default} | {extras} |\n")
 
 
-def create_mkdocs_config(docs_dir: str):
-    category_usage = {}
-    nodes_dir = base_dir / "nodes"
-    categories = load_categories()
-
-    for file in os.listdir(nodes_dir):
-        if file.endswith(".py") and file not in ["__init__.py", "categories.py", "shared.py"]:
-            with open(nodes_dir / file) as f:
-                content = f.read()
-                for name, value in categories.items():
-                    if name in content or f"from .categories import {name}" in content:
-                        category_usage[value] = True
-
+def create_mkdocs_config(categories: list):
     category_tree = {}
-    catalog_keys = list(category_usage.keys())
-    for cat_value in catalog_keys:
-        parts = cat_value.split("/")
-        parts = [p.strip() for p in parts]
-
-        parts = parts[1:]
-
+    parts_and_output_base_names = [
+        ([p.strip() for p in category["documentation_path"].split("/")][1:], category["output_base_name"])
+        for category in categories
+    ]
+    for parts, output_base_name in sorted(parts_and_output_base_names, key=lambda x: -len(x[0])):
         current_level = category_tree
-        for _, part in enumerate(parts[:-1]):
+        for part in parts[:-1]:
             if part not in current_level:
                 current_level[part] = {}
             current_level = current_level[part]
 
-        last_part = parts[-1].strip()
-
-        nodes_docs_dir = os.path.join(docs_dir, "nodes")
-        existing_docs = {f[:-3]: f for f in os.listdir(nodes_docs_dir) if f.endswith(".md")}
-
-        clean_name = " ".join(last_part.split()[1:] if "️" in last_part else last_part.split())
-        clean_name = clean_name.lower().replace(" ", "_")
-
-        variations = [
-            clean_name,
-            clean_name.replace("_", ""),
-            clean_name.split("_", maxsplit=1)[0] if "_" in clean_name else clean_name,
-            "".join(c for c in clean_name if c.isalnum()),
-            clean_name.replace("input", "").replace("output", ""),
-            clean_name.rsplit("_", maxsplit=1)[-1] if "_" in clean_name else clean_name,
-        ]
-
-        doc_path = None
-        for var in variations:
-            if var in existing_docs:
-                doc_path = f"nodes/{existing_docs[var]}"
-                break
-            for doc_name in existing_docs:
-                if var in doc_name or doc_name in var:
-                    doc_path = f"nodes/{existing_docs[doc_name]}"
-                    break
-            if doc_path:
-                break
-
-        if doc_path:
-            current_level[last_part] = doc_path
+        last_part = parts[-1]
+        if last_part in current_level and len(current_level[last_part]) > 0:
+            # Add parent category as first dict entry
+            old_children = current_level[last_part]
+            new_children = {last_part: f"nodes/{output_base_name}.md"}
+            new_children.update(old_children)
+            current_level[last_part] = new_children
         else:
-            continue
+            current_level[last_part] = f"nodes/{output_base_name}.md"
 
-    def build_nav_structure(tree):
+    def _build_nav_structure(tree):
         result = []
         for key, value in tree.items():
             if isinstance(value, dict):
-                result.append({key: build_nav_structure(value)})
+                result.append({key: _build_nav_structure(value)})
             else:
                 result.append({key: value})
         return result
 
-    nav_structure = [{"Home": "index.md"}, {"Nodes": [*build_nav_structure(category_tree)]}]
+    nav_structure = [{"Home": "index.md"}, {"Nodes": [*_build_nav_structure(category_tree)]}]
 
     config = f"""site_name: Signature Nodes Documentation
 theme:
@@ -447,33 +426,6 @@ nav: {nav_structure}"""
     return config
 
 
-def create_category_docs(docs_dir: str):
-    category_usage = {}
-    nodes_dir = os.path.join(docs_dir, "..", "nodes")
-    categories = load_categories()
-
-    for file in os.listdir(nodes_dir):
-        if file.endswith(".py") and file not in ["__init__.py", "categories.py", "shared.py"]:
-            with open(os.path.join(nodes_dir, file)) as f:
-                content = f.read()
-                for name, value in categories.items():
-                    if name in content or f"from .categories import {name}" in content:
-                        category_usage[value] = True
-
-    main_categories = []
-    other_categories = []
-    category_usage_keys = list(category_usage.keys())
-    for cat_value in category_usage_keys:
-        parts = cat_value.split("/")
-        if len(parts) == 2:
-            main_categories.append(cat_value)
-        elif len(parts) == 3 and "📦 Others" in parts[1]:
-            other_categories.append(cat_value)
-
-    main_categories.sort()
-    other_categories.sort()
-
-
 def copy_readme_to_index(project_base_dir: Path):
     readme_path = project_base_dir / "README.md"
     index_path = project_base_dir / "docs" / "index.md"
@@ -493,27 +445,26 @@ def copy_readme_to_index(project_base_dir: Path):
 
 
 def main():
-    project_base_dir = Path(__file__).parent.parent
-    nodes_dir = project_base_dir / "nodes"
-    docs_dir = project_base_dir / "docs"
+    nodes_dir = BASE_DIR / "nodes"
+    docs_dir = BASE_DIR / "docs"
 
-    sys.path.insert(0, str(project_base_dir))
+    sys.path.insert(0, str(BASE_DIR))
 
     init_file = nodes_dir / "__init__.py"
     if not init_file.exists():
         init_file.touch()
 
+    shutil.rmtree(docs_dir)
     os.makedirs(docs_dir, exist_ok=True)
 
-    copy_readme_to_index(project_base_dir)
+    copy_readme_to_index(BASE_DIR)
 
-    create_category_docs(str(docs_dir))
+    categories = create_categories(nodes_dir)
+    create_category_files(docs_dir, categories)
 
-    create_category_files(str(nodes_dir), str(docs_dir))
-
-    mkdocs_config = project_base_dir / "mkdocs.yml"
+    mkdocs_config = BASE_DIR / "mkdocs.yml"
     with open(mkdocs_config, "w") as f:
-        f.write(create_mkdocs_config(str(docs_dir)))
+        f.write(create_mkdocs_config(categories))
 
 
 if __name__ == "__main__":

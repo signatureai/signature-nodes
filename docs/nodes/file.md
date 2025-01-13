@@ -21,7 +21,7 @@ and RGBA images with automatic mask generation for transparency.
 | mask | `MASK` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class ImageFromWeb:
@@ -90,7 +90,7 @@ both RGB and RGBA images with proper mask generation.
 | mask | `MASK` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class ImageFromBase64:
@@ -158,7 +158,7 @@ transmission or storage in text format.
 | string | `STRING` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class Base64FromImage:
@@ -226,7 +226,7 @@ Handles both single files and multiple files separated by '&&'.
 | file | `FILE` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class FileLoader:
@@ -308,7 +308,7 @@ Supports both single and multiple folder paths.
 | file | `FILE` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class FolderLoader:
@@ -389,7 +389,7 @@ ComfyUI-compatible tensor format.
 | image | `IMAGE` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class File2ImageList:
@@ -467,7 +467,7 @@ Processes file input data into a consistent list format for further ComfyUI oper
 | list | `LIST` |
 
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class File2List:
@@ -521,7 +521,7 @@ Rotates an image and mask by a specified angle.
 This node provides functionality to rotate images and masks while optionally adjusting the output
 size to fit the entire rotated content.
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class Rotate:
@@ -560,7 +560,7 @@ Applies Gaussian blur to a mask.
 This node performs Gaussian blur on mask inputs with configurable radius, sigma and iteration
 parameters. Useful for softening mask edges or creating smooth transitions.
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class MaskGaussianBlur:

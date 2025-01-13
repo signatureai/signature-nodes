@@ -22,7 +22,7 @@ The mask is returned in BWHC (Batch, Width, Height, Channel) format.
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class BaseMask:
@@ -100,7 +100,7 @@ Supports multiple iterations for stronger effects.
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskMorphology:
@@ -216,7 +216,7 @@ or comparing mask regions.
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskBitwise:
@@ -307,7 +307,7 @@ mask similarity or differences.
 | float | `FLOAT` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskDistance:
@@ -379,7 +379,7 @@ using threshold values and morphological operations.
 | trimap | `TRIMAP` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class Mask2Trimap:
@@ -460,9 +460,7 @@ using threshold values and morphological operations.
             trimap_im[inner_mask == 1.0] = 1.0
             batch_size = step.shape[0]
 
-            trimap = torch.zeros(
-                batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device
-            )
+            trimap = torch.zeros(batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device)
             for i in range(batch_size):
                 tar_trimap = trimap_im[i][0]
                 trimap[i][1][tar_trimap == 1] = 1
@@ -500,7 +498,7 @@ binary mask.
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskBinaryFilter:
@@ -567,7 +565,7 @@ Creates a negative version of the input mask where white becomes black and vice 
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskInvert:
@@ -634,7 +632,7 @@ Implements a configurable Gaussian blur with control over blur radius, strength,
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskGaussianBlur:
@@ -711,7 +709,7 @@ Provides fine control over mask growth with options for smooth transitions and e
 | mask | `MASK` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskGrowWithBlur:
@@ -881,7 +879,7 @@ Extracts and returns the shape parameters of the input mask for analysis or debu
 | string | `STRING` |
 
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class GetMaskShape:
@@ -942,7 +940,7 @@ Converts mask data to a viewable image format and saves it with optional metadat
 |-------|------|------|---------|--------|
 | required | mask | `MASK` |  |  |
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskPreview(SaveImage):

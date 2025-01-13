@@ -11,7 +11,7 @@ Python's built-in str() function. Useful for debugging, logging, or text-based o
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b302cdea0>` |  |  |
+| required | value | `any_type` |  |  |
 
 ### Returns
 
@@ -20,7 +20,7 @@ Python's built-in str() function. Useful for debugging, logging, or text-based o
 | string | `STRING` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Any2String:
@@ -73,7 +73,7 @@ literal expressions (strings, numbers, tuples, lists, dicts, booleans, None).
 |-------|------|------|---------|--------|
 | required | string | `STRING` |  |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class String2Any:
@@ -126,7 +126,7 @@ Python's built-in int() function. Useful for debugging, logging, or text-based o
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b302ce950>` |  |  |
+| required | value | `any_type` |  |  |
 
 ### Returns
 
@@ -135,7 +135,7 @@ Python's built-in int() function. Useful for debugging, logging, or text-based o
 | int | `INT` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Any2Int:
@@ -184,7 +184,7 @@ Python's built-in float() function. Useful for debugging, logging, or text-based
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b302cf6d0>` |  |  |
+| required | value | `any_type` |  |  |
 
 ### Returns
 
@@ -193,7 +193,7 @@ Python's built-in float() function. Useful for debugging, logging, or text-based
 | float | `FLOAT` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Any2Float:
@@ -242,7 +242,7 @@ image processing workflows.
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b302cf880>` |  |  |
+| required | value | `any_type` |  |  |
 
 ### Returns
 
@@ -251,7 +251,7 @@ image processing workflows.
 | image | `IMAGE` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Any2Image:
@@ -308,9 +308,9 @@ without any modifications. Useful for workflow organization or debugging.
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b30291270>` |  |  |
+| required | value | `any_type` |  |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Any2Any:
@@ -370,7 +370,7 @@ color space while preserving the image structure and dimensions.
 | image | `IMAGE` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class RGB2HSV:
@@ -432,7 +432,7 @@ color space while preserving the image structure and dimensions.
 | image | `IMAGE` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class RGB2HLS:
@@ -494,7 +494,7 @@ alpha channel. Passes through RGB images unchanged.
 | image | `IMAGE` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class RGBA2RGB:
@@ -559,7 +559,7 @@ standard luminance conversion factors.
 | image | `IMAGE` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class RGB2GRAY:
@@ -621,7 +621,7 @@ by replicating the grayscale values across channels.
 | image | `IMAGE` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class GRAY2RGB:
@@ -674,9 +674,9 @@ and unloading models. Useful for managing memory usage in complex workflows.
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | anything | `<ast.Name object at 0x7f2b30287c10>` |  |  |
+| required | anything | `any_type` |  |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class PurgeVRAM:
@@ -734,10 +734,10 @@ be useful for timing control, pacing operations, or waiting for external process
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b302854e0>` |  |  |
+| required | value | `any_type` |  |  |
 | required | seconds | `FLOAT` | 1.0 |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class WaitSeconds:
@@ -793,7 +793,7 @@ Builds a list from input elements.
 A node that constructs a list from provided input elements. Used in node-based
 workflows to combine multiple elements into a single list output.
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class ListBuilder:
@@ -819,7 +819,6 @@ workflows to combine multiple elements into a single list output.
 
         @classmethod
         def INPUT_TYPES(cls):
-
             inputs = {
                 "required": {
                     "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),
@@ -886,7 +885,7 @@ that includes type information, shape, and tensor values.
 | dict | `DICT` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Latent2Dict:
@@ -965,7 +964,7 @@ format used by the system.
 | latent | `LATENT` |
 
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Dict2Latent:

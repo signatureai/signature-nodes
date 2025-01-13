@@ -3,6 +3,8 @@ from ...utils import WILDCARD
 
 
 class AnyToList:
+    """Converts any value to a list."""
+
     @classmethod
     def INPUT_TYPES(cls):
         return {

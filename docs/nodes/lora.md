@@ -23,7 +23,7 @@ in the stack sequentially using specified weights for both model and CLIP compon
 | clip | `CLIP` |
 
 
-??? note "Source code in lora.py"
+??? note "Source code"
 
     ```python
     class ApplyLoraStack:
@@ -93,9 +93,7 @@ in the stack sequentially using specified weights for both model and CLIP compon
                 lora_path = folder_paths.get_full_path("loras", lora_name)
                 lora = utils.load_torch_file(lora_path, safe_load=True)
 
-                model_lora, clip_lora = sd.load_lora_for_models(
-                    model_lora, clip_lora, lora, strength_model, strength_clip
-                )
+                model_lora, clip_lora = sd.load_lora_for_models(model_lora, clip_lora, lora, strength_model, strength_clip)
 
             return (
                 model_lora,
@@ -119,7 +117,7 @@ weight controls and two operating modes for simple or advanced weight management
 | lora_stack | `LORA_STACK` |
 
 
-??? note "Source code in lora.py"
+??? note "Source code"
 
     ```python
     class LoraStacker:
@@ -222,15 +220,15 @@ weights for both model and CLIP components. Can extend an existing LORA_STACK.
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
 | required | switch_1 | `LIST` |  |  |
-| required | lora_name_1 | `<ast.Name object at 0x7f2b302e4340>` |  |  |
+| required | lora_name_1 | `loras` |  |  |
 | required | model_weight_1 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
 | required | clip_weight_1 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
 | required | switch_2 | `LIST` |  |  |
-| required | lora_name_2 | `<ast.Name object at 0x7f2b302e47c0>` |  |  |
+| required | lora_name_2 | `loras` |  |  |
 | required | model_weight_2 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
 | required | clip_weight_2 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
 | required | switch_3 | `LIST` |  |  |
-| required | lora_name_3 | `<ast.Name object at 0x7f2b302e5cc0>` |  |  |
+| required | lora_name_3 | `loras` |  |  |
 | required | model_weight_3 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
 | required | clip_weight_3 | `FLOAT` | 1.0 | max=10.0, step=0.01 |
 | optional | lora_stack | `LORA_STACK` |  |  |
@@ -242,7 +240,7 @@ weights for both model and CLIP components. Can extend an existing LORA_STACK.
 | lora_stack | `LORA_STACK` |
 
 
-??? note "Source code in lora.py"
+??? note "Source code"
 
     ```python
     class LoraStacker:
@@ -406,13 +404,13 @@ weights for both model and CLIP components. Can extend an existing LORA_STACK.
                 lora_list.extend([l for l in lora_stack if l[0] != "None"])
 
             if lora_name_1 != "None" and switch_1 == "On":
-                lora_list.extend([(lora_name_1, model_weight_1, clip_weight_1)]),  # type: ignore
+                (lora_list.extend([(lora_name_1, model_weight_1, clip_weight_1)]),)  # type: ignore
 
             if lora_name_2 != "None" and switch_2 == "On":
-                lora_list.extend([(lora_name_2, model_weight_2, clip_weight_2)]),  # type: ignore
+                (lora_list.extend([(lora_name_2, model_weight_2, clip_weight_2)]),)  # type: ignore
 
             if lora_name_3 != "None" and switch_3 == "On":
-                lora_list.extend([(lora_name_3, model_weight_3, clip_weight_3)]),  # type: ignore
+                (lora_list.extend([(lora_name_3, model_weight_3, clip_weight_3)]),)  # type: ignore
 
             return (lora_list,)
 
@@ -433,7 +431,7 @@ for LORA_STACK operations. Can optionally extend an existing stack.
 | lora_stack | `LORA_STACK` |
 
 
-??? note "Source code in lora.py"
+??? note "Source code"
 
     ```python
     class Dict2LoraStack:
@@ -522,7 +520,7 @@ with support for multiple captions and optional text modifications.
 | string | `STRING` |
 
 
-??? note "Source code in lora.py"
+??? note "Source code"
 
     ```python
     class SaveLoraCaptions:

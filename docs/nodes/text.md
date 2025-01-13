@@ -12,9 +12,9 @@ and provide a consistent preview format.
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `<ast.Name object at 0x7f2b30292440>` |  |  |
+| required | value | `any_type` |  |  |
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextPreview:
@@ -89,7 +89,7 @@ lowercase, uppercase, capitalization, and title case conversion.
 | string | `STRING` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextCase:
@@ -165,7 +165,7 @@ from the beginning, end, or both sides of the text.
 | string | `STRING` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextTrim:
@@ -237,7 +237,7 @@ creating a list of substrings.
 | string | `STRING` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextSplit:
@@ -303,7 +303,7 @@ supporting complex pattern matching and replacement operations.
 | string | `STRING` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextRegexReplace:
@@ -371,7 +371,7 @@ another substring, using exact matching.
 | string | `STRING` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextFindReplace:
@@ -438,7 +438,7 @@ without any separator between them.
 | string | `STRING` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class TextConcatenate:
@@ -511,7 +511,7 @@ returning the modified image with the rendered text.
 | e | `E` |
 
 
-??? note "Source code in text.py"
+??? note "Source code"
 
     ```python
     class RenderText:

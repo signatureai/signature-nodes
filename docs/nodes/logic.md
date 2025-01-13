@@ -13,10 +13,10 @@ is useful for creating conditional workflows and dynamic value selection.
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
 | required | condition | `BOOLEAN` | True |  |
-| required | on_true | `<ast.Name object at 0x7f2b302d5a20>` |  |  |
-| required | on_false | `<ast.Name object at 0x7f2b302d59c0>` |  |  |
+| required | on_true | `any_type` |  |  |
+| required | on_false | `any_type` |  |  |
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class Switch:
@@ -58,7 +58,6 @@ is useful for creating conditional workflows and dynamic value selection.
         CATEGORY = LOGIC_CAT
 
         def check_lazy_status(self, condition, on_true=None, on_false=None):
-
             if condition and on_true is None:
                 on_true = ["on_true"]
                 if isinstance(on_true, ExecutionBlocker):
@@ -90,9 +89,9 @@ the input value unchanged.
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
 | required | continue | `BOOLEAN` | False |  |
-| required | in | `<ast.Name object at 0x7f2b302d4670>` | None |  |
+| required | in | `any_type` | None |  |
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class Blocker:
@@ -149,9 +148,9 @@ node is useful for implementing conditional logic based on the relationship betw
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | a | `<ast.Name object at 0x7f2b302fb190>` |  |  |
-| required | b | `<ast.Name object at 0x7f2b302fb130>` |  |  |
-| required | comparison | `<ast.Name object at 0x7f2b302fb0d0>` | a == b |  |
+| required | a | `any_type` |  |  |
+| required | b | `any_type` |  |  |
+| required | comparison | `compare_functions` | a == b |  |
 
 ### Returns
 
@@ -160,7 +159,7 @@ node is useful for implementing conditional logic based on the relationship betw
 | boolean | `BOOLEAN` |
 
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class Compare:
@@ -250,7 +249,7 @@ A control node that starts a loop, allowing for a specified number of iterations
 optional initial values for each iteration, which can be used within the loop. This node is useful
 for creating iterative workflows where the same set of operations is performed multiple times.
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class LoopStart:
@@ -303,7 +302,7 @@ A control node that signifies the end of a loop initiated by a `LoopStart` node.
 flow control signal and can return the final values from the loop iterations. This node is useful
 for managing the completion of iterative workflows and retrieving results after looping.
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class LoopEnd:

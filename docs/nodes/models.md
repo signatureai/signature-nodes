@@ -22,7 +22,7 @@ The Lama model intelligently fills in the masked areas with contextually appropr
 | image | `IMAGE` |
 
 
-??? note "Source code in models.py"
+??? note "Source code"
 
     ```python
     class MagicEraser(SaveImage):
@@ -125,7 +125,7 @@ It's effective for correcting motion blur, out-of-focus areas, and general image
 | image | `IMAGE` |
 
 
-??? note "Source code in models.py"
+??? note "Source code"
 
     ```python
     class Unblur(SaveImage):
@@ -224,7 +224,7 @@ quality levels for various use cases. It can output both masked and RGBA version
 | mask | `MASK` |
 
 
-??? note "Source code in models.py"
+??? note "Source code"
 
     ```python
     class BackgroundRemoval(SaveImage):

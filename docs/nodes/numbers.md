@@ -23,7 +23,7 @@ maximum value, it returns the maximum value.
 | int | `INT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class IntClamp:
@@ -119,7 +119,7 @@ maximum value, it returns the maximum value.
 | float | `FLOAT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class FloatClamp:
@@ -213,7 +213,7 @@ The conversion is performed using Python's built-in int() function, which trunca
 | int | `INT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class Float2Int:
@@ -279,7 +279,7 @@ built-in float() function.
 | float | `FLOAT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class Int2Float:
@@ -348,7 +348,7 @@ and division.
 | int | `INT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class IntOperator:
@@ -439,7 +439,7 @@ operations are addition, subtraction, multiplication, and division.
 | float | `FLOAT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class FloatOperator:
@@ -531,7 +531,7 @@ the specified mode of operation.
 | int | `INT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class IntMinMax:
@@ -609,7 +609,7 @@ the specified mode of operation.
 | float | `FLOAT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class FloatMinMax:
@@ -685,7 +685,7 @@ and its floating-point equivalent.
 | float | `FLOAT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class RandomNumber:
@@ -757,7 +757,7 @@ various mathematical operations. It can handle arithmetic, comparison, and logic
 | float | `FLOAT` |
 
 
-??? note "Source code in numbers.py"
+??? note "Source code"
 
     ```python
     class MathOperator:
