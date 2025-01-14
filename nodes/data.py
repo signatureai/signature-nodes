@@ -1,5 +1,7 @@
 import json
 
+import jq
+
 from .categories import DATA_CAT
 from .neurochain.utils import WILDCARD
 from .shared import any_type
@@ -233,6 +235,8 @@ class GetDictValue:
         key (str): The lookup key for value retrieval.
             Must be a string type.
             Case-sensitive and must match exactly.
+            If the key starts with a dot it will be used as a path as in a jq query,
+            e.g. ".key1.key2[0]" will return the first value of array key2 in the dictionary key1.
             Defaults to empty string.
 
     Returns:
@@ -274,7 +278,10 @@ class GetDictValue:
             raise ValueError("Key must be a string")
         if not isinstance(dict_obj, dict):
             raise ValueError("Dict must be a dictionary")
-        value = dict_obj.get(key)
+        if key.startswith("."):
+            value = jq.compile(key).input(dict_obj).first()
+        else:
+            value = dict_obj.get(key)
         value_type = type(value).__name__
         return (value, value_type)
 
@@ -292,6 +299,8 @@ class SetDictValue:
         key (str): The lookup key for value setter.
             Must be a string type.
             Case-sensitive and must match exactly.
+            If the key starts with a dot it will be used as a path as in a jq query,
+            e.g. ".key1.key2[0]" will set the first value of array key2 in the dictionary key1.
             Defaults to empty string.
         value (Any): The value to set.
             Can be any type of value.
@@ -333,7 +342,11 @@ class SetDictValue:
             raise ValueError("Key must be a string")
         if not isinstance(dict_obj, dict):
             raise ValueError("Dict must be a dictionary")
-        dict_obj[key] = value
+        if key.startswith("."):
+            update_query = f'{key} = "{value}"'
+            dict_obj = jq.compile(update_query).input(dict_obj).first()
+        else:
+            dict_obj[key] = value
         return (dict_obj,)
 
 
@@ -350,6 +363,8 @@ class DeleteDictKey:
         key (str): The lookup key for value deletion.
             Must be a string type.
             Case-sensitive and must match exactly.
+            If the key starts with a dot it will be used as a path as in a jq query,
+            e.g. ".key1.key2[0]" will delete the first value of array key2 in the dictionary key1.
             Defaults to empty string.
 
     Returns:
@@ -390,5 +405,9 @@ class DeleteDictKey:
             raise ValueError("Dict must be a dictionary")
         if key not in dict_obj:
             raise KeyError(f"Key {key} not found in dictionary")
-        del dict_obj[key]
+        if key.startswith("."):
+            delete_query = f"del({key})"
+            dict_obj = jq.compile(delete_query).input(dict_obj).first()
+        else:
+            del dict_obj[key]
         return (dict_obj,)
