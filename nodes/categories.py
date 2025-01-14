@@ -37,6 +37,10 @@ LLM_CAT = f"{NEUROCHAIN_CAT}/💬 LLMs"
 LOADERS_CAT = f"{NEUROCHAIN_CAT}/⟳ Loaders"
 
 MATH_CAT = f"{NEUROCHAIN_CAT}/𝞹 Math"
+
+DETECTORS_CAT = f"{NEUROCHAIN_CAT}/👁️ Detectors"
+SEGMENTATION_CAT = f"{DETECTORS_CAT}/😶‍🌫️ Segmentation"
+
 DIST_CAT = f"{MATH_CAT}/📐 Distance Metrics"
 
 STORAGE_CAT = f"{NEUROCHAIN_CAT}/☁️ Storage"
