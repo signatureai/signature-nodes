@@ -21,7 +21,7 @@ input format.
 | dict | `DICT` |
 
 
-??? note "Source code in data.py"
+??? note "Source code"
 
     ```python
     class Json2Dict:
@@ -96,7 +96,7 @@ export and communication with external systems that require JSON format.
 | string | `STRING` |
 
 
-??? note "Source code in data.py"
+??? note "Source code"
 
     ```python
     class Dict2Json:
@@ -174,7 +174,7 @@ within a collection, enabling targeted processing of specific images in a sequen
 | e | `E` |
 
 
-??? note "Source code in data.py"
+??? note "Source code"
 
     ```python
     class GetImageListItem:
@@ -252,7 +252,7 @@ type, enabling dynamic type handling and conditional processing in workflows.
 | required | list | `LIST` |  |  |
 | required | index | `INT` | 0 |  |
 
-??? note "Source code in data.py"
+??? note "Source code"
 
     ```python
     class GetListItem:
@@ -329,7 +329,7 @@ type, enabling dynamic type handling and conditional processing in workflows.
 | required | dict | `DICT` |  |  |
 | required | key | `STRING` |  |  |
 
-??? note "Source code in data.py"
+??? note "Source code"
 
     ```python
     class GetDictValue:

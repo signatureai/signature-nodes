@@ -32,7 +32,7 @@ subjects or focusing on specific masked areas.
 | int | `INT` |
 
 
-??? note "Source code in image_processing.py"
+??? note "Source code"
 
     ```python
     class AutoCrop:
@@ -141,7 +141,7 @@ maintaining aspect ratio is important.
 | mask | `MASK` |
 
 
-??? note "Source code in image_processing.py"
+??? note "Source code"
 
     ```python
     class Rescale:
@@ -191,9 +191,7 @@ maintaining aspect ratio is important.
                     "image": ("IMAGE", {"default": None}),
                     "mask": ("MASK", {"default": None}),
                     "factor": ("FLOAT", {"default": 2.0, "min": 0.01, "max": 100.0, "step": 0.01}),
-                    "interpolation": (
-                        ["nearest", "nearest-exact", "bilinear", "bicubic", "box", "hamming", "lanczos"],
-                    ),
+                    "interpolation": (["nearest", "nearest-exact", "bilinear", "bicubic", "box", "hamming", "lanczos"],),
                     "antialias": ("BOOLEAN", {"default": True}),
                 },
             }
@@ -212,14 +210,10 @@ maintaining aspect ratio is important.
                 raise ValueError("Either image or mask must be provided")
 
             input_image = (
-                TensorImage.from_BWHC(image)
-                if isinstance(image, torch.Tensor)
-                else TensorImage(torch.zeros((1, 3, 1, 1)))
+                TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
             )
             input_mask = (
-                TensorImage.from_BWHC(mask)
-                if isinstance(mask, torch.Tensor)
-                else TensorImage(torch.zeros((1, 1, 1, 1)))
+                TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else TensorImage(torch.zeros((1, 1, 1, 1)))
             )
             output_image = rescale(
                 input_image,
@@ -270,7 +264,7 @@ images for specific size requirements while maintaining quality.
 | mask | `MASK` |
 
 
-??? note "Source code in image_processing.py"
+??? note "Source code"
 
     ```python
     class Resize:
@@ -398,7 +392,7 @@ trade-off between content preservation and output size.
 | mask | `MASK` |
 
 
-??? note "Source code in image_processing.py"
+??? note "Source code"
 
     ```python
     class Rotate:
@@ -460,14 +454,10 @@ trade-off between content preservation and output size.
             zoom_to_fit = kwargs.get("zoom_to_fit", False)
 
             input_image = (
-                TensorImage.from_BWHC(image)
-                if isinstance(image, torch.Tensor)
-                else TensorImage(torch.zeros((1, 3, 1, 1)))
+                TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
             )
             input_mask = (
-                TensorImage.from_BWHC(mask)
-                if isinstance(mask, torch.Tensor)
-                else TensorImage(torch.zeros((1, 1, 1, 1)))
+                TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else TensorImage(torch.zeros((1, 1, 1, 1)))
             )
             output_image = rotate(input_image, angle, zoom_to_fit).get_BWHC()
             output_mask = rotate(input_mask, angle, zoom_to_fit).get_BWHC()
@@ -503,7 +493,7 @@ cutouts for compositing.
 | image | `IMAGE` |
 
 
-??? note "Source code in image_processing.py"
+??? note "Source code"
 
     ```python
     class Cutout:
@@ -588,11 +578,11 @@ multiple resampling methods for final adjustments.
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
 | required | image | `IMAGE` |  |  |
-| required | upscale_model | `<ast.Call object at 0x7f2b30237070>` |  |  |
+| required | upscale_model | `<ast.Call object at 0x101332dd0>` |  |  |
 | required | mode | `LIST` |  |  |
 | required | rescale_factor | `FLOAT` | 2 | min=0.01, max=100.0, step=0.01 |
 | required | resize_size | `INT` | 1024 | min=1, max=48000, step=1 |
-| required | resampling_method | `<ast.Name object at 0x7f2b302341c0>` |  |  |
+| required | resampling_method | `resampling_methods` |  |  |
 | required | tiled_size | `INT` | 512 | min=128, max=2048, step=128 |
 
 ### Returns
@@ -602,7 +592,7 @@ multiple resampling methods for final adjustments.
 | image | `IMAGE` |
 
 
-??? note "Source code in image_processing.py"
+??? note "Source code"
 
     ```python
     class UpscaleImage:
@@ -759,9 +749,7 @@ multiple resampling methods for final adjustments.
             current_size = max(H, W)
             up_image = image
             while current_size < target_size:
-                step = self.upscale_with_model(
-                    upscale_model=up_model, image=up_image, device=device, tile=tiled_size
-                )
+                step = self.upscale_with_model(upscale_model=up_model, image=up_image, device=device, tile=tiled_size)
                 del up_image
                 up_image = step.to("cpu")
                 _, H, W, _ = up_image.shape
@@ -771,9 +759,7 @@ multiple resampling methods for final adjustments.
             tensor_image = TensorImage.from_BWHC(up_image)
 
             if mode == "resize":
-                up_image = resize(
-                    tensor_image, resize_size, resize_size, "ASPECT", resampling_method, True
-                ).get_BWHC()
+                up_image = resize(tensor_image, resize_size, resize_size, "ASPECT", resampling_method, True).get_BWHC()
             else:
                 # get the max size of the upscaled image
                 _, _, H, W = tensor_image.shape

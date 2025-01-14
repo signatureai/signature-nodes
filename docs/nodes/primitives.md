@@ -21,7 +21,7 @@ number precision is required.
 | float | `FLOAT` |
 
 
-??? note "Source code in primitives.py"
+??? note "Source code"
 
     ```python
     class Float:
@@ -90,7 +90,7 @@ number values are required.
 | int | `INT` |
 
 
-??? note "Source code in primitives.py"
+??? note "Source code"
 
     ```python
     class Int:
@@ -158,7 +158,7 @@ basic input node in computational graphs where text processing is required.
 | string | `STRING` |
 
 
-??? note "Source code in primitives.py"
+??? note "Source code"
 
     ```python
     class String:
@@ -257,7 +257,7 @@ processing is required.
 | string | `STRING` |
 
 
-??? note "Source code in primitives.py"
+??? note "Source code"
 
     ```python
     class StringMultiline:
@@ -319,7 +319,7 @@ as a basic input node in computational graphs where conditional logic is require
 | boolean | `BOOLEAN` |
 
 
-??? note "Source code in primitives.py"
+??? note "Source code"
 
     ```python
     class Boolean:

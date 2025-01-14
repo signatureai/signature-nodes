@@ -1,4 +1,4 @@
-# Augmentations Nodes
+# Augmentation Nodes
 
 ## RandomCropAugmentation
 
@@ -26,7 +26,7 @@ probability.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class RandomCropAugmentation:
@@ -118,7 +118,7 @@ vertical flip operations with adjustable probability of application.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class FlipAugmentation:
@@ -201,7 +201,7 @@ provides control over sample generation and reproducibility through seed managem
 | mask | `MASK` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class ComposeAugmentation:
@@ -323,7 +323,7 @@ limits and probability of application.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class BrightnessContrastAugmentation:
@@ -404,7 +404,7 @@ application probability.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class RotationAugmentation:
@@ -479,7 +479,7 @@ softening effects.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class BlurAugmentation:
@@ -569,7 +569,7 @@ quality loss scenarios.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class QualityAugmentation:
@@ -656,7 +656,7 @@ and application probability.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class DistortionAugmentation:
@@ -745,7 +745,7 @@ and probability.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class ShiftScaleAugmentation:
@@ -832,7 +832,7 @@ useful for regularization and robustness training.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class CutoutAugmentation:
@@ -915,7 +915,7 @@ effects.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class GridAugmentation:
@@ -1000,7 +1000,7 @@ with configurable strength and probability.
 | augmentation | `AUGMENTATION` |
 
 
-??? note "Source code in augmentations.py"
+??? note "Source code"
 
     ```python
     class PerspectiveAugmentation:
