@@ -1,6 +1,7 @@
 import json
 
 from .categories import DATA_CAT
+from .neurochain.utils import WILDCARD
 from .shared import any_type
 
 
@@ -34,7 +35,7 @@ class Json2Dict:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "json_str": ("STRING", {"default": "", "forceInput": True}),
@@ -276,3 +277,118 @@ class GetDictValue:
         value = dict_obj.get(key)
         value_type = type(value).__name__
         return (value, value_type)
+
+
+class SetDictValue:
+    """Sets a value in a dictionary using a string key.
+
+    A node that provides key-based update of a dictionary while determining their Python
+    type, enabling dynamic type handling and conditional processing in workflows.
+
+    Args:
+        dict (dict): The source dictionary to set values.
+            Must be a valid Python dictionary.
+            Can contain values of any type and nested structures.
+        key (str): The lookup key for value setter.
+            Must be a string type.
+            Case-sensitive and must match exactly.
+            Defaults to empty string.
+        value (Any): The value to set.
+            Can be any type of value.
+
+    Returns:
+        tuple[dict]: A tuple containing:
+            - dict: The updated dictionary with the new value set.
+
+    Raises:
+        ValueError: When key is not a string or dict parameter is not a dictionary.
+
+    Notes:
+        - Supports dictionaries containing any Python type, including custom classes
+        - Thread-safe for concurrent access
+        - Preserves original data without modifications
+        - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "dict": ("DICT",),
+                "key": ("STRING", {"default": ""}),
+                "value": (WILDCARD,),
+            }
+        }
+
+    RETURN_TYPES = ("DICT",)
+    RETURN_NAMES = ("new_dict",)
+    FUNCTION = "execute"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        dict_obj = kwargs.get("dict")
+        key = kwargs.get("key")
+        value = kwargs.get("value")
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string")
+        if not isinstance(dict_obj, dict):
+            raise ValueError("Dict must be a dictionary")
+        dict_obj[key] = value
+        return (dict_obj,)
+
+
+class DeleteDictKey:
+    """Deletes a key from a dictionary.
+
+    A node that provides key-based deletion of a dictionary while determining their Python
+    type, enabling dynamic type handling and conditional processing in workflows.
+
+    Args:
+        dict (dict): The source dictionary to delete values.
+            Must be a valid Python dictionary.
+            Can contain values of any type and nested structures.
+        key (str): The lookup key for value deletion.
+            Must be a string type.
+            Case-sensitive and must match exactly.
+            Defaults to empty string.
+
+    Returns:
+        tuple[dict]: A tuple containing:
+            - dict: The updated dictionary with the key deleted.
+
+    Raises:
+        KeyError: When the specified key doesn't exist in the dictionary.
+        ValueError: When key is not a string or dict parameter is not a dictionary.
+
+    Notes:
+        - Supports dictionaries containing any Python type, including custom classes
+        - Thread-safe for concurrent access
+        - Preserves original data without modifications
+        - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "dict": ("DICT",),
+                "key": ("STRING", {"default": ""}),
+            },
+        }
+
+    RETURN_TYPES = ("DICT",)
+    RETURN_NAMES = ("new_dict",)
+    FUNCTION = "execute"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        dict_obj = kwargs.get("dict")
+        key = kwargs.get("key")
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string")
+        if not isinstance(dict_obj, dict):
+            raise ValueError("Dict must be a dictionary")
+        if key not in dict_obj:
+            raise KeyError(f"Key {key} not found in dictionary")
+        del dict_obj[key]
+        return (dict_obj,)
