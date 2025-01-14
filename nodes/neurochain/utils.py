@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import time
 from urllib.parse import urlparse
@@ -10,6 +11,8 @@ from botocore.exceptions import ClientError
 
 BASE_COMFY_DIR = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
 COMFY_IMAGES_DIR = os.path.join(BASE_COMFY_DIR, "input")
+
+logger = logging.getLogger(__name__)
 
 
 # Hack: string type that is always equal in not equal comparisons
@@ -36,11 +39,10 @@ def get_async_output(output_location, wait_interval: float = 0.5, timeout: int =
             return sagemaker_session.read_s3_file(bucket=bucket, key_prefix=key)
         except ClientError as e:
             if e.response["Error"]["Code"] == "NoSuchKey":
-                print("waiting for output...")
+                logger.info("waiting for output...")
                 time.sleep(wait_interval)
                 count += 1
                 continue
-            print(count)
             raise
 
 
@@ -56,7 +58,15 @@ def overlay_bboxes(img_np, bboxes, labels: list | None = None):
             label_size, _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)
             label_w, label_h = label_size
             cv2.rectangle(image_bgr, (x1, y1 - label_h - 10), (x1 + label_w, y1), (0, 255, 0), -1)
-            cv2.putText(image_bgr, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2)
+            cv2.putText(
+                image_bgr,
+                label,
+                (x1, y1 - 5),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.7,
+                (0, 0, 0),
+                2,
+            )
 
     image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
     return image_rgb
