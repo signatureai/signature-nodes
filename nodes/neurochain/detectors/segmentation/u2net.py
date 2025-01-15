@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import folder_paths
 import torch
 from neurochain.detectors.segmentation.u2net import U2Net
 
@@ -21,8 +22,8 @@ class U2NetNode:
     CATEGORY = SEGMENTATION_CAT
 
     def process(self, image: torch.Tensor, clearml_model_id: str):
-        root_dir = Path(__file__).parents[6]  # TODO: replace this with an automatic method to get the root
-        checkpoint_dir = root_dir / "models" / "checkpoints"
+        checkpoint_dir = Path(folder_paths.models_dir) / "checkpoints"
         model = U2Net(model_id=clearml_model_id, checkpoint_dir=checkpoint_dir)
         output = model.predict(image)
         return (output,)
+
