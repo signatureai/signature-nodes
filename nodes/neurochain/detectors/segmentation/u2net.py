@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import folder_paths
+import folder_paths  # type: ignore
 import torch
 from neurochain.detectors.segmentation.u2net import U2Net
 
