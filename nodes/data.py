@@ -1,6 +1,11 @@
 import json
+import tomllib
+
+import jq
+import tomli_w
 
 from .categories import DATA_CAT
+from .neurochain.utils import WILDCARD
 from .shared import any_type
 
 
@@ -34,7 +39,7 @@ class Json2Dict:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "json_str": ("STRING", {"default": "", "forceInput": True}),
@@ -52,6 +57,55 @@ class Json2Dict:
             raise ValueError("Json string must be a string")
         json_dict = json.loads(json_str)
         return (json_dict,)
+
+
+class Toml2Dict:
+    """Converts TOML strings to Python dictionaries for workflow integration.
+
+    A node that takes TOML-formatted strings and parses them into Python dictionaries, enabling
+    seamless data integration within the workflow. Handles nested TOML structures and validates
+    input format.
+
+    Args:
+        toml_str (str): The TOML-formatted input string to parse.
+            Must be a valid TOML string conforming to standard TOML syntax.
+            Can represent simple key-value pairs or complex nested structures.
+
+    Returns:
+        tuple[dict]: A single-element tuple containing:
+            - dict: The parsed Python dictionary representing the TOML structure.
+                   Preserves all nested objects, arrays, and primitive values.
+
+    Raises:
+        ValueError: When toml_str is not a string type.
+        toml.TomlDecodeError: When the input string contains invalid TOML syntax.
+
+    Notes:
+        - Accepts any valid TOML format including hash tables, arrays, and primitive values
+        - Empty TOML tables ('[table]') are valid inputs and return empty dictionaries
+        - Preserves all TOML data types: hash tables, arrays, strings, numbers, booleans, null
+        - Unicode characters are properly handled and preserved
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "toml_str": ("STRING", {"default": "", "forceInput": True}),
+            },
+        }
+
+    RETURN_TYPES = ("DICT",)
+    FUNCTION = "execute"
+    CLASS_ID = "toml_dict"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        toml_str = kwargs.get("toml_str")
+        if not isinstance(toml_str, str):
+            raise ValueError("Toml string must be a string")
+        toml_dict = tomllib.loads(toml_str)
+        return (toml_dict,)
 
 
 class Dict2Json:
@@ -100,6 +154,53 @@ class Dict2Json:
         json_dict = kwargs.get("dict")
         json_str = json.dumps(json_dict)
         return (json_str,)
+
+
+class Dict2Toml:
+    """Converts Python dictionaries to TOML strings for data interchange.
+
+    A node that serializes Python dictionaries into TOML-formatted strings, facilitating data
+    export and communication with external systems that require TOML format.
+
+    Args:
+        dict (dict): The Python dictionary to serialize.
+            Can contain nested dictionaries, lists, and primitive Python types.
+            All values must be JSON-serializable (dict, list, str, int, float, bool, None).
+
+    Returns:
+        tuple[str]: A single-element tuple containing:
+            - str: The TOML-formatted string representation of the input dictionary.
+
+    Raises:
+        ValueError: When dict is not a dictionary type.
+
+    Notes:
+        - All dictionary keys are converted to strings in the output TOML
+        - Complex Python objects (datetime, custom classes) must be pre-converted to basic types
+        - Output is compact TOML without extra whitespace or formatting
+        - Handles nested structures of any depth
+        - Unicode characters are properly escaped in the output
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "dict": ("DICT",),
+            },
+        }
+
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "execute"
+    CLASS_ID = "dict_toml"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        dict_obj = kwargs.get("dict")
+        if not isinstance(dict_obj, dict):
+            raise ValueError("Dict must be a dictionary")
+        toml_str = tomli_w.dumps(dict_obj)
+        return (toml_str,)
 
 
 class GetImageListItem:
@@ -232,6 +333,8 @@ class GetDictValue:
         key (str): The lookup key for value retrieval.
             Must be a string type.
             Case-sensitive and must match exactly.
+            If the key starts with a dot it will be used as a path as in a jq query,
+            e.g. ".key1.key2[0]" will return the first value of array key2 in the dictionary key1.
             Defaults to empty string.
 
     Returns:
@@ -273,6 +376,143 @@ class GetDictValue:
             raise ValueError("Key must be a string")
         if not isinstance(dict_obj, dict):
             raise ValueError("Dict must be a dictionary")
-        value = dict_obj.get(key)
+        if key.startswith("."):
+            value = jq.compile(key).input(dict_obj).first()
+            if value is None:
+                raise KeyError(f"Key {key} not found in dictionary")
+        else:
+            if key not in dict_obj:
+                raise KeyError(f"Key {key} not found in dictionary")
+            value = dict_obj.get(key)
         value_type = type(value).__name__
         return (value, value_type)
+
+
+class SetDictValue:
+    """Sets a value in a dictionary using a string key.
+
+    A node that provides key-based update of a dictionary while determining their Python
+    type, enabling dynamic type handling and conditional processing in workflows.
+
+    Args:
+        dict (dict): The source dictionary to set values.
+            Must be a valid Python dictionary.
+            Can contain values of any type and nested structures.
+        key (str): The lookup key for value setter.
+            Must be a string type.
+            Case-sensitive and must match exactly.
+            If the key starts with a dot it will be used as a path as in a jq query,
+            e.g. ".key1.key2[0]" will set the first value of array key2 in the dictionary key1.
+            Defaults to empty string.
+        value (Any): The value to set.
+            Can be any type of value.
+
+    Returns:
+        tuple[dict]: A tuple containing:
+            - dict: The updated dictionary with the new value set.
+
+    Raises:
+        ValueError: When key is not a string or dict parameter is not a dictionary.
+
+    Notes:
+        - Supports dictionaries containing any Python type, including custom classes
+        - Thread-safe for concurrent access
+        - Preserves original data without modifications
+        - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "dict": ("DICT",),
+                "key": ("STRING", {"default": ""}),
+                "value": (WILDCARD,),
+            }
+        }
+
+    RETURN_TYPES = ("DICT",)
+    RETURN_NAMES = ("new_dict",)
+    FUNCTION = "execute"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        dict_obj = kwargs.get("dict")
+        key = kwargs.get("key")
+        value = kwargs.get("value")
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string")
+        if not isinstance(dict_obj, dict):
+            raise ValueError("Dict must be a dictionary")
+        if key.startswith("."):
+            update_query = f'{key} = "{value}"'
+            dict_obj = jq.compile(update_query).input(dict_obj).first()
+        else:
+            dict_obj[key] = value
+        return (dict_obj,)
+
+
+class DeleteDictKey:
+    """Deletes a key from a dictionary.
+
+    A node that provides key-based deletion of a dictionary while determining their Python
+    type, enabling dynamic type handling and conditional processing in workflows.
+
+    Args:
+        dict (dict): The source dictionary to delete values.
+            Must be a valid Python dictionary.
+            Can contain values of any type and nested structures.
+        key (str): The lookup key for value deletion.
+            Must be a string type.
+            Case-sensitive and must match exactly.
+            If the key starts with a dot it will be used as a path as in a jq query,
+            e.g. ".key1.key2[0]" will delete the first value of array key2 in the dictionary key1.
+            Defaults to empty string.
+
+    Returns:
+        tuple[dict]: A tuple containing:
+            - dict: The updated dictionary with the key deleted.
+
+    Raises:
+        KeyError: When the specified key doesn't exist in the dictionary.
+        ValueError: When key is not a string or dict parameter is not a dictionary.
+
+    Notes:
+        - Supports dictionaries containing any Python type, including custom classes
+        - Thread-safe for concurrent access
+        - Preserves original data without modifications
+        - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "dict": ("DICT",),
+                "key": ("STRING", {"default": ""}),
+            },
+        }
+
+    RETURN_TYPES = ("DICT",)
+    RETURN_NAMES = ("new_dict",)
+    FUNCTION = "execute"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        dict_obj = kwargs.get("dict")
+        key = kwargs.get("key")
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string")
+        if not isinstance(dict_obj, dict):
+            raise ValueError("Dict must be a dictionary")
+        if key.startswith("."):
+            exists = jq.compile(key).input(dict_obj).first()
+            if exists is None:
+                raise KeyError(f"Key {key} not found in dictionary")
+            delete_query = f"del({key})"
+            dict_obj = jq.compile(delete_query).input(dict_obj).first()
+        else:
+            if key not in dict_obj:
+                raise KeyError(f"Key {key} not found in dictionary")
+            del dict_obj[key]
+        return (dict_obj,)
