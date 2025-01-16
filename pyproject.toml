@@ -12,6 +12,7 @@ dependencies = [
     "matplotlib>=3.10.0",
     "opencv-python>=4.10.0.84",
     "python-dotenv>=1.0.1",
+    "pyyaml>=6.0.2",
     "requests>=2.32.3",
     "tomli-w>=1.1.0",
     "torch>=2.5.1",
