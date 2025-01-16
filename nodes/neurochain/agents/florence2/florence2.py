@@ -1,6 +1,7 @@
 import os
 from typing import Optional, Tuple
 
+import comfy.model_management
 import folder_paths  # type: ignore
 import torch
 from neurochain.agents.florence2 import Florence2 as Florence2Neurochain
@@ -80,7 +81,8 @@ class Florence2:
         if text_prompt == "undefined" or text_prompt == "":
             text_prompt = None
 
-        florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path)
+        device = comfy.model_management.get_torch_device()
+        florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path, device)
         raw_task_resp = florence2.generate(base64_string, task_token, text_prompt, num_beams)
 
         final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], str] = (

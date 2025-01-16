@@ -1,5 +1,6 @@
 import os
 
+import comfy.model_management
 import folder_paths  # type: ignore
 from neurochain.agents.audio.audio_transcriber import AudioTranscriber
 
@@ -27,7 +28,9 @@ class TranscribeAudio:
         base_model_path = os.path.join(folder_paths.models_dir, SIG_MODELS_DIR)
         if not os.path.exists(base_model_path):
             os.makedirs(base_model_path)
-        transcriber = AudioTranscriber(base_model_path)
+
+        device = comfy.model_management.get_torch_device()
+        transcriber = AudioTranscriber(base_model_path, device)
 
         audio_tensor = audio["waveform"]
         sample_rate = audio["sample_rate"]
