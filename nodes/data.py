@@ -3,6 +3,7 @@ import tomllib
 
 import jq
 import tomli_w
+import yaml
 
 from .categories import DATA_CAT
 from .neurochain.utils import WILDCARD
@@ -108,6 +109,51 @@ class Toml2Dict:
         return (toml_dict,)
 
 
+class Yaml2Dict:
+    """Converts YAML strings to Python dictionaries for data interchange.
+
+    A node that takes YAML-formatted strings and parses them into Python dictionaries,
+    enabling seamless data integration within the workflow. Handles nested YAML structures
+    and validates input format.
+
+    Args:
+        yaml_str (str): The YAML-formatted input string to parse.
+            Must be a valid YAML string conforming to standard YAML syntax.
+            Can represent simple key-value pairs or complex nested structures.
+
+    Returns:
+        tuple[dict]: A single-element tuple containing:
+            - dict: The parsed Python dictionary representing the YAML structure.
+
+    Raises:
+        ValueError: When yaml_str is not a string type.
+        yaml.YAMLError: When the input string contains invalid YAML syntax.
+
+    Notes:
+        - Accepts any valid YAML format including hash tables, arrays, and primitive values
+        - Preserves all YAML data types: hash tables, arrays, strings, numbers, booleans, null
+        - Unicode characters are properly handled and preserved
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {"yaml_str": ("STRING", {"default": "", "forceInput": True})},
+        }
+
+    RETURN_TYPES = ("DICT",)
+    FUNCTION = "execute"
+    CLASS_ID = "yaml_dict"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        yaml_str = kwargs.get("yaml_str")
+        if not isinstance(yaml_str, str):
+            raise ValueError("Yaml string must be a string")
+        yaml_dict = yaml.safe_load(yaml_str)
+        return (yaml_dict,)
+
+
 class Dict2Json:
     """Converts Python dictionaries to JSON strings for data interchange.
 
@@ -201,6 +247,50 @@ class Dict2Toml:
             raise ValueError("Dict must be a dictionary")
         toml_str = tomli_w.dumps(dict_obj)
         return (toml_str,)
+
+
+class Dict2Yaml:
+    """Converts Python dictionaries to YAML strings for data interchange.
+
+    A node that serializes Python dictionaries into YAML-formatted strings, facilitating data
+    export and communication with external systems that require YAML format.
+
+    Args:
+        dict (dict): The Python dictionary to serialize.
+            Can contain nested dictionaries, lists, and primitive Python types.
+            All values must be JSON-serializable (dict, list, str, int, float, bool, None).
+
+    Returns:
+        tuple[str]: A single-element tuple containing:
+            - str: The YAML-formatted string representation of the input dictionary.
+
+    Raises:
+        ValueError: When dict is not a dictionary type.
+
+    Notes:
+        - All dictionary keys are converted to strings in the output YAML
+        - Complex Python objects (datetime, custom classes) must be pre-converted to basic types
+        - Handles nested structures of any depth
+        - Unicode characters are properly escaped in the output
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {"dict": ("DICT",)},
+        }
+
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "execute"
+    CLASS_ID = "dict_yaml"
+    CATEGORY = DATA_CAT
+
+    def execute(self, **kwargs):
+        dict_obj = kwargs.get("dict")
+        if not isinstance(dict_obj, dict):
+            raise ValueError("Dict must be a dictionary")
+        yaml_str = yaml.dump(dict_obj)
+        return (yaml_str,)
 
 
 class GetImageListItem:
