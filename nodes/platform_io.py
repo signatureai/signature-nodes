@@ -7,7 +7,6 @@ import torch
 from signature_core.connectors.google_connector import GoogleConnector
 from signature_core.functional.transform import cutout
 from signature_core.img.tensor_image import TensorImage
-from signature_core.img.utils import is_allowed_file_type
 from uuid_extensions import uuid7str
 
 from .categories import PLATFORM_IO_CAT
@@ -112,9 +111,6 @@ class InputImage:
         def load_image(url_or_base64: str) -> TensorImage:
             if not url_or_base64:
                 raise ValueError("Empty input string")
-
-            if not is_allowed_file_type(url_or_base64):
-                raise ValueError("File does not contain an image format that we support.")
 
             if url_or_base64.startswith("http"):
                 return TensorImage.from_web(url_or_base64)
