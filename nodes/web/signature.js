@@ -119,7 +119,8 @@ async function saveWorkflow(app) {
       try {
         e.preventDefault();
         const formData = {
-          name: form.querySelector('input[type="text"]').value,
+          baseWorkflowId: form.querySelectorAll('input[type="text"]')[0].value,
+          name: form.querySelectorAll('input[type="text"]')[1].value,
           description: form.querySelector("textarea").value,
           type: form.querySelector("select").value,
           coverImage: form.querySelector('input[type="file"]').files[0],
@@ -155,6 +156,7 @@ async function saveWorkflow(app) {
         }
 
         const submitData = new FormData();
+        submitData.append("workflowUUID", formData.baseWorkflowId);
         submitData.append("workflowName", formData.name);
         submitData.append("workflowDescription", formData.description);
         submitData.append("workflowType", formData.type.toLowerCase());
@@ -313,6 +315,23 @@ function showForm() {
         },
       },
       [
+        // Base Workflow ID field (new)
+        $el("div", { style: { marginBottom: "10px" } }, [
+          $el("label", {
+            style: { display: "block", marginBottom: "5px" },
+            textContent: "Base Workflow ID",
+          }),
+          $el("input", {
+            type: "text",
+            style: {
+              width: "100%",
+              padding: "5px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            },
+            placeholder: "Optional: Enter base workflow ID",
+          }),
+        ]),
         // Name field
         $el("div", { style: { marginBottom: "10px" } }, [
           $el("label", {

@@ -1,6 +1,6 @@
 import os
 
-import comfy.model_management
+import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 from neurochain.agents.audio.audio_transcriber import AudioTranscriber
 
