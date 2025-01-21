@@ -30,20 +30,20 @@ class Florence2:
                 "image": ("IMAGE",),
                 "task_token": (
                     [
-                        "<CAPTION>",
-                        "<DETAILED_CAPTION>",
-                        "<MORE_DETAILED_CAPTION>",
-                        "<OD>",
-                        "<DENSE_REGION_CAPTION>",
-                        "<REGION_PROPOSAL>",
-                        "<CAPTION_TO_PHRASE_GROUNDING>",
-                        "<REFERRING_EXPRESSION_SEGMENTATION>",
-                        "<REGION_TO_SEGMENTATION>",
-                        "<OPEN_VOCABULARY_DETECTION>",
-                        "<REGION_TO_CATEGORY>",
-                        "<REGION_TO_DESCRIPTION>",
-                        "<OCR>",
-                        "<OCR_WITH_REGION>",
+                        "CAPTION",
+                        "DETAILED_CAPTION",
+                        "MORE_DETAILED_CAPTION",
+                        "OD",
+                        "DENSE_REGION_CAPTION",
+                        "REGION_PROPOSAL",
+                        "CAPTION_TO_PHRASE_GROUNDING",
+                        "REFERRING_EXPRESSION_SEGMENTATION",
+                        "REGION_TO_SEGMENTATION",
+                        "OPEN_VOCABULARY_DETECTION",
+                        "REGION_TO_CATEGORY",
+                        "REGION_TO_DESCRIPTION",
+                        "OCR",
+                        "OCR_WITH_REGION",
                     ],
                 ),
                 "num_beams": ("INT", {"default": 3, "min": 1, "max": 50}),
@@ -85,7 +85,7 @@ class Florence2:
 
         device = comfy.model_management.get_torch_device()
         florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path, device, attention)
-        raw_task_resp = florence2.generate(base64_string, task_token, text_prompt, num_beams)
+        raw_task_resp = florence2.generate(base64_string, f"<{task_token}>", text_prompt, num_beams)
 
         final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], str] = (
             image,
@@ -94,7 +94,7 @@ class Florence2:
         )
 
         for task_processor in FLORENCE_PROCESSORS:
-            if task_token in task_processor.task_tokens:
+            if f"<{task_token}>" in task_processor.task_tokens:
                 final_resp = task_processor.process_output(
                     input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp
                 )
