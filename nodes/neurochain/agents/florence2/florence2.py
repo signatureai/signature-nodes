@@ -1,7 +1,7 @@
 import os
 from typing import Optional, Tuple
 
-import comfy.model_management
+import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 import torch
 from neurochain.agents.florence2 import Florence2 as Florence2Neurochain
