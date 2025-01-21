@@ -48,6 +48,7 @@ class Florence2:
                 ),
                 "num_beams": ("INT", {"default": 3, "min": 1, "max": 50}),
                 "attention": (["sdpa", "flash_attention_2", "eager"], {"default": "sdpa"}),
+                "precision": (["float16", "bfloat16", "float32"], {"default": "float16"}),
             },
             "optional": {
                 "text_prompt": ("STRING", {"multiline": True}),
@@ -69,6 +70,7 @@ class Florence2:
         task_token: str,
         num_beams: int,
         attention: str,
+        precision: str,
         text_prompt: Optional[str] = None,
     ):
         base_model_path = None
@@ -84,7 +86,7 @@ class Florence2:
             text_prompt = None
 
         device = comfy.model_management.get_torch_device()
-        florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path, device, attention)
+        florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path, device, attention, precision)
         raw_task_resp = florence2.generate(base64_string, task_token, text_prompt, num_beams)
 
         final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], str] = (
