@@ -20,6 +20,10 @@ class StartClearmlTask:
     OUTPUT_NODE = True
 
     def process(self, project_name: str, task_name: str):
-        task = Task.init(project_name=project_name, task_name=task_name)
-        task.get_logger().set_default_upload_destination("s3://signature-ml-models-development/clearml/images/")
+        task = Task.init(
+            project_name=project_name,
+            task_name=task_name,
+            auto_connect_streams=False,
+        )
+        task.get_logger().set_default_upload_destination("s3://signature-clearml/images/")
         return (task,)
