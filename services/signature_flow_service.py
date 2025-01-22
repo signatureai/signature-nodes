@@ -86,7 +86,7 @@ class SignatureFlowService:
                 if not jenkins_url or not jenkins_auth:
                     raise ValueError("JENKINS_URL and JENKINS_AUTH environment variables must be set")
 
-                jenkins_url = jenkins_url.rstrip("/") + "/job/submit-workflow/buildWithParameters"
+                jenkins_url = jenkins_url.rstrip("/") + "/job/Submit%20Workflow/buildWithParameters"
                 auth = f"Basic {jenkins_auth}"
 
                 async with aiohttp.ClientSession() as session:
