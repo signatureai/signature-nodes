@@ -1,3 +1,5 @@
+from typing import Optional
+
 from neurochain.evaluation.geval import Geval
 
 from ...categories import EVALUATION_CAT
@@ -15,10 +17,6 @@ class GevalEvaluation:
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": {
-                "input": ("STRING", {}),
-                "output": ("STRING", {}),
-            },
             "optional": {
                 "criteria": ("STRING", {"default": ""}),
                 "evaluation_steps": (
@@ -28,18 +26,15 @@ class GevalEvaluation:
             },
         }
 
-    RETURN_TYPES = ("FLOAT", "STRING")
-    RETURN_NAMES = ("score", "reason")
+    RETURN_TYPES = ("EVALUATOR",)
     FUNCTION = "process"
     CATEGORY = EVALUATION_CAT
     OUTPUT_NODE = True
 
-    def process(self, input: str, output: str, evaluation_steps: str, criteria: str):
-        neurochain_criteria = criteria.strip()
+    def process(self, evaluation_steps: Optional[str], criteria: Optional[str]):
+        neurochain_criteria = criteria.strip() if criteria else None
         neurochain_evaluation_steps = None
-        if neurochain_criteria == "":
-            neurochain_criteria = None
-            neurochain_evaluation_steps = evaluation_steps.split("\n")
+        if neurochain_criteria is None or neurochain_criteria == "":
+            neurochain_evaluation_steps = evaluation_steps.split("\n") if evaluation_steps else None
         evaluator = Geval(neurochain_criteria, neurochain_evaluation_steps)
-        evaluation_result = evaluator.evaluate(input, output)
-        return (evaluation_result.score, evaluation_result.reason)
+        return (evaluator,)
