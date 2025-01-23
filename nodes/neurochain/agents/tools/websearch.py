@@ -8,7 +8,7 @@ class WebsearchTool:
     def INPUT_TYPES(cls):
         return {}
 
-    RETURN_TYPES = ("BaseAgentTool",)
+    RETURN_TYPES = ("AGENT_TOOL",)
     RETURN_NAMES = ("tool",)
     FUNCTION = "process"
     CATEGORY = AGENT_TOOLS_CAT
