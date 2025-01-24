@@ -10,6 +10,8 @@ from shutil import copyfile
 
 from dotenv import load_dotenv
 
+from .utils import parallel_for
+
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -46,20 +48,18 @@ try:
 except ImportError:
     raise ImportError("signature_core package not available")
 
-try:
-    import neurochain  # type: ignore
-
+neurochain_module = importlib.import_module("neurochain")
+if neurochain_module is not None:
     NEUROCHAIN_AVAILABLE = True
-except ImportError:
+else:
     logger.warning("neurochain package not available")
 
-try:
-    import signature_flows  # type: ignore
-
+flows_module = importlib.import_module("signature_flows")
+if flows_module is not None:
     os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
     SIGNATURE_FLOWS_AVAILABLE = True
-except ImportError:
-    logging.warning("signature_flows package not available")
+else:
+    logger.warning("signature_flows package not available")
 
 
 def get_node_class_mappings(nodes_directory: str):
@@ -67,19 +67,21 @@ def get_node_class_mappings(nodes_directory: str):
     node_display_name_mappings = {}
 
     plugin_file_paths = []
-
     for path, _, files in walk(nodes_directory):
         for name in files:
             if not name.endswith(".py"):
                 continue
             plugin_file_paths.append(join(path, name))
 
-    for plugin_file_path in plugin_file_paths:
+    def process_plugin_file(plugin_file_path: str, idx: int, worker_id: int) -> tuple[dict, dict]:
+        file_class_mappings = {}
+        file_display_mappings = {}
+
         plugin_rel_path = plugin_file_path.replace(".py", "").replace(sep, ".")
         plugin_rel_path = plugin_rel_path.split("signature-nodes.nodes.")[-1]
 
         if not NEUROCHAIN_AVAILABLE and plugin_rel_path.startswith("neurochain"):
-            continue
+            return {}, {}
 
         try:
             module = importlib.import_module("signature-nodes.nodes." + plugin_rel_path)
@@ -101,11 +103,21 @@ def get_node_class_mappings(nodes_directory: str):
                         )
                     )
                     key = f"signature_{snake_case}"
-                    node_class_mappings[key] = value
+                    file_class_mappings[key] = value
                     item_name = re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z]{2})(?=[A-Z][a-z])", " ", item)
-                    node_display_name_mappings[key] = f"SIG {item_name}"
+                    file_display_mappings[key] = f"SIG {item_name}"
         except ImportError as e:
             logger.info(f"[red]Error importing {plugin_rel_path}: {e}")
+
+        return file_class_mappings, file_display_mappings
+
+    # Process files in parallel
+    results = parallel_for(process_plugin_file, plugin_file_paths)
+
+    # Combine results from all workers
+    for file_mappings, file_display_names in results:
+        node_class_mappings.update(file_mappings)
+        node_display_name_mappings.update(file_display_names)
 
     return node_class_mappings, node_display_name_mappings
 
