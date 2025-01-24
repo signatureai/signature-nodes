@@ -1,6 +1,5 @@
 import torch
 from kornia.geometry import transform
-from signature_core.functional.color import color_average
 from signature_core.functional.filters import (
     gaussian_blur2d,
     image_soft_light,
@@ -285,20 +284,34 @@ class ImageAverage:
         return {
             "required": {
                 "image": ("IMAGE",),
-            }
+            },
+            "optional": {
+                "focus_mask": ("MASK",),
+            },
         }
 
-    RETURN_TYPES = ("IMAGE",)
+    RETURN_TYPES = ("IMAGE", "STRING")
+    RETURN_NAMES = ("color", "hex_color")
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
 
-    def execute(self, **kwargs):
-        image = kwargs.get("image")
-        if not isinstance(image, torch.Tensor):
-            raise ValueError("Image must be a torch.Tensor")
+    def execute(self, image: torch.Tensor, focus_mask: torch.Tensor | None = None):
         step = TensorImage.from_BWHC(image)
-        output = color_average(step).get_BWHC()
-        return (output,)
+        if focus_mask is not None:
+            mask = TensorImage.from_BWHC(focus_mask)
+            masked_image = step * mask
+            step = masked_image.sum(dim=[2, 3], keepdim=True) / (mask.sum(dim=[2, 3], keepdim=True) + 1e-8)
+        else:
+            step = step.mean(dim=[2, 3], keepdim=True)
+        step = step.expand(-1, -1, image.shape[1], image.shape[2])
+        output = TensorImage(step).get_BWHC()
+
+        avg_color = step[0, :, 0, 0] * 255
+        hex_color = "#{:02x}{:02x}{:02x}".format(
+            int(avg_color[0].item()), int(avg_color[1].item()), int(avg_color[2].item())
+        )
+
+        return (output, hex_color)
 
 
 class ImageSubtract:
