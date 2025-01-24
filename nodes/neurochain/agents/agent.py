@@ -17,9 +17,9 @@ class Agent:
         return {
             "required": {
                 "llm": ("BaseLLM", {}),
-                "prompt": ("STRING", {"multiline": True}),
             },
             "optional": {
+                "prompt": ("STRING", {"multiline": True}),
                 "tools": ("LIST,AGENT_TOOL", {}),
                 "images": ("LIST,IMAGE", {}),
                 "memory": ("BaseMemory", {}),
@@ -45,7 +45,7 @@ class Agent:
     def process(
         self,
         llm: BaseLLM,
-        prompt: str,
+        prompt: Optional[str] = None,
         tools: Optional[list[BaseAgentTool] | BaseAgentTool] = None,
         images: Optional[list[torch.Tensor] | torch.Tensor] = None,
         memory: Optional[BaseMemory] = None,
@@ -81,7 +81,10 @@ class Agent:
             json_schema=json_schema,
             validators=validators,
         )
-        response = agent.execute(prompt, images=base64_images, conversation_id=str(self.conversation_id))
+
+        response = None
+        if prompt is not None and prompt.strip() != "":
+            response = agent.execute(prompt, images=base64_images, conversation_id=str(self.conversation_id))
         return (
             response,
             agent,
