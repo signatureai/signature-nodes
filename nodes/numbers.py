@@ -6,6 +6,22 @@ import random
 from .. import MAX_FLOAT, MAX_INT
 from .categories import NUMBERS_CAT
 
+BASIC_OPERATORS = {
+    "+": op.add,
+    "-": op.sub,
+    "*": op.mul,
+    "/": op.truediv,
+}
+
+
+OP_FUNCTIONS = {
+    "min": min,
+    "max": max,
+    "round": round,
+    "sum": sum,
+    "len": len,
+}
+
 
 class IntClamp:
     """Clamps an integer value between specified minimum and maximum bounds.
@@ -43,11 +59,11 @@ class IntClamp:
                         "max": MAX_INT,
                     },
                 ),
-                "min_value": (
+                "max_value": (
                     "INT",
                     {"default": 0, "min": -MAX_INT, "max": MAX_INT, "step": 1},
                 ),
-                "max_value": (
+                "min_value": (
                     "INT",
                     {"default": 0, "min": -MAX_INT, "max": MAX_INT, "step": 1},
                 ),
@@ -58,16 +74,9 @@ class IntClamp:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, **kwargs):
-        number = kwargs.get("number")
-        if not isinstance(number, int):
-            raise ValueError("Number must be an integer")
-        min_value = kwargs.get("min_value")
-        if not isinstance(min_value, int):
-            raise ValueError("Min value must be an integer")
-        max_value = kwargs.get("max_value")
-        if not isinstance(max_value, int):
-            raise ValueError("Max value must be an integer")
+    def execute(self, number: int, max_value: int, min_value: int) -> tuple[int]:
+        if max_value < min_value:
+            raise ValueError("Max value must be greater than or equal to min value")
         if number < min_value:
             return (min_value,)
         if number > max_value:
@@ -111,11 +120,11 @@ class FloatClamp:
                         "max": MAX_FLOAT,
                     },
                 ),
-                "min_value": (
+                "max_value": (
                     "FLOAT",
                     {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
                 ),
-                "max_value": (
+                "min_value": (
                     "FLOAT",
                     {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
                 ),
@@ -126,17 +135,11 @@ class FloatClamp:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, **kwargs):
-        number = kwargs.get("number")
-        if not isinstance(number, float) and not isinstance(number, int):
-            raise ValueError("Number must be a float")
-        min_value = kwargs.get("min_value")
-        if not isinstance(min_value, float) and not isinstance(min_value, int):
-            raise ValueError("Min value must be a float")
-        max_value = float(kwargs.get("max_value") or 0.0)
-        if not isinstance(max_value, float) and not isinstance(max_value, int):
-            raise ValueError("Max value must be a float")
-
+    def execute(
+        self, number: float, max_value: float, min_value: float
+    ) -> tuple[float]:
+        if max_value < min_value:
+            raise ValueError("Max value must be greater than or equal to min value")
         if number < min_value:
             return (min_value,)
         if number > max_value:
@@ -177,9 +180,8 @@ class Float2Int:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "float2int"
 
-    def execute(self, **kwargs):
+    def execute(self, number: float) -> tuple[int]:
         try:
-            number = float(kwargs.get("number", 0.0))
             return (int(number),)
         except (TypeError, ValueError):
             raise ValueError("Number must be convertible to float")
@@ -218,9 +220,8 @@ class Int2Float:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "int2float"
 
-    def execute(self, **kwargs):
+    def execute(self, number: int) -> tuple[float]:
         try:
-            number = int(kwargs.get("number", 0))
             return (float(number),)
         except (TypeError, ValueError):
             raise ValueError("Number must be convertible to integer")
@@ -270,22 +271,9 @@ class IntOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, **kwargs):
-        try:
-            left = float(kwargs.get("left", 0.0))
-            right = float(kwargs.get("right", 0.0))
-            operator = str(kwargs.get("operator", "+"))
-        except (TypeError, ValueError):
-            raise ValueError("Values must be convertible to floats")
-
-        if operator == "+":
-            return (int(left + right),)
-        if operator == "-":
-            return (int(left - right),)
-        if operator == "*":
-            return (int(left * right),)
-        if operator == "/":
-            return (int(left / right),)
+    def execute(self, left: float, right: float, operator: str) -> tuple[int]:
+        if operator in BASIC_OPERATORS:
+            return (int(BASIC_OPERATORS[operator](left, right)),)
 
         raise ValueError(f"Unsupported operator: {operator}")
 
@@ -333,24 +321,9 @@ class FloatOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, **kwargs):
-        left = kwargs.get("left")
-        if not isinstance(left, float):
-            raise ValueError("Left must be a float")
-        right = kwargs.get("right")
-        if not isinstance(right, float):
-            raise ValueError("Right must be a float")
-        operator = kwargs.get("operator")
-        if not isinstance(operator, str):
-            raise ValueError("Operator must be a string")
-        if operator == "+":
-            return (left + right,)
-        if operator == "-":
-            return (left - right,)
-        if operator == "*":
-            return (left * right,)
-        if operator == "/":
-            return (left / right,)
+    def execute(self, left: float, right: float, operator: str) -> tuple[float]:
+        if operator in BASIC_OPERATORS:
+            return (BASIC_OPERATORS[operator](left, right),)
 
         raise ValueError(f"Unsupported operator: {operator}")
 
@@ -382,7 +355,7 @@ class IntMinMax:
             "required": {
                 "a": ("INT", {"default": 0, "forceInput": True}),
                 "b": ("INT", {"default": 0, "forceInput": True}),
-                "mode": (["min", "max"],),
+                "mode": (["min", "max"], {"default": "min"}),
             }
         }
 
@@ -391,18 +364,9 @@ class IntMinMax:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "int_minmax"
 
-    def execute(self, **kwargs):
-        try:
-            a = int(kwargs.get("a", 0))
-            b = int(kwargs.get("b", 0))
-            mode = str(kwargs.get("mode", "min"))
-        except (TypeError, ValueError):
-            raise ValueError("Values must be convertible to integers")
-
-        if mode == "min":
-            return (min(a, b),)
-        if mode == "max":
-            return (max(a, b),)
+    def execute(self, a: int, b: int, mode: str) -> tuple[int]:
+        if mode in OP_FUNCTIONS:
+            return (OP_FUNCTIONS[mode](a, b),)
         raise ValueError(f"Unsupported mode: {mode}")
 
 
@@ -433,7 +397,7 @@ class FloatMinMax:
             "required": {
                 "a": ("FLOAT", {"default": 0.0, "forceInput": True}),
                 "b": ("FLOAT", {"default": 0.0, "forceInput": True}),
-                "mode": (["min", "max"],),
+                "mode": (["min", "max"], {"default": "min"}),
             }
         }
 
@@ -442,18 +406,9 @@ class FloatMinMax:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "float_minmax"
 
-    def execute(self, **kwargs):
-        try:
-            a = float(kwargs.get("a", 0.0))
-            b = float(kwargs.get("b", 0.0))
-            mode = str(kwargs.get("mode", "min"))
-        except (TypeError, ValueError):
-            raise ValueError("Values must be convertible to floats")
-
-        if mode == "min":
-            return (min(a, b),)
-        if mode == "max":
-            return (max(a, b),)
+    def execute(self, a: float, b: float, mode: str) -> tuple[float]:
+        if mode in OP_FUNCTIONS:
+            return (OP_FUNCTIONS[mode](a, b),)
         raise ValueError(f"Unsupported mode: {mode}")
 
 
@@ -484,18 +439,18 @@ class RandomNumber:
     CATEGORY = NUMBERS_CAT
 
     @staticmethod
-    def get_random():
+    def get_random() -> tuple[int, float]:
         result = random.randint(0, MAX_INT)
         return (
             result,
             float(result),
         )
 
-    def execute(self):
+    def execute(self) -> tuple[int, float]:
         return RandomNumber.get_random()
 
     @classmethod
-    def IS_CHANGED(cls):  # type: ignore
+    def IS_CHANGED(cls) -> tuple[int, float]:  # type: ignore
         return RandomNumber.get_random()
 
 
@@ -532,10 +487,22 @@ class MathOperator:
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "optional": {
-                "a": ("FLOAT", {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01}),
-                "b": ("FLOAT", {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01}),
-                "c": ("FLOAT", {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01}),
-                "d": ("FLOAT", {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01}),
+                "a": (
+                    "FLOAT,INT",
+                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
+                ),
+                "b": (
+                    "FLOAT,INT",
+                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
+                ),
+                "c": (
+                    "FLOAT,INT",
+                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
+                ),
+                "d": (
+                    "FLOAT,INT",
+                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
+                ),
             },
             "required": {
                 "value": ("STRING", {"multiline": True, "default": ""}),
@@ -549,16 +516,9 @@ class MathOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, **kwargs):
-        try:
-            a = float(kwargs.get("a", 0.0))
-            b = float(kwargs.get("b", 0.0))
-            c = float(kwargs.get("c", 0.0))
-            d = float(kwargs.get("d", 0.0))
-            value = str(kwargs.get("value", "")).strip()
-        except (TypeError, ValueError):
-            raise ValueError("Values must be convertible to floats")
-
+    def execute(
+        self, a: float | int, b: float | int, c: float | int, d: float | int, value: str
+    ) -> tuple[int, float]:
         def safe_xor(x, y):
             if isinstance(x, float) or isinstance(y, float):
                 # Convert to integers if either operand is a float
@@ -586,16 +546,8 @@ class MathOperator:
             ast.BitXor: safe_xor,  # Use the safe_xor function
         }
 
-        op_functions = {
-            "min": min,
-            "max": max,
-            "round": round,
-            "sum": sum,
-            "len": len,
-        }
-
         def eval_(node):
-            if isinstance(node, ast.Num):  # number
+            if isinstance(node, ast.Constant):  # number
                 return node.n
             if isinstance(node, ast.Name):  # variable
                 if node.id == "a":
@@ -620,9 +572,9 @@ class MathOperator:
                 values = [eval_(value) for value in node.values]
                 return operators[type(node.op)](*values)  # type: ignore
             if isinstance(node, ast.Call):  # custom function
-                if node.func.id in op_functions:  # type: ignore
+                if node.func.id in OP_FUNCTIONS:  # type: ignore
                     args = [eval_(arg) for arg in node.args]
-                    return op_functions[node.func.id](*args)  # type: ignore
+                    return OP_FUNCTIONS[node.func.id](*args)  # type: ignore
             if isinstance(node, ast.Subscript):  # indexing or slicing
                 value = eval_(node.value)
                 if isinstance(node.slice, ast.Constant):
