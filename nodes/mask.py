@@ -707,9 +707,6 @@ class MaskPreview(SaveImage):
             "required": {
                 "mask": ("MASK",),
             },
-            "optional": {
-                "filename_prefix": ("STRING", {"default": "Signature"}),
-            },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
         }
 
@@ -719,9 +716,8 @@ class MaskPreview(SaveImage):
     def execute(
         self,
         mask: torch.Tensor,
-        filename_prefix: str = "Signature",
         prompt: Optional[str] = None,
         extra_pnginfo: Optional[dict] = None,
     ) -> dict[str, dict[str, list]]:
         preview = TensorImage.from_BWHC(mask).get_rgb_or_rgba().get_BWHC()
-        return self.save_images(preview, filename_prefix, prompt, extra_pnginfo)
+        return self.save_images(preview, "Signature", prompt, extra_pnginfo)
