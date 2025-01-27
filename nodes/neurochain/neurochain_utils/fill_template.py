@@ -20,7 +20,15 @@ class FillTemplate:
     def process(self, data_dict: dict, template: str):
         output = template
 
-        for key, value in data_dict.items():
-            output = output.replace(f"[{key}]", value)
+        def replace_key(template: str, data: dict, parent_path: str = "") -> str:
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    template = replace_key(template, value, parent_path + key + ".")
+                else:
+                    print(f"Replacing {parent_path}{key}")
+                    template = template.replace(f"[{parent_path}{key}]", str(value))
+            return template
+
+        output = replace_key(template, data_dict)
 
         return (output,)
