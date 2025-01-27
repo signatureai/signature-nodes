@@ -116,8 +116,9 @@ def get_node_class_mappings(nodes_directory: str):
 
     # Combine results from all workers
     for file_mappings, file_display_names in results:
-        node_class_mappings.update(file_mappings)
-        node_display_name_mappings.update(file_display_names)
+        if isinstance(file_mappings, dict) and isinstance(file_display_names, dict):
+            node_class_mappings.update(file_mappings)
+            node_display_name_mappings.update(file_display_names)
 
     return node_class_mappings, node_display_name_mappings
 
