@@ -24,6 +24,7 @@ dependencies = [
 dev = [
     "bandit>=1.8.0",
     "pre-commit>=4.0.1",
+    "pytest>=8.3.4",
     "ruff>=0.8.6",
 ]
 doc = [
@@ -45,3 +46,8 @@ select = [
 
 [tool.bandit]
 skips = ["B113", "B311"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
