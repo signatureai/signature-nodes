@@ -51,7 +51,7 @@ class InputImage:
                 "required": ("BOOLEAN", {"default": True}),
                 "include_alpha": ("BOOLEAN", {"default": False}),
                 "multiple": ("BOOLEAN", {"default": False}),
-                "value": ("STRING", {"default": ""}),
+                "value": ("STRING", {"default": "", "multiline": True}),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
             },
             "optional": {
