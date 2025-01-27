@@ -56,10 +56,7 @@ class ImageFromWeb:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        url = kwargs.get("url")
-        if not isinstance(url, str):
-            raise ValueError("URL must be a string")
+    def execute(self, url: str) -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_web(url)
         return image_array_to_tensor(img_arr)
 
@@ -93,16 +90,17 @@ class ImageFromBase64:
 
     @classmethod
     def INPUT_TYPES(cls):  # type: ignore
-        return {"required": {"base64": ("STRING", {"default": "BASE64 HERE"})}}
+        return {
+            "required": {
+                "base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})
+            }
+        }
 
     RETURN_TYPES = ("IMAGE", "MASK")
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        base64 = kwargs.get("base64")
-        if not isinstance(base64, str):
-            raise ValueError("Base64 must be a string")
+    def execute(self, base64: str) -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_base64(base64)
         return image_array_to_tensor(img_arr)
 
@@ -187,10 +185,7 @@ class FileLoader:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, str):
-            raise ValueError("Value must be a string")
+    def execute(self, value: str) -> tuple[list[dict]]:
         data = value.split("&&") if "&&" in value else [value]
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
         for i, _ in enumerate(data):
@@ -203,7 +198,6 @@ class FileLoader:
                     continue
                 item["name"] = os.path.join(input_folder, name)
                 data[i] = item
-
         return (data,)
 
 
@@ -244,10 +238,7 @@ class FolderLoader:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, str):
-            raise ValueError("Value must be a string")
+    def execute(self, value: str) -> tuple[list[dict]]:
         data = value.split("&&") if "&&" in value else [value]
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
         for i, _ in enumerate(data):
@@ -302,10 +293,7 @@ class File2ImageList:
     CLASS_ID = "file_image_list"
     OUTPUT_IS_LIST = (True,)
 
-    def execute(self, **kwargs):
-        files = kwargs.get("files")
-        if not isinstance(files, list):
-            raise ValueError("Files must be a list")
+    def execute(self, files: list[dict]) -> tuple[list[torch.Tensor]]:
         images_list = []
         for file in files:
             mimetype = file["type"]
@@ -352,10 +340,7 @@ class File2List:
     CLASS_ID = "file_list"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        files = kwargs.get("files")
-        if not isinstance(files, list):
-            raise ValueError("Files must be a list")
+    def execute(self, files: list[dict]) -> tuple[list[dict]]:
         return (files,)
 
 
