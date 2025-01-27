@@ -43,10 +43,9 @@ class TextPreview:
 
     CATEGORY = TEXT_CAT
 
-    def execute(self, **kwargs):
-        text = kwargs.get("value", [])
+    def execute(self, value: any = []) -> tuple[dict]:
         text_string = ""
-        for t in text:
+        for t in value:
             if t is None:
                 continue
             if text_string != "":
@@ -90,19 +89,8 @@ class TextCase:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, **kwargs):
-        text = kwargs.get("text") or ""
-        case = kwargs.get("case") or "lower"
-        result = text
-        if case == "lower":
-            result = text.lower()
-        if case == "upper":
-            result = text.upper()
-        if case == "capitalize":
-            result = text.capitalize()
-        if case == "title":
-            result = text.title()
-        return (result,)
+    def execute(self, text: str, case: str) -> tuple[str]:
+        return (getattr(text, case)(),)
 
 
 class TextTrim:
@@ -139,16 +127,13 @@ class TextTrim:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, **kwargs):
-        text = kwargs.get("text") or ""
-        trim_type = kwargs.get("trim_type") or "both"
-        if trim_type == "both":
-            return (text.strip(),)
-        if trim_type == "left":
-            return (text.lstrip(),)
-        if trim_type == "right":
-            return (text.rstrip(),)
-        return (text,)
+    def execute(self, text: str, trim_type: str) -> tuple[str]:
+        trim_types = {
+            "both": text.strip,
+            "left": text.lstrip,
+            "right": text.rstrip,
+        }
+        return (trim_types[trim_type](),)
 
 
 class TextSplit:
@@ -184,9 +169,7 @@ class TextSplit:
     CATEGORY = TEXT_CAT
     OUTPUT_IS_LIST = (True,)
 
-    def execute(self, **kwargs):
-        text = kwargs.get("text", "")
-        delimiter = kwargs.get("delimiter", " ")
+    def execute(self, text: str, delimiter: str) -> tuple[list[str]]:
         return (text.split(delimiter),)
 
 
@@ -224,10 +207,7 @@ class TextRegexReplace:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, **kwargs):
-        text = kwargs.get("text", "")
-        pattern = kwargs.get("pattern", "")
-        replacement = kwargs.get("replacement", "")
+    def execute(self, text: str, pattern: str, replacement: str) -> tuple[str]:
         return (re.sub(pattern, replacement, text),)
 
 
@@ -265,10 +245,7 @@ class TextFindReplace:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, **kwargs):
-        text = kwargs.get("text") or ""
-        find = kwargs.get("find") or ""
-        replace = kwargs.get("replace") or ""
+    def execute(self, text: str, find: str, replace: str) -> tuple[str]:
         return (text.replace(find, replace),)
 
 
@@ -304,9 +281,7 @@ class TextConcatenate:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, **kwargs):
-        text1 = kwargs.get("text1", "")
-        text2 = kwargs.get("text2", "")
+    def execute(self, text1: str, text2: str) -> tuple[str]:
         return (text1 + text2,)
 
 
