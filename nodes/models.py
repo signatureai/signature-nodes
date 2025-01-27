@@ -1,5 +1,6 @@
 import random
 
+import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 import torch
 from signature_core.functional.transform import cutout
@@ -75,7 +76,8 @@ class MagicEraser(SaveImage):
         filename_prefix = kwargs.get("filename_prefix", "Signature")
         prompt = kwargs.get("prompt") or ""
         extra_pnginfo = kwargs.get("extra_pnginfo")
-        model = Lama()
+        device = comfy.model_management.get_torch_device()
+        model = Lama(device)
         input_image = TensorImage.from_BWHC(image)
         input_mask = TensorImage.from_BWHC(mask)
         result = TensorImage(model.forward(input_image, input_mask), device=input_mask.device)
@@ -85,8 +87,8 @@ class MagicEraser(SaveImage):
             return (output_images,)
         result = self.save_images(output_images, filename_prefix, prompt, extra_pnginfo)
         result.update({"result": (output_images,)})
-        del model
         model = None
+        del model
         return result
 
 
@@ -155,8 +157,8 @@ class Unblur(SaveImage):
             return (output_images,)
         result = self.save_images(output_images, filename_prefix, prompt, extra_pnginfo)
         result.update({"result": (output_images,)})
-        del model
         model = None
+        del model
         return result
 
 
@@ -266,6 +268,6 @@ class BackgroundRemoval(SaveImage):
                 )
             }
         )
-        del model
         model = None
+        del model
         return result
