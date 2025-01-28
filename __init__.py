@@ -89,14 +89,6 @@ def get_node_class_mappings(nodes_directory: str):
         if not NEUROCHAIN_AVAILABLE and plugin_rel_path.startswith("neurochain"):
             return {}, {}
 
-        # Skip data modules if sagemaker is not available
-        if plugin_rel_path.startswith("data"):
-            try:
-                import sagemaker
-            except ImportError:
-                logger.warning("sagemaker package not available, skipping data modules")
-                return {}, {}
-
         try:
             module = importlib.import_module("signature-nodes.nodes." + plugin_rel_path)
 
