@@ -14,7 +14,10 @@ class ImageEmbeddings:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "endpoint_name": ("STRING", {"default": "Resnet50Embeddings-10-02-2024-16-24-45-endpoint"}),
+                "endpoint_name": (
+                    "STRING",
+                    {"default": "Resnet50Embeddings"},
+                ),
                 "image": ("IMAGE",),
             }
         }
@@ -29,15 +32,22 @@ class ImageEmbeddings:
         tensor_img = TensorImage.from_BWHC(data=image)
         base64_string = tensor_img.get_base64()
 
-        secret_name = "signature-ml-development-models-api-secret-key"  # nosec
+        secret_name = "signature-ml-production-models-api-secret-key"  # nosec
         secretsmanager_client = boto3.client("secretsmanager")
         secret_value = secretsmanager_client.get_secret_value(SecretId=secret_name)
         model_api_key = secret_value["SecretString"]
 
-        reqUrl = "https://ei2ybimz5h.execute-api.eu-west-1.amazonaws.com/development/invoke"
-        headersList = {"Accept": "*/*", "X-Api-Key": model_api_key, "Content-Type": "application/json"}
+        reqUrl = "https://ml-platform-inference.signature.ai/invoke_model"
+        headersList = {
+            "Accept": "*/*",
+            "X-Api-Key": model_api_key,
+            "Content-Type": "application/json",
+        }
 
-        payload = {"endpoint_name": endpoint_name, "inputs": {"image_b64": base64_string}}
+        payload = {
+            "endpoint_name": endpoint_name,
+            "inputs": {"image_b64": base64_string},
+        }
         payload = json.dumps(payload)
 
         infer_req_response = requests.request("POST", reqUrl, data=payload, headers=headersList).json()
