@@ -1,0 +1,55 @@
+[project]
+name = "signature-nodes"
+version = "0.1.0"
+description = "Signature Nodes"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.35.95",
+    "httpx>=0.28.1",
+    "huggingface-hub>=0.26.2",
+    "jq>=1.8.0",
+    "matplotlib>=3.10.0",
+    "opencv-python>=4.10.0.84",
+    "python-dotenv>=1.0.1",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.3",
+    "spandrel>=0.4.1",
+    "tomli-w>=1.1.0",
+    "torch>=2.5.1",
+    "transformers>=4.46.3",
+    "uuid7>=0.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.0",
+    "pre-commit>=4.0.1",
+    "pytest>=8.3.4",
+    "ruff>=0.8.6",
+]
+doc = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.5.49",
+]
+
+[tool.ruff]
+line-length = 120
+
+# Set of rules taken from https://docs.astral.sh/ruff/linter/#rule-selection
+# Default rules here: https://docs.astral.sh/ruff/configuration/
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle
+    "F",  # Pyflakes
+    "I",  # isort
+]
+
+[tool.bandit]
+skips = ["B113", "B311"]
+assert_used.skips = ["*_test.py", "*/test_*.py"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]

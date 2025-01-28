@@ -1,6 +1,6 @@
-# Signature Core for ComfyUI
+# Signature for ComfyUI
 
-![GitHub](https://img.shields.io/github/license/signatureai/signature-core-nodes)
+![GitHub](https://img.shields.io/github/license/signatureai/signature-nodes)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&logo=PyTorch&logoColor=white)
 ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?&logo=numpy&logoColor=white)
@@ -10,7 +10,7 @@
 A powerful collection of custom nodes for ComfyUI that provides essential image
 processing, data handling, and workflow management capabilities.
 
-📚 **[View Full Documentation](https://signatureai.github.io/signature-core-nodes/)**
+📚 **[View Full Documentation](https://signatureai.github.io/signature-nodes/)**
 
 ## 🚀 Installation
 
@@ -23,7 +23,7 @@ cd ComfyUI/custom_nodes/
 2. Clone the repository:
 
 ```bash
-git clone https://github.com/signatureai/signature-core-nodes.git ComfyUI/custom_nodes/signature-core-nodes
+git clone https://github.com/signatureai/signature-nodes.git
 ```
 
 3. Install the required dependencies:
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 ## 💻 Usage
 
-After installation, the Signature Core nodes will be available in your ComfyUI workspace
+After installation, the Signature nodes will be available in your ComfyUI workspace
 under the "🔲 Signature Nodes" category. Each node is designed to be intuitive and
 includes proper input validation and error handling.
 
@@ -77,29 +77,29 @@ includes proper input validation and error handling.
 
 ## 🛠 Development Setup
 
-1. Install development dependencies:
+1. Install uv if not already installed:
 
-```bash
-pip install -r dev-requirements.txt
+```shell
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-2. Install pre-commit hooks:
+2. Install the python environment:
 
-```bash
-pre-commit install
+```shell
+uv sync
 ```
 
-The project uses pre-commit hooks for:
+3. Install the pre-commit hooks for checks and file format fixed (after doing this, git will "remember" that this uv
+   environment is the python environment which should be used to run the pre-commit hooks):
 
-- Code formatting and linting
-- Syntax checking
-- Security checks
-- File consistency
+```shell
+uv run pre-commit install
+```
 
-3. Generate documentation:
+4. Generate documentation:
 
 ```bash
-python scripts/generate_docs.py
+uv run python scripts/generate_docs.py
 ```
 
 ## 📚 Documentation
@@ -110,13 +110,13 @@ locally:
 1. Install MkDocs and dependencies:
 
 ```bash
-pip install mkdocs mkdocs-material
+uv sync --group doc
 ```
 
 2. Serve the documentation:
 
 ```bash
-mkdocs serve
+uv run mkdocs serve
 ```
 
 The documentation will be available at `http://localhost:8000`.

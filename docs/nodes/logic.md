@@ -4,20 +4,19 @@
 
 Switches between two input values based on a boolean condition.
 
-A logic gate that selects between two inputs of any type based on a boolean condition.
-When the condition is True, it returns the 'true' value; otherwise, it returns the
-'false' value. This node is useful for creating conditional workflows and dynamic value
-selection.
+A logic gate that selects between two inputs of any type based on a boolean condition. When the
+condition is True, it returns the 'true' value; otherwise, it returns the 'false' value. This node
+is useful for creating conditional workflows and dynamic value selection.
 
 ### Inputs
 
-| Group    | Name      | Type                                  | Default | Extras |
-| -------- | --------- | ------------------------------------- | ------- | ------ |
-| required | condition | `BOOLEAN`                             | True    |        |
-| required | on_true   | `<ast.Name object at 0x7f1c090836d0>` |         |        |
-| required | on_false  | `<ast.Name object at 0x7f1c09083d60>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | condition | `BOOLEAN` | True |  |
+| required | on_true | `any_type` |  |  |
+| required | on_false | `any_type` |  |  |
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class Switch:
@@ -59,7 +58,6 @@ selection.
         CATEGORY = LOGIC_CAT
 
         def check_lazy_status(self, condition, on_true=None, on_false=None):
-
             if condition and on_true is None:
                 on_true = ["on_true"]
                 if isinstance(on_true, ExecutionBlocker):
@@ -82,18 +80,18 @@ selection.
 
 Controls flow execution based on a boolean condition.
 
-A utility node that blocks or allows execution flow based on a boolean flag. When the
-continue flag is False, it blocks execution by returning an ExecutionBlocker. When True,
-it passes through the input value unchanged.
+A utility node that blocks or allows execution flow based on a boolean flag. When the continue
+flag is False, it blocks execution by returning an ExecutionBlocker. When True, it passes through
+the input value unchanged.
 
 ### Inputs
 
-| Group    | Name     | Type                                  | Default | Extras |
-| -------- | -------- | ------------------------------------- | ------- | ------ |
-| required | continue | `BOOLEAN`                             | False   |        |
-| required | in       | `<ast.Name object at 0x7f1c090837c0>` | None    |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | continue | `BOOLEAN` | False |  |
+| required | in | `any_type` | None |  |
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class Blocker:
@@ -142,26 +140,26 @@ it passes through the input value unchanged.
 
 Compares two input values based on a specified comparison operation.
 
-A logic gate that evaluates a comparison between two inputs of any type. The comparison
-is determined by the specified operation, which can include equality, inequality, and
-relational comparisons. This node is useful for implementing conditional logic based on
-the relationship between two values.
+A logic gate that evaluates a comparison between two inputs of any type. The comparison is determined
+by the specified operation, which can include equality, inequality, and relational comparisons. This
+node is useful for implementing conditional logic based on the relationship between two values.
 
 ### Inputs
 
-| Group    | Name       | Type                                  | Default | Extras |
-| -------- | ---------- | ------------------------------------- | ------- | ------ |
-| required | a          | `<ast.Name object at 0x7f1c09083160>` |         |        |
-| required | b          | `<ast.Name object at 0x7f1c09081ae0>` |         |        |
-| required | comparison | `<ast.Name object at 0x7f1c09082ad0>` | a == b  |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | a | `any_type` |  |  |
+| required | b | `any_type` |  |  |
+| required | comparison | `compare_functions` | a == b |  |
 
 ### Returns
 
-| Name    | Type      |
-| ------- | --------- |
+| Name | Type |
+|------|------|
 | boolean | `BOOLEAN` |
 
-??? note "Source code in logic.py"
+
+??? note "Source code"
 
     ```python
     class Compare:
@@ -247,12 +245,11 @@ the relationship between two values.
 
 Initiates a loop with optional initial values for each iteration.
 
-A control node that starts a loop, allowing for a specified number of iterations. It can
-accept optional initial values for each iteration, which can be used within the loop.
-This node is useful for creating iterative workflows where the same set of operations is
-performed multiple times.
+A control node that starts a loop, allowing for a specified number of iterations. It can accept
+optional initial values for each iteration, which can be used within the loop. This node is useful
+for creating iterative workflows where the same set of operations is performed multiple times.
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class LoopStart:
@@ -301,12 +298,11 @@ performed multiple times.
 
 Ends a loop and returns the final values after the loop execution.
 
-A control node that signifies the end of a loop initiated by a `LoopStart` node. It
-processes the flow control signal and can return the final values from the loop
-iterations. This node is useful for managing the completion of iterative workflows and
-retrieving results after looping.
+A control node that signifies the end of a loop initiated by a `LoopStart` node. It processes the
+flow control signal and can return the final values from the loop iterations. This node is useful
+for managing the completion of iterative workflows and retrieving results after looping.
 
-??? note "Source code in logic.py"
+??? note "Source code"
 
     ```python
     class LoopEnd:

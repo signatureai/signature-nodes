@@ -79,9 +79,7 @@ class RandomCropAugmentation:
         max_window = kwargs.get("max_window") or 1024
         percent = kwargs.get("percent") or 1.0
         augmentation = kwargs.get("augmentation")
-        augmentation = random_crop_augmentation(
-            height, width, min_window, max_window, percent, augmentation
-        )
+        augmentation = random_crop_augmentation(height, width, min_window, max_window, percent, augmentation)
         return (augmentation,)
 
 
@@ -209,12 +207,8 @@ class ComposeAugmentation:
         if image is None and mask is not None:
             image = torch.zeros_like(mask)
 
-        image_tensor = (
-            TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else None
-        )
-        mask_tensor = (
-            TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else None
-        )
+        image_tensor = TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else None
+        mask_tensor = TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else None
 
         total_images, total_masks = compose_augmentation(
             augmentation=augmentation,
@@ -332,9 +326,7 @@ class RotationAugmentation:
         limit = kwargs.get("limit") or 45
         percent = kwargs.get("percent") or 0.5
         augmentation = kwargs.get("augmentation")
-        augmentation = rotation_augmentation(
-            limit=limit, percent=percent, augmentation=augmentation
-        )
+        augmentation = rotation_augmentation(limit=limit, percent=percent, augmentation=augmentation)
         return (augmentation,)
 
 

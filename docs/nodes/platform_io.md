@@ -4,24 +4,23 @@
 
 Processes and validates image inputs from various sources for the platform.
 
-This class handles image input processing, supporting both single and multiple images
-from URLs or base64 strings. It includes functionality for alpha channel management and
-mask generation.
+This class handles image input processing, supporting both single and multiple images from URLs or
+base64 strings. It includes functionality for alpha channel management and mask generation.
 
 ### Inputs
 
-| Group    | Name          | Type                                  | Default     | Extras         |
-| -------- | ------------- | ------------------------------------- | ----------- | -------------- |
-| required | title         | `STRING`                              | Input Image |                |
-| required | subtype       | `LIST`                                |             |                |
-| required | required      | `BOOLEAN`                             | True        |                |
-| required | include_alpha | `BOOLEAN`                             | False       |                |
-| required | multiple      | `BOOLEAN`                             | False       |                |
-| required | value         | `STRING`                              |             |                |
-| required | metadata      | `STRING`                              | {}          | multiline=True |
-| optional | fallback      | `<ast.Name object at 0x7f1c090936d0>` |             |                |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Image |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | include_alpha | `BOOLEAN` | False |  |
+| required | multiple | `BOOLEAN` | False |  |
+| required | value | `STRING` |  |  |
+| required | metadata | `STRING` | {} | multiline=True |
+| optional | fallback | `any_type` |  |  |
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputImage:
@@ -167,29 +166,30 @@ mask generation.
 
 Manages file downloads from external services using authentication tokens.
 
-Handles connections to external services (currently Google Drive) to download files
-using provided authentication tokens and file identifiers.
+Handles connections to external services (currently Google Drive) to download files using provided
+authentication tokens and file identifiers.
 
 ### Inputs
 
-| Group    | Name      | Type      | Default         | Extras         |
-| -------- | --------- | --------- | --------------- | -------------- |
-| required | title     | `STRING`  | Input Connector |                |
-| required | subtype   | `LIST`    |                 |                |
-| required | required  | `BOOLEAN` | True            |                |
-| required | override  | `BOOLEAN` | False           |                |
-| required | token     | `STRING`  |                 |                |
-| required | mime_type | `STRING`  | image/png       |                |
-| required | value     | `STRING`  |                 |                |
-| required | metadata  | `STRING`  | {}              | multiline=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Connector |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | override | `BOOLEAN` | False |  |
+| required | token | `STRING` |  |  |
+| required | mime_type | `STRING` | image/png |  |
+| required | value | `STRING` |  |  |
+| required | metadata | `STRING` | {} | multiline=True |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | file | `FILE` |
 
-??? note "Source code in platform_io.py"
+
+??? note "Source code"
 
     ```python
     class InputConnector:
@@ -257,9 +257,7 @@ using provided authentication tokens and file identifiers.
                 raise ValueError("Override must be a boolean")
             connector = GoogleConnector(token=token)
             input_folder = os.path.join(BASE_COMFY_DIR, "input")
-            data = connector.download(
-                file_id=value, mime_type=mime_type, output_path=input_folder, override=override
-            )
+            data = connector.download(file_id=value, mime_type=mime_type, output_path=input_folder, override=override)
             clean_memory()
             return (data,)
 
@@ -270,27 +268,28 @@ using provided authentication tokens and file identifiers.
 
 Processes text input with fallback support.
 
-Handles text input processing with support for different subtypes and optional fallback
-values when input is empty.
+Handles text input processing with support for different subtypes and optional fallback values
+when input is empty.
 
 ### Inputs
 
-| Group    | Name     | Type      | Default    | Extras          |
-| -------- | -------- | --------- | ---------- | --------------- |
-| required | title    | `STRING`  | Input Text |                 |
-| required | subtype  | `LIST`    |            |                 |
-| required | required | `BOOLEAN` | True       |                 |
-| required | value    | `STRING`  |            | multiline=True  |
-| required | metadata | `STRING`  | {}         | multiline=True  |
-| optional | fallback | `STRING`  |            | forceInput=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Text |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `STRING` |  | multiline=True |
+| required | metadata | `STRING` | {} | multiline=True |
+| optional | fallback | `STRING` |  | forceInput=True |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
 
-??? note "Source code in platform_io.py"
+
+??? note "Source code"
 
     ```python
     class InputText:
@@ -355,20 +354,20 @@ values when input is empty.
 
 Processes numeric inputs with type conversion.
 
-Handles numeric input processing with support for both integer and float values,
-including automatic type conversion based on the specified subtype.
+Handles numeric input processing with support for both integer and float values, including
+automatic type conversion based on the specified subtype.
 
 ### Inputs
 
-| Group    | Name     | Type      | Default      | Extras                   |
-| -------- | -------- | --------- | ------------ | ------------------------ |
-| required | title    | `STRING`  | Input Number |                          |
-| required | subtype  | `LIST`    |              |                          |
-| required | required | `BOOLEAN` | True         |                          |
-| required | value    | `FLOAT`   | 0            | max=18446744073709551615 |
-| required | metadata | `STRING`  | {}           | multiline=True           |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Number |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `FLOAT` | 0 | max=18446744073709551615 |
+| required | metadata | `STRING` | {} | multiline=True |
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class InputNumber:
@@ -436,21 +435,22 @@ Handles boolean input processing with validation and type checking.
 
 ### Inputs
 
-| Group    | Name     | Type      | Default       | Extras         |
-| -------- | -------- | --------- | ------------- | -------------- |
-| required | title    | `STRING`  | Input Boolean |                |
-| required | subtype  | `LIST`    |               |                |
-| required | required | `BOOLEAN` | True          |                |
-| required | value    | `BOOLEAN` | False         |                |
-| required | metadata | `STRING`  | {}            | multiline=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Boolean |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `BOOLEAN` | False |  |
+| required | metadata | `STRING` | {} | multiline=True |
 
 ### Returns
 
-| Name    | Type      |
-| ------- | --------- |
+| Name | Type |
+|------|------|
 | boolean | `BOOLEAN` |
 
-??? note "Source code in platform_io.py"
+
+??? note "Source code"
 
     ```python
     class InputBoolean:
@@ -507,20 +507,20 @@ Handles boolean input processing with validation and type checking.
 
 Manages output processing and file saving for various data types.
 
-Handles the processing and saving of different output types including images, masks,
-numbers, and strings. Includes support for thumbnail generation and metadata management.
+Handles the processing and saving of different output types including images, masks, numbers, and
+strings. Includes support for thumbnail generation and metadata management.
 
 ### Inputs
 
-| Group    | Name        | Type                                  | Default      | Extras         |
-| -------- | ----------- | ------------------------------------- | ------------ | -------------- |
-| required | title       | `STRING`                              | Output Image |                |
-| required | subtype     | `LIST`                                |              |                |
-| required | metadata    | `STRING`                              | {}           | multiline=True |
-| required | value       | `<ast.Name object at 0x7f1c0908e590>` |              |                |
-| hidden   | output_path | `STRING`                              | output       |                |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Output Image |  |
+| required | subtype | `LIST` |  |  |
+| required | metadata | `STRING` | {} | multiline=True |
+| required | value | `any_type` |  |  |
+| hidden | output_path | `STRING` | output |  |
 
-??? note "Source code in platform_io.py"
+??? note "Source code"
 
     ```python
     class Output:
@@ -674,9 +674,7 @@ numbers, and strings. Includes support for thumbnail generation and metadata man
                         raise ValueError(f"Unsupported output type: {type(item)}")
                 else:
                     value_json = json.dumps(item) if main_subtype == "dict" else item
-                    results.append(
-                        {"title": title, "type": main_subtype, "metadata": metadata, "value": value_json}
-                    )
+                    results.append({"title": title, "type": main_subtype, "metadata": metadata, "value": value_json})
             clean_memory()
             return {"ui": {"signature_output": results}}
 

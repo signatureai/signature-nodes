@@ -215,9 +215,7 @@ class InputConnector:
             raise ValueError("Override must be a boolean")
         connector = GoogleConnector(token=token)
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
-        data = connector.download(
-            file_id=value, mime_type=mime_type, output_path=input_folder, override=override
-        )
+        data = connector.download(file_id=value, mime_type=mime_type, output_path=input_folder, override=override)
         clean_memory()
         return (data,)
 
@@ -532,9 +530,7 @@ class Output:
                     raise ValueError(f"Unsupported output type: {type(item)}")
             else:
                 value_json = json.dumps(item) if main_subtype == "dict" else item
-                results.append(
-                    {"title": title, "type": main_subtype, "metadata": metadata, "value": value_json}
-                )
+                results.append({"title": title, "type": main_subtype, "metadata": metadata, "value": value_json})
         clean_memory()
         return {"ui": {"signature_output": results}}
 
@@ -569,3 +565,24 @@ class PlatformEnvs:
             ORG_ID,
             ORG_TOKEN,
         )
+
+
+class Report:
+    @classmethod
+    def INPUT_TYPES(cls):  # type: ignore
+        return {
+            "required": {
+                "value": (any_type,),
+                "report": ("STRING", {"default": "", "multiline": True}),
+            },
+        }
+
+    RETURN_TYPES = (any_type,)
+    RETURN_NAMES = ("value",)
+    FUNCTION = "execute"
+    CATEGORY = PLATFORM_IO_CAT
+    OUTPUT_NODE = True
+
+    def execute(self, value, report):
+        data = {"type": "string", "value": report}
+        return {"ui": {"signature_report": [data]}, "result": (value,)}

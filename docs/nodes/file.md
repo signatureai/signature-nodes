@@ -4,23 +4,24 @@
 
 Fetches and converts web images to ComfyUI-compatible tensors.
 
-Downloads an image from a URL and processes it into ComfyUI's expected tensor format.
-Handles both RGB and RGBA images with automatic mask generation for transparency.
+Downloads an image from a URL and processes it into ComfyUI's expected tensor format. Handles both RGB
+and RGBA images with automatic mask generation for transparency.
 
 ### Inputs
 
-| Group    | Name | Type     | Default  | Extras |
-| -------- | ---- | -------- | -------- | ------ |
-| required | url  | `STRING` | URL HERE |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | url | `STRING` | URL HERE |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class ImageFromWeb:
@@ -72,23 +73,24 @@ Handles both RGB and RGBA images with automatic mask generation for transparency
 
 Converts base64 image strings to ComfyUI-compatible tensors.
 
-Processes base64-encoded image data into tensor format suitable for ComfyUI operations.
-Handles both RGB and RGBA images with proper mask generation.
+Processes base64-encoded image data into tensor format suitable for ComfyUI operations. Handles
+both RGB and RGBA images with proper mask generation.
 
 ### Inputs
 
-| Group    | Name   | Type     | Default     | Extras |
-| -------- | ------ | -------- | ----------- | ------ |
-| required | base64 | `STRING` | BASE64 HERE |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | base64 | `STRING` | BASE64 HERE |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class ImageFromBase64:
@@ -140,22 +142,23 @@ Handles both RGB and RGBA images with proper mask generation.
 
 Converts ComfyUI image tensors to base64-encoded strings.
 
-Transforms image tensors from ComfyUI's format into base64-encoded strings, suitable for
-web transmission or storage in text format.
+Transforms image tensors from ComfyUI's format into base64-encoded strings, suitable for web
+transmission or storage in text format.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class Base64FromImage:
@@ -207,22 +210,23 @@ web transmission or storage in text format.
 
 Processes string input into ComfyUI-compatible file data.
 
-Converts JSON-formatted string data into file references with proper paths for ComfyUI
-processing. Handles both single files and multiple files separated by '&&'.
+Converts JSON-formatted string data into file references with proper paths for ComfyUI processing.
+Handles both single files and multiple files separated by '&&'.
 
 ### Inputs
 
-| Group    | Name  | Type     | Default | Extras |
-| -------- | ----- | -------- | ------- | ------ |
-| required | value | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `STRING` |  |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | file | `FILE` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class FileLoader:
@@ -288,22 +292,23 @@ processing. Handles both single files and multiple files separated by '&&'.
 
 Processes folder paths into ComfyUI-compatible file data.
 
-Converts folder path information into properly formatted file references for ComfyUI
-processing. Supports both single and multiple folder paths.
+Converts folder path information into properly formatted file references for ComfyUI processing.
+Supports both single and multiple folder paths.
 
 ### Inputs
 
-| Group    | Name  | Type     | Default | Extras |
-| -------- | ----- | -------- | ------- | ------ |
-| required | value | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `STRING` |  |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | file | `FILE` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class FolderLoader:
@@ -368,22 +373,23 @@ processing. Supports both single and multiple folder paths.
 
 Converts file references to a list of image tensors.
 
-Processes a list of file references, extracting and converting supported image files
-into ComfyUI-compatible tensor format.
+Processes a list of file references, extracting and converting supported image files into
+ComfyUI-compatible tensor format.
 
 ### Inputs
 
-| Group    | Name  | Type   | Default | Extras |
-| -------- | ----- | ------ | ------- | ------ |
-| required | files | `FILE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | files | `FILE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class File2ImageList:
@@ -450,17 +456,18 @@ Processes file input data into a consistent list format for further ComfyUI oper
 
 ### Inputs
 
-| Group    | Name  | Type   | Default | Extras |
-| -------- | ----- | ------ | ------- | ------ |
-| required | files | `FILE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | files | `FILE` |  |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | list | `LIST` |
 
-??? note "Source code in file.py"
+
+??? note "Source code"
 
     ```python
     class File2List:
@@ -511,10 +518,10 @@ Processes file input data into a consistent list format for further ComfyUI oper
 
 Rotates an image and mask by a specified angle.
 
-This node provides functionality to rotate images and masks while optionally adjusting
-the output size to fit the entire rotated content.
+This node provides functionality to rotate images and masks while optionally adjusting the output
+size to fit the entire rotated content.
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class Rotate:
@@ -550,10 +557,10 @@ the output size to fit the entire rotated content.
 
 Applies Gaussian blur to a mask.
 
-This node performs Gaussian blur on mask inputs with configurable radius, sigma and
-iteration parameters. Useful for softening mask edges or creating smooth transitions.
+This node performs Gaussian blur on mask inputs with configurable radius, sigma and iteration
+parameters. Useful for softening mask edges or creating smooth transitions.
 
-??? note "Source code in file.py"
+??? note "Source code"
 
     ```python
     class MaskGaussianBlur:

@@ -4,23 +4,24 @@
 
 A node that handles floating-point number inputs with configurable parameters.
 
-This node provides functionality for processing floating-point numbers within a
-specified range and step size. It can be used as a basic input node in computational
-graphs where decimal number precision is required.
+This node provides functionality for processing floating-point numbers within a specified range
+and step size. It can be used as a basic input node in computational graphs where decimal
+number precision is required.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras                              |
-| -------- | ----- | ------- | ------- | ----------------------------------- |
-| required | value | `FLOAT` | 0       | max=18446744073709551615, step=0.01 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `FLOAT` | 0 | max=18446744073709551615, step=0.01 |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
 
-??? note "Source code in primitives.py"
+
+??? note "Source code"
 
     ```python
     class Float:
@@ -78,17 +79,18 @@ number values are required.
 
 ### Inputs
 
-| Group    | Name  | Type  | Default | Extras                           |
-| -------- | ----- | ----- | ------- | -------------------------------- |
-| required | value | `INT` | 0       | max=18446744073709551615, step=1 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `INT` | 0 | max=18446744073709551615, step=1 |
 
 ### Returns
 
-| Name | Type  |
-| ---- | ----- |
-| int  | `INT` |
+| Name | Type |
+|------|------|
+| int | `INT` |
 
-??? note "Source code in primitives.py"
+
+??? note "Source code"
 
     ```python
     class Int:
@@ -140,22 +142,23 @@ number values are required.
 
 A node that handles single-line string inputs.
 
-This node provides functionality for processing single-line text input. It can be used
-as a basic input node in computational graphs where text processing is required.
+This node provides functionality for processing single-line text input. It can be used as a
+basic input node in computational graphs where text processing is required.
 
 ### Inputs
 
-| Group    | Name  | Type     | Default | Extras |
-| -------- | ----- | -------- | ------- | ------ |
-| required | value | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `STRING` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
 
-??? note "Source code in primitives.py"
+
+??? note "Source code"
 
     ```python
     class String:
@@ -237,23 +240,24 @@ as a basic input node in computational graphs where text processing is required.
 
 A node that handles multi-line string inputs.
 
-This node provides functionality for processing multi-line text input. It can be used as
-a basic input node in computational graphs where larger text blocks or formatted text
+This node provides functionality for processing multi-line text input. It can be used as a
+basic input node in computational graphs where larger text blocks or formatted text
 processing is required.
 
 ### Inputs
 
-| Group    | Name  | Type     | Default | Extras         |
-| -------- | ----- | -------- | ------- | -------------- |
-| required | value | `STRING` |         | multiline=True |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `STRING` |  | multiline=True |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
 
-??? note "Source code in primitives.py"
+
+??? note "Source code"
 
     ```python
     class StringMultiline:
@@ -299,22 +303,23 @@ processing is required.
 
 A node that handles boolean inputs.
 
-This node provides functionality for processing boolean (True/False) values. It can be
-used as a basic input node in computational graphs where conditional logic is required.
+This node provides functionality for processing boolean (True/False) values. It can be used
+as a basic input node in computational graphs where conditional logic is required.
 
 ### Inputs
 
-| Group    | Name  | Type      | Default | Extras |
-| -------- | ----- | --------- | ------- | ------ |
-| required | value | `BOOLEAN` | False   |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `BOOLEAN` | False |  |
 
 ### Returns
 
-| Name    | Type      |
-| ------- | --------- |
+| Name | Type |
+|------|------|
 | boolean | `BOOLEAN` |
 
-??? note "Source code in primitives.py"
+
+??? note "Source code"
 
     ```python
     class Boolean:

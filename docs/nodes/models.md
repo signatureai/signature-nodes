@@ -4,25 +4,25 @@
 
 Removes unwanted content from images using the Lama inpainting model.
 
-This class provides functionality to erase and reconstruct image regions based on a
-provided mask. The Lama model intelligently fills in the masked areas with contextually
-appropriate content.
+This class provides functionality to erase and reconstruct image regions based on a provided mask.
+The Lama model intelligently fills in the masked areas with contextually appropriate content.
 
 ### Inputs
 
-| Group    | Name    | Type    | Default | Extras |
-| -------- | ------- | ------- | ------- | ------ |
-| required | image   | `IMAGE` |         |        |
-| required | mask    | `MASK`  |         |        |
-| required | preview | `LIST`  |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | mask | `MASK` |  |  |
+| required | preview | `LIST` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in models.py"
+
+??? note "Source code"
 
     ```python
     class MagicEraser(SaveImage):
@@ -108,24 +108,24 @@ appropriate content.
 
 Enhances image clarity by reducing blur using the SeeMore model.
 
-This class implements image deblurring functionality using the SeeMore neural network
-model. It's effective for correcting motion blur, out-of-focus areas, and general image
-softness.
+This class implements image deblurring functionality using the SeeMore neural network model.
+It's effective for correcting motion blur, out-of-focus areas, and general image softness.
 
 ### Inputs
 
-| Group    | Name    | Type    | Default | Extras |
-| -------- | ------- | ------- | ------- | ------ |
-| required | image   | `IMAGE` |         |        |
-| required | preview | `LIST`  |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | preview | `LIST` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in models.py"
+
+??? note "Source code"
 
     ```python
     class Unblur(SaveImage):
@@ -204,27 +204,27 @@ softness.
 
 Separates foreground subjects from image backgrounds using AI segmentation models.
 
-This class provides multiple AI models for background removal, offering different
-approaches and quality levels for various use cases. It can output both masked and RGBA
-versions of the results.
+This class provides multiple AI models for background removal, offering different approaches and
+quality levels for various use cases. It can output both masked and RGBA versions of the results.
 
 ### Inputs
 
-| Group    | Name       | Type    | Default | Extras |
-| -------- | ---------- | ------- | ------- | ------ |
-| required | model_name | `LIST`  |         |        |
-| required | preview    | `LIST`  |         |        |
-| required | image      | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | model_name | `LIST` |  |  |
+| required | preview | `LIST` |  |  |
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
 
-??? note "Source code in models.py"
+
+??? note "Source code"
 
     ```python
     class BackgroundRemoval(SaveImage):

@@ -4,34 +4,35 @@
 
 Automatically crops an image based on a mask content.
 
-This node detects non-zero regions in a mask and crops both the image and mask to those
-regions, with optional padding. Useful for removing empty space around subjects or
-focusing on specific masked areas.
+This node detects non-zero regions in a mask and crops both the image and mask
+to those regions, with optional padding. Useful for removing empty space around
+subjects or focusing on specific masked areas.
 
 ### Inputs
 
-| Group    | Name           | Type    | Default | Extras                      |
-| -------- | -------------- | ------- | ------- | --------------------------- |
-| required | image          | `IMAGE` |         |                             |
-| required | mask           | `MASK`  |         |                             |
-| required | mask_threshold | `FLOAT` | 0.1     | min=0.0, max=1.0, step=0.01 |
-| required | left_padding   | `INT`   | 0       |                             |
-| required | right_padding  | `INT`   | 0       |                             |
-| required | top_padding    | `INT`   | 0       |                             |
-| required | bottom_padding | `INT`   | 0       |                             |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | mask | `MASK` |  |  |
+| required | mask_threshold | `FLOAT` | 0.1 | min=0.0, max=1.0, step=0.01 |
+| required | left_padding | `INT` | 0 |  |
+| required | right_padding | `INT` | 0 |  |
+| required | top_padding | `INT` | 0 |  |
+| required | bottom_padding | `INT` | 0 |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
-| int   | `INT`   |
-| int   | `INT`   |
-| int   | `INT`   |
-| int   | `INT`   |
+| mask | `MASK` |
+| int | `INT` |
+| int | `INT` |
+| int | `INT` |
+| int | `INT` |
 
-??? note "Source code in image_processing.py"
+
+??? note "Source code"
 
     ```python
     class AutoCrop:
@@ -124,22 +125,23 @@ maintaining aspect ratio is important.
 
 ### Inputs
 
-| Group    | Name          | Type      | Default | Extras                         |
-| -------- | ------------- | --------- | ------- | ------------------------------ |
-| optional | image         | `IMAGE`   | None    |                                |
-| optional | mask          | `MASK`    | None    |                                |
-| optional | factor        | `FLOAT`   | 2.0     | min=0.01, max=100.0, step=0.01 |
-| optional | interpolation | `LIST`    |         |                                |
-| optional | antialias     | `BOOLEAN` | True    |                                |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| optional | image | `IMAGE` | None |  |
+| optional | mask | `MASK` | None |  |
+| optional | factor | `FLOAT` | 2.0 | min=0.01, max=100.0, step=0.01 |
+| optional | interpolation | `LIST` |  |  |
+| optional | antialias | `BOOLEAN` | True |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
 
-??? note "Source code in image_processing.py"
+
+??? note "Source code"
 
     ```python
     class Rescale:
@@ -189,9 +191,7 @@ maintaining aspect ratio is important.
                     "image": ("IMAGE", {"default": None}),
                     "mask": ("MASK", {"default": None}),
                     "factor": ("FLOAT", {"default": 2.0, "min": 0.01, "max": 100.0, "step": 0.01}),
-                    "interpolation": (
-                        ["nearest", "nearest-exact", "bilinear", "bicubic", "box", "hamming", "lanczos"],
-                    ),
+                    "interpolation": (["nearest", "nearest-exact", "bilinear", "bicubic", "box", "hamming", "lanczos"],),
                     "antialias": ("BOOLEAN", {"default": True}),
                 },
             }
@@ -210,14 +210,10 @@ maintaining aspect ratio is important.
                 raise ValueError("Either image or mask must be provided")
 
             input_image = (
-                TensorImage.from_BWHC(image)
-                if isinstance(image, torch.Tensor)
-                else TensorImage(torch.zeros((1, 3, 1, 1)))
+                TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
             )
             input_mask = (
-                TensorImage.from_BWHC(mask)
-                if isinstance(mask, torch.Tensor)
-                else TensorImage(torch.zeros((1, 1, 1, 1)))
+                TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else TensorImage(torch.zeros((1, 1, 1, 1)))
             )
             output_image = rescale(
                 input_image,
@@ -244,30 +240,31 @@ maintaining aspect ratio is important.
 
 Resizes images and masks to specific dimensions with multiple sizing modes.
 
-A versatile resizing node that supports multiple modes for handling aspect ratio and
-provides fine control over interpolation methods. Suitable for preparing images for
-specific size requirements while maintaining quality.
+A versatile resizing node that supports multiple modes for handling aspect ratio
+and provides fine control over interpolation methods. Suitable for preparing
+images for specific size requirements while maintaining quality.
 
 ### Inputs
 
-| Group    | Name          | Type      | Default | Extras                    |
-| -------- | ------------- | --------- | ------- | ------------------------- |
-| optional | image         | `IMAGE`   | None    |                           |
-| optional | mask          | `MASK`    | None    |                           |
-| optional | width         | `INT`     | 1024    | min=32, step=2, max=40960 |
-| optional | height        | `INT`     | 1024    | min=32, step=2, max=40960 |
-| optional | mode          | `LIST`    |         |                           |
-| optional | interpolation | `LIST`    |         |                           |
-| optional | antialias     | `BOOLEAN` | True    |                           |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| optional | image | `IMAGE` | None |  |
+| optional | mask | `MASK` | None |  |
+| optional | width | `INT` | 1024 | min=32, step=2, max=40960 |
+| optional | height | `INT` | 1024 | min=32, step=2, max=40960 |
+| optional | mode | `LIST` |  |  |
+| optional | interpolation | `LIST` |  |  |
+| optional | antialias | `BOOLEAN` | True |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
 
-??? note "Source code in image_processing.py"
+
+??? note "Source code"
 
     ```python
     class Resize:
@@ -374,27 +371,28 @@ specific size requirements while maintaining quality.
 
 Rotates images and masks by a specified angle with optional zoom adjustment.
 
-Performs rotation of images and masks with control over whether to zoom to fit the
-entire rotated content. Useful for reorienting content while managing the trade-off
-between content preservation and output size.
+Performs rotation of images and masks with control over whether to zoom to fit
+the entire rotated content. Useful for reorienting content while managing the
+trade-off between content preservation and output size.
 
 ### Inputs
 
-| Group    | Name        | Type      | Default | Extras                     |
-| -------- | ----------- | --------- | ------- | -------------------------- |
-| optional | image       | `IMAGE`   | None    |                            |
-| optional | mask        | `MASK`    | None    |                            |
-| optional | angle       | `FLOAT`   | 0.0     | min=0, max=360.0, step=1.0 |
-| optional | zoom_to_fit | `BOOLEAN` | False   |                            |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| optional | image | `IMAGE` | None |  |
+| optional | mask | `MASK` | None |  |
+| optional | angle | `FLOAT` | 0.0 | min=0, max=360.0, step=1.0 |
+| optional | zoom_to_fit | `BOOLEAN` | False |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
-| mask  | `MASK`  |
+| mask | `MASK` |
 
-??? note "Source code in image_processing.py"
+
+??? note "Source code"
 
     ```python
     class Rotate:
@@ -456,14 +454,10 @@ between content preservation and output size.
             zoom_to_fit = kwargs.get("zoom_to_fit", False)
 
             input_image = (
-                TensorImage.from_BWHC(image)
-                if isinstance(image, torch.Tensor)
-                else TensorImage(torch.zeros((1, 3, 1, 1)))
+                TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
             )
             input_mask = (
-                TensorImage.from_BWHC(mask)
-                if isinstance(mask, torch.Tensor)
-                else TensorImage(torch.zeros((1, 1, 1, 1)))
+                TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else TensorImage(torch.zeros((1, 1, 1, 1)))
             )
             output_image = rotate(input_image, angle, zoom_to_fit).get_BWHC()
             output_mask = rotate(input_mask, angle, zoom_to_fit).get_BWHC()
@@ -480,25 +474,26 @@ between content preservation and output size.
 
 Creates masked cutouts from images with both RGB and RGBA outputs.
 
-Extracts portions of an image based on a mask, providing both RGB and RGBA versions of
-the result. Useful for isolating subjects or creating transparent cutouts for
-compositing.
+Extracts portions of an image based on a mask, providing both RGB and RGBA
+versions of the result. Useful for isolating subjects or creating transparent
+cutouts for compositing.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
-| required | mask  | `MASK`  |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | mask | `MASK` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 | image | `IMAGE` |
 
-??? note "Source code in image_processing.py"
+
+??? note "Source code"
 
     ```python
     class Cutout:
@@ -573,30 +568,31 @@ compositing.
 
 AI-powered image upscaling with tiled processing and flexible scaling modes.
 
-A comprehensive image upscaling node that leverages AI models for high-quality image
-enlargement. Supports both factor-based rescaling and target size resizing while
-efficiently managing GPU memory through tiled processing. Compatible with various AI
-upscaling models and includes multiple resampling methods for final adjustments.
+A comprehensive image upscaling node that leverages AI models for high-quality image enlargement.
+Supports both factor-based rescaling and target size resizing while efficiently managing GPU
+memory through tiled processing. Compatible with various AI upscaling models and includes
+multiple resampling methods for final adjustments.
 
 ### Inputs
 
-| Group    | Name              | Type                                  | Default | Extras                         |
-| -------- | ----------------- | ------------------------------------- | ------- | ------------------------------ |
-| required | image             | `IMAGE`                               |         |                                |
-| required | upscale_model     | `<ast.Call object at 0x7f1c09080f10>` |         |                                |
-| required | mode              | `LIST`                                |         |                                |
-| required | rescale_factor    | `FLOAT`                               | 2       | min=0.01, max=100.0, step=0.01 |
-| required | resize_size       | `INT`                                 | 1024    | min=1, max=48000, step=1       |
-| required | resampling_method | `<ast.Name object at 0x7f1c09083a30>` |         |                                |
-| required | tiled_size        | `INT`                                 | 512     | min=128, max=2048, step=128    |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | upscale_model | `<ast.Call object at 0x101332dd0>` |  |  |
+| required | mode | `LIST` |  |  |
+| required | rescale_factor | `FLOAT` | 2 | min=0.01, max=100.0, step=0.01 |
+| required | resize_size | `INT` | 1024 | min=1, max=48000, step=1 |
+| required | resampling_method | `resampling_methods` |  |  |
+| required | tiled_size | `INT` | 512 | min=128, max=2048, step=128 |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in image_processing.py"
+
+??? note "Source code"
 
     ```python
     class UpscaleImage:
@@ -669,7 +665,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
             sd = comfy.utils.load_torch_file(model_path, safe_load=True)
             if "module.layers.0.residual_group.blocks.0.norm1.weight" in sd:
                 sd = comfy.utils.state_dict_prefix_replace(sd, {"module.": ""})
-            out = ModelLoader().load_from_state_dict(sd).eval()
+            out = ModelLoader().load_from_state_dict(sd)
 
             if not isinstance(out, ImageModelDescriptor):
                 raise ValueError("Upscale model must be a single-image model.")
@@ -753,9 +749,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
             current_size = max(H, W)
             up_image = image
             while current_size < target_size:
-                step = self.upscale_with_model(
-                    upscale_model=up_model, image=up_image, device=device, tile=tiled_size
-                )
+                step = self.upscale_with_model(upscale_model=up_model, image=up_image, device=device, tile=tiled_size)
                 del up_image
                 up_image = step.to("cpu")
                 _, H, W, _ = up_image.shape
@@ -765,9 +759,7 @@ upscaling models and includes multiple resampling methods for final adjustments.
             tensor_image = TensorImage.from_BWHC(up_image)
 
             if mode == "resize":
-                up_image = resize(
-                    tensor_image, resize_size, resize_size, "ASPECT", resampling_method, True
-                ).get_BWHC()
+                up_image = resize(tensor_image, resize_size, resize_size, "ASPECT", resampling_method, True).get_BWHC()
             else:
                 # get the max size of the upscaled image
                 _, _, H, W = tensor_image.shape

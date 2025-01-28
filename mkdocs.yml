@@ -1,66 +1,34 @@
 site_name: Signature Nodes Documentation
 theme:
-  name: material
-  features:
-    - navigation.instant
-    - navigation.tracking
-    - navigation.sections
-    - navigation.expand
-    - navigation.top
-    - search.highlight
-    - search.share
-    - toc.follow
-  palette:
-    # Force dark mode
-    scheme: slate
-    primary: indigo
-    accent: indigo
+    name: material
+    features:
+        - navigation.instant
+        - navigation.tracking
+        - navigation.sections
+        - navigation.expand
+        - navigation.top
+        - search.highlight
+        - search.share
+        - toc.follow
+    palette:
+        # Force dark mode
+        scheme: slate
+        primary: indigo
+        accent: indigo
 
 plugins:
-  - search
+    - search
 
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - admonition
-  - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+    - pymdownx.highlight:
+        anchor_linenums: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - admonition
+    - pymdownx.details
+    - pymdownx.emoji:
+        emoji_index: !!python/name:material.extensions.emoji.twemoji
+        emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
-nav:
-  [
-    { "Home": "index.md" },
-    {
-      "Nodes":
-        [
-          {
-            "⚡ Basic":
-              [
-                { "🧱 Primitives": "nodes/primitives.md" },
-                { "🔤 Text": "nodes/text.md" },
-                { "🎭 Mask": "nodes/mask.md" },
-                { "🖼️ Image": "nodes/image.md" },
-                { "📁 File": "nodes/file.md" },
-                { "🔢 Numbers": "nodes/numbers.md" },
-              ],
-          },
-          {
-            "📦 Others":
-              [
-                { "📊 Data": "nodes/data.md" },
-                { "🔀 Augmentations": "nodes/augmentations.md" },
-                { "🔌 Platform IO": "nodes/platform_io.md" },
-                { "🧬 Loras": "nodes/lora.md" },
-              ],
-          },
-          { "🖼️ Image Processing": "nodes/image_processing.md" },
-          { "🛠️ Utils": "nodes/utils.md" },
-          { "🧠 Logic": "nodes/logic.md" },
-          { "🤖 Models": "nodes/models.md" },
-        ],
-    },
-  ]
+nav: [{'Home': 'index.md'}, {'Nodes': [{'🧠 Neurochain': [{'🤖 Agent': [{'🤖 Agent': 'nodes/agent.md'}, {'⚙️ Tools': 'nodes/agent_tools.md'}, {'🐘 Memory': 'nodes/agent_memory.md'}, {'✅ Response Validators': 'nodes/agent_response_validators.md'}, {'↪️ Response Post Processors': 'nodes/agent_response_post_process.md'}]}, {'𝞹 Math': [{'𝞹 Math': 'nodes/math.md'}, {'📐 Distance Metrics': 'nodes/dist.md'}]}, {'☁️ Storage': [{'☁️ Storage': 'nodes/storage.md'}, {'S3': 'nodes/s3.md'}]}, {'🛠️ Utils': [{'🛠️ Utils': 'nodes/neurochain_utils.md'}, {'Any': 'nodes/any.md'}, {'Dicts': 'nodes/dicts.md'}, {'Lists': 'nodes/lists.md'}]}, {'ClearML': 'nodes/clearml.md'}, {'🔎 Evaluation': 'nodes/evaluation.md'}, {'📊 Graphs': 'nodes/graph.md'}, {'💬 LLMs': 'nodes/llm.md'}, {'⟳ Loaders': 'nodes/loaders.md'}, {'🧮 Tabular': 'nodes/tabular.md'}, {'🕸️ Vectorstores': 'nodes/vectorstore.md'}]}, {'⚡ Basic': [{'🧱 Primitives': 'nodes/primitives.md'}, {'🔢 Numbers': 'nodes/numbers.md'}, {'🔤 Text': 'nodes/text.md'}, {'📁 File': 'nodes/file.md'}, {'🖼️ Image': 'nodes/image.md'}, {'🎭 Mask': 'nodes/mask.md'}]}, {'📦 Others': [{'🔀 Augmentations': 'nodes/augmentation.md'}, {'🔌 Platform IO': 'nodes/platform_io.md'}, {'📊 Data': 'nodes/data.md'}, {'🧬 Loras': 'nodes/lora.md'}]}, {'🖼️ Image Processing': 'nodes/image_processing.md'}, {'🤖 Models': 'nodes/models.md'}, {'💡 Logic': 'nodes/logic.md'}, {'🛠️ Utils': 'nodes/utils.md'}, {'🧪 Labs': 'nodes/labs.md'}]}]

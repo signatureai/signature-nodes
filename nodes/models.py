@@ -1,12 +1,15 @@
 import random
 
+import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 import torch
+from comfy_extras.nodes_upscale_model import ImageUpscaleWithModel
 from signature_core.functional.transform import cutout
 from signature_core.img.tensor_image import TensorImage
 from signature_core.models.lama import Lama
 from signature_core.models.salient_object_detection import SalientObjectDetection
 from signature_core.models.seemore import SeeMore
+from spandrel import ModelLoader
 
 from nodes import SaveImage  # type: ignore
 
@@ -26,6 +29,7 @@ class MagicEraser(SaveImage):
             - "on": Saves preview images
             - "off": No preview images
         filename_prefix (str, optional): Prefix to use for saved output files. Defaults to "Signature".
+        upscale_model (str, optional): Name of the upscale model to use. Defaults to None.
         prompt (str, optional): Text prompt for metadata. Defaults to None.
         extra_pnginfo (dict, optional): Additional metadata to save with output images. Defaults to None.
 
@@ -52,6 +56,9 @@ class MagicEraser(SaveImage):
                 "mask": ("MASK",),
                 "preview": (["on", "off"],),
             },
+            "optional": {
+                "upscale_model": (["None"] + folder_paths.get_filename_list("upscale_models"),),
+            },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
         }
 
@@ -72,10 +79,35 @@ class MagicEraser(SaveImage):
         if preview not in ["on", "off"]:
             raise ValueError("Preview must be 'on' or 'off'")
 
+        upscale_model = kwargs.get("upscale_model", None)
+        if upscale_model == "None":
+            upscale_model = None
+
+        upscale_fn = None
+        loaded_upscale_model = None
+        device = comfy.model_management.get_torch_device()
+        if upscale_model is not None:
+            upscale_model_path = folder_paths.get_full_path("upscale_models", upscale_model)
+            sd = comfy.utils.load_torch_file(upscale_model_path, safe_load=True)
+            if "module.layers.0.residual_group.blocks.0.norm1.weight" in sd:
+                sd = comfy.utils.state_dict_prefix_replace(sd, {"module.": ""})
+            loaded_upscale_model = ModelLoader().load_from_state_dict(sd)
+            loaded_upscale_model.to(device)
+
+            # TODO: See how we can unify this with the UpscaleImage node, probably it makes sense to extract the code
+            # for the pure upscale into a function or class in signature-core
+            upscaler = ImageUpscaleWithModel
+
+            def upscale_image(image: torch.Tensor) -> torch.Tensor:
+                return upscaler.upscale(upscaler, loaded_upscale_model, image)
+
+            upscale_fn = upscale_image
+
         filename_prefix = kwargs.get("filename_prefix", "Signature")
         prompt = kwargs.get("prompt") or ""
         extra_pnginfo = kwargs.get("extra_pnginfo")
-        model = Lama()
+
+        model = Lama(device, upscale_fn)
         input_image = TensorImage.from_BWHC(image)
         input_mask = TensorImage.from_BWHC(mask)
         result = TensorImage(model.forward(input_image, input_mask), device=input_mask.device)
@@ -85,8 +117,13 @@ class MagicEraser(SaveImage):
             return (output_images,)
         result = self.save_images(output_images, filename_prefix, prompt, extra_pnginfo)
         result.update({"result": (output_images,)})
-        del model
+
         model = None
+        del model
+        if loaded_upscale_model is not None:
+            loaded_upscale_model = None
+            del loaded_upscale_model
+
         return result
 
 
@@ -155,8 +192,8 @@ class Unblur(SaveImage):
             return (output_images,)
         result = self.save_images(output_images, filename_prefix, prompt, extra_pnginfo)
         result.update({"result": (output_images,)})
-        del model
         model = None
+        del model
         return result
 
 
@@ -266,6 +303,6 @@ class BackgroundRemoval(SaveImage):
                 )
             }
         )
-        del model
         model = None
+        del model
         return result

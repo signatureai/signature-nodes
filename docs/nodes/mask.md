@@ -4,24 +4,25 @@
 
 Creates a basic binary mask with specified dimensions.
 
-A utility class that generates a simple binary mask (black or white) with user-defined
-dimensions. The mask is returned in BWHC (Batch, Width, Height, Channel) format.
+A utility class that generates a simple binary mask (black or white) with user-defined dimensions.
+The mask is returned in BWHC (Batch, Width, Height, Channel) format.
 
 ### Inputs
 
-| Group    | Name   | Type   | Default | Extras        |
-| -------- | ------ | ------ | ------- | ------------- |
-| required | color  | `LIST` |         |               |
-| required | width  | `INT`  | 1024    | min=1, step=1 |
-| required | height | `INT`  | 1024    | min=1, step=1 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | color | `LIST` |  |  |
+| required | width | `INT` | 1024 | min=1, step=1 |
+| required | height | `INT` | 1024 | min=1, step=1 |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class BaseMask:
@@ -80,25 +81,26 @@ dimensions. The mask is returned in BWHC (Batch, Width, Height, Channel) format.
 
 Applies morphological operations to transform mask shapes and boundaries.
 
-Provides various morphological operations to modify mask shapes through kernel-based
-transformations. Supports multiple iterations for stronger effects.
+Provides various morphological operations to modify mask shapes through kernel-based transformations.
+Supports multiple iterations for stronger effects.
 
 ### Inputs
 
-| Group    | Name        | Type   | Default | Extras        |
-| -------- | ----------- | ------ | ------- | ------------- |
-| required | mask        | `MASK` |         |               |
-| required | operation   | `LIST` |         |               |
-| required | kernel_size | `INT`  | 1       | min=1, step=2 |
-| required | iterations  | `INT`  | 5       | min=1, step=1 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
+| required | operation | `LIST` |  |  |
+| required | kernel_size | `INT` | 1 | min=1, step=2 |
+| required | iterations | `INT` | 5 | min=1, step=1 |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskMorphology:
@@ -196,24 +198,25 @@ transformations. Supports multiple iterations for stronger effects.
 
 Performs bitwise logical operations between two binary masks.
 
-Converts masks to 8-bit format and applies various bitwise operations, useful for
-combining or comparing mask regions.
+Converts masks to 8-bit format and applies various bitwise operations, useful for combining
+or comparing mask regions.
 
 ### Inputs
 
-| Group    | Name   | Type   | Default | Extras |
-| -------- | ------ | ------ | ------- | ------ |
-| required | mask_1 | `MASK` |         |        |
-| required | mask_2 | `MASK` |         |        |
-| required | mode   | `LIST` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask_1 | `MASK` |  |  |
+| required | mask_2 | `MASK` |  |  |
+| required | mode | `LIST` |  |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskBitwise:
@@ -287,23 +290,24 @@ combining or comparing mask regions.
 
 Calculates the Euclidean distance between two binary masks.
 
-Computes the average pixel-wise Euclidean distance between two masks, useful for
-comparing mask similarity or differences.
+Computes the average pixel-wise Euclidean distance between two masks, useful for comparing
+mask similarity or differences.
 
 ### Inputs
 
-| Group    | Name   | Type   | Default | Extras |
-| -------- | ------ | ------ | ------- | ------ |
-| required | mask_0 | `MASK` |         |        |
-| required | mask_1 | `MASK` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask_0 | `MASK` |  |  |
+| required | mask_1 | `MASK` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskDistance:
@@ -353,28 +357,29 @@ comparing mask similarity or differences.
 
 Converts a binary mask into a trimap representation with three distinct regions.
 
-Creates a trimap by identifying definite foreground, definite background, and uncertain
-regions using threshold values and morphological operations.
+Creates a trimap by identifying definite foreground, definite background, and uncertain regions
+using threshold values and morphological operations.
 
 ### Inputs
 
-| Group    | Name                | Type   | Default | Extras         |
-| -------- | ------------------- | ------ | ------- | -------------- |
-| required | mask                | `MASK` |         |                |
-| required | inner_min_threshold | `INT`  | 200     | min=0, max=255 |
-| required | inner_max_threshold | `INT`  | 255     | min=0, max=255 |
-| required | outer_min_threshold | `INT`  | 15      | min=0, max=255 |
-| required | outer_max_threshold | `INT`  | 240     | min=0, max=255 |
-| required | kernel_size         | `INT`  | 10      | min=1, max=100 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
+| required | inner_min_threshold | `INT` | 200 | min=0, max=255 |
+| required | inner_max_threshold | `INT` | 255 | min=0, max=255 |
+| required | outer_min_threshold | `INT` | 15 | min=0, max=255 |
+| required | outer_max_threshold | `INT` | 240 | min=0, max=255 |
+| required | kernel_size | `INT` | 10 | min=1, max=100 |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
-| mask   | `MASK`   |
+| Name | Type |
+|------|------|
+| mask | `MASK` |
 | trimap | `TRIMAP` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class Mask2Trimap:
@@ -455,9 +460,7 @@ regions using threshold values and morphological operations.
             trimap_im[inner_mask == 1.0] = 1.0
             batch_size = step.shape[0]
 
-            trimap = torch.zeros(
-                batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device
-            )
+            trimap = torch.zeros(batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device)
             for i in range(batch_size):
                 tar_trimap = trimap_im[i][0]
                 trimap[i][1][tar_trimap == 1] = 1
@@ -483,18 +486,19 @@ binary mask.
 
 ### Inputs
 
-| Group    | Name      | Type    | Default | Extras                      |
-| -------- | --------- | ------- | ------- | --------------------------- |
-| required | mask      | `MASK`  |         |                             |
-| required | threshold | `FLOAT` | 0.01    | min=0.0, max=1.0, step=0.01 |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
+| required | threshold | `FLOAT` | 0.01 | min=0.0, max=1.0, step=0.01 |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskBinaryFilter:
@@ -550,17 +554,18 @@ Creates a negative version of the input mask where white becomes black and vice 
 
 ### Inputs
 
-| Group    | Name | Type   | Default | Extras |
-| -------- | ---- | ------ | ------- | ------ |
-| required | mask | `MASK` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskInvert:
@@ -608,26 +613,26 @@ Creates a negative version of the input mask where white becomes black and vice 
 
 Applies Gaussian blur to soften mask edges and create smooth transitions.
 
-Implements a configurable Gaussian blur with control over blur radius, strength, and
-iterations.
+Implements a configurable Gaussian blur with control over blur radius, strength, and iterations.
 
 ### Inputs
 
-| Group    | Name         | Type      | Default | Extras |
-| -------- | ------------ | --------- | ------- | ------ |
-| required | image        | `MASK`    |         |        |
-| required | radius       | `INT`     | 13      |        |
-| required | sigma        | `FLOAT`   | 10.5    |        |
-| required | interations  | `INT`     | 1       |        |
-| required | only_outline | `BOOLEAN` | False   |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `MASK` |  |  |
+| required | radius | `INT` | 13 |  |
+| required | sigma | `FLOAT` | 10.5 |  |
+| required | interations | `INT` | 1 |  |
+| required | only_outline | `BOOLEAN` | False |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskGaussianBlur:
@@ -682,29 +687,29 @@ iterations.
 
 Expands or contracts a mask with controllable blur and tapering effects.
 
-Provides fine control over mask growth with options for smooth transitions and edge
-effects.
+Provides fine control over mask growth with options for smooth transitions and edge effects.
 
 ### Inputs
 
-| Group    | Name                   | Type      | Default | Extras                       |
-| -------- | ---------------------- | --------- | ------- | ---------------------------- |
-| required | mask                   | `MASK`    |         |                              |
-| required | expand                 | `INT`     | 0       | step=1                       |
-| required | incremental_expandrate | `FLOAT`   | 0.0     | min=0.0, max=100.0, step=0.1 |
-| required | tapered_corners        | `BOOLEAN` | True    |                              |
-| required | flip_input             | `BOOLEAN` | False   |                              |
-| required | blur_radius            | `FLOAT`   | 0.0     | min=0.0, max=100, step=0.1   |
-| required | lerp_alpha             | `FLOAT`   | 1.0     | min=0.0, max=1.0, step=0.01  |
-| required | decay_factor           | `FLOAT`   | 1.0     | min=0.0, max=1.0, step=0.01  |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
+| required | expand | `INT` | 0 | step=1 |
+| required | incremental_expandrate | `FLOAT` | 0.0 | min=0.0, max=100.0, step=0.1 |
+| required | tapered_corners | `BOOLEAN` | True |  |
+| required | flip_input | `BOOLEAN` | False |  |
+| required | blur_radius | `FLOAT` | 0.0 | min=0.0, max=100, step=0.1 |
+| required | lerp_alpha | `FLOAT` | 1.0 | min=0.0, max=1.0, step=0.01 |
+| required | decay_factor | `FLOAT` | 1.0 | min=0.0, max=1.0, step=0.01 |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | mask | `MASK` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class MaskGrowWithBlur:
@@ -859,21 +864,22 @@ Extracts and returns the shape parameters of the input mask for analysis or debu
 
 ### Inputs
 
-| Group    | Name | Type   | Default | Extras |
-| -------- | ---- | ------ | ------- | ------ |
-| required | mask | `MASK` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
-| int    | `INT`    |
-| int    | `INT`    |
-| int    | `INT`    |
-| int    | `INT`    |
+| Name | Type |
+|------|------|
+| int | `INT` |
+| int | `INT` |
+| int | `INT` |
+| int | `INT` |
 | string | `STRING` |
 
-??? note "Source code in mask.py"
+
+??? note "Source code"
 
     ```python
     class GetMaskShape:
@@ -930,11 +936,11 @@ Converts mask data to a viewable image format and saves it with optional metadat
 
 ### Inputs
 
-| Group    | Name | Type   | Default | Extras |
-| -------- | ---- | ------ | ------- | ------ |
-| required | mask | `MASK` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | mask | `MASK` |  |  |
 
-??? note "Source code in mask.py"
+??? note "Source code"
 
     ```python
     class MaskPreview(SaveImage):

@@ -526,7 +526,6 @@ class ListBuilder:
 
     @classmethod
     def INPUT_TYPES(cls):
-
         inputs = {
             "required": {
                 "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),
@@ -683,3 +682,50 @@ class Dict2Latent:
         latent = {"samples": tensor_data}
 
         return (latent,)
+
+
+class InputListToList:
+    """Converts a list input to a list as as single output.
+
+    A utility node that takes an input list and returns a single list containing all the inputs.
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {"list": (any_type,)},
+        }
+
+    RETURN_TYPES = ("LIST",)
+    RETURN_NAMES = ("list",)
+    FUNCTION = "execute"
+    CATEGORY = UTILS_CAT
+    OUTPUT_NODE = True
+    INPUT_IS_LIST = True
+    CLASS_ID = "input_list_to_list"
+
+    def execute(self, **kwargs):
+        return (kwargs.get("list"),)
+
+
+class ListToOutputList:
+    """Converts a list input to a list as a single output.
+
+    A utility node that takes a list and returns an output list for iterations.
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {"list": ("LIST",)},
+        }
+
+    RETURN_TYPES = (any_type,)
+    RETURN_NAMES = ("ANY",)
+    FUNCTION = "execute"
+    CATEGORY = UTILS_CAT
+    OUTPUT_IS_LIST = (True,)
+    CLASS_ID = "list_to_output_list"
+
+    def execute(self, **kwargs):
+        return (kwargs.get("list"),)

@@ -4,23 +4,23 @@
 
 Converts any input value to its string representation.
 
-This utility node provides a simple way to convert any input value into a string format
-using Python's built-in str() function. Useful for debugging, logging, or text-based
-operations.
+This utility node provides a simple way to convert any input value into a string format using
+Python's built-in str() function. Useful for debugging, logging, or text-based operations.
 
 ### Inputs
 
-| Group    | Name  | Type                                  | Default | Extras |
-| -------- | ----- | ------------------------------------- | ------- | ------ |
-| required | value | `<ast.Name object at 0x7f1c090b3040>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | string | `STRING` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class Any2String:
@@ -64,16 +64,16 @@ operations.
 
 Safely converts a string representation to its Python object.
 
-Uses Python's ast.literal_eval for secure string evaluation, which only allows literal
-expressions (strings, numbers, tuples, lists, dicts, booleans, None).
+Uses Python's ast.literal_eval for secure string evaluation, which only allows
+literal expressions (strings, numbers, tuples, lists, dicts, booleans, None).
 
 ### Inputs
 
-| Group    | Name   | Type     | Default | Extras |
-| -------- | ------ | -------- | ------- | ------ |
-| required | string | `STRING` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | string | `STRING` |  |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class String2Any:
@@ -119,23 +119,23 @@ expressions (strings, numbers, tuples, lists, dicts, booleans, None).
 
 Converts any input value to its int representation.
 
-This utility node provides a simple way to convert any input value into a int format
-using Python's built-in int() function. Useful for debugging, logging, or text-based
-operations.
+This utility node provides a simple way to convert any input value into a int format using
+Python's built-in int() function. Useful for debugging, logging, or text-based operations.
 
 ### Inputs
 
-| Group    | Name  | Type                                  | Default | Extras |
-| -------- | ----- | ------------------------------------- | ------- | ------ |
-| required | value | `<ast.Name object at 0x7f1c090b1db0>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
 
 ### Returns
 
-| Name | Type  |
-| ---- | ----- |
-| int  | `INT` |
+| Name | Type |
+|------|------|
+| int | `INT` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class Any2Int:
@@ -177,23 +177,23 @@ operations.
 
 Converts any input value to its float representation.
 
-This utility node provides a simple way to convert any input value into a float format
-using Python's built-in float() function. Useful for debugging, logging, or text-based
-operations.
+This utility node provides a simple way to convert any input value into a float format using
+Python's built-in float() function. Useful for debugging, logging, or text-based operations.
 
 ### Inputs
 
-| Group    | Name  | Type                                  | Default | Extras |
-| -------- | ----- | ------------------------------------- | ------- | ------ |
-| required | value | `<ast.Name object at 0x7f1c090b1630>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | float | `FLOAT` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class Any2Float:
@@ -235,22 +235,23 @@ operations.
 
 Converts any inputs value to image format.
 
-A utility node that handles conversion of tensor inputs to a compatible image format for
-use in image processing workflows.
+A utility node that handles conversion of tensor inputs to a compatible image format for use in
+image processing workflows.
 
 ### Inputs
 
-| Group    | Name  | Type                                  | Default | Extras |
-| -------- | ----- | ------------------------------------- | ------- | ------ |
-| required | value | `<ast.Name object at 0x7f1c090b0eb0>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class Any2Image:
@@ -300,16 +301,16 @@ use in image processing workflows.
 
 Passes through any input value unchanged.
 
-A utility node that acts as a pass-through or identity function, returning the input
-value without any modifications. Useful for workflow organization or debugging.
+A utility node that acts as a pass-through or identity function, returning the input value
+without any modifications. Useful for workflow organization or debugging.
 
 ### Inputs
 
-| Group    | Name  | Type                                  | Default | Extras |
-| -------- | ----- | ------------------------------------- | ------- | ------ |
-| required | value | `<ast.Name object at 0x7f1c090b0400>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class Any2Any:
@@ -353,22 +354,23 @@ value without any modifications. Useful for workflow organization or debugging.
 
 Converts RGB images to HSV color space.
 
-Transforms images from RGB (Red, Green, Blue) color space to HSV (Hue, Saturation,
-Value) color space while preserving the image structure and dimensions.
+Transforms images from RGB (Red, Green, Blue) color space to HSV (Hue, Saturation, Value)
+color space while preserving the image structure and dimensions.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class RGB2HSV:
@@ -414,22 +416,23 @@ Value) color space while preserving the image structure and dimensions.
 
 Converts RGB images to HLS color space.
 
-Transforms images from RGB (Red, Green, Blue) color space to HLS (Hue, Lightness,
-Saturation) color space while preserving the image structure and dimensions.
+Transforms images from RGB (Red, Green, Blue) color space to HLS (Hue, Lightness, Saturation)
+color space while preserving the image structure and dimensions.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class RGB2HLS:
@@ -475,22 +478,23 @@ Saturation) color space while preserving the image structure and dimensions.
 
 Converts RGBA images to RGB format.
 
-Transforms images from RGBA (Red, Green, Blue, Alpha) format to RGB format by removing
-the alpha channel. Passes through RGB images unchanged.
+Transforms images from RGBA (Red, Green, Blue, Alpha) format to RGB format by removing the
+alpha channel. Passes through RGB images unchanged.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class RGBA2RGB:
@@ -539,22 +543,23 @@ the alpha channel. Passes through RGB images unchanged.
 
 Converts RGB images to grayscale format.
 
-This node transforms RGB color images to single-channel grayscale images using standard
-luminance conversion factors.
+This node transforms RGB color images to single-channel grayscale images using
+standard luminance conversion factors.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class RGB2GRAY:
@@ -600,22 +605,23 @@ luminance conversion factors.
 
 Converts grayscale images to RGB format.
 
-This node transforms single-channel grayscale images to three-channel RGB images by
-replicating the grayscale values across channels.
+This node transforms single-channel grayscale images to three-channel RGB images
+by replicating the grayscale values across channels.
 
 ### Inputs
 
-| Group    | Name  | Type    | Default | Extras |
-| -------- | ----- | ------- | ------- | ------ |
-| required | image | `IMAGE` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
 
 ### Returns
 
-| Name  | Type    |
-| ----- | ------- |
+| Name | Type |
+|------|------|
 | image | `IMAGE` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class GRAY2RGB:
@@ -661,16 +667,16 @@ replicating the grayscale values across channels.
 
 Cleans up VRAM by forcing memory deallocation and cache clearing.
 
-A utility node that performs comprehensive VRAM cleanup by collecting garbage, emptying
-CUDA cache, and unloading models. Useful for managing memory usage in complex workflows.
+A utility node that performs comprehensive VRAM cleanup by collecting garbage, emptying CUDA cache,
+and unloading models. Useful for managing memory usage in complex workflows.
 
 ### Inputs
 
-| Group    | Name     | Type                                  | Default | Extras |
-| -------- | -------- | ------------------------------------- | ------- | ------ |
-| required | anything | `<ast.Name object at 0x7f1c090bf040>` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | anything | `any_type` |  |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class PurgeVRAM:
@@ -721,18 +727,17 @@ CUDA cache, and unloading models. Useful for managing memory usage in complex wo
 
 Pauses execution for a specified number of seconds.
 
-A utility node that introduces a delay in the workflow by sleeping for a given duration.
-This can be useful for timing control, pacing operations, or waiting for external
-processes to complete.
+A utility node that introduces a delay in the workflow by sleeping for a given duration. This can
+be useful for timing control, pacing operations, or waiting for external processes to complete.
 
 ### Inputs
 
-| Group    | Name    | Type                                  | Default | Extras |
-| -------- | ------- | ------------------------------------- | ------- | ------ |
-| required | value   | `<ast.Name object at 0x7f1c090bc190>` |         |        |
-| required | seconds | `FLOAT`                               | 1.0     |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
+| required | seconds | `FLOAT` | 1.0 |  |
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class WaitSeconds:
@@ -785,10 +790,10 @@ processes to complete.
 
 Builds a list from input elements.
 
-A node that constructs a list from provided input elements. Used in node-based workflows
-to combine multiple elements into a single list output.
+A node that constructs a list from provided input elements. Used in node-based
+workflows to combine multiple elements into a single list output.
 
-??? note "Source code in utils.py"
+??? note "Source code"
 
     ```python
     class ListBuilder:
@@ -814,7 +819,6 @@ to combine multiple elements into a single list output.
 
         @classmethod
         def INPUT_TYPES(cls):
-
             inputs = {
                 "required": {
                     "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),
@@ -865,22 +869,23 @@ to combine multiple elements into a single list output.
 
 Converts a latent tensor representation to a dictionary format.
 
-Transforms a LATENT input (containing tensor data) into a structured dictionary that
-includes type information, shape, and tensor values.
+Transforms a LATENT input (containing tensor data) into a structured dictionary
+that includes type information, shape, and tensor values.
 
 ### Inputs
 
-| Group    | Name   | Type     | Default | Extras |
-| -------- | ------ | -------- | ------- | ------ |
-| required | latent | `LATENT` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | latent | `LATENT` |  |  |
 
 ### Returns
 
-| Name | Type   |
-| ---- | ------ |
+| Name | Type |
+|------|------|
 | dict | `DICT` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class Latent2Dict:
@@ -943,22 +948,23 @@ includes type information, shape, and tensor values.
 
 Converts a dictionary representation back to a latent tensor format.
 
-Transforms a structured dictionary containing tensor data back into the LATENT format
-used by the system.
+Transforms a structured dictionary containing tensor data back into the LATENT
+format used by the system.
 
 ### Inputs
 
-| Group    | Name | Type   | Default | Extras |
-| -------- | ---- | ------ | ------- | ------ |
-| required | dict | `DICT` |         |        |
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
 
 ### Returns
 
-| Name   | Type     |
-| ------ | -------- |
+| Name | Type |
+|------|------|
 | latent | `LATENT` |
 
-??? note "Source code in utils.py"
+
+??? note "Source code"
 
     ```python
     class Dict2Latent:
