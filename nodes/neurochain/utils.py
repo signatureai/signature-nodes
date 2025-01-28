@@ -15,16 +15,6 @@ COMFY_IMAGES_DIR = os.path.join(BASE_COMFY_DIR, "input")
 logger = logging.getLogger(__name__)
 
 
-# Hack: string type that is always equal in not equal comparisons
-class AnyType(str):
-    def __ne__(self, __value: object) -> bool:
-        return False
-
-
-# Our any instance wants to be a wildcard string
-WILDCARD = AnyType("*")
-
-
 def get_async_output(output_location, wait_interval: float = 0.5, timeout: int = 20):
     sagemaker_session = sagemaker.Session()
     count = 0
