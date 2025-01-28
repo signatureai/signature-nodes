@@ -16,9 +16,7 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[
-    0
-]
+BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
 SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("src")[0]
 
 MAX_INT: int = sys.maxsize
@@ -77,9 +75,7 @@ def get_node_class_mappings(nodes_directory: str):
                 continue
             plugin_file_paths.append(join(path, name))
 
-    def process_plugin_file(
-        plugin_file_path: str, idx: int = 0, worker_id: int = 0
-    ) -> tuple[dict, dict]:
+    def process_plugin_file(plugin_file_path: str, idx: int = 0, worker_id: int = 0) -> tuple[dict, dict]:
         file_class_mappings = {}
         file_display_mappings = {}
 
@@ -94,11 +90,7 @@ def get_node_class_mappings(nodes_directory: str):
 
             for item in dir(module):
                 value = getattr(module, item)
-                if (
-                    not value
-                    or not inspect.isclass(value)
-                    or not value.__module__.startswith("signature-nodes.nodes.")
-                ):
+                if not value or not inspect.isclass(value) or not value.__module__.startswith("signature-nodes.nodes."):
                     continue
 
                 if hasattr(value, "FUNCTION"):
@@ -114,9 +106,7 @@ def get_node_class_mappings(nodes_directory: str):
                     )
                     key = f"signature_{snake_case}"
                     file_class_mappings[key] = value
-                    item_name = re.sub(
-                        r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z]{2})(?=[A-Z][a-z])", " ", item
-                    )
+                    item_name = re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z]{2})(?=[A-Z][a-z])", " ", item)
                     file_display_mappings[key] = f"SIG {item_name}"
         except ImportError as e:
             logger.info(f"[red]Error importing {plugin_rel_path}: {e}")
@@ -127,10 +117,7 @@ def get_node_class_mappings(nodes_directory: str):
     if parallel_process:
         results = parallel_for(process_plugin_file, plugin_file_paths)
     else:
-        results = [
-            process_plugin_file(file_path, idx, 0)
-            for idx, file_path in enumerate(plugin_file_paths)
-        ]
+        results = [process_plugin_file(file_path, idx, 0) for idx, file_path in enumerate(plugin_file_paths)]
 
     for file_mappings, file_display_names in results:
         if isinstance(file_mappings, dict) and isinstance(file_display_names, dict):
