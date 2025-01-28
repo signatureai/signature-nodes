@@ -48,17 +48,19 @@ try:
 except ImportError:
     raise ImportError("signature_core package not available")
 
-neurochain_module = importlib.import_module("neurochain")
-if neurochain_module is not None:
-    NEUROCHAIN_AVAILABLE = True
-else:
+try:
+    neurochain_module = importlib.import_module("neurochain")
+    if neurochain_module is not None:
+        NEUROCHAIN_AVAILABLE = True
+except ImportError:
     logger.warning("neurochain package not available")
 
-flows_module = importlib.import_module("signature_flows")
-if flows_module is not None:
-    os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
-    SIGNATURE_FLOWS_AVAILABLE = True
-else:
+try:
+    flows_module = importlib.import_module("signature_flows")
+    if flows_module is not None:
+        os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
+        SIGNATURE_FLOWS_AVAILABLE = True
+except ImportError:
     logger.warning("signature_flows package not available")
 
 
