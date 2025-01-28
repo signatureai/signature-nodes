@@ -73,7 +73,7 @@ def get_node_class_mappings(nodes_directory: str):
                 continue
             plugin_file_paths.append(join(path, name))
 
-    def process_plugin_file(plugin_file_path: str, idx: int, worker_id: int) -> tuple[dict, dict]:
+    def process_plugin_file(plugin_file_path: str, idx: int = 0, worker_id: int = 0) -> tuple[dict, dict]:
         file_class_mappings = {}
         file_display_mappings = {}
 
@@ -111,10 +111,12 @@ def get_node_class_mappings(nodes_directory: str):
 
         return file_class_mappings, file_display_mappings
 
-    # Process files in parallel
-    results = parallel_for(process_plugin_file, plugin_file_paths)
+    parallel_process = os.getenv("PARALLEL_PROCESSING", "False") == "True"
+    if parallel_process:
+        results = parallel_for(process_plugin_file, plugin_file_paths)
+    else:
+        results = [process_plugin_file(file_path, idx, 0) for idx, file_path in enumerate(plugin_file_paths)]
 
-    # Combine results from all workers
     for file_mappings, file_display_names in results:
         if isinstance(file_mappings, dict) and isinstance(file_display_names, dict):
             node_class_mappings.update(file_mappings)
