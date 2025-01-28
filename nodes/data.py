@@ -6,7 +6,6 @@ import tomli_w
 import yaml
 
 from .categories import DATA_CAT
-from .neurochain.utils import WILDCARD
 from .shared import any_type
 
 
@@ -517,7 +516,7 @@ class SetDictValue:
             "required": {
                 "dict": ("DICT",),
                 "key": ("STRING", {"default": ""}),
-                "value": (WILDCARD,),
+                "value": (any_type,),
             }
         }
 
