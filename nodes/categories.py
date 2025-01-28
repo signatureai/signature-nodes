@@ -32,6 +32,8 @@ CLEARML_CAT = f"{NEUROCHAIN_CAT}/ClearML"
 
 EVALUATION_CAT = f"{NEUROCHAIN_CAT}/🔎 Evaluation"
 
+EMBEDDINGS_CAT = f"{NEUROCHAIN_CAT}/🔗 Embeddings"
+
 GRAPH_CAT = f"{NEUROCHAIN_CAT}/📊 Graphs"
 
 LLM_CAT = f"{NEUROCHAIN_CAT}/💬 LLMs"
