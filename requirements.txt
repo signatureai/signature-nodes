@@ -11,3 +11,4 @@ tomli-w>=1.1.0
 torch>=2.5.1
 transformers>=4.46.3
 uuid7>=0.1.0
+pygit2>=1.17.0
