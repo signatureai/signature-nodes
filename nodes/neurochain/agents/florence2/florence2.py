@@ -18,15 +18,6 @@ class Florence2:
     def INPUT_TYPES(s):  # type: ignore
         return {
             "required": {
-                "local_model": ("BOOLEAN", {"default": False}),
-                "endpoint_name": (
-                    "STRING",
-                    {"default": "Florence-2-large"},
-                ),
-                "infer_endpoint": (
-                    "STRING",
-                    {"default": "https://ml-platform-inference.signature.ai/invoke_model"},
-                ),
                 "image": ("IMAGE",),
                 "task_token": (
                     [
@@ -63,9 +54,6 @@ class Florence2:
 
     def process(
         self,
-        local_model: bool,
-        endpoint_name: str,
-        infer_endpoint: str,
         image: torch.Tensor,
         task_token: str,
         num_beams: int,
@@ -74,10 +62,9 @@ class Florence2:
         text_prompt: Optional[str] = None,
     ):
         base_model_path = None
-        if local_model:
-            base_model_path = os.path.join(folder_paths.models_dir, SIG_MODELS_DIR)
-            if not os.path.exists(base_model_path):
-                os.makedirs(base_model_path)
+        base_model_path = os.path.join(folder_paths.models_dir, SIG_MODELS_DIR)
+        if not os.path.exists(base_model_path):
+            os.makedirs(base_model_path)
 
         tensor_img = TensorImage.from_BWHC(data=image)
         base64_string = tensor_img.get_base64()
@@ -86,7 +73,7 @@ class Florence2:
             text_prompt = None
 
         device = comfy.model_management.get_torch_device()
-        florence2 = Florence2Neurochain(endpoint_name, infer_endpoint, base_model_path, device, attention, precision)
+        florence2 = Florence2Neurochain(base_model_path, device, attention, precision)
         raw_task_resp = florence2.generate(base64_string, f"<{task_token}>", text_prompt, num_beams)
 
         final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], str] = (
