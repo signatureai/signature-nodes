@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Optional
 
@@ -26,6 +27,20 @@ class GetEmbeddings:
             "optional": {
                 "image": ("IMAGE",),
                 "text": ("STRING",),
+                "sig_additional_metadata": (
+                    "STRING",
+                    {
+                        "default": json.dumps(
+                            {
+                                model["name"]: {
+                                    "showText": model["supports_text"],
+                                    "showImage": model["supports_image"],
+                                }
+                                for model in MODEL_REPOSITORY
+                            }
+                        ),
+                    },
+                ),
             },
         }
 

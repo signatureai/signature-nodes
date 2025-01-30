@@ -1,17 +1,11 @@
 import { app } from "../../../scripts/app.js";
 
-const modelInfo = {
-  resnet50: { showText: false, showImage: true },
-  clip: { showText: true, showImage: true },
-  "mini-lm": { showText: true, showImage: false },
-};
-
-function updateInputsOutputs(node, newVal) {
-  if (modelInfo[newVal].showText) {
+function updateInputsOutputs(node, newVal, additionalMetadata) {
+  if (additionalMetadata[newVal].showText) {
     const slotIndexInputText = node.findInputSlot("text");
     const widgetText = node.widgets.find((w) => w.name === "text");
     if (slotIndexInputText < 0 && !widgetText) {
-      node.addWidget("STRING", "text", "");
+      node.addWidget("STRING", "text", "", "text");
     }
 
     const slotIndexOutputTextEmbeddings = node.findOutputSlot("text_embeddings");
@@ -34,7 +28,7 @@ function updateInputsOutputs(node, newVal) {
     }
   }
 
-  if (modelInfo[newVal].showImage) {
+  if (additionalMetadata[newVal].showImage) {
     const slotIndexInputImage = node.findInputSlot("image");
     if (slotIndexInputImage < 0) {
       node.addInput("image", "IMAGE");
@@ -83,11 +77,18 @@ app.registerExtension({
   async nodeCreated(node) {
     if (node.comfyClass !== "signature_get_embeddings") return;
 
+    const widgetMetadata = node.widgets.find((w) => w.name === "sig_additional_metadata");
+    let metadata = {};
+    if (widgetMetadata) {
+      metadata = JSON.parse(widgetMetadata.value || "{}");
+      node.widgets.splice(node.widgets.indexOf(widgetMetadata), 1);
+    }
+
     for (const w of node.widgets || []) {
       if (w.name !== "model") continue;
 
       let widgetValue = w.value;
-      updateInputsOutputs(node, widgetValue);
+      updateInputsOutputs(node, widgetValue, metadata);
       let originalDescriptor = Object.getOwnPropertyDescriptor(w, "value");
       Object.defineProperty(w, "value", {
         get() {
@@ -105,7 +106,7 @@ app.registerExtension({
           }
 
           if (oldVal !== newVal) {
-            updateInputsOutputs(node, newVal);
+            updateInputsOutputs(node, newVal, metadata);
           }
         },
       });
