@@ -5,7 +5,7 @@ import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 import torch
 from neurochain.agents.florence2 import Florence2 as Florence2Neurochain
-from neurochain.utils.florence2 import FLORENCE_PROCESSORS
+from neurochain.utils.florence2 import get_florence_processor
 from signature_core.img.tensor_image import TensorImage
 
 from ....categories import AGENT_CAT
@@ -69,18 +69,13 @@ class Florence2:
         tensor_img = TensorImage.from_BWHC(data=image)
         base64_string = tensor_img.get_base64()
 
-        task_processor = next(
-            (
-                task_processor
-                for task_processor in FLORENCE_PROCESSORS
-                if f"<{task_token}>" in task_processor.task_tokens
-            ),
-            None,
-        )
-        if task_processor is None:
-            raise ValueError(f"Task processor for task token {task_token} not found")
+        task_processor = get_florence_processor(f"<{task_token}>")
 
-        if text_prompt == "undefined" or text_prompt == "" or not task_processor.accepts_text_prompt:
+        if (
+            text_prompt == "undefined"
+            or text_prompt == ""
+            or (task_processor is not None and not task_processor.accepts_text_prompt)
+        ):
             text_prompt = None
 
         device = comfy.model_management.get_torch_device()
@@ -103,6 +98,9 @@ class Florence2:
                 "",
             )
 
-        final_resp = task_processor.process_output(input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp)
+        if task_processor is not None:
+            final_resp = task_processor.process_output(
+                input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp
+            )
 
         return final_resp
