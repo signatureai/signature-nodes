@@ -29,10 +29,10 @@ class Florence2:
                         "REGION_PROPOSAL",  # 4, image
                         "CAPTION_TO_PHRASE_GROUNDING",  # 2, image + (prompt)
                         "REFERRING_EXPRESSION_SEGMENTATION",  # 3, image + (prompt)
-                        "REGION_TO_SEGMENTATION",  # ? input like `<loc_702><loc_575><loc_866><loc_772>`
+                        # "REGION_TO_SEGMENTATION",  # TODO:  Support this later with BBox interface
                         "OPEN_VOCABULARY_DETECTION",  # 2, image + (prompt)
-                        "REGION_TO_CATEGORY",  # ? outputs an object plus some <loc_*>
-                        "REGION_TO_DESCRIPTION",  # ? outputs some description
+                        # "REGION_TO_CATEGORY",   # TODO:  Support this later with BBox interface
+                        # "REGION_T O_DESCRIPTION",   # TODO:  Support this later with BBox interface
                         "OCR",  # 1, image
                         "OCR_WITH_REGION",  # 2, image
                     ],
