@@ -21,20 +21,20 @@ class Florence2:
                 "image": ("IMAGE",),
                 "task_token": (
                     [
-                        "CAPTION",
-                        "DETAILED_CAPTION",
-                        "MORE_DETAILED_CAPTION",
-                        "OD",
-                        "DENSE_REGION_CAPTION",
-                        "REGION_PROPOSAL",
-                        "CAPTION_TO_PHRASE_GROUNDING",
-                        "REFERRING_EXPRESSION_SEGMENTATION",
+                        "CAPTION",  # 1
+                        "DETAILED_CAPTION",  # 1
+                        "MORE_DETAILED_CAPTION",  # 1
+                        "OD",  # 4
+                        "DENSE_REGION_CAPTION",  # 4
+                        "REGION_PROPOSAL",  # 4
+                        "CAPTION_TO_PHRASE_GROUNDING",  # 2
+                        "REFERRING_EXPRESSION_SEGMENTATION",  # 3
                         "REGION_TO_SEGMENTATION",
-                        "OPEN_VOCABULARY_DETECTION",
+                        "OPEN_VOCABULARY_DETECTION",  # 2
                         "REGION_TO_CATEGORY",
                         "REGION_TO_DESCRIPTION",
-                        "OCR",
-                        "OCR_WITH_REGION",
+                        "OCR",  # 1
+                        "OCR_WITH_REGION",  # 2
                     ],
                 ),
                 "num_beams": ("INT", {"default": 3, "min": 1, "max": 50}),
@@ -46,8 +46,8 @@ class Florence2:
             },
         }
 
-    RETURN_TYPES = ("IMAGE", "MASK", "STRING")
-    RETURN_NAMES = ("image", "mask", "response")
+    RETURN_TYPES = ("IMAGE", "MASK", "STRING", "STRING")
+    RETURN_NAMES = ("image", "mask", "caption", "data")
     FUNCTION = "process"
     CATEGORY = AGENT_CAT
     OUTPUT_NODE = True
@@ -76,11 +76,21 @@ class Florence2:
         florence2 = Florence2Neurochain(base_model_path, device, attention, precision)
         raw_task_resp = florence2.generate(base64_string, f"<{task_token}>", text_prompt, num_beams)
 
-        final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], str] = (
-            image,
-            image,
-            raw_task_resp,
-        )
+        final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], dict, str]
+        if isinstance(raw_task_resp, str):
+            final_resp = (
+                image,
+                image,
+                {},
+                raw_task_resp,
+            )
+        else:
+            final_resp: Tuple[Optional[torch.Tensor], Optional[torch.Tensor], dict, str] = (
+                image,
+                image,
+                raw_task_resp,
+                "",
+            )
 
         for task_processor in FLORENCE_PROCESSORS:
             if f"<{task_token}>" in task_processor.task_tokens:

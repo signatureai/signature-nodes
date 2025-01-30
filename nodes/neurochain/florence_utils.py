@@ -13,8 +13,8 @@ class FlorenceTaskProcessor(ABC):
 
     @abstractmethod
     def process_output(
-        self, input_img: torch.Tensor, text_prompt: str, raw_output
-    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], str]:
+        self, input_img: torch.Tensor, text_prompt: str, raw_output: dict | str
+    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], dict, str]:
         raise NotImplementedError
 
 
@@ -27,10 +27,10 @@ class CaptionProcessor(FlorenceTaskProcessor):
     ]
 
     def process_output(
-        self, input_img: torch.Tensor, text_prompt: str, raw_output
-    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], str]:
+        self, input_img: torch.Tensor, text_prompt: str, raw_output: str
+    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], dict, str]:
         placeholder_img = torch.zeros(1, 512, 512)
-        return placeholder_img, placeholder_img, raw_output
+        return placeholder_img, placeholder_img, {}, raw_output
 
 
 class TextGuidedObjectDetectProcessor(FlorenceTaskProcessor):
@@ -42,8 +42,8 @@ class TextGuidedObjectDetectProcessor(FlorenceTaskProcessor):
     ]
 
     def process_output(
-        self, input_img: torch.Tensor, text_prompt: str, raw_output
-    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], str]:
+        self, input_img: torch.Tensor, text_prompt: str, raw_output: dict
+    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], dict, str]:
         label_keys = ["bboxes_labels", "labels"]
         labels = None
         for label_key in label_keys:
@@ -62,7 +62,7 @@ class TextGuidedObjectDetectProcessor(FlorenceTaskProcessor):
 
         overlayed_img = TensorImage.from_numpy(overlayed_img).get_BWHC()
         bbox_mask = TensorImage.from_numpy(bbox_mask).get_BWHC()
-        return overlayed_img, bbox_mask, raw_output
+        return overlayed_img, bbox_mask, raw_output, ""
 
 
 class TextGuidedSegmentationProcessor(FlorenceTaskProcessor):
@@ -70,8 +70,8 @@ class TextGuidedSegmentationProcessor(FlorenceTaskProcessor):
     task_tokens: list = ["<REFERRING_EXPRESSION_SEGMENTATION>"]
 
     def process_output(
-        self, input_img: torch.Tensor, text_prompt: str, raw_output
-    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], str]:
+        self, input_img: torch.Tensor, text_prompt: str, raw_output: dict
+    ) -> tuple[Optional[torch.Tensor], Optional[torch.Tensor], dict, str]:
         img_np = TensorImage.from_BWHC(input_img).get_numpy_image()
 
         overlayed_img = draw_polygons(image=img_np, prediction=raw_output, is_bin_mask=False, fill_mask=True)
@@ -80,7 +80,7 @@ class TextGuidedSegmentationProcessor(FlorenceTaskProcessor):
         overlayed_img = TensorImage.from_numpy(overlayed_img).get_BWHC()
         seg_mask = TensorImage.from_numpy(seg_mask).get_BWHC()
 
-        return overlayed_img, seg_mask, raw_output
+        return overlayed_img, seg_mask, raw_output, ""
 
 
 class ObjectDetectProcessor(TextGuidedObjectDetectProcessor):
