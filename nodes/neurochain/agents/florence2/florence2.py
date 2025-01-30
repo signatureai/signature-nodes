@@ -5,10 +5,10 @@ import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 import torch
 from neurochain.agents.florence2 import Florence2 as Florence2Neurochain
+from neurochain.utils.florence2 import FLORENCE_PROCESSORS
 from signature_core.img.tensor_image import TensorImage
 
 from ....categories import AGENT_CAT
-from ...florence_utils import FLORENCE_PROCESSORS
 
 SIG_MODELS_DIR = "sig_models"
 
@@ -29,7 +29,7 @@ class Florence2:
                         "REGION_PROPOSAL",  # 4, image
                         "CAPTION_TO_PHRASE_GROUNDING",  # 2, image + (prompt)
                         "REFERRING_EXPRESSION_SEGMENTATION",  # 3, image + (prompt)
-                        "REGION_TO_SEGMENTATION",  # ? what does this do?
+                        "REGION_TO_SEGMENTATION",  # ? input like `<loc_702><loc_575><loc_866><loc_772>`
                         "OPEN_VOCABULARY_DETECTION",  # 2, image + (prompt)
                         "REGION_TO_CATEGORY",  # ? outputs an object plus some <loc_*>
                         "REGION_TO_DESCRIPTION",  # ? outputs some description
