@@ -21,20 +21,20 @@ class Florence2:
                 "image": ("IMAGE",),
                 "task_token": (
                     [
-                        "CAPTION",  # 1
-                        "DETAILED_CAPTION",  # 1
-                        "MORE_DETAILED_CAPTION",  # 1
-                        "OD",  # 4
-                        "DENSE_REGION_CAPTION",  # 4
-                        "REGION_PROPOSAL",  # 4
-                        "CAPTION_TO_PHRASE_GROUNDING",  # 2
-                        "REFERRING_EXPRESSION_SEGMENTATION",  # 3
-                        "REGION_TO_SEGMENTATION",
-                        "OPEN_VOCABULARY_DETECTION",  # 2
-                        "REGION_TO_CATEGORY",
-                        "REGION_TO_DESCRIPTION",
-                        "OCR",  # 1
-                        "OCR_WITH_REGION",  # 2
+                        "CAPTION",  # 1, image
+                        "DETAILED_CAPTION",  # 1, image
+                        "MORE_DETAILED_CAPTION",  # 1, image
+                        "OD",  # 4, image
+                        "DENSE_REGION_CAPTION",  # 4, image
+                        "REGION_PROPOSAL",  # 4, image
+                        "CAPTION_TO_PHRASE_GROUNDING",  # 2, image + (prompt)
+                        "REFERRING_EXPRESSION_SEGMENTATION",  # 3, image + (prompt)
+                        "REGION_TO_SEGMENTATION",  # ? what does this do?
+                        "OPEN_VOCABULARY_DETECTION",  # 2, image + (prompt)
+                        "REGION_TO_CATEGORY",  # ? outputs an object plus some <loc_*>
+                        "REGION_TO_DESCRIPTION",  # ? outputs some description
+                        "OCR",  # 1, image
+                        "OCR_WITH_REGION",  # 2, image
                     ],
                 ),
                 "num_beams": ("INT", {"default": 3, "min": 1, "max": 50}),
@@ -69,7 +69,18 @@ class Florence2:
         tensor_img = TensorImage.from_BWHC(data=image)
         base64_string = tensor_img.get_base64()
 
-        if text_prompt == "undefined" or text_prompt == "":
+        task_processor = next(
+            (
+                task_processor
+                for task_processor in FLORENCE_PROCESSORS
+                if f"<{task_token}>" in task_processor.task_tokens
+            ),
+            None,
+        )
+        if task_processor is None:
+            raise ValueError(f"Task processor for task token {task_token} not found")
+
+        if text_prompt == "undefined" or text_prompt == "" or not task_processor.accepts_text_prompt:
             text_prompt = None
 
         device = comfy.model_management.get_torch_device()
@@ -92,11 +103,6 @@ class Florence2:
                 "",
             )
 
-        for task_processor in FLORENCE_PROCESSORS:
-            if f"<{task_token}>" in task_processor.task_tokens:
-                final_resp = task_processor.process_output(
-                    input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp
-                )
-                break
+        final_resp = task_processor.process_output(input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp)
 
         return final_resp

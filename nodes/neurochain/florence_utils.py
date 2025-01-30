@@ -24,6 +24,7 @@ class CaptionProcessor(FlorenceTaskProcessor):
         "<DETAILED_CAPTION>",
         "<MORE_DETAILED_CAPTION>",
         "<OCR>",
+        "<OCR_WITH_REGION>",
     ]
 
     def process_output(
@@ -38,7 +39,6 @@ class TextGuidedObjectDetectProcessor(FlorenceTaskProcessor):
     task_tokens: list = [
         "<OPEN_VOCABULARY_DETECTION>",
         "<CAPTION_TO_PHRASE_GROUNDING>",
-        "<OCR_WITH_REGION>",
     ]
 
     def process_output(
