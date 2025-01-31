@@ -10,6 +10,7 @@ from signature_core.models.lama import Lama
 from signature_core.models.salient_object_detection import SalientObjectDetection
 from signature_core.models.seemore import SeeMore
 from spandrel import ModelLoader
+from typing import Optional
 
 from nodes import SaveImage  # type: ignore
 
@@ -66,23 +67,15 @@ class MagicEraser(SaveImage):
     FUNCTION = "execute"
     CATEGORY = MODELS_CAT
 
-    def execute(self, **kwargs):
-        image = kwargs.get("image")
-        if not isinstance(image, torch.Tensor):
-            raise ValueError("Image must be a torch.Tensor")
-
-        mask = kwargs.get("mask")
-        if not isinstance(mask, torch.Tensor):
-            raise ValueError("Mask must be a torch.Tensor")
-
-        preview = kwargs.get("preview", "off")
-        if preview not in ["on", "off"]:
-            raise ValueError("Preview must be 'on' or 'off'")
-
-        upscale_model = kwargs.get("upscale_model", None)
-        if upscale_model == "None":
-            upscale_model = None
-
+    def execute(
+        self,
+        image: torch.Tensor,
+        mask: torch.Tensor,
+        preview: str,
+        upscale_model: str | None,
+        extra_pnginfo: dict,
+        prompt: str = "",
+    ):
         upscale_fn = None
         loaded_upscale_model = None
         device = comfy.model_management.get_torch_device()
@@ -103,9 +96,7 @@ class MagicEraser(SaveImage):
 
             upscale_fn = upscale_image
 
-        filename_prefix = kwargs.get("filename_prefix", "Signature")
-        prompt = kwargs.get("prompt") or ""
-        extra_pnginfo = kwargs.get("extra_pnginfo")
+        filename_prefix = "Signature"
 
         model = Lama(device, upscale_fn)
         input_image = TensorImage.from_BWHC(image)
@@ -170,19 +161,20 @@ class Unblur(SaveImage):
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = MODELS_CAT
+    DEPRECATED = True
 
-    def execute(self, **kwargs):
-        image = kwargs.get("image")
-        if not isinstance(image, torch.Tensor):
-            raise ValueError("Image must be a torch.Tensor")
-
-        preview = kwargs.get("preview")
+    def execute(
+        self,
+        image: torch.Tensor,
+        preview: str = "on",
+        prompt: Optional[str] = None,
+        extra_pnginfo: Optional[dict] = None,
+    ):
         if preview not in ["on", "off"]:
             raise ValueError("Preview must be either 'on' or 'off'")
 
-        filename_prefix = kwargs.get("filename_prefix", "Signature")
-        prompt = kwargs.get("prompt")
-        extra_pnginfo = kwargs.get("extra_pnginfo")
+        filename_prefix = "Signature"
+
         model = SeeMore()
         input_image = TensorImage.from_BWHC(image)
         output_image = model.forward(input_image)
@@ -231,6 +223,9 @@ class BackgroundRemoval(SaveImage):
         - Different models may perform better on different types of images
     """
 
+    model_names = ["inspyrenet", "rmbg14", "isnet_general", "fakepng"]
+    preview_types = ["mask", "rgba", "none"]
+
     def __init__(self):
         self.output_dir = folder_paths.get_temp_directory()
         self.type = "temp"
@@ -241,41 +236,39 @@ class BackgroundRemoval(SaveImage):
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
-                "model_name": (["inspyrenet", "rmbg14", "isnet_general", "fakepng"],),
-                "preview": (["mask", "rgba", "none"],),
+                "model_name": (cls.model_names,),
+                "preview": (cls.preview_types,),
                 "image": ("IMAGE",),
             },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
         }
+
+    @classmethod
+    def VALIDATE_INPUTS(cls, model_name: str, preview: str) -> bool:
+        if not isinstance(model_name, str):
+            raise ValueError("Model name must be a string")
+        if not isinstance(preview, str):
+            raise ValueError("Preview must be a string")
+        if model_name not in cls.model_names:
+            raise ValueError("Invalid model name")
+        if preview not in cls.preview_types:
+            raise ValueError("Invalid preview type")
+        return True
 
     RETURN_TYPES = ("IMAGE", "IMAGE", "MASK")
     RETURN_NAMES = ("rgba", "rgb", "mask")
     FUNCTION = "execute"
     CATEGORY = MODELS_CAT
 
-    def execute(self, **kwargs):
-        image = kwargs.get("image")
-        if not isinstance(image, torch.Tensor):
-            raise ValueError("Image must be a torch.Tensor")
-
-        model_name = kwargs.get("model_name")
-        if not isinstance(model_name, str):
-            raise ValueError("Model name must be a string")
-        if model_name not in ["inspyrenet", "rmbg14", "isnet_general", "fakepng"]:
-            raise ValueError("Invalid model name")
-
-        preview = kwargs.get("preview")
-        if not isinstance(preview, str):
-            raise ValueError("Preview must be a string")
-        if preview not in ["mask", "rgba", "none"]:
-            raise ValueError("Invalid preview type")
-
-        filename_prefix = kwargs.get("filename_prefix", "Signature")
-        if not isinstance(filename_prefix, str):
-            raise ValueError("Filename prefix must be a string")
-
-        prompt = kwargs.get("prompt")
-        extra_pnginfo = kwargs.get("extra_pnginfo")
+    def execute(
+        self,
+        model_name: str,
+        preview: str,
+        image: torch.Tensor,
+        prompt: str,
+        extra_pnginfo: dict,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        filename_prefix = "Signature"
 
         model = SalientObjectDetection(model_name=model_name)
         input_image = TensorImage.from_BWHC(image)
