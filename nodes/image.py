@@ -1,4 +1,5 @@
 import torch
+from typing import Optional
 from kornia.geometry import transform
 from signature_core.functional.filters import (
     gaussian_blur2d,
@@ -53,9 +54,7 @@ class ImageBaseColor:
     CATEGORY = IMAGE_CAT
     CLASS_ID = "image_base_color"
 
-    def execute(
-        self, hex_color: str = "#FFFFFF", width: int = 1024, height: int = 1024
-    ) -> tuple[torch.Tensor]:
+    def execute(self, hex_color: str = "#FFFFFF", width: int = 1024, height: int = 1024) -> tuple[torch.Tensor]:
         hex_color = hex_color.lstrip("#")
         r, g, b = tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
 
@@ -270,14 +269,12 @@ class ImageAverage:
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
 
-    def execute(self, image: torch.Tensor, focus_mask: torch.Tensor | None = None):
+    def execute(self, image: torch.Tensor, focus_mask: Optional[torch.Tensor] = None):
         step = TensorImage.from_BWHC(image)
         if focus_mask is not None:
             mask = TensorImage.from_BWHC(focus_mask)
             masked_image = step * mask
-            step = masked_image.sum(dim=[2, 3], keepdim=True) / (
-                mask.sum(dim=[2, 3], keepdim=True) + 1e-8
-            )
+            step = masked_image.sum(dim=[2, 3], keepdim=True) / (mask.sum(dim=[2, 3], keepdim=True) + 1e-8)
         else:
             step = step.mean(dim=[2, 3], keepdim=True)
         step = step.expand(-1, -1, image.shape[1], image.shape[2])
@@ -330,9 +327,7 @@ class ImageSubtract:
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
 
-    def execute(
-        self, image_0: torch.Tensor, image_1: torch.Tensor
-    ) -> tuple[torch.Tensor]:
+    def execute(self, image_0: torch.Tensor, image_1: torch.Tensor) -> tuple[torch.Tensor]:
         image_0_tensor = TensorImage.from_BWHC(image_0)
         image_1_tensor = TensorImage.from_BWHC(image_1)
         image_tensor = torch.abs(image_0_tensor - image_1_tensor)
@@ -430,9 +425,7 @@ class ImageTranspose:
 
         if rotation != 0:
             angle = torch.tensor(rotation, dtype=torch.float32, device=device)
-            center = torch.tensor(
-                [width / 2, height / 2], dtype=torch.float32, device=device
-            )
+            center = torch.tensor([width / 2, height / 2], dtype=torch.float32, device=device)
             overlay_image = transform.rotate(overlay_image, angle, center=center)
 
         # Create mask (handle both RGB and RGBA cases)
@@ -447,9 +440,7 @@ class ImageTranspose:
         pad_right = max(0, base_image.shape[3] - overlay_image.shape[3] - x)
         pad_bottom = max(0, base_image.shape[2] - overlay_image.shape[2] - y)
 
-        overlay_image = torch.nn.functional.pad(
-            overlay_image, (pad_left, pad_right, pad_top, pad_bottom)
-        )
+        overlay_image = torch.nn.functional.pad(overlay_image, (pad_left, pad_right, pad_top, pad_bottom))
         mask = torch.nn.functional.pad(mask, (pad_left, pad_right, pad_top, pad_bottom))
 
         # Resize to match base image
@@ -458,9 +449,7 @@ class ImageTranspose:
 
         if feathering > 0:
             kernel_size = 2 * feathering + 1
-            feather_kernel = torch.ones(
-                (1, 1, kernel_size, kernel_size), device=device
-            ) / (kernel_size**2)
+            feather_kernel = torch.ones((1, 1, kernel_size, kernel_size), device=device) / (kernel_size**2)
             mask = torch.nn.functional.conv2d(mask, feather_kernel, padding=feathering)
 
         # Blend images
@@ -526,7 +515,10 @@ class ImageList2Batch:
     CLASS_ID = "image_list_batch"
 
     def execute(
-        self, images: list[torch.Tensor], mode: str, interpolation: str
+        self,
+        images: list[torch.Tensor],
+        mode: str = "STRETCH",
+        interpolation: str = "bilinear",
     ) -> tuple[torch.Tensor]:
         # Check if all images have the same shape
         shapes = [img.shape for img in images]
