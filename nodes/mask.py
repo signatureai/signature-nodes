@@ -65,7 +65,7 @@ class BaseMask:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, color: str, width: int, height: int) -> tuple[torch.Tensor]:
+    def execute(self, color: str = "white", width: int = 1024, height: int = 1024) -> tuple[torch.Tensor]:
         if color == "white":
             mask = torch.ones(1, 1, height, width)
         else:
@@ -136,32 +136,32 @@ class MaskMorphology:
     CATEGORY = MASK_CAT
 
     def execute(
-        self, mask: torch.Tensor, operation: str, kernel_size: int, iterations: int
+        self,
+        mask: torch.Tensor,
+        operation: str = "dilation",
+        kernel_size: int = 1,
+        iterations: int = 5,
     ) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
 
-        if operation == "dilation":
-            output = dilation(
-                image=step, kernel_size=kernel_size, iterations=iterations
-            )
-        elif operation == "erosion":
-            output = erosion(image=step, kernel_size=kernel_size, iterations=iterations)
-        elif operation == "opening":
-            output = opening(image=step, kernel_size=kernel_size, iterations=iterations)
-        elif operation == "closing":
-            output = closing(image=step, kernel_size=kernel_size, iterations=iterations)
-        elif operation == "gradient":
-            output = gradient(
-                image=step, kernel_size=kernel_size, iterations=iterations
-            )
-        elif operation == "top_hat":
-            output = top_hat(image=step, kernel_size=kernel_size, iterations=iterations)
-        elif operation == "bottom_hat":
-            output = bottom_hat(
-                image=step, kernel_size=kernel_size, iterations=iterations
-            )
-        else:
-            raise ValueError("Invalid operation")
+        operations = {
+            "dilation": dilation,
+            "erosion": erosion,
+            "opening": opening,
+            "closing": closing,
+            "gradient": gradient,
+            "top_hat": top_hat,
+            "bottom_hat": bottom_hat,
+        }
+
+        if operation not in operations:
+            raise ValueError(f"Invalid operation: {operation}")
+
+        try:
+            output = operations[operation](image=step, kernel_size=kernel_size, iterations=iterations)
+        except KeyError:
+            raise ValueError(f"Invalid operation: {operation}")
+
         return (output.get_BWHC(),)
 
 
@@ -206,15 +206,16 @@ class MaskBitwise:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(
-        self, mask_1: torch.Tensor, mask_2: torch.Tensor, mode: str
-    ) -> tuple[torch.Tensor]:
+    def execute(self, mask_1: torch.Tensor, mask_2: torch.Tensor, mode: str = "and") -> tuple[torch.Tensor]:
         input_mask_1 = TensorImage.from_BWHC(mask_1)
         input_mask_2 = TensorImage.from_BWHC(mask_2)
         eight_bit_mask_1 = torch.tensor(input_mask_1 * 255, dtype=torch.uint8)
         eight_bit_mask_2 = torch.tensor(input_mask_2 * 255, dtype=torch.uint8)
 
-        result = getattr(torch, f"bitwise_{mode}")(eight_bit_mask_1, eight_bit_mask_2)
+        try:
+            result = getattr(torch, f"bitwise_{mode}")(eight_bit_mask_1, eight_bit_mask_2)
+        except AttributeError:
+            raise ValueError(f"Invalid mode: {mode}")
 
         float_result = result.float() / 255
         output_mask = TensorImage(float_result).get_BWHC()
@@ -251,12 +252,14 @@ class MaskDistance:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(
-        self, mask_0: torch.Tensor, mask_1: torch.Tensor
-    ) -> tuple[torch.Tensor]:
+    def execute(self, mask_0: torch.Tensor, mask_1: torch.Tensor) -> tuple[torch.Tensor]:
         tensor1 = TensorImage.from_BWHC(mask_0)
         tensor2 = TensorImage.from_BWHC(mask_1)
-        dist = torch.Tensor((tensor1 - tensor2).pow(2).sum(3).sqrt().mean())
+
+        try:
+            dist = torch.Tensor((tensor1 - tensor2).pow(2).sum(3).sqrt().mean())
+        except RuntimeError:
+            raise ValueError("Invalid mask dimensions")
         return (dist,)
 
 
@@ -308,11 +311,11 @@ class Mask2Trimap:
     def execute(
         self,
         mask: torch.Tensor,
-        inner_min_threshold: int,
-        inner_max_threshold: int,
-        outer_min_threshold: int,
-        outer_max_threshold: int,
-        kernel_size: int,
+        inner_min_threshold: int = 200,
+        inner_max_threshold: int = 255,
+        outer_min_threshold: int = 15,
+        outer_max_threshold: int = 240,
+        kernel_size: int = 10,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
         inner_mask = TensorImage(step.clone())
@@ -396,7 +399,7 @@ class MaskBinaryFilter:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, mask: torch.Tensor, threshold: float) -> tuple[torch.Tensor]:
+    def execute(self, mask: torch.Tensor, threshold: float = 0.01) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
         step[step > threshold] = 1.0
         step[step <= threshold] = 0.0
@@ -483,7 +486,11 @@ class MaskGaussianBlur:
     CATEGORY = MASK_CAT
 
     def execute(
-        self, mask: torch.Tensor, radius: int, sigma: float, interations: int
+        self,
+        mask: torch.Tensor,
+        radius: int = 13,
+        sigma: float = 10.5,
+        interations: int = 1,
     ) -> tuple[torch.Tensor]:
         tensor_image = TensorImage.from_BWHC(mask)
         output = gaussian_blur2d(tensor_image, radius, sigma, interations).get_BWHC()
@@ -559,13 +566,13 @@ class MaskGrowWithBlur:
     def expand_mask(
         self,
         mask: torch.Tensor,
-        expand: int,
-        incremental_expandrate: float,
-        tapered_corners: bool,
-        flip_input: bool,
-        blur_radius: float,
-        lerp_alpha: float,
-        decay_factor: float,
+        expand: int = 0,
+        incremental_expandrate: float = 0.0,
+        tapered_corners: bool = True,
+        flip_input: bool = False,
+        blur_radius: float = 0.0,
+        lerp_alpha: float = 1.0,
+        decay_factor: float = 1.0,
     ) -> tuple[torch.Tensor]:
         mask = TensorImage.from_BWHC(mask)
         alpha = lerp_alpha
@@ -696,9 +703,7 @@ class MaskPreview(SaveImage):
     def __init__(self):
         self.output_dir = folder_paths.get_temp_directory()
         self.type = "temp"
-        self.prefix_append = "_temp_" + "".join(
-            random.choice("abcdefghijklmnopqrstupvxyz") for _ in range(5)
-        )
+        self.prefix_append = "_temp_" + "".join(random.choice("abcdefghijklmnopqrstupvxyz") for _ in range(5))
         self.compress_level = 4
 
     @classmethod
