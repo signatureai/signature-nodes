@@ -41,12 +41,11 @@ class Any2String:
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("string",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "any_string"
 
-    def execute(self, value):
+    def execute(self, value: any) -> tuple[str]:
         return (str(value),)
 
 
@@ -80,7 +79,7 @@ class String2Any:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
 
-    def execute(self, string):
+    def execute(self, string: str) -> tuple[any]:
         try:
             return (ast.literal_eval(string),)
         except (ValueError, SyntaxError) as e:
@@ -112,11 +111,10 @@ class Any2Int:
         }
 
     RETURN_TYPES = ("INT",)
-    RETURN_NAMES = ("int",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
 
-    def execute(self, value):
+    def execute(self, value: any) -> tuple[int]:
         return (int(value),)
 
 
@@ -145,11 +143,10 @@ class Any2Float:
         }
 
     RETURN_TYPES = ("FLOAT",)
-    RETURN_NAMES = ("float",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
 
-    def execute(self, value):
+    def execute(self, value: any) -> tuple[float]:
         return (float(value),)
 
 
@@ -183,12 +180,11 @@ class Any2Image:
         }
 
     RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("image",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "any_image"
 
-    def execute(self, value):
+    def execute(self, value: any) -> tuple[torch.Tensor]:
         if isinstance(value, torch.Tensor):
             return (value,)
         raise ValueError(f"Unsupported type: {type(value)}")
@@ -225,7 +221,7 @@ class Any2Any:
     CATEGORY = UTILS_CAT
     CLASS_ID = "any2any"
 
-    def execute(self, value):
+    def execute(self, value: any) -> tuple[any]:
         return (value,)
 
 
@@ -260,7 +256,7 @@ class RGB2HSV:
     CATEGORY = UTILS_CAT
     CLASS_ID = "rgb_hsv"
 
-    def execute(self, image: torch.Tensor):
+    def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
         output = rgb_to_hsv(image_tensor).get_BWHC()
         return (output,)
@@ -297,7 +293,7 @@ class RGB2HLS:
     CATEGORY = UTILS_CAT
     CLASS_ID = "rgb_hls"
 
-    def execute(self, image: torch.Tensor):
+    def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
         output = rgb_to_hls(image_tensor).get_BWHC()
         return (output,)
@@ -335,7 +331,7 @@ class RGBA2RGB:
     CATEGORY = UTILS_CAT
     CLASS_ID = "rgba2rgb"
 
-    def execute(self, image: torch.Tensor):
+    def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
         if image_tensor.shape[1] == 4:
             image_tensor = rgba_to_rgb(image_tensor)
@@ -374,7 +370,7 @@ class RGB2GRAY:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
 
-    def execute(self, image: torch.Tensor):
+    def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
         output = rgb_to_grayscale(image_tensor).get_BWHC()
         return (output,)
@@ -411,9 +407,11 @@ class GRAY2RGB:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
 
-    def execute(self, image: torch.Tensor):
+    def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
+        output = image
         image_tensor = TensorImage.from_BWHC(image)
-        output = grayscale_to_rgb(image_tensor).get_BWHC()
+        if image_tensor.shape[1] == 1:
+            output = grayscale_to_rgb(image_tensor).get_BWHC()
         return (output,)
 
 
@@ -442,9 +440,8 @@ class PurgeVRAM:
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
-                "anything": (any_type, {}),
+                "anything": (any_type,),
             },
-            "optional": {},
         }
 
     RETURN_TYPES = (any_type,)
@@ -454,7 +451,7 @@ class PurgeVRAM:
     # DEPRECATED = True
     CLASS_ID = "purge_vram"
 
-    def execute(self, anything):
+    def execute(self, anything: any) -> tuple[any]:
         clean_memory()
         return (anything,)
 
@@ -496,9 +493,7 @@ class WaitSeconds:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        seconds = kwargs.get("seconds") or 1.0
+    def execute(self, value: any, seconds: float = 1.0) -> tuple[any]:
         time.sleep(seconds)
         return (value,)
 
@@ -557,10 +552,9 @@ class ListBuilder:
         False,
     )
 
-    def execute(self, **kwargs):
-        num_slots = int(kwargs.get("num_slots", 1))
+    def execute(self, num_slots: str = "1", **kwargs) -> tuple[any, list[any]]:
         list_stack = []
-        for i in range(1, num_slots + 1):
+        for i in range(1, int(num_slots) + 1):
             list_value = kwargs.get(f"value_{i}")
             if list_value is not None:
                 list_stack.append(list_value)
@@ -602,14 +596,11 @@ class Latent2Dict:
         }
 
     RETURN_TYPES = ("DICT",)
-    RETURN_NAMES = ("dict",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     OUTPUT_NODE = True
 
-    def execute(self, **kwargs):
-        latent = kwargs.get("latent") or {}
-
+    def execute(self, latent: dict) -> tuple[dict]:
         latent_dict = {
             "type": "LATENT",
             "data": {
@@ -661,17 +652,15 @@ class Dict2Latent:
         }
 
     RETURN_TYPES = ("LATENT",)
-    RETURN_NAMES = ("latent",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     OUTPUT_NODE = True
 
-    def execute(self, **kwargs):
-        input_dict = kwargs.get("dict") or {}
-        if input_dict.get("type") != "LATENT":
+    def execute(self, dict: dict) -> tuple[dict]:
+        if dict.get("type") != "LATENT":
             raise ValueError("Input dictionary is not a LATENT type")
 
-        samples_data = input_dict["data"]["samples"]
+        samples_data = dict["data"]["samples"]
         tensor_type = samples_data["type"]
         if "Tensor" in tensor_type or "GGMLTensor" in tensor_type or "TensorImage" in tensor_type:
             tensor_data = torch.tensor(samples_data["values"])
@@ -697,15 +686,14 @@ class InputListToList:
         }
 
     RETURN_TYPES = ("LIST",)
-    RETURN_NAMES = ("list",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     OUTPUT_NODE = True
     INPUT_IS_LIST = True
     CLASS_ID = "input_list_to_list"
 
-    def execute(self, **kwargs):
-        return (kwargs.get("list"),)
+    def execute(self, list: list[any]) -> tuple[list[any]]:
+        return (list,)
 
 
 class ListToOutputList:
@@ -727,5 +715,5 @@ class ListToOutputList:
     OUTPUT_IS_LIST = (True,)
     CLASS_ID = "list_to_output_list"
 
-    def execute(self, **kwargs):
-        return (kwargs.get("list"),)
+    def execute(self, list: list[any]) -> tuple[list[any]]:
+        return (list,)
