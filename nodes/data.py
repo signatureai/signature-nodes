@@ -323,9 +323,7 @@ class GetImageListItem:
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
 
-    def execute(
-        self, images: list[torch.Tensor], index: int = 0
-    ) -> tuple[torch.Tensor]:
+    def execute(self, images: list[torch.Tensor], index: int = 0) -> tuple[torch.Tensor]:
         image = images[index]
         return (image,)
 
