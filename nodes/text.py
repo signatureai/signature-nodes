@@ -89,7 +89,7 @@ class TextCase:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, text: str, case: str) -> tuple[str]:
+    def execute(self, text: str, case: str = "lower") -> tuple[str]:
         return (getattr(text, case)(),)
 
 
@@ -127,7 +127,7 @@ class TextTrim:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, text: str, trim_type: str) -> tuple[str]:
+    def execute(self, text: str, trim_type: str = "both") -> tuple[str]:
         trim_types = {
             "both": text.strip,
             "left": text.lstrip,
@@ -169,7 +169,7 @@ class TextSplit:
     CATEGORY = TEXT_CAT
     OUTPUT_IS_LIST = (True,)
 
-    def execute(self, text: str, delimiter: str) -> tuple[list[str]]:
+    def execute(self, text: str, delimiter: str = " ") -> tuple[list[str]]:
         return (text.split(delimiter),)
 
 
@@ -207,7 +207,7 @@ class TextRegexReplace:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, text: str, pattern: str, replacement: str) -> tuple[str]:
+    def execute(self, text: str, pattern: str = "", replacement: str = "") -> tuple[str]:
         return (re.sub(pattern, replacement, text),)
 
 
@@ -245,7 +245,7 @@ class TextFindReplace:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, text: str, find: str, replace: str) -> tuple[str]:
+    def execute(self, text: str = "", find: str = "", replace: str = "") -> tuple[str]:
         return (text.replace(find, replace),)
 
 
@@ -281,7 +281,7 @@ class TextConcatenate:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
 
-    def execute(self, text1: str, text2: str) -> tuple[str]:
+    def execute(self, text1: str = "", text2: str = "") -> tuple[str]:
         return (text1 + text2,)
 
 
