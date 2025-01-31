@@ -44,7 +44,7 @@ class Float:
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value: float) -> tuple[float]:
+    def execute(self, value: float = 0) -> tuple[float]:
         return (value,)
 
 
@@ -91,7 +91,7 @@ class Int:
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value: int) -> tuple[int]:
+    def execute(self, value: int = 0) -> tuple[int]:
         return (value,)
 
 
@@ -120,7 +120,11 @@ class JoinStringMulti:
     CATEGORY = "KJNodes"
 
     def combine(
-        self, inputcount: int, delimiter: str, return_list: bool, **kwargs
+        self,
+        inputcount: int = 2,
+        delimiter: str = " ",
+        return_list: bool = False,
+        **kwargs,
     ) -> tuple[str] | tuple[list[str]]:
         string = kwargs["string_1"]
         strings = [string]  # Initialize a list with the first string
@@ -167,7 +171,7 @@ class String:
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value: str) -> tuple[str]:
+    def execute(self, value: str = "") -> tuple[str]:
         return (value,)
 
 
@@ -203,7 +207,7 @@ class StringMultiline:
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value: str) -> tuple[str]:
+    def execute(self, value: str = "") -> tuple[str]:
         return (value,)
 
 
@@ -238,5 +242,5 @@ class Boolean:
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value: bool) -> tuple[bool]:
+    def execute(self, value: bool = False) -> tuple[bool]:
         return (value,)
