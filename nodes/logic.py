@@ -35,9 +35,9 @@ class Switch:
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
-                "condition": ("BOOLEAN", {"default": True}),
                 "on_true": (any_type,),
                 "on_false": (any_type,),
+                "condition": ("BOOLEAN", {"default": True}),
             }
         }
 
@@ -46,22 +46,24 @@ class Switch:
     FUNCTION = "execute"
     CATEGORY = LOGIC_CAT
 
-    def check_lazy_status(
-        self, condition: bool, on_true: any = None, on_false: any = None
-    ) -> tuple[any]:
-        if condition and on_true is None:
-            on_true = ["on_true"]
-            if isinstance(on_true, ExecutionBlocker):
-                on_true = on_true.message  # type: ignore
-            return on_true
-        if not condition and on_false is None:
-            on_false = ["on_false"]
-            if isinstance(on_false, ExecutionBlocker):
-                on_false = on_false.message  # type: ignore
-            return on_false
-        return None
+    # TODO: check if this is needed
 
-    def execute(self, condition: bool, on_true: any, on_false: any) -> tuple[any]:
+    # def check_lazy_status(
+    #     self, condition: bool, on_true: any = None, on_false: any = None
+    # ) -> any:
+    #     if condition and on_true is None:
+    #         on_true = ["on_true"]
+    #         if isinstance(on_true, ExecutionBlocker):
+    #             on_true = on_true.message  # type: ignore
+    #         return on_true
+    #     if not condition and on_false is None:
+    #         on_false = ["on_false"]
+    #         if isinstance(on_false, ExecutionBlocker):
+    #             on_false = on_false.message  # type: ignore
+    #         return on_false
+    #     return None
+
+    def execute(self, on_true: any, on_false: any, condition: bool = True) -> tuple[any]:
         return (on_true if condition else on_false,)
 
 
@@ -92,7 +94,7 @@ class Blocker:
         return {
             "required": {
                 "should_continue": ("BOOLEAN", {"default": False}),
-                "in_value": (any_type, {"default": None}),
+                "input": (any_type, {"default": None}),
             },
         }
 
@@ -101,10 +103,8 @@ class Blocker:
     CATEGORY = LABS_CAT
     FUNCTION = "execute"
 
-    def execute(
-        self, should_continue: bool = False, in_value: any = None
-    ) -> tuple[any]:
-        return (in_value if should_continue else ExecutionBlocker(None),)
+    def execute(self, should_continue: bool = False, input: any = None) -> tuple[any]:
+        return (input if should_continue else ExecutionBlocker(None),)
 
 
 class Compare:
@@ -208,9 +208,7 @@ class LoopStart:
         return inputs
 
     RETURN_TYPES = ByPassTypeTuple(tuple(["FLOW_CONTROL"] + [any_type] * MAX_FLOW_NUM))
-    RETURN_NAMES = ByPassTypeTuple(
-        tuple(["flow"] + [f"value_{i}" for i in range(MAX_FLOW_NUM)])
-    )
+    RETURN_NAMES = ByPassTypeTuple(tuple(["flow"] + [f"value_{i}" for i in range(MAX_FLOW_NUM)]))
     FUNCTION = "execute"
 
     CATEGORY = LABS_CAT + "/Loops"
@@ -290,9 +288,7 @@ class LoopEnd:
                 contained[child_id] = True
                 self.collect_contained(child_id, upstream, contained)
 
-    def execute(
-        self, flow: tuple[str], end_loop: bool, dynprompt=None, unique_id=None, **kwargs
-    ):
+    def execute(self, flow: tuple[str], end_loop: bool, dynprompt=None, unique_id=None, **kwargs):
         if end_loop:
             # We're done with the loop
             values = []
