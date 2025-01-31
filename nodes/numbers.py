@@ -74,7 +74,7 @@ class IntClamp:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, number: int, max_value: int, min_value: int) -> tuple[int]:
+    def execute(self, number: int = 0, max_value: int = 0, min_value: int = 0) -> tuple[int]:
         if max_value < min_value:
             raise ValueError("Max value must be greater than or equal to min value")
         if number < min_value:
@@ -135,9 +135,7 @@ class FloatClamp:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(
-        self, number: float, max_value: float, min_value: float
-    ) -> tuple[float]:
+    def execute(self, number: float = 0.0, max_value: float = 0.0, min_value: float = 0.0) -> tuple[float]:
         if max_value < min_value:
             raise ValueError("Max value must be greater than or equal to min value")
         if number < min_value:
@@ -180,7 +178,7 @@ class Float2Int:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "float2int"
 
-    def execute(self, number: float) -> tuple[int]:
+    def execute(self, number: float = 0.0) -> tuple[int]:
         try:
             return (int(number),)
         except (TypeError, ValueError):
@@ -220,7 +218,7 @@ class Int2Float:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "int2float"
 
-    def execute(self, number: int) -> tuple[float]:
+    def execute(self, number: int = 0) -> tuple[float]:
         try:
             return (float(number),)
         except (TypeError, ValueError):
@@ -271,7 +269,7 @@ class IntOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, left: float, right: float, operator: str) -> tuple[int]:
+    def execute(self, left: float = 0.0, right: float = 0.0, operator: str = "+") -> tuple[int]:
         if operator in BASIC_OPERATORS:
             return (int(BASIC_OPERATORS[operator](left, right)),)
 
@@ -321,7 +319,7 @@ class FloatOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
 
-    def execute(self, left: float, right: float, operator: str) -> tuple[float]:
+    def execute(self, left: float = 0.0, right: float = 0.0, operator: str = "+") -> tuple[float]:
         if operator in BASIC_OPERATORS:
             return (BASIC_OPERATORS[operator](left, right),)
 
@@ -364,7 +362,7 @@ class IntMinMax:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "int_minmax"
 
-    def execute(self, a: int, b: int, mode: str) -> tuple[int]:
+    def execute(self, a: int = 0, b: int = 0, mode: str = "min") -> tuple[int]:
         if mode in OP_FUNCTIONS:
             return (OP_FUNCTIONS[mode](a, b),)
         raise ValueError(f"Unsupported mode: {mode}")
@@ -406,7 +404,7 @@ class FloatMinMax:
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "float_minmax"
 
-    def execute(self, a: float, b: float, mode: str) -> tuple[float]:
+    def execute(self, a: float = 0.0, b: float = 0.0, mode: str = "min") -> tuple[float]:
         if mode in OP_FUNCTIONS:
             return (OP_FUNCTIONS[mode](a, b),)
         raise ValueError(f"Unsupported mode: {mode}")
@@ -517,7 +515,12 @@ class MathOperator:
     CATEGORY = NUMBERS_CAT
 
     def execute(
-        self, a: float | int, b: float | int, c: float | int, d: float | int, value: str
+        self,
+        a: float | int = 0,
+        b: float | int = 0,
+        c: float | int = 0,
+        d: float | int = 0,
+        value: str = "",
     ) -> tuple[int, float]:
         def safe_xor(x, y):
             if isinstance(x, float) or isinstance(y, float):
