@@ -1,6 +1,6 @@
 import json
 import tomllib
-
+import torch
 import jq
 import tomli_w
 import yaml
@@ -51,10 +51,7 @@ class Json2Dict:
     CLASS_ID = "json_dict"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        json_str = kwargs.get("json_str")
-        if not isinstance(json_str, str):
-            raise ValueError("Json string must be a string")
+    def execute(self, json_str: str = "") -> tuple[dict]:
         json_dict = json.loads(json_str)
         return (json_dict,)
 
@@ -100,10 +97,7 @@ class Toml2Dict:
     CLASS_ID = "toml_dict"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        toml_str = kwargs.get("toml_str")
-        if not isinstance(toml_str, str):
-            raise ValueError("Toml string must be a string")
+    def execute(self, toml_str: str = "") -> tuple[dict]:
         toml_dict = tomllib.loads(toml_str)
         return (toml_dict,)
 
@@ -145,10 +139,7 @@ class Yaml2Dict:
     CLASS_ID = "yaml_dict"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        yaml_str = kwargs.get("yaml_str")
-        if not isinstance(yaml_str, str):
-            raise ValueError("Yaml string must be a string")
+    def execute(self, yaml_str: str = "") -> tuple[dict]:
         yaml_dict = yaml.safe_load(yaml_str)
         return (yaml_dict,)
 
@@ -195,9 +186,8 @@ class Dict2Json:
     CLASS_ID = "dict_json"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        json_dict = kwargs.get("dict")
-        json_str = json.dumps(json_dict)
+    def execute(self, dict: dict) -> tuple[str]:
+        json_str = json.dumps(dict)
         return (json_str,)
 
 
@@ -240,11 +230,8 @@ class Dict2Toml:
     CLASS_ID = "dict_toml"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        dict_obj = kwargs.get("dict")
-        if not isinstance(dict_obj, dict):
-            raise ValueError("Dict must be a dictionary")
-        toml_str = tomli_w.dumps(dict_obj)
+    def execute(self, dict: dict) -> tuple[str]:
+        toml_str = tomli_w.dumps(dict)
         return (toml_str,)
 
 
@@ -276,7 +263,9 @@ class Dict2Yaml:
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": {"dict": ("DICT",)},
+            "required": {
+                "dict": ("DICT",),
+            },
         }
 
     RETURN_TYPES = ("STRING",)
@@ -284,11 +273,8 @@ class Dict2Yaml:
     CLASS_ID = "dict_yaml"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        dict_obj = kwargs.get("dict")
-        if not isinstance(dict_obj, dict):
-            raise ValueError("Dict must be a dictionary")
-        yaml_str = yaml.dump(dict_obj)
+    def execute(self, dict: dict) -> tuple[str]:
+        yaml_str = yaml.dump(dict)
         return (yaml_str,)
 
 
@@ -328,25 +314,16 @@ class GetImageListItem:
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
-                "images": ("IMAGE",),
+                "images": ("LIST",),
                 "index": ("INT", {"default": 0}),
             },
         }
 
     RETURN_TYPES = "IMAGE"
-    RETURN_NAMES = "image"
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        images = kwargs.get("images")
-        index = kwargs.get("index")
-        if not isinstance(index, int):
-            raise ValueError("Index must be an integer")
-        if not isinstance(images, list):
-            raise ValueError("Images must be a list")
-        images = images[index]
-        index = kwargs.get("index")
+    def execute(self, images: list[torch.Tensor], index: int = 0) -> tuple[torch.Tensor]:
         image = images[index]
         return (image,)
 
@@ -397,14 +374,8 @@ class GetListItem:
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        list_obj = kwargs.get("list")
-        index = kwargs.get("index")
-        if not isinstance(index, int):
-            raise ValueError("Index must be an integer")
-        if not isinstance(list_obj, list):
-            raise ValueError("Input must be a list")
-        item = list_obj[index]
+    def execute(self, list: list, index: int = 0) -> tuple[any, str]:
+        item = list[index]
         item_type = type(item).__name__
         return (item, item_type)
 
@@ -458,21 +429,15 @@ class GetDictValue:
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        dict_obj = kwargs.get("dict")
-        key = kwargs.get("key")
-        if not isinstance(key, str):
-            raise ValueError("Key must be a string")
-        if not isinstance(dict_obj, dict):
-            raise ValueError("Dict must be a dictionary")
+    def execute(self, dict: dict, key: str = "") -> tuple[any, str]:
         if key.startswith("."):
-            value = jq.compile(key).input(dict_obj).first()
+            value = jq.compile(key).input(dict).first()
             if value is None:
                 raise KeyError(f"Key {key} not found in dictionary")
         else:
-            if key not in dict_obj:
+            if key not in dict:
                 raise KeyError(f"Key {key} not found in dictionary")
-            value = dict_obj.get(key)
+            value = dict.get(key)
         value_type = type(value).__name__
         return (value, value_type)
 
@@ -515,8 +480,8 @@ class SetDictValue:
         return {
             "required": {
                 "dict": ("DICT",),
-                "key": ("STRING", {"default": ""}),
                 "value": (any_type,),
+                "key": ("STRING", {"default": ""}),
             }
         }
 
@@ -525,20 +490,13 @@ class SetDictValue:
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        dict_obj = kwargs.get("dict")
-        key = kwargs.get("key")
-        value = kwargs.get("value")
-        if not isinstance(key, str):
-            raise ValueError("Key must be a string")
-        if not isinstance(dict_obj, dict):
-            raise ValueError("Dict must be a dictionary")
+    def execute(self, dict: dict, value: any, key: str = "") -> tuple[dict]:
         if key.startswith("."):
             update_query = f'{key} = "{value}"'
-            dict_obj = jq.compile(update_query).input(dict_obj).first()
+            dict = jq.compile(update_query).input(dict).first()
         else:
-            dict_obj[key] = value
-        return (dict_obj,)
+            dict[key] = value
+        return (dict,)
 
 
 class DeleteDictKey:
@@ -587,21 +545,15 @@ class DeleteDictKey:
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
 
-    def execute(self, **kwargs):
-        dict_obj = kwargs.get("dict")
-        key = kwargs.get("key")
-        if not isinstance(key, str):
-            raise ValueError("Key must be a string")
-        if not isinstance(dict_obj, dict):
-            raise ValueError("Dict must be a dictionary")
+    def execute(self, dict: dict, key: str = "") -> tuple[dict]:
         if key.startswith("."):
-            exists = jq.compile(key).input(dict_obj).first()
+            exists = jq.compile(key).input(dict).first()
             if exists is None:
                 raise KeyError(f"Key {key} not found in dictionary")
             delete_query = f"del({key})"
-            dict_obj = jq.compile(delete_query).input(dict_obj).first()
+            dict = jq.compile(delete_query).input(dict).first()
         else:
-            if key not in dict_obj:
+            if key not in dict:
                 raise KeyError(f"Key {key} not found in dictionary")
-            del dict_obj[key]
-        return (dict_obj,)
+            del dict[key]
+        return (dict,)

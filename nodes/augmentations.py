@@ -1,4 +1,5 @@
 import torch
+from typing import Optional
 from signature_core.functional.augmentation import (
     blur_augmentation,
     brightness_contrast_augmentation,
@@ -65,21 +66,20 @@ class RandomCropAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
     def execute(
         self,
-        **kwargs,
-    ):
-        height = kwargs.get("height") or 1024
-        width = kwargs.get("width") or 1024
-        min_window = kwargs.get("min_window") or 256
-        max_window = kwargs.get("max_window") or 1024
-        percent = kwargs.get("percent") or 1.0
-        augmentation = kwargs.get("augmentation")
+        height: int = 1024,
+        width: int = 1024,
+        min_window: int = 256,
+        max_window: int = 1024,
+        percent: float = 1.0,
+        augmentation: list | None = None,
+    ) -> tuple[list]:
         augmentation = random_crop_augmentation(height, width, min_window, max_window, percent, augmentation)
+
         return (augmentation,)
 
 
@@ -124,14 +124,15 @@ class FlipAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        flip = kwargs.get("flip") or "horizontal"
-        percent = kwargs.get("percent") or 0.5
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        flip: str = "horizontal",
+        percent: float = 0.5,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = flip_augmentation(flip, percent, augmentation)
         return (augmentation,)
 
@@ -195,14 +196,12 @@ class ComposeAugmentation:
 
     def execute(
         self,
-        **kwargs,
-    ):
-        augmentation = kwargs.get("augmentation") or []
-        samples = kwargs.get("samples") or 1
-        image = kwargs.get("image")
-        mask = kwargs.get("mask")
-        seed = kwargs.get("seed") or -1
-
+        augmentation: list,
+        samples: int = 1,
+        seed: int = -1,
+        image: Optional[torch.Tensor] = None,
+        mask: Optional[torch.Tensor] = None,
+    ) -> tuple[list, list]:
         # Create a dummy image if only mask is provided
         if image is None and mask is not None:
             image = torch.zeros_like(mask)
@@ -266,15 +265,16 @@ class BrightnessContrastAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        brightness_limit = kwargs.get("brightness_limit") or 0.2
-        contrast_limit = kwargs.get("contrast_limit") or 0.2
-        percent = kwargs.get("percent") or 0.5
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        brightness_limit: float = 0.2,
+        contrast_limit: float = 0.2,
+        percent: float = 0.5,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = brightness_contrast_augmentation(
             brightness_limit=brightness_limit,
             contrast_limit=contrast_limit,
@@ -318,14 +318,15 @@ class RotationAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        limit = kwargs.get("limit") or 45
-        percent = kwargs.get("percent") or 0.5
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        limit: int = 45,
+        percent: float = 0.5,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = rotation_augmentation(limit=limit, percent=percent, augmentation=augmentation)
         return (augmentation,)
 
@@ -374,15 +375,18 @@ class BlurAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        blur_type = kwargs.get("blur_type") or "gaussian"
-        blur_limit = (kwargs.get("blur_limit_min", 3), kwargs.get("blur_limit_max", 7))
-        percent = kwargs.get("percent") or 0.3
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        blur_type: str = "gaussian",
+        blur_limit_min: int = 3,
+        blur_limit_max: int = 87,
+        percent: float = 0.3,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
+        blur_limit = (blur_limit_min, blur_limit_max)
         augmentation = blur_augmentation(
             blur_type=blur_type,
             blur_limit=blur_limit,
@@ -433,15 +437,16 @@ class QualityAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        quality_type = kwargs.get("quality_type") or "compression"
-        quality_limit = kwargs.get("quality_limit") or 60
-        percent = kwargs.get("percent") or 0.2
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        quality_type: str = "compression",
+        quality_limit: int = 60,
+        percent: float = 0.2,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = quality_augmentation(
             quality_type=quality_type,
             quality_limit=quality_limit,
@@ -493,15 +498,16 @@ class DistortionAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        distortion_type = kwargs.get("distortion_type") or "optical"
-        severity = kwargs.get("severity") or 1
-        percent = kwargs.get("percent") or 0.3
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        distortion_type: str = "optical",
+        severity: int = 1,
+        percent: float = 0.3,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = distortion_augmentation(
             distortion_type=distortion_type,
             severity=severity,
@@ -550,16 +556,17 @@ class ShiftScaleAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        shift_limit = kwargs.get("shift_limit") or 0.1
-        scale_limit = kwargs.get("scale_limit") or 0.2
-        rotate_limit = kwargs.get("rotate_limit") or 45
-        percent = kwargs.get("percent") or 0.3
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        shift_limit: float = 0.1,
+        scale_limit: float = 0.2,
+        rotate_limit: int = 45,
+        percent: float = 0.3,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = shift_scale_augmentation(
             shift_limit=shift_limit,
             scale_limit=scale_limit,
@@ -602,24 +609,31 @@ class CutoutAugmentation:
                 "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
             },
             "optional": {
+                "min_num_holes": ("INT", {"default": 1, "min": 1, "max": 20}),
+                "min_size": ("INT", {"default": 1, "min": 1, "max": 100}),
                 "augmentation": ("AUGMENTATION", {"default": None}),
             },
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        num_holes = kwargs.get("num_holes") or 8
-        max_size = kwargs.get("max_size") or 30
-        percent = kwargs.get("percent") or 0.3
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        num_holes: int = 8,
+        max_size: int = 30,
+        percent: float = 0.3,
+        min_num_holes: int = 1,
+        min_size: int = 1,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = cutout_augmentation(
             num_holes=num_holes,
             max_size=max_size,
             percent=percent,
+            min_num_holes=min_num_holes,
+            min_size=min_size,
             augmentation=augmentation,
         )
         return (augmentation,)
@@ -664,15 +678,16 @@ class GridAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        grid_type = kwargs.get("grid_type") or "shuffle"
-        grid_size = kwargs.get("grid_size") or 3
-        percent = kwargs.get("percent") or 0.3
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        grid_type: str = "shuffle",
+        grid_size: int = 3,
+        percent: float = 0.3,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = grid_augmentation(
             grid_type=grid_type,
             grid_size=grid_size,
@@ -719,15 +734,16 @@ class PerspectiveAugmentation:
         }
 
     RETURN_TYPES = ("AUGMENTATION",)
-    RETURN_NAMES = ("augmentation",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
 
-    def execute(self, **kwargs):
-        scale = kwargs.get("scale") or 0.05
-        keep_size = kwargs.get("keep_size", True)
-        percent = kwargs.get("percent") or 0.3
-        augmentation = kwargs.get("augmentation")
+    def execute(
+        self,
+        scale: float = 0.05,
+        keep_size: bool = True,
+        percent: float = 0.3,
+        augmentation: Optional[list] = None,
+    ) -> tuple[list]:
         augmentation = perspective_augmentation(
             scale=scale, keep_size=keep_size, percent=percent, augmentation=augmentation
         )

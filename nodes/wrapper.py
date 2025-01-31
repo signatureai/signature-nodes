@@ -92,7 +92,15 @@ class Workflow:
                 data_title = data_value.get("title")
                 data_type = (data_value.get("subtype") or "").upper()
                 data_metadata = data_value.get("metadata")
-                data.update({key: {"title": data_title, "type": data_type, "metadata": data_metadata}})
+                data.update(
+                    {
+                        key: {
+                            "title": data_title,
+                            "type": data_type,
+                            "metadata": data_metadata,
+                        }
+                    }
+                )
         return data
 
     def set_inputs(self, new_inputs: dict):
@@ -226,6 +234,7 @@ class Wrapper:
     RETURN_TYPES = (any_type,) * 20
     FUNCTION = "execute"
     CATEGORY = LABS_CAT
+    DEPRECATED = True
 
     def execute(self, **kwargs):
         data = kwargs.get("data")

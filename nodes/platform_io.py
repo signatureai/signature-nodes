@@ -47,11 +47,11 @@ class InputImage:
         return {
             "required": {
                 "title": ("STRING", {"default": "Input Image"}),
-                "subtype": (["image", "mask"],),
+                "subtype": (["image", "mask"], {"default": "image"}),
                 "required": ("BOOLEAN", {"default": True}),
                 "include_alpha": ("BOOLEAN", {"default": False}),
                 "multiple": ("BOOLEAN", {"default": False}),
-                "value": ("STRING", {"default": ""}),
+                "value": ("STRING", {"default": "", "multiline": True}),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
             },
             "optional": {
@@ -64,9 +64,17 @@ class InputImage:
     CATEGORY = PLATFORM_IO_CAT
     OUTPUT_IS_LIST = (True,)
 
+    # TODO: confirm if title, required and metadata inputs are needed
     def execute(
         self,
-        **kwargs,
+        title: str = "Input Image",
+        subtype: str = "image",
+        required: bool = True,
+        include_alpha: bool = False,
+        multiple: bool = False,
+        value: str = "",
+        metadata: str = "{}",
+        fallback: any = None,
     ) -> tuple[list[torch.Tensor]]:
         def post_process(output: TensorImage, include_alpha: bool) -> TensorImage:
             if output.shape[1] not in [3, 4]:
@@ -84,21 +92,6 @@ class InputImage:
                     alpha = TensorImage(output[:, -1, :, :])
                     output, _ = cutout(rgb, alpha)
             return output
-
-        def validate_inputs() -> tuple[str, str, bool, bool, TensorImage | None]:
-            value = kwargs.get("value", "")
-            if not isinstance(value, str):
-                raise ValueError("Value must be a string")
-
-            subtype = kwargs.get("subtype", "image")
-            if not isinstance(subtype, str):
-                raise ValueError("Subtype must be a string")
-
-            include_alpha = bool(kwargs.get("include_alpha", False))
-            multiple = bool(kwargs.get("multiple", False))
-            fallback = kwargs.get("fallback")
-
-            return value, subtype, include_alpha, multiple, fallback
 
         def process_value(value: str, multiple: bool) -> list[str]:
             if not value:
@@ -119,7 +112,6 @@ class InputImage:
             except Exception as e:
                 raise ValueError(f"Unsupported input format: {url_or_base64}") from e
 
-        value, subtype, include_alpha, multiple, fallback = validate_inputs()
         value_list = process_value(value, multiple)
         outputs: list[torch.Tensor] = []
 
@@ -196,26 +188,28 @@ class InputConnector:
     RETURN_TYPES = ("FILE",)
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
+    DEPRECATED = True
 
+    # TODO: confirm if title, subtype required and metadata inputs are needed
     def execute(
         self,
-        **kwargs,
+        title: str = "Input Connector",
+        subtype: str = "google_drive",
+        required: bool = True,
+        override: bool = False,
+        token: str = "",
+        mime_type: str = "image/png",
+        value: str = "",
+        metadata: str = "{}",
     ):
-        value = kwargs.get("value")
-        if not isinstance(value, str):
-            raise ValueError("Value must be a string")
-        token = kwargs.get("token")
-        if not isinstance(token, str):
-            raise ValueError("Token must be a string")
-        mime_type = kwargs.get("mime_type")
-        if not isinstance(mime_type, str):
-            raise ValueError("Mime type must be a string")
-        override = kwargs.get("override")
-        if not isinstance(override, bool):
-            raise ValueError("Override must be a boolean")
         connector = GoogleConnector(token=token)
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
-        data = connector.download(file_id=value, mime_type=mime_type, output_path=input_folder, override=override)
+        data = connector.download(
+            file_id=value,
+            mime_type=mime_type,
+            output_path=input_folder,
+            override=override,
+        )
         clean_memory()
         return (data,)
 
@@ -265,13 +259,18 @@ class InputText:
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, str):
-            raise ValueError("Value must be a string")
-        fallback = kwargs.get("fallback")
-        if value == "":
-            value = fallback or ""
+    # TODO: confirm if title, subtype required and metadata inputs are needed
+    def execute(
+        self,
+        title: str = "Input Text",
+        subtype: str = "string",
+        required: bool = True,
+        value: str = "",
+        metadata: str = "{}",
+        fallback: str = "",
+    ) -> tuple[str]:
+        if fallback and value == "":
+            value = fallback
         clean_memory()
         return (value,)
 
@@ -307,7 +306,14 @@ class InputNumber:
                 "title": ("STRING", {"default": "Input Number"}),
                 "subtype": (["float", "int"],),
                 "required": ("BOOLEAN", {"default": True}),
-                "value": ("FLOAT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+                "value": (
+                    "FLOAT",
+                    {
+                        "default": 0,
+                        "min": -18446744073709551615,
+                        "max": 18446744073709551615,
+                    },
+                ),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
             },
         }
@@ -316,17 +322,17 @@ class InputNumber:
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, int) and not isinstance(value, float):
-            raise ValueError("Value must be a string")
-        subtype = kwargs.get("subtype")
-        if not isinstance(subtype, str):
-            raise ValueError("Subtype must be a string")
-        if subtype == "int":
-            value = int(value)
-        else:
-            value = float(value)
+    # TODO: confirm if title and metadata inputs are needed
+    def execute(
+        self,
+        title: str = "Input Number",
+        subtype: str = "float",
+        required: bool = True,
+        value: float = 0,
+        metadata: str = "{}",
+    ) -> tuple[float]:
+        type_map = {"int": int, "float": float}
+        value = type_map[subtype](value)
         clean_memory()
         return (value,)
 
@@ -359,7 +365,7 @@ class InputBoolean:
         return {
             "required": {
                 "title": ("STRING", {"default": "Input Boolean"}),
-                "subtype": (["boolean"],),
+                "subtype": (["boolean"], {"default": "boolean"}),
                 "required": ("BOOLEAN", {"default": True}),
                 "value": ("BOOLEAN", {"default": False}),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
@@ -367,14 +373,18 @@ class InputBoolean:
         }
 
     RETURN_TYPES = ("BOOLEAN",)
-    RETURN_NAMES = ("boolean",)
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, bool):
-            raise ValueError("Value must be a boolean")
+    # TODO: confirm if title, subtype, and metadata inputs are needed
+    def execute(
+        self,
+        title: str = "Input Boolean",
+        subtype: str = "boolean",
+        required: bool = True,
+        value: bool = False,
+        metadata: str = "{}",
+    ) -> tuple[bool]:
         clean_memory()
         return (value,)
 
@@ -530,7 +540,14 @@ class Output:
                     raise ValueError(f"Unsupported output type: {type(item)}")
             else:
                 value_json = json.dumps(item) if main_subtype == "dict" else item
-                results.append({"title": title, "type": main_subtype, "metadata": metadata, "value": value_json})
+                results.append(
+                    {
+                        "title": title,
+                        "type": main_subtype,
+                        "metadata": metadata,
+                        "value": value_json,
+                    }
+                )
         clean_memory()
         return {"ui": {"signature_output": results}}
 

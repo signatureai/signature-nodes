@@ -10,9 +10,11 @@ from .shared import BASE_COMFY_DIR
 
 def image_array_to_tensor(x: TensorImage):
     image = x.get_BWHC()
-    mask = torch.ones((x.shape[0], 1, x.shape[2], x.shape[3]), dtype=torch.float32)
-    if x.shape[1] == 4:
+    mask = torch.ones((x.shape[0], x.shape[2], x.shape[3], 1), dtype=torch.float32)
+
+    if x.shape[-1] == 4:
         mask = image[:, :, :, -1]
+
     return (
         image,
         mask,
@@ -54,10 +56,7 @@ class ImageFromWeb:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        url = kwargs.get("url")
-        if not isinstance(url, str):
-            raise ValueError("URL must be a string")
+    def execute(self, url: str = "URL HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_web(url)
         return image_array_to_tensor(img_arr)
 
@@ -91,16 +90,13 @@ class ImageFromBase64:
 
     @classmethod
     def INPUT_TYPES(cls):  # type: ignore
-        return {"required": {"base64": ("STRING", {"default": "BASE64 HERE"})}}
+        return {"required": {"base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})}}
 
     RETURN_TYPES = ("IMAGE", "MASK")
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        base64 = kwargs.get("base64")
-        if not isinstance(base64, str):
-            raise ValueError("Base64 must be a string")
+    def execute(self, base64: str = "BASE64 HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_base64(base64)
         return image_array_to_tensor(img_arr)
 
@@ -139,10 +135,7 @@ class Base64FromImage:
     CATEGORY = FILE_CAT
     OUTPUT_NODE = True
 
-    def execute(self, **kwargs):
-        image = kwargs.get("image")
-        if not isinstance(image, torch.Tensor):
-            raise ValueError("Image must be a torch.Tensor")
+    def execute(self, image: torch.Tensor) -> tuple[str]:
         images = TensorImage.from_BWHC(image)
         output = images.get_base64()
         return (output,)
@@ -185,10 +178,7 @@ class FileLoader:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, str):
-            raise ValueError("Value must be a string")
+    def execute(self, value: str = "") -> tuple[list[dict]]:
         data = value.split("&&") if "&&" in value else [value]
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
         for i, _ in enumerate(data):
@@ -201,7 +191,6 @@ class FileLoader:
                     continue
                 item["name"] = os.path.join(input_folder, name)
                 data[i] = item
-
         return (data,)
 
 
@@ -242,10 +231,7 @@ class FolderLoader:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        value = kwargs.get("value")
-        if not isinstance(value, str):
-            raise ValueError("Value must be a string")
+    def execute(self, value: str = "") -> tuple[list[dict]]:
         data = value.split("&&") if "&&" in value else [value]
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
         for i, _ in enumerate(data):
@@ -300,10 +286,7 @@ class File2ImageList:
     CLASS_ID = "file_image_list"
     OUTPUT_IS_LIST = (True,)
 
-    def execute(self, **kwargs):
-        files = kwargs.get("files")
-        if not isinstance(files, list):
-            raise ValueError("Files must be a list")
+    def execute(self, files: list[dict]) -> tuple[list[torch.Tensor]]:
         images_list = []
         for file in files:
             mimetype = file["type"]
@@ -350,65 +333,5 @@ class File2List:
     CLASS_ID = "file_list"
     CATEGORY = FILE_CAT
 
-    def execute(self, **kwargs):
-        files = kwargs.get("files")
-        if not isinstance(files, list):
-            raise ValueError("Files must be a list")
+    def execute(self, files: list[dict]) -> tuple[list[dict]]:
         return (files,)
-
-
-class Rotate:
-    """Rotates an image and mask by a specified angle.
-
-    This node provides functionality to rotate images and masks while optionally adjusting the output
-    size to fit the entire rotated content.
-
-    Args:
-        image (torch.Tensor, optional): Input image in BWHC format
-        mask (torch.Tensor, optional): Input mask in BWHC format
-        angle (float): Rotation angle in degrees (0-360)
-        zoom_to_fit (bool): Whether to zoom to fit rotated content (default: False)
-
-    Returns:
-        tuple[torch.Tensor, torch.Tensor]: Tuple containing:
-            - Rotated image in BWHC format
-            - Rotated mask in BWHC format
-
-    Notes:
-        - At least one of image or mask must be provided
-        - Rotation is performed counterclockwise
-        - When zoom_to_fit is False, corners may be clipped
-        - When zoom_to_fit is True, output may be larger
-        - Empty areas after rotation are filled with black
-        - Maintains aspect ratio of input
-    """
-
-
-class MaskGaussianBlur:
-    """Applies Gaussian blur to a mask.
-
-    This node performs Gaussian blur on mask inputs with configurable radius, sigma and iteration
-    parameters. Useful for softening mask edges or creating smooth transitions.
-
-    Args:
-        image (torch.Tensor): Input mask in BWHC format
-        radius (int): Blur radius in pixels. Default: 13
-            Larger values create wider blur effects
-        sigma (float): Blur strength/standard deviation. Default: 10.5
-            Controls the falloff of the blur effect
-        iterations (int): Number of blur passes to apply. Default: 1
-            Multiple passes can create stronger blur effects
-        only_outline (bool): Whether to blur only the outline. Default: False
-            When True, preserves solid areas and only blurs edges
-
-    Returns:
-        tuple[torch.Tensor]: Single-element tuple containing:
-            - Blurred mask in BWHC format
-
-    Notes:
-        - Input should be a single-channel mask
-        - Output maintains the same dimensions as input
-        - Multiple iterations can create smoother results
-        - Larger radius and sigma values produce stronger blur
-        - Edge-only mode is useful for creating soft borders
-    """

@@ -35,9 +35,9 @@ class Switch:
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
-                "condition": ("BOOLEAN", {"default": True}),
                 "on_true": (any_type,),
                 "on_false": (any_type,),
+                "condition": ("BOOLEAN", {"default": True}),
             }
         }
 
@@ -46,21 +46,25 @@ class Switch:
     FUNCTION = "execute"
     CATEGORY = LOGIC_CAT
 
-    def check_lazy_status(self, condition, on_true=None, on_false=None):
-        if condition and on_true is None:
-            on_true = ["on_true"]
-            if isinstance(on_true, ExecutionBlocker):
-                on_true = on_true.message  # type: ignore
-            return on_true
-        if not condition and on_false is None:
-            on_false = ["on_false"]
-            if isinstance(on_false, ExecutionBlocker):
-                on_false = on_false.message  # type: ignore
-            return on_false
-        return None
+    # TODO: check if this is needed
 
-    def execute(self, **kwargs):
-        return (kwargs["on_true"] if kwargs["condition"] else kwargs["on_false"],)
+    # def check_lazy_status(
+    #     self, condition: bool, on_true: any = None, on_false: any = None
+    # ) -> any:
+    #     if condition and on_true is None:
+    #         on_true = ["on_true"]
+    #         if isinstance(on_true, ExecutionBlocker):
+    #             on_true = on_true.message  # type: ignore
+    #         return on_true
+    #     if not condition and on_false is None:
+    #         on_false = ["on_false"]
+    #         if isinstance(on_false, ExecutionBlocker):
+    #             on_false = on_false.message  # type: ignore
+    #         return on_false
+    #     return None
+
+    def execute(self, on_true: any, on_false: any, condition: bool = True) -> tuple[any]:
+        return (on_true if condition else on_false,)
 
 
 class Blocker:
@@ -89,8 +93,8 @@ class Blocker:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "continue": ("BOOLEAN", {"default": False}),
-                "in": (any_type, {"default": None}),
+                "should_continue": ("BOOLEAN", {"default": False}),
+                "input": (any_type, {"default": None}),
             },
         }
 
@@ -99,8 +103,8 @@ class Blocker:
     CATEGORY = LABS_CAT
     FUNCTION = "execute"
 
-    def execute(self, **kwargs):
-        return (kwargs["in"] if kwargs["continue"] else ExecutionBlocker(None),)
+    def execute(self, should_continue: bool = False, input: any = None) -> tuple[any]:
+        return (input if should_continue else ExecutionBlocker(None),)
 
 
 class Compare:
@@ -157,18 +161,14 @@ class Compare:
     FUNCTION = "execute"
     CATEGORY = LOGIC_CAT
 
-    def execute(self, **kwargs):
-        input_a = kwargs.get("a")
-        input_b = kwargs.get("b")
-        comparison = kwargs.get("comparison") or "a == b"
-
+    def execute(self, a: any, b: any, comparison: str = "a == b") -> tuple[bool]:
         try:
-            output = self.COMPARE_FUNCTIONS[comparison](input_a, input_b)
+            output = self.COMPARE_FUNCTIONS[comparison](a, b)
         except Exception as e:
-            if isinstance(input_a, torch.Tensor) and isinstance(input_b, torch.Tensor):
-                output = self.COMPARE_FUNCTIONS[comparison](input_a.shape, input_b.shape)
-            elif isinstance(input_a, (list, tuple)) and isinstance(input_b, (list, tuple)):
-                output = self.COMPARE_FUNCTIONS[comparison](len(input_a), len(input_b))
+            if isinstance(a, torch.Tensor) and isinstance(b, torch.Tensor):
+                output = self.COMPARE_FUNCTIONS[comparison](a.shape, b.shape)
+            elif isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+                output = self.COMPARE_FUNCTIONS[comparison](len(a), len(b))
             else:
                 raise e
 
@@ -288,7 +288,7 @@ class LoopEnd:
                 contained[child_id] = True
                 self.collect_contained(child_id, upstream, contained)
 
-    def execute(self, flow, end_loop, dynprompt=None, unique_id=None, **kwargs):
+    def execute(self, flow: tuple[str], end_loop: bool, dynprompt=None, unique_id=None, **kwargs):
         if end_loop:
             # We're done with the loop
             values = []
@@ -313,7 +313,10 @@ class LoopEnd:
         for node_id in contained:
             if dynprompt is not None:
                 original_node = dynprompt.get_node(node_id)
-                node = graph.node(original_node["class_type"], "Recurse" if node_id == unique_id else node_id)
+                node = graph.node(
+                    original_node["class_type"],
+                    "Recurse" if node_id == unique_id else node_id,
+                )
                 node.set_override_display_id(node_id)
         for node_id in contained:
             if dynprompt is not None:

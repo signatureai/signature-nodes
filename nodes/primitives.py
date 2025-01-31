@@ -30,17 +30,21 @@ class Float:
             "required": {
                 "value": (
                     "FLOAT",
-                    {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 0.01},
+                    {
+                        "default": 0,
+                        "min": -18446744073709551615,
+                        "max": 18446744073709551615,
+                        "step": 0.01,
+                    },
                 ),
             },
         }
 
     RETURN_TYPES = ("FLOAT",)
-    RETURN_NAMES = ("float",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value):
+    def execute(self, value: float = 0) -> tuple[float]:
         return (value,)
 
 
@@ -73,18 +77,67 @@ class Int:
             "required": {
                 "value": (
                     "INT",
-                    {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1},
+                    {
+                        "default": 0,
+                        "min": -18446744073709551615,
+                        "max": 18446744073709551615,
+                        "step": 1,
+                    },
                 ),
             },
         }
 
     RETURN_TYPES = ("INT",)
-    RETURN_NAMES = ("int",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value):
+    def execute(self, value: int = 0) -> tuple[int]:
         return (value,)
+
+
+class JoinStringMulti:
+    """
+    Creates single string, or a list of strings, from
+    multiple input strings.
+    You can set how many inputs the node has,
+    with the **inputcount** and clicking update.
+    """
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "inputcount": ("INT", {"default": 2, "min": 2, "max": 1000, "step": 1}),
+                "delimiter": ("STRING", {"default": " ", "multiline": False}),
+                "return_list": ("BOOLEAN", {"default": False}),
+                "string_1": ("STRING", {"default": "", "forceInput": True}),
+                "string_2": ("STRING", {"default": "", "forceInput": True}),
+            },
+        }
+
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "combine"
+    CATEGORY = "KJNodes"
+
+    def combine(
+        self,
+        inputcount: int = 2,
+        delimiter: str = " ",
+        return_list: bool = False,
+        **kwargs,
+    ) -> tuple[str] | tuple[list[str]]:
+        string = kwargs["string_1"]
+        strings = [string]  # Initialize a list with the first string
+        for c in range(1, inputcount):
+            new_string = kwargs[f"string_{c + 1}"]
+            if return_list:
+                strings.append(new_string)  # Add new string to the list
+            else:
+                string = string + delimiter + new_string
+        if return_list:
+            return (strings,)  # Return the list of strings
+        else:
+            return (string,)  # Return the combined string
 
 
 class String:
@@ -115,11 +168,10 @@ class String:
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("string",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value):
+    def execute(self, value: str = "") -> tuple[str]:
         return (value,)
 
 
@@ -152,11 +204,10 @@ class StringMultiline:
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("string",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value):
+    def execute(self, value: str = "") -> tuple[str]:
         return (value,)
 
 
@@ -188,9 +239,8 @@ class Boolean:
         }
 
     RETURN_TYPES = ("BOOLEAN",)
-    RETURN_NAMES = ("boolean",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
 
-    def execute(self, value):
+    def execute(self, value: bool = False) -> tuple[bool]:
         return (value,)

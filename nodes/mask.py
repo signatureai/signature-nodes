@@ -1,6 +1,6 @@
 import random
-
-import folder_paths  # type: ignore
+from typing import Optional
+import folder_paths
 import torch
 from kornia import filters, morphology
 from signature_core.functional.filters import gaussian_blur2d
@@ -15,7 +15,7 @@ from signature_core.functional.morphology import (
 )
 from signature_core.img.tensor_image import TensorImage
 
-from nodes import SaveImage  # type: ignore
+from nodes import SaveImage
 
 from .. import MAX_INT
 from .categories import MASK_CAT
@@ -46,12 +46,18 @@ class BaseMask:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
-                "color": (["white", "black"],),
-                "width": ("INT", {"default": 1024, "min": 1, "max": MAX_INT, "step": 1}),
-                "height": ("INT", {"default": 1024, "min": 1, "max": MAX_INT, "step": 1}),
+                "color": (["white", "black"], {"default": "white"}),
+                "width": (
+                    "INT",
+                    {"default": 1024, "min": 1, "max": MAX_INT, "step": 1},
+                ),
+                "height": (
+                    "INT",
+                    {"default": 1024, "min": 1, "max": MAX_INT, "step": 1},
+                ),
             }
         }
 
@@ -59,10 +65,7 @@ class BaseMask:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, **kwargs):
-        color = kwargs.get("color") or "white"
-        width = kwargs.get("width") or 1024
-        height = kwargs.get("height") or 1024
+    def execute(self, color: str = "white", width: int = 1024, height: int = 1024) -> tuple[torch.Tensor]:
         if color == "white":
             mask = torch.ones(1, 1, height, width)
         else:
@@ -102,7 +105,7 @@ class MaskMorphology:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
@@ -132,31 +135,33 @@ class MaskMorphology:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, **kwargs):
-        mask = kwargs.get("mask")
-        if not isinstance(mask, torch.Tensor):
-            raise ValueError("Mask must be a tensor")
-        kernel = kwargs.get("kernel_size")
-        iterations = kwargs.get("iterations")
-        operation = kwargs.get("operation")
+    def execute(
+        self,
+        mask: torch.Tensor,
+        operation: str = "dilation",
+        kernel_size: int = 1,
+        iterations: int = 5,
+    ) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
 
-        if operation == "dilation":
-            output = dilation(image=step, kernel_size=kernel, iterations=iterations)
-        elif operation == "erosion":
-            output = erosion(image=step, kernel_size=kernel, iterations=iterations)
-        elif operation == "opening":
-            output = opening(image=step, kernel_size=kernel, iterations=iterations)
-        elif operation == "closing":
-            output = closing(image=step, kernel_size=kernel, iterations=iterations)
-        elif operation == "gradient":
-            output = gradient(image=step, kernel_size=kernel, iterations=iterations)
-        elif operation == "top_hat":
-            output = top_hat(image=step, kernel_size=kernel, iterations=iterations)
-        elif operation == "bottom_hat":
-            output = bottom_hat(image=step, kernel_size=kernel, iterations=iterations)
-        else:
-            raise ValueError("Invalid operation")
+        operations = {
+            "dilation": dilation,
+            "erosion": erosion,
+            "opening": opening,
+            "closing": closing,
+            "gradient": gradient,
+            "top_hat": top_hat,
+            "bottom_hat": bottom_hat,
+        }
+
+        if operation not in operations:
+            raise ValueError(f"Invalid operation: {operation}")
+
+        try:
+            output = operations[operation](image=step, kernel_size=kernel_size, iterations=iterations)
+        except KeyError:
+            raise ValueError(f"Invalid operation: {operation}")
+
         return (output.get_BWHC(),)
 
 
@@ -188,7 +193,7 @@ class MaskBitwise:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask_1": ("MASK",),
@@ -201,24 +206,16 @@ class MaskBitwise:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, mask_1: torch.Tensor, mask_2: torch.Tensor, mode: str):
+    def execute(self, mask_1: torch.Tensor, mask_2: torch.Tensor, mode: str = "and") -> tuple[torch.Tensor]:
         input_mask_1 = TensorImage.from_BWHC(mask_1)
         input_mask_2 = TensorImage.from_BWHC(mask_2)
         eight_bit_mask_1 = torch.tensor(input_mask_1 * 255, dtype=torch.uint8)
         eight_bit_mask_2 = torch.tensor(input_mask_2 * 255, dtype=torch.uint8)
 
-        if mode == "and":
-            result = torch.bitwise_and(eight_bit_mask_1, eight_bit_mask_2)
-        elif mode == "or":
-            result = torch.bitwise_or(eight_bit_mask_1, eight_bit_mask_2)
-        elif mode == "xor":
-            result = torch.bitwise_xor(eight_bit_mask_1, eight_bit_mask_2)
-        elif mode == "left_shift":
-            result = torch.bitwise_left_shift(eight_bit_mask_1, eight_bit_mask_2)
-        elif mode == "right_shift":
-            result = torch.bitwise_right_shift(eight_bit_mask_1, eight_bit_mask_2)
-        else:
-            raise ValueError("Invalid mode")
+        try:
+            result = getattr(torch, f"bitwise_{mode}")(eight_bit_mask_1, eight_bit_mask_2)
+        except AttributeError:
+            raise ValueError(f"Invalid mode: {mode}")
 
         float_result = result.float() / 255
         output_mask = TensorImage(float_result).get_BWHC()
@@ -248,21 +245,21 @@ class MaskDistance:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {"required": {"mask_0": ("MASK",), "mask_1": ("MASK",)}}
 
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, **kwargs):
-        mask_0 = kwargs.get("mask_0")
-        mask_1 = kwargs.get("mask_1")
-        if not isinstance(mask_0, torch.Tensor) or not isinstance(mask_1, torch.Tensor):
-            raise ValueError("Mask must be a tensor")
+    def execute(self, mask_0: torch.Tensor, mask_1: torch.Tensor) -> tuple[torch.Tensor]:
         tensor1 = TensorImage.from_BWHC(mask_0)
         tensor2 = TensorImage.from_BWHC(mask_1)
-        dist = torch.Tensor((tensor1 - tensor2).pow(2).sum(3).sqrt().mean())
+
+        try:
+            dist = torch.Tensor((tensor1 - tensor2).pow(2).sum(3).sqrt().mean())
+        except RuntimeError:
+            raise ValueError("Invalid mask dimensions")
         return (dist,)
 
 
@@ -294,7 +291,7 @@ class Mask2Trimap:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
@@ -311,17 +308,15 @@ class Mask2Trimap:
     CATEGORY = MASK_CAT
     CLASS_ID = "mask_trimap"
 
-    def execute(self, **kwargs):
-        mask = kwargs.get("mask")
-        inner_min_threshold = kwargs.get("inner_min_threshold") or 200
-        inner_max_threshold = kwargs.get("inner_max_threshold") or 255
-        outer_min_threshold = kwargs.get("outer_min_threshold") or 15
-        outer_max_threshold = kwargs.get("outer_max_threshold") or 240
-        kernel_size = kwargs.get("kernel_size")
-
-        if not isinstance(mask, torch.Tensor):
-            raise ValueError("Mask must be a tensor")
-
+    def execute(
+        self,
+        mask: torch.Tensor,
+        inner_min_threshold: int = 200,
+        inner_max_threshold: int = 255,
+        outer_min_threshold: int = 15,
+        outer_max_threshold: int = 240,
+        kernel_size: int = 10,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
         inner_mask = TensorImage(step.clone())
         inner_mask[inner_mask > (inner_max_threshold / 255.0)] = 1.0
@@ -344,7 +339,14 @@ class Mask2Trimap:
         trimap_im[inner_mask == 1.0] = 1.0
         batch_size = step.shape[0]
 
-        trimap = torch.zeros(batch_size, 2, step.shape[2], step.shape[3], dtype=step.dtype, device=step.device)
+        trimap = torch.zeros(
+            batch_size,
+            2,
+            step.shape[2],
+            step.shape[3],
+            dtype=step.dtype,
+            device=step.device,
+        )
         for i in range(batch_size):
             tar_trimap = trimap_im[i][0]
             trimap[i][1][tar_trimap == 1] = 1
@@ -382,11 +384,14 @@ class MaskBinaryFilter:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
-                "threshold": ("FLOAT", {"default": 0.01, "min": 0.00, "max": 1.00, "step": 0.01}),
+                "threshold": (
+                    "FLOAT",
+                    {"default": 0.01, "min": 0.00, "max": 1.00, "step": 0.01},
+                ),
             }
         }
 
@@ -394,7 +399,7 @@ class MaskBinaryFilter:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, mask: torch.Tensor, threshold: float):
+    def execute(self, mask: torch.Tensor, threshold: float = 0.01) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
         step[step > threshold] = 1.0
         step[step <= threshold] = 0.0
@@ -423,7 +428,7 @@ class MaskInvert:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
@@ -434,7 +439,7 @@ class MaskInvert:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, mask: torch.Tensor):
+    def execute(self, mask: torch.Tensor) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
         step = 1.0 - step
         output = TensorImage(step).get_BWHC()
@@ -466,14 +471,13 @@ class MaskGaussianBlur:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": ("MASK",),
+                "mask": ("MASK",),
                 "radius": ("INT", {"default": 13}),
                 "sigma": ("FLOAT", {"default": 10.5}),
                 "interations": ("INT", {"default": 1}),
-                "only_outline": ("BOOLEAN", {"default": False}),
             }
         }
 
@@ -481,8 +485,14 @@ class MaskGaussianBlur:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, image: torch.Tensor, radius, sigma, interations):
-        tensor_image = TensorImage.from_BWHC(image)
+    def execute(
+        self,
+        mask: torch.Tensor,
+        radius: int = 13,
+        sigma: float = 10.5,
+        interations: int = 1,
+    ) -> tuple[torch.Tensor]:
+        tensor_image = TensorImage.from_BWHC(mask)
         output = gaussian_blur2d(tensor_image, radius, sigma, interations).get_BWHC()
         return (output,)
 
@@ -551,34 +561,19 @@ class MaskGrowWithBlur:
 
     CATEGORY = MASK_CAT
     RETURN_TYPES = ("MASK",)
-    RETURN_NAMES = ("mask",)
     FUNCTION = "expand_mask"
 
-    def expand_mask(self, **kwargs):
-        mask = kwargs.get("mask")
-        if not isinstance(mask, torch.Tensor):
-            raise ValueError("Mask must be a tensor")
-        expand = kwargs.get("expand")
-        if not isinstance(expand, int):
-            raise ValueError("Expand must be an integer")
-        incremental_expandrate = kwargs.get("incremental_expandrate")
-        if not isinstance(incremental_expandrate, float):
-            raise ValueError("Incremental expandrate must be a float")
-        tapered_corners = kwargs.get("tapered_corners")
-        if not isinstance(tapered_corners, bool):
-            raise ValueError("Tapered corners must be a boolean")
-        flip_input = kwargs.get("flip_input")
-        if not isinstance(flip_input, bool):
-            raise ValueError("Flip input must be a boolean")
-        blur_radius = kwargs.get("blur_radius")
-        if not isinstance(blur_radius, float):
-            raise ValueError("Blur radius must be a float")
-        lerp_alpha = kwargs.get("lerp_alpha")
-        if not isinstance(lerp_alpha, float):
-            raise ValueError("Lerp alpha must be a float")
-        decay_factor = kwargs.get("decay_factor")
-        if not isinstance(decay_factor, float):
-            raise ValueError("Decay factor must be a float")
+    def expand_mask(
+        self,
+        mask: torch.Tensor,
+        expand: int = 0,
+        incremental_expandrate: float = 0.0,
+        tapered_corners: bool = True,
+        flip_input: bool = False,
+        blur_radius: float = 0.0,
+        lerp_alpha: float = 1.0,
+        decay_factor: float = 1.0,
+    ) -> tuple[torch.Tensor]:
         mask = TensorImage.from_BWHC(mask)
         alpha = lerp_alpha
         decay = decay_factor
@@ -618,7 +613,9 @@ class MaskGrowWithBlur:
             kernel_size = int(4 * round(blur_radius) + 1)
             blurred = [
                 filters.gaussian_blur2d(
-                    tensor.unsqueeze(0).unsqueeze(0), (kernel_size, kernel_size), (blur_radius, blur_radius)
+                    tensor.unsqueeze(0).unsqueeze(0),
+                    (kernel_size, kernel_size),
+                    (blur_radius, blur_radius),
                 ).squeeze(0)
                 for tensor in out
             ]
@@ -655,7 +652,7 @@ class GetMaskShape:
     """
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
@@ -667,10 +664,16 @@ class GetMaskShape:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, mask):
+    def execute(self, mask: torch.Tensor) -> tuple[int, int, int, int, str]:
         if len(mask.shape) == 3:
             return (mask.shape[0], mask.shape[2], mask.shape[1], 1, str(mask.shape))
-        return (mask.shape[0], mask.shape[2], mask.shape[1], mask.shape[3], str(mask.shape))
+        return (
+            mask.shape[0],
+            mask.shape[2],
+            mask.shape[1],
+            mask.shape[3],
+            str(mask.shape),
+        )
 
 
 class MaskPreview(SaveImage):
@@ -704,7 +707,7 @@ class MaskPreview(SaveImage):
         self.compress_level = 4
 
     @classmethod
-    def INPUT_TYPES(cls):  # type: ignore
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
@@ -715,6 +718,11 @@ class MaskPreview(SaveImage):
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
 
-    def execute(self, mask, filename_prefix="Signature", prompt=None, extra_pnginfo=None):
+    def execute(
+        self,
+        mask: torch.Tensor,
+        prompt: Optional[str] = None,
+        extra_pnginfo: Optional[dict] = None,
+    ) -> dict[str, dict[str, list]]:
         preview = TensorImage.from_BWHC(mask).get_rgb_or_rgba().get_BWHC()
-        return self.save_images(preview, filename_prefix, prompt, extra_pnginfo)
+        return self.save_images(preview, "Signature", prompt, extra_pnginfo)
