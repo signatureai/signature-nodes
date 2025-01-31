@@ -56,7 +56,7 @@ class ImageFromWeb:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, url: str) -> tuple[torch.Tensor, torch.Tensor]:
+    def execute(self, url: str = "URL HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_web(url)
         return image_array_to_tensor(img_arr)
 
@@ -90,17 +90,13 @@ class ImageFromBase64:
 
     @classmethod
     def INPUT_TYPES(cls):  # type: ignore
-        return {
-            "required": {
-                "base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})
-            }
-        }
+        return {"required": {"base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})}}
 
     RETURN_TYPES = ("IMAGE", "MASK")
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, base64: str) -> tuple[torch.Tensor, torch.Tensor]:
+    def execute(self, base64: str = "BASE64 HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_base64(base64)
         return image_array_to_tensor(img_arr)
 
@@ -139,10 +135,7 @@ class Base64FromImage:
     CATEGORY = FILE_CAT
     OUTPUT_NODE = True
 
-    def execute(self, **kwargs):
-        image = kwargs.get("image")
-        if not isinstance(image, torch.Tensor):
-            raise ValueError("Image must be a torch.Tensor")
+    def execute(self, image: torch.Tensor) -> tuple[str]:
         images = TensorImage.from_BWHC(image)
         output = images.get_base64()
         return (output,)
@@ -185,7 +178,7 @@ class FileLoader:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, value: str) -> tuple[list[dict]]:
+    def execute(self, value: str = "") -> tuple[list[dict]]:
         data = value.split("&&") if "&&" in value else [value]
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
         for i, _ in enumerate(data):
@@ -238,7 +231,7 @@ class FolderLoader:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
 
-    def execute(self, value: str) -> tuple[list[dict]]:
+    def execute(self, value: str = "") -> tuple[list[dict]]:
         data = value.split("&&") if "&&" in value else [value]
         input_folder = os.path.join(BASE_COMFY_DIR, "input")
         for i, _ in enumerate(data):
