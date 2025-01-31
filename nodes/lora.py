@@ -6,6 +6,7 @@ import torch
 # comfy related imports
 from comfy import sd, utils  # type: ignore
 from signature_core.img.tensor_image import TensorImage
+from typing import Optional
 from uuid_extensions import uuid7str
 
 from .categories import LABS_CAT, LORA_CAT
@@ -57,18 +58,17 @@ class ApplyLoraStack:
 
     def execute(
         self,
-        **kwargs,
+        model: any,
+        clip: any,
+        lora_stack: Optional[list] = None,
     ):
-        model = kwargs.get("model")
-        clip = kwargs.get("clip")
-        lora_stack = kwargs.get("lora_stack")
-        loras = []
         if lora_stack is None:
             return (
                 model,
                 clip,
             )
 
+        loras = []
         model_lora = model
         clip_lora = clip
         loras.extend(lora_stack)
@@ -134,9 +134,18 @@ class LoraStacker:
                 {
                     f"switch_{i}": (["On", "Off"],),
                     f"lora_name_{i}": (loras,),
-                    f"weight_{i}": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
-                    f"model_weight_{i}": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
-                    f"clip_weight_{i}": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
+                    f"weight_{i}": (
+                        "FLOAT",
+                        {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                    ),
+                    f"model_weight_{i}": (
+                        "FLOAT",
+                        {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                    ),
+                    f"clip_weight_{i}": (
+                        "FLOAT",
+                        {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                    ),
                 }
             )
 
@@ -149,7 +158,7 @@ class LoraStacker:
     CLASS_ID = "lora_stacker"
 
     def execute(self, **kwargs):
-        num_slots = int(kwargs.get("num_slots", 3))
+        num_slots = int(kwargs.get("num_slots", 1))
         mode = kwargs.get("mode", "Simple")
         lora_stack = kwargs.get("lora_stack")
 
@@ -204,16 +213,34 @@ class LoraStack:
             "required": {
                 "switch_1": (["Off", "On"],),
                 "lora_name_1": (loras,),
-                "model_weight_1": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
-                "clip_weight_1": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
+                "model_weight_1": (
+                    "FLOAT",
+                    {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                ),
+                "clip_weight_1": (
+                    "FLOAT",
+                    {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                ),
                 "switch_2": (["Off", "On"],),
                 "lora_name_2": (loras,),
-                "model_weight_2": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
-                "clip_weight_2": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
+                "model_weight_2": (
+                    "FLOAT",
+                    {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                ),
+                "clip_weight_2": (
+                    "FLOAT",
+                    {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                ),
                 "switch_3": (["Off", "On"],),
                 "lora_name_3": (loras,),
-                "model_weight_3": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
-                "clip_weight_3": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
+                "model_weight_3": (
+                    "FLOAT",
+                    {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                ),
+                "clip_weight_3": (
+                    "FLOAT",
+                    {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01},
+                ),
             },
             "optional": {"lora_stack": ("LORA_STACK",)},
         }
@@ -291,25 +318,22 @@ class Dict2LoraStack:
             },
             "optional": {"lora_stack": ("LORA_STACK",)},
         }
-
-        inputs["optional"] = {"lora_stack": ("LORA_STACK",)}
         return inputs
 
     RETURN_TYPES = ("LORA_STACK",)
-    RETURN_NAMES = ("lora_stack",)
     FUNCTION = "execute"
     CATEGORY = LORA_CAT
     CLASS_ID = "dict_to_lora_stack"
 
-    def execute(self, **kwargs):
-        lora_dicts = kwargs.get("lora_dicts")
-        if not isinstance(lora_dicts, list):
-            raise ValueError("Lora dicts must be a list")
-        lora_stack = kwargs.get("lora_stack")
+    def execute(self, lora_dicts: list, lora_stack: Optional[list] = None):
         loras = [None for _ in lora_dicts]
 
         for idx, lora_dict in enumerate(lora_dicts):
-            loras[idx] = (lora_dict["lora_name"], lora_dict["lora_weight"], lora_dict["lora_weight"])  # type: ignore
+            loras[idx] = (
+                lora_dict["lora_name"],
+                lora_dict["lora_weight"],
+                lora_dict["lora_weight"],
+            )  # type: ignore
 
         # If lora_stack is not None, extend the loras list with lora_stack
         if lora_stack is not None:
@@ -352,10 +376,10 @@ class SaveLoraCaptions:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "dataset_name": ("STRING", {"default": ""}),
-                "repeats": ("INT", {"default": 5, "min": 1}),
                 "images": ("IMAGE",),
                 "labels": ("STRING", {"forceInput": True}),
+                "dataset_name": ("STRING", {"default": ""}),
+                "repeats": ("INT", {"default": 5, "min": 1}),
             },
             "optional": {
                 "prefix": ("STRING", {"default": ""}),
@@ -371,27 +395,13 @@ class SaveLoraCaptions:
 
     def execute(
         self,
-        **kwargs,
+        images: torch.Tensor,
+        labels: str,
+        dataset_name: str = "",
+        repeats: int = 5,
+        prefix: Optional[str] = "",
+        suffix: Optional[str] = "",
     ):
-        dataset_name = kwargs.get("dataset_name")
-        if not isinstance(dataset_name, str):
-            raise ValueError("Dataset name must be a string")
-        repeats = kwargs.get("repeats")
-        if not isinstance(repeats, int):
-            raise ValueError("Repeats must be an integer")
-        images = kwargs.get("images")
-        if not isinstance(images, torch.Tensor):
-            raise ValueError("Images must be a torch.Tensor")
-        labels = kwargs.get("labels")
-        if not isinstance(labels, str):
-            raise ValueError("Labels must be a string")
-        prefix = kwargs.get("prefix")
-        if not isinstance(prefix, str):
-            raise ValueError("Prefix must be a string")
-        suffix = kwargs.get("suffix")
-        if not isinstance(suffix, str):
-            raise ValueError("Suffix must be a string")
-
         labels_list = labels.split("\n") if "\n" in labels else [labels]
 
         root_folder = os.path.join(BASE_COMFY_DIR, "loras_datasets")
