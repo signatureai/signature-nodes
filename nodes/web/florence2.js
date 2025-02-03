@@ -1,7 +1,6 @@
 import { app } from "../../../scripts/app.js";
 
 function updateInputsOutputs(node, newVal, metadata, originalInputNames, originalOutputNames, originalWidgetNames) {
-  console.log(node.id);
   // Hide inputs and widgets
   node.hiddenInputs ||= [];
   node.hiddenWidgets ||= [];
