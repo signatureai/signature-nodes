@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Optional, Tuple
 
@@ -12,6 +13,37 @@ from ....categories import AGENT_CAT
 
 SIG_MODELS_DIR = "sig_models"
 
+TASK_TOKENS = [
+    "CAPTION",
+    "DETAILED_CAPTION",
+    "MORE_DETAILED_CAPTION",
+    "OD",
+    "DENSE_REGION_CAPTION",
+    "REGION_PROPOSAL",
+    "CAPTION_TO_PHRASE_GROUNDING",
+    "REFERRING_EXPRESSION_SEGMENTATION",
+    # "REGION_TO_SEGMENTATION",  # TODO:  Support this later with BBox interface
+    "OPEN_VOCABULARY_DETECTION",
+    # "REGION_TO_CATEGORY",   # TODO:  Support this later with BBox interface
+    # "REGION_TO_DESCRIPTION",   # TODO:  Support this later with BBox interface
+    "OCR",
+    "OCR_WITH_REGION",
+]
+
+TASK_INPUTS_OUTPUTS = {
+    "CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+    "DETAILED_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+    "MORE_DETAILED_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+    "OD": {"hide_inputs": ["text_prompt"], "hide_outputs": ["caption"]},
+    "DENSE_REGION_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["caption"]},
+    "REGION_PROPOSAL": {"hide_inputs": ["text_prompt"], "hide_outputs": ["caption"]},
+    "CAPTION_TO_PHRASE_GROUNDING": {"hide_inputs": [], "hide_outputs": ["caption"]},
+    "REFERRING_EXPRESSION_SEGMENTATION": {"hide_inputs": [], "hide_outputs": ["caption"]},
+    "OPEN_VOCABULARY_DETECTION": {"hide_inputs": [], "hide_outputs": ["caption"]},
+    "OCR": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+    "OCR_WITH_REGION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+}
+
 
 class Florence2:
     @classmethod
@@ -19,30 +51,14 @@ class Florence2:
         return {
             "required": {
                 "image": ("IMAGE",),
-                "task_token": (
-                    [
-                        "CAPTION",  # 1, image
-                        "DETAILED_CAPTION",  # 1, image
-                        "MORE_DETAILED_CAPTION",  # 1, image
-                        "OD",  # 4, image
-                        "DENSE_REGION_CAPTION",  # 4, image
-                        "REGION_PROPOSAL",  # 4, image
-                        "CAPTION_TO_PHRASE_GROUNDING",  # 2, image + (prompt)
-                        "REFERRING_EXPRESSION_SEGMENTATION",  # 3, image + (prompt)
-                        # "REGION_TO_SEGMENTATION",  # TODO:  Support this later with BBox interface
-                        "OPEN_VOCABULARY_DETECTION",  # 2, image + (prompt)
-                        # "REGION_TO_CATEGORY",   # TODO:  Support this later with BBox interface
-                        # "REGION_T O_DESCRIPTION",   # TODO:  Support this later with BBox interface
-                        "OCR",  # 1, image
-                        "OCR_WITH_REGION",  # 2, image
-                    ],
-                ),
+                "task_token": (TASK_TOKENS,),
                 "num_beams": ("INT", {"default": 3, "min": 1, "max": 50}),
                 "attention": (["sdpa", "flash_attention_2", "eager"], {"default": "sdpa"}),
                 "precision": (["float16", "bfloat16", "float32"], {"default": "float16"}),
             },
             "optional": {
                 "text_prompt": ("STRING", {"multiline": True}),
+                "sig_additional_metadata": ("STRING", {"default": json.dumps(TASK_INPUTS_OUTPUTS)}),
             },
         }
 
@@ -103,4 +119,18 @@ class Florence2:
                 input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp
             )
 
-        return final_resp
+        response_dict = {
+            "image": final_resp[0],
+            "mask": final_resp[1],
+            "data": final_resp[2],
+            "caption": final_resp[3],
+        }
+        response_tuple = tuple(
+            [
+                value
+                for key, value in response_dict.items()
+                if key not in TASK_INPUTS_OUTPUTS[task_token]["hide_outputs"]
+            ]
+        )
+
+        return response_tuple
