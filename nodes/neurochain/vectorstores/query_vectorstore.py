@@ -5,7 +5,7 @@ import requests
 from neurochain.utils.utils import query_vectorstore
 
 from ...categories import VECTORSTORE_CAT
-from ..utils import get_secret
+from ...shared import get_secret
 
 
 class QueryVectorstore:

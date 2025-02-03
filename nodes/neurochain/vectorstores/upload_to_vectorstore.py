@@ -5,7 +5,7 @@ import requests
 from neurochain.utils.utils import make_upsert_request
 
 from ...categories import VECTORSTORE_CAT
-from ..utils import get_secret
+from ...shared import get_secret
 
 
 class UploadToVectorstore:
