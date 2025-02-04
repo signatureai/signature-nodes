@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "prHeader": "Renovate Dependency Update",
   "assignees": [
@@ -14,37 +14,66 @@
   ],
   "packageRules": [
     {
-      "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchCategories": [
+        "python"
+      ],
+      "fileMatch": [
+        "(^|/)pyproject\\.toml$"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
       "automerge": false,
-      "labels": ["dependencies"]
+      "labels": [
+        "dependencies"
+      ],
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
-      "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["major"],
-      "labels": ["dependencies", "breaking"]
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "labels": [
+        "dependencies",
+        "breaking"
+      ],
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
-      "matchPackagePatterns": ["^pytest"],
-      "labels": ["testing"]
+      "labels": [
+        "testing"
+      ],
+      "matchPackageNames": [
+        "/^pytest/"
+      ]
     }
   ],
-  "enabledManagers": ["pep621"],
-  "python": {
-    "fileMatch": ["(^|/)pyproject\\.toml$"]
-  },
+  "enabledManagers": [
+    "pep621"
+  ],
   "lockFileMaintenance": {
     "enabled": true
   },
-  "schedule": ["before 5pm"],
+  "schedule": [
+    "before 5pm"
+  ],
   "prConcurrentLimit": 4,
   "prCreation": "not-pending",
-  "stabilityDays": 3,
+  "minimumReleaseAge": "3 days",
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "ML Dependency Dashboard",
   "commitMessage": "⬆️ Renovate dependency update",
   "prTitle": "📦 Signature Nodes dep: Update {{{depName}}} from {{currentVersion}} to {{newVersion}}",
-  "labels": ["dependencies"]
+  "labels": [
+    "dependencies"
+  ]
 }
