@@ -476,6 +476,7 @@ class MathOperator:
 
     Raises:
         ValueError: If the expression contains unsupported operations or invalid syntax.
+        ValueError: If the number of slots is different from the number of inputs.
 
     Notes:
         - Supports standard arithmetic operators: +, -, *, /, //, %, **
