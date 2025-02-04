@@ -1,8 +1,8 @@
 import { app } from "../../../scripts/app.js";
 
-const extNames = ["signature.batch_builder", "signature.list_builder"]
+const extNames = ["signature.batch_builder", "signature.list_builder", "signature.math_operator"]
 
-const classNames = ["signature_list_builder", "signature_batch_builder"]
+const classNames = ["signature_list_builder", "signature_batch_builder", "signature_math_operator"]
 
 function updateTypesBasedOnConnection(node) {
   // Find if there's at least one connected input among visible and hidden inputs
@@ -35,15 +35,21 @@ function handleNumSlots(node, widget) {
   }
 
   for (let i = 1; i <= 10; i++) {
-    // Find inputs with this index across both visible and hidden inputs
+    // Find inputs with either numeric suffix (_1, _2...) or alphabetic name (a, b...)
     const inputs = [...node.inputs, ...node.inputsHidden].filter((input) =>
-      input.name.endsWith(`_${i}`),
+      input.name.endsWith(`_${i}`) || 
+      input.name === String.fromCharCode(96 + i)  // a = 97, b = 98, etc.
     );
 
-    // Group inputs by their base name (removing the _N suffix)
+    // Group inputs by their base name (removing the _N suffix for numeric ones)
     const inputsByName = {};
     inputs.forEach((input) => {
-      const baseName = input.name.replace(/_\d+$/, "");
+      // For alphabetic inputs (a, b, c...), use the full name as base name
+      // For numeric suffix inputs (test_1, test_2...), remove the suffix
+      const baseName = input.name.match(/^[a-z]$/) ? 
+        input.name : 
+        input.name.replace(/_\d+$/, "");
+
       if (!inputsByName[baseName]) {
         inputsByName[baseName] = [];
       }
@@ -52,18 +58,20 @@ function handleNumSlots(node, widget) {
 
     // Process each group of inputs separately
     Object.values(inputsByName).forEach((sameNameInputs) => {
-      // Skip if no inputs found for this name
       if (sameNameInputs.length === 0) return;
-
-      // Take only the first input if there are duplicates
+  
       const input = sameNameInputs[0];
-
+  
       if (i <= numSlots) {
         // Move to visible inputs if not already there
         const hiddenIndex = node.inputsHidden.indexOf(input);
         const inputIndex = node.inputs.indexOf(input);
         if (hiddenIndex !== -1 && inputIndex === -1) {
-          node.inputs.push(input);
+          // Find the index of the "value" input
+          const valueInputIndex = node.inputs.findIndex(input => input.name === "value");
+          // Insert before "value" input if it exists, otherwise append to end
+          const insertIndex = valueInputIndex !== -1 ? valueInputIndex : node.inputs.length;
+          node.inputs.splice(insertIndex, 0, input);
           node.inputsHidden.splice(hiddenIndex, 1);
         }
       } else {
