@@ -560,7 +560,8 @@ class MaskGrowWithBlur:
         }
 
     CATEGORY = MASK_CAT
-    RETURN_TYPES = ("MASK",)
+    RETURN_TYPES = ("MASK", "MASK")
+    RETURN_NAMES = ("mask", "inverted mask")
     FUNCTION = "expand_mask"
 
     def expand_mask(
@@ -573,7 +574,7 @@ class MaskGrowWithBlur:
         blur_radius: float = 0.0,
         lerp_alpha: float = 1.0,
         decay_factor: float = 1.0,
-    ) -> tuple[torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         mask = TensorImage.from_BWHC(mask)
         alpha = lerp_alpha
         decay = decay_factor
@@ -620,10 +621,20 @@ class MaskGrowWithBlur:
                 for tensor in out
             ]
             blurred = torch.cat(blurred, dim=0)
+            inverted = 1.0 - TensorImage(blurred).get_BWHC()
 
-            return (TensorImage(blurred).get_BWHC(),)
+            return (
+                TensorImage(blurred).get_BWHC(),
+                inverted,
+            )
 
-        return (TensorImage(torch.stack(out, dim=0)).get_BWHC(),)
+        unblurred = torch.stack(out, dim=0)
+        inverted = 1 - TensorImage(unblurred).get_BWHC()
+
+        return (
+            TensorImage(unblurred).get_BWHC(),
+            inverted,
+        )
 
 
 class GetMaskShape:
