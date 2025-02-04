@@ -2,10 +2,9 @@ import os
 
 import boto3
 import requests
-from neurochain.utils.utils import make_upsert_request
+from neurochain.utils.utils import get_secret, make_upsert_request
 
 from ...categories import VECTORSTORE_CAT
-from ...shared import get_secret
 
 
 class UploadToVectorstore:

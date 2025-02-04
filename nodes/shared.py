@@ -1,5 +1,4 @@
 import gc
-import json
 import sys
 
 import torch
@@ -63,14 +62,3 @@ def clean_memory():
     comfy.model_management.unload_all_models()
     comfy.model_management.cleanup_models()
     comfy.model_management.soft_empty_cache()
-
-
-def get_secret(session, secret_name, region_name="eu-west-1"):
-    client = session.client(service_name="secretsmanager", region_name=region_name)
-    try:
-        response = client.get_secret_value(SecretId=secret_name)
-        if "SecretString" in response:
-            return json.loads(response["SecretString"])
-    except Exception as e:
-        print(f"Error getting secret: {e}")
-        raise

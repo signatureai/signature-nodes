@@ -1,7 +1,4 @@
-import os
-
-import boto3
-import requests
+from neurochain.dojo.start_training_run import StartTrainingRun as StartTrainingRunNeurochain
 
 from ..categories import DOJO_CAT
 
@@ -44,39 +41,11 @@ class StartTrainingRun:
         is_flux: bool,
         s3_bucket_name: str,
     ):
-        environment = os.environ.get("ENVIRONMENT", "staging")
-
         if is_flux:
-            secret_name = f"signature-ml-{environment}-api-secret-key"
-            train_endpoint = (
-                "https://ml-platform.signature.ai/batch_train"
-                if environment == "production"
-                else f"https://ml-platform.{environment}.signature.ai/batch_train"
+            training_id = StartTrainingRunNeurochain().start_flux_training(
+                model_id, model_version, org_id, user_id, s3_bucket_name
             )
-
-            ## trigger training on ML Platform
-            secretsmanager_client = boto3.client("secretsmanager")
-            secret_value = secretsmanager_client.get_secret_value(SecretId=secret_name)
-            api_key = secret_value["SecretString"]
-
-            headers = {
-                "Accept": "*/*",
-                "X-Api-Key": api_key,
-                "Content-Type": "application/json",
-            }
-
-            data = {
-                "user_id": user_id,
-                "organisation_id": org_id,
-                "model_id": model_id,
-                "model_path": f"s3://{s3_bucket_name}/{model_id}/{model_version}",
-                "model_name": f"{model_id}_{model_version}",
-                "model_version": model_version,
-                "instance_type": "g5.4xlarge",
-            }
-
-            response = requests.post(train_endpoint, headers=headers, json=data)
-            print(response.text)
-            return (response.text,)
+            print(training_id)
+            return (training_id,)
         else:
             return ("no training launched - specify 'is_flux'",)
