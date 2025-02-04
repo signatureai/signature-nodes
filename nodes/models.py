@@ -3,7 +3,7 @@ import random
 import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
 import torch
-from comfy_extras.nodes_upscale_model import ImageUpscaleWithModel
+from comfy_extras.nodes_upscale_model import ImageUpscaleWithModel  # type: ignore
 from signature_core.functional.transform import cutout
 from signature_core.img.tensor_image import TensorImage
 from signature_core.models.lama import Lama

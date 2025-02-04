@@ -166,19 +166,21 @@ async function saveWorkflow(app) {
           new File([new Blob([""], { type: "image/png" })], "default.png"),
         );
 
-        const workflowBlob = new Blob([JSON.stringify(workflow)], {
-          type: "application/json",
+        const workflowString = JSON.stringify(workflow, null, 2);
+        const workflowBlob = new Blob([workflowString], {
+          type: "application/json;charset=UTF-8",
         });
         submitData.append("workflowJson", workflowBlob, "workflow.json");
 
-        const workflowApiBlob = new Blob([JSON.stringify(workflow_api)], {
-          type: "application/json",
+        const workflowApiString = JSON.stringify(workflow_api, null, 2);
+        const workflowApiBlob = new Blob([workflowApiString], {
+          type: "application/json;charset=UTF-8",
         });
         submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
         const manifest = await getManifest(workflow_api);
         const manifestBlob = new Blob([manifest], {
-          type: "application/json",
+          type: "application/json;charset=UTF-8",
         });
         submitData.append("manifest", manifestBlob, "manifest.json");
 

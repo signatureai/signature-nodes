@@ -62,24 +62,8 @@ class SignatureFlowService:
                 return web.json_response(text=error_msg, status=500)
 
         @PromptServer.instance.routes.post("/flow/submit_workflow")
-        async def submit_workflow(request):
+        async def submit_workflow(request: web.BaseRequest):
             try:
-                reader = await request.multipart()
-
-                params = {}
-
-                while True:
-                    part = await reader.next()
-                    if part is None:
-                        break
-
-                    if part.filename:
-                        file_data = await part.read()
-                        params[part.name] = file_data
-                    else:
-                        value = await part.text()
-                        params[part.name] = value
-
                 jenkins_url = os.getenv("JENKINS_URL")
                 jenkins_auth = os.getenv("JENKINS_AUTH")
 
@@ -89,11 +73,25 @@ class SignatureFlowService:
                 jenkins_url = jenkins_url.rstrip("/") + "/job/Submit%20Workflow/buildWithParameters"
                 auth = f"Basic {jenkins_auth}"
 
+                form_data = await request.multipart()
+                new_form_data = aiohttp.FormData()
+                async for part in form_data:
+                    if not isinstance(part, aiohttp.BodyPartReader) or part.name is None:
+                        continue
+                    field_name = part.name
+                    if part.filename:
+                        content = await part.read()
+                        params = {"name": field_name, "value": content, "filename": part.filename}
+                    else:
+                        content = await part.text()
+                        params = {"name": field_name, "value": content}
+                    new_form_data.add_field(**params)
+
                 async with aiohttp.ClientSession() as session:
                     headers = {"Authorization": auth}
-                    async with session.post(jenkins_url, data=params, headers=headers) as resp:
+                    async with session.post(jenkins_url, data=new_form_data, headers=headers) as resp:
                         if resp.status != 201:
-                            logging.error("Workflow submission failed: %s", await resp.text())
+                            logging.error("Workflow submission failed with status: %d", resp.status)
                             return web.json_response(text="Workflow submission failed", status=502)
                         return web.json_response(text="Workflow submitted successfully", status=200)
             except Exception as e:
