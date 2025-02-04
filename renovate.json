@@ -1,6 +1,50 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ]
+    "config:base"
+  ],
+  "prHeader": "Renovate Dependency Update",
+  "assignees": [
+    "jk-signature",
+    "miguelbper",
+    "FredOliveira-Signature",
+    "pbouda",
+    "marcosignature",
+    "ZenKetse"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "automerge": false,
+      "labels": ["dependencies"]
+    },
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "breaking"]
+    },
+    {
+      "matchPackagePatterns": ["^pytest"],
+      "labels": ["testing"]
+    }
+  ],
+  "enabledManagers": ["pep621"],
+  "python": {
+    "fileMatch": ["(^|/)pyproject\\.toml$"]
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "schedule": ["before 5pm"],
+  "prConcurrentLimit": 4,
+  "prCreation": "not-pending",
+  "stabilityDays": 3,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "ML Dependency Dashboard",
+  "commitMessage": "⬆️ Renovate dependency update",
+  "prTitle": "📦 Signature Nodes dep: Update {{{depName}}} from {{currentVersion}} to {{newVersion}}",
+  "labels": ["dependencies"]
 }
