@@ -20,6 +20,7 @@ OP_FUNCTIONS = {
     "round": round,
     "sum": sum,
     "len": len,
+    "log": math.log,
 }
 
 
@@ -476,6 +477,7 @@ class MathOperator:
         - Supports comparison operators: ==, !=, <, <=, >, >=
         - Supports logical operators: and, or, not
         - Supports bitwise XOR operator: ^
+        - Supports exponential and logarithmic functions: **, log(a, b)
         - Includes functions: min(), max(), round(), sum(), len()
         - Variables are limited by MAX_FLOAT constant
         - NaN results are converted to 0.0
@@ -561,6 +563,7 @@ class MathOperator:
                     return c
                 if node.id == "d":
                     return d
+
             if isinstance(node, ast.BinOp):  # <left> <operator> <right>
                 return operators[type(node.op)](eval_(node.left), eval_(node.right))  # type: ignore
             if isinstance(node, ast.UnaryOp):  # <operator> <operand> e.g., -1
