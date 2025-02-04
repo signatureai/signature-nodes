@@ -1,6 +1,6 @@
 from neurochain.dojo.start_training_run import StartTrainingRun as StartTrainingRunNeurochain
 
-from ..categories import DOJO_CAT
+from ...categories import DOJO_CAT
 
 
 class StartTrainingRun:

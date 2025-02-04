@@ -2,7 +2,7 @@ from neurochain.dojo.create_training_run import (
     CreateTrainingRun as CreateTrainingRunNeurochain,
 )
 
-from ..categories import DOJO_CAT
+from ...categories import DOJO_CAT
 
 
 class CreateTrainingRun:
