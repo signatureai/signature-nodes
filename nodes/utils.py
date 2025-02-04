@@ -1,5 +1,4 @@
 import ast
-import comfy
 import time
 import torch
 
