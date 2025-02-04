@@ -31,17 +31,17 @@ TASK_TOKENS = [
 ]
 
 TASK_INPUTS_OUTPUTS = {
-    "CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
-    "DETAILED_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
-    "MORE_DETAILED_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+    "CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["image", "mask", "data"]},
+    "DETAILED_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["image", "mask", "data"]},
+    "MORE_DETAILED_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["image", "mask", "data"]},
     "OD": {"hide_inputs": ["text_prompt"], "hide_outputs": ["caption"]},
     "DENSE_REGION_CAPTION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["caption"]},
     "REGION_PROPOSAL": {"hide_inputs": ["text_prompt"], "hide_outputs": ["caption"]},
     "CAPTION_TO_PHRASE_GROUNDING": {"hide_inputs": [], "hide_outputs": ["caption"]},
     "REFERRING_EXPRESSION_SEGMENTATION": {"hide_inputs": [], "hide_outputs": ["caption"]},
     "OPEN_VOCABULARY_DETECTION": {"hide_inputs": [], "hide_outputs": ["caption"]},
-    "OCR": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
-    "OCR_WITH_REGION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["mask", "data"]},
+    "OCR": {"hide_inputs": ["text_prompt"], "hide_outputs": ["image", "mask", "data"]},
+    "OCR_WITH_REGION": {"hide_inputs": ["text_prompt"], "hide_outputs": ["image", "mask", "data"]},
 }
 
 
@@ -63,7 +63,7 @@ class Florence2:
         }
 
     RETURN_TYPES = ("IMAGE", "MASK", "STRING", "STRING")
-    RETURN_NAMES = ("image", "mask", "caption", "data")
+    RETURN_NAMES = ("image", "mask", "data", "caption")
     FUNCTION = "process"
     CATEGORY = AGENT_CAT
     OUTPUT_NODE = True
@@ -119,18 +119,4 @@ class Florence2:
                 input_img=image, text_prompt=text_prompt, raw_output=raw_task_resp
             )
 
-        response_dict = {
-            "image": final_resp[0],
-            "mask": final_resp[1],
-            "data": final_resp[2],
-            "caption": final_resp[3],
-        }
-        response_tuple = tuple(
-            [
-                value
-                for key, value in response_dict.items()
-                if key not in TASK_INPUTS_OUTPUTS[task_token]["hide_outputs"]
-            ]
-        )
-
-        return response_tuple
+        return final_resp

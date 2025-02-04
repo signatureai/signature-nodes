@@ -1,6 +1,6 @@
 import { app } from "../../../scripts/app.js";
 
-function updateInputsOutputs(node, newVal, metadata, originalInputNames, originalOutputNames, originalWidgetNames) {
+function updateInputsOutputs(node, newVal, metadata, originalInputNames, originalWidgetNames) {
   // Hide inputs and widgets
   node.hiddenInputs ||= [];
   node.hiddenWidgets ||= [];
@@ -34,50 +34,7 @@ function updateInputsOutputs(node, newVal, metadata, originalInputNames, origina
     }
   }
 
-  // Hide outputs
-  node.hiddenOutputs ||= [];
-  node.outputs ||= [];
-  const lenOutputsBefore = node.outputs.length;
-  const allOutputs = [...node.outputs, ...node.hiddenOutputs];
-  allOutputs.sort((a, b) => originalOutputNames.indexOf(a.name) - originalOutputNames.indexOf(b.name));
-  node.hiddenOutputs = [];
-
-  for (const output of allOutputs) {
-    const slotIndex = node.findOutputSlot(output.name);
-    if (slotIndex >= 0) {
-      if (metadata[newVal].hide_outputs.includes(output.name)) {
-        node.hiddenOutputs.push(output);
-        node.removeOutput(slotIndex);
-      } else {
-        // if the slot is in the outputs then we have to remove it and re-create it with the links
-        let storedLinks = [];
-        if (output.links) {
-          storedLinks = output.links.map((l) => node.graph.links[l]);
-        }
-        node.removeOutput(slotIndex);
-        node.addOutput(output.name, output.type);
-        const newOutput = node.findOutputSlot(output.name);
-        for (const link of storedLinks) {
-          const targetNode = node.graph.nodes.find((n) => n.id === link.target_id);
-          if (targetNode) {
-            node.connect(newOutput, targetNode, link.target_slot);
-          }
-        }
-      }
-    } else {
-      if (!metadata[newVal].hide_outputs.includes(output.name)) {
-        node.addOutput(output.name, output.type);
-      } else {
-        node.hiddenOutputs.push(output);
-      }
-    }
-  }
-
-  if (node.outputs.length !== lenOutputsBefore) {
-    if (node.widgets && node.widgets.length > 0) {
-      node.widgets[0].last_y += (node.outputs.length - lenOutputsBefore) * LiteGraph.NODE_SLOT_HEIGHT;
-    }
-  }
+  node.hiddenOutputs = metadata[newVal].hide_outputs;
 
   node.setSize(node.computeSize());
 }
@@ -87,43 +44,65 @@ app.registerExtension({
 
   async nodeCreated(node) {
     if (node.comfyClass !== "signature_florence") return;
-    for (const w of node.widgets || []) {
-      if (w.name !== "task_token") continue;
 
-      const widgetMetadata = node.widgets.find((w) => w.name === "sig_additional_metadata");
-      let metadata = {};
-      if (widgetMetadata) {
-        metadata = JSON.parse(widgetMetadata.value || "{}");
-        node.widgets.splice(node.widgets.indexOf(widgetMetadata), 1);
-      }
-
-      const originalInputNames = node.inputs.map((i) => i.name);
-      const originalOutputNames = node.outputs.map((o) => o.name);
-      const originalWidgetNames = node.widgets.map((w) => w.name);
-
-      let widgetValue = w.value;
-      updateInputsOutputs(node, widgetValue, metadata, originalInputNames, originalOutputNames, originalWidgetNames);
-      let originalDescriptor = Object.getOwnPropertyDescriptor(w, "value");
-      Object.defineProperty(w, "value", {
-        get() {
-          let valueToReturn =
-            originalDescriptor && originalDescriptor.get ? originalDescriptor.get.call(w) : widgetValue;
-          return valueToReturn;
-        },
-        set(newVal) {
-          const oldVal = widgetValue;
-
-          if (originalDescriptor && originalDescriptor.set) {
-            originalDescriptor.set.call(w, newVal);
-          } else {
-            widgetValue = newVal;
-          }
-
-          if (oldVal !== newVal) {
-            updateInputsOutputs(node, newVal, metadata, originalInputNames, originalOutputNames, originalWidgetNames);
-          }
-        },
-      });
+    const widgetMetadata = node.widgets.find((w) => w.name === "sig_additional_metadata");
+    let metadata = {};
+    if (widgetMetadata) {
+      metadata = JSON.parse(widgetMetadata.value || "{}");
+      node.widgets.splice(node.widgets.indexOf(widgetMetadata), 1);
     }
+
+    const widgetTaskToken = node.widgets.find((w) => w.name === "task_token");
+    if (!widgetTaskToken) return;
+
+    const originalInputNames = node.inputs.map((i) => i.name);
+    const originalWidgetNames = node.widgets.map((w) => w.name);
+
+    let widgetValue = widgetTaskToken.value;
+    updateInputsOutputs(node, widgetValue, metadata, originalInputNames, originalWidgetNames);
+    let originalDescriptor = Object.getOwnPropertyDescriptor(widgetTaskToken, "value");
+    Object.defineProperty(widgetTaskToken, "value", {
+      get() {
+        let valueToReturn =
+          originalDescriptor && originalDescriptor.get ? originalDescriptor.get.call(widgetTaskToken) : widgetValue;
+        return valueToReturn;
+      },
+      set(newVal) {
+        const oldVal = widgetValue;
+
+        if (originalDescriptor && originalDescriptor.set) {
+          originalDescriptor.set.call(w, newVal);
+        } else {
+          widgetValue = newVal;
+        }
+
+        if (oldVal !== newVal) {
+          updateInputsOutputs(node, newVal, metadata, originalInputNames, originalWidgetNames);
+        }
+      },
+    });
+
+    const originalDrawForeground = node.onDrawForeground;
+    node.onDrawForeground = function (ctx) {
+      originalDrawForeground?.apply?.(this, arguments);
+
+      for (const outputName of node.hiddenOutputs) {
+        const slotOutput = node.findOutputSlot(outputName);
+        if (slotOutput < 0) continue;
+        const pos = node.getConnectionPos(false, slotOutput);
+
+        pos[0] -= node.pos[0] - 10;
+        pos[1] -= node.pos[1];
+
+        ctx.beginPath();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.moveTo(pos[0] - 5, pos[1] - 5);
+        ctx.lineTo(pos[0] + 5, pos[1] + 5);
+        ctx.moveTo(pos[0] + 5, pos[1] - 5);
+        ctx.lineTo(pos[0] - 5, pos[1] + 5);
+        ctx.stroke();
+      }
+    };
   },
 });
