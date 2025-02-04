@@ -621,18 +621,20 @@ class MaskGrowWithBlur:
                 for tensor in out
             ]
             blurred = torch.cat(blurred, dim=0)
-            inverted = 1.0 - TensorImage(blurred).get_BWHC()
+            blurred_mask = TensorImage(blurred).get_BWHC()
+            inverted = 1.0 - blurred_mask
 
             return (
-                TensorImage(blurred).get_BWHC(),
+                blurred_mask,
                 inverted,
             )
 
         unblurred = torch.stack(out, dim=0)
-        inverted = 1 - TensorImage(unblurred).get_BWHC()
+        unblurred_mask = TensorImage(unblurred).get_BWHC()
+        inverted = 1 - unblurred_mask
 
         return (
-            TensorImage(unblurred).get_BWHC(),
+            unblurred_mask,
             inverted,
         )
 
