@@ -1,0 +1,90 @@
+name: Security Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: |
+          uv pip install bandit safety pylint --system
+          uv pip install . --system
+
+      - name: Run Bandit
+        continue-on-error: true  # don't fail the whole workflow
+        id: bandit
+        run: |
+          bandit -r ./ -c pyproject.toml -f json -o bandit-results.json || echo "Vulnerabilities found"
+
+      - name: Run Safety Check
+        continue-on-error: true
+        id: safety
+        run: |
+          safety check --json > safety-results.json || echo "Vulnerable dependencies found"
+
+      - name: Run Pylint Security Checks
+        continue-on-error: true
+        id: pylint
+        run: |
+          pylint --disable=all --enable=security --output-format=json ./ > pylint-results.json || echo "Security issues found"
+
+      - name: Post Results to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## Security Scan Results\n\n';
+
+            try {
+              const banditResults = JSON.parse(fs.readFileSync('bandit-results.json', 'utf8'));
+              comment += '### Bandit Results\n';
+              if (banditResults.results.length === 0) {
+                comment += '✅ No security issues found\n\n';
+              } else {
+                comment += '⚠️ Security issues found:\n';
+                banditResults.results.forEach(issue => {
+                  comment += `- ${issue.issue_text} in ${issue.filename}:${issue.line_number}\n`;
+                });
+              }
+            } catch (e) {
+              comment += '### Bandit Results\n⚠️ Error processing results\n\n';
+            }
+
+            try {
+              const safetyResults = JSON.parse(fs.readFileSync('safety-results.json', 'utf8'));
+              comment += '### Safety Check Results\n';
+              if (safetyResults.vulnerabilities.length === 0) {
+                comment += '✅ No vulnerable dependencies found\n\n';
+              } else {
+                comment += '⚠️ Vulnerable dependencies found:\n';
+                safetyResults.vulnerabilities.forEach(vuln => {
+                  comment += `- ${vuln.package}: ${vuln.vulnerability_id}\n`;
+                });
+              }
+            } catch (e) {
+              comment += '### Safety Check Results\n⚠️ Error processing results\n\n';
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
