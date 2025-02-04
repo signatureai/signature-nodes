@@ -1,7 +1,8 @@
 import ast
+import comfy
 import time
-
 import torch
+
 from signature_core.functional.color import (
     grayscale_to_rgb,
     rgb_to_grayscale,
@@ -717,3 +718,66 @@ class ListToOutputList:
 
     def execute(self, list: list[any]) -> tuple[list[any]]:
         return (list,)
+
+
+class BatchBuilder:
+    """Builds a batch from input images.
+
+    A node that constructs a batch from provided input images usign the first one as the base. Used in node-based
+    workflows to combine multiple images into a single batch output.
+
+    Args:
+        images (Image): Input images to combine into a batch. The specific types
+            accepted are defined in INPUT_TYPES.
+
+    Returns:
+        tuple: A tuple containing:
+            - batch: The constructed batch containing all input images
+
+    Notes:
+        - The actual input types and number of images that can be added to the batch
+          are defined in the INPUT_TYPES class method
+        - This node is typically used in node graph systems to aggregate multiple
+          inputs into a single batch output
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        inputs = {
+            "required": {
+                "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),
+            },
+            "optional": {},
+        }
+
+        for i in range(1, 11):
+            inputs["optional"].update(
+                {
+                    f"value_{i}": ("IMAGE", {"forceInput": True}),
+                }
+            )
+        return inputs
+
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "execute"
+    CATEGORY = UTILS_CAT
+    CLASS_ID = "batch_builder"
+
+    def execute(self, num_slots: str = "1", **kwargs) -> tuple[torch.Tensor]:
+        if f"value_{int(num_slots)}" not in kwargs.keys():
+            raise ValueError("Number of inputs is not equal to number of slots")
+
+        base_image = kwargs.get("value_1")
+        base_image_shape = base_image.shape
+        images = []
+        for i in range(1, int(num_slots) + 1):
+            image = kwargs.get(f"value_{i}")
+            image_shape = image.shape
+
+            if base_image_shape[1:] == image_shape[1:]:
+                images.append(image)
+            else:
+                raise ValueError(f"Image in value_{i} is not the same as the image in value_1")
+
+        images = torch.cat(images, dim=0)
+        return (images,)
