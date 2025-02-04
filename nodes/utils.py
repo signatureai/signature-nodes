@@ -727,18 +727,14 @@ class BatchBuilder:
     workflows to combine multiple images into a single batch output.
 
     Args:
-        images (Image): Input images to combine into a batch. The specific types
-            accepted are defined in INPUT_TYPES.
+        images (Image): Input images to combine into a batch.
 
     Returns:
         tuple: A tuple containing:
             - batch: The constructed batch containing all input images
 
     Notes:
-        - The actual input types and number of images that can be added to the batch
-          are defined in the INPUT_TYPES class method
-        - This node is typically used in node graph systems to aggregate multiple
-          inputs into a single batch output
+        - This node is typically used in node graph systems to aggregate multiple image inputs into a single batch output
     """
 
     @classmethod
