@@ -5,6 +5,7 @@ import random
 
 from .. import MAX_FLOAT, MAX_INT
 from .categories import NUMBERS_CAT
+from .utils import clamp
 
 BASIC_OPERATORS = {
     "+": op.add,
@@ -21,6 +22,8 @@ OP_FUNCTIONS = {
     "sum": sum,
     "len": len,
     "log": math.log,
+    "abs": abs,
+    "clamp": clamp,
 }
 
 
@@ -269,6 +272,7 @@ class IntOperator:
     RETURN_TYPES = ("INT",)
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
+    DEPRECATED = True
 
     def execute(self, left: float = 0.0, right: float = 0.0, operator: str = "+") -> tuple[int]:
         if operator in BASIC_OPERATORS:
@@ -319,6 +323,7 @@ class FloatOperator:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
+    DEPRECATED = True
 
     def execute(self, left: float = 0.0, right: float = 0.0, operator: str = "+") -> tuple[float]:
         if operator in BASIC_OPERATORS:
@@ -515,6 +520,34 @@ class MathOperator:
     )
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
+    DESCRIPTION = """Evaluates mathematical expressions with support for variables and multiple operators.
+
+    This class provides a powerful expression evaluator that supports variables (a, b, c, d) and
+    various mathematical operations. It can handle arithmetic, comparison, and logical operations.
+
+    Args:
+        a (float, optional): Value for variable 'a'. Defaults to 0.0.
+        b (float, optional): Value for variable 'b'. Defaults to 0.0.
+        c (float, optional): Value for variable 'c'. Defaults to 0.0.
+        d (float, optional): Value for variable 'd'. Defaults to 0.0.
+        value (str): The mathematical expression to evaluate.
+
+    Returns:
+        tuple[int, float]: A tuple containing both integer and float representations of the result.
+
+    Raises:
+        ValueError: If the expression contains unsupported operations or invalid syntax.
+
+    Notes:
+        - Supports standard arithmetic operators: +, -, *, /, //, %, **
+        - Supports comparison operators: ==, !=, <, <=, >, >=
+        - Supports logical operators: and, or, not
+        - Supports bitwise XOR operator: ^
+        - Supports exponential and logarithmic functions: base**exponent, log(base, value)
+        - Includes functions: min(), max(), round(), sum(), len(), clamp(value, min, max)
+        - Variables are limited by MAX_FLOAT constant
+        - NaN results are converted to 0.0
+    """
 
     def execute(
         self,
