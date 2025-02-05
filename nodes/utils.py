@@ -15,6 +15,10 @@ from .categories import UTILS_CAT
 from .shared import any_type, clean_memory
 
 
+def clamp(value, min_value, max_value):
+    return max(min(value, max_value), min_value)
+
+
 class Any2String:
     """Converts any input value to its string representation.
 
