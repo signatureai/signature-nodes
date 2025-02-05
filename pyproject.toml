@@ -52,3 +52,6 @@ assert_used.skips = ["**/test_*.py"]
 pythonpath = [
   "."
 ]
+
+[tool.setuptools]
+packages = ["nodes", "services"]
