@@ -24,6 +24,7 @@ function updateTypesBasedOnConnection(node) {
   const allOutputs = [...node.outputs, ...(node.outputsHidden || [])];
   allOutputs[0].type = typeToUse;
   allOutputs[0].name = typeToUse === "*" ? "ANY" : typeToUse;
+  allOutputs[0].localized_name = typeToUse === "*" ? "ANY" : typeToUse;
 }
 
 function handleNumSlots(node, widget) {
