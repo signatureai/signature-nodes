@@ -15,7 +15,10 @@ function updateTypesBasedOnConnection(node) {
     typeToUse = app.graph.getNodeById(app.graph.links[connectedInput.link].origin_id)
       .outputs[app.graph.links[connectedInput.link].origin_slot].type;
   }
-
+  // prevent math operator node from updating types on inputs
+  if (node.comfyClass === "signature_math_operator") {
+    return;
+  }
   // Update all inputs (visible and hidden) with the same type and name
   allInputs.forEach((input) => {
     input.type = typeToUse;
@@ -78,6 +81,16 @@ function handleNumSlots(node, widget) {
         // Move to hidden inputs if not already there
         const inputIndex = node.inputs.indexOf(input);
         if (inputIndex !== -1) {
+          // Disconnect the input if it has a link
+          if (input.link) {
+            const link = app.graph.links[input.link];
+            if (link) {
+              node.disconnectInput(inputIndex);
+            }
+          }
+          // Clear the input value
+          input.value = undefined;
+          
           node.inputsHidden.push(input);
           node.inputs.splice(inputIndex, 1);
         }

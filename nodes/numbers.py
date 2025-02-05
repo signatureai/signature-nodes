@@ -2,7 +2,7 @@ import ast
 import math
 import operator as op
 import random
-
+import string
 from .. import MAX_FLOAT, MAX_INT
 from .categories import NUMBERS_CAT
 from .utils import clamp
@@ -459,61 +459,34 @@ class RandomNumber:
 
 
 class MathOperator:
-    """Evaluates mathematical expressions with support for variables and multiple operators.
-
-    This class provides a powerful expression evaluator that supports variables (a, b, c, d) and
-    various mathematical operations. It can handle arithmetic, comparison, and logical operations.
-
-    Args:
-        a (float, optional): Value for variable 'a'. Defaults to 0.0.
-        b (float, optional): Value for variable 'b'. Defaults to 0.0.
-        c (float, optional): Value for variable 'c'. Defaults to 0.0.
-        d (float, optional): Value for variable 'd'. Defaults to 0.0.
-        value (str): The mathematical expression to evaluate.
-
-    Returns:
-        tuple[int, float]: A tuple containing both integer and float representations of the result.
-
-    Raises:
-        ValueError: If the expression contains unsupported operations or invalid syntax.
-        ValueError: If the number of slots is different from the number of inputs.
-
-    Notes:
-        - Supports standard arithmetic operators: +, -, *, /, //, %, **
-        - Supports comparison operators: ==, !=, <, <=, >, >=
-        - Supports logical operators: and, or, not
-        - Supports bitwise XOR operator: ^
-        - Supports exponential and logarithmic functions: **, log(a, b)
-        - Includes functions: min(), max(), round(), sum(), len()
-        - Variables are limited by MAX_FLOAT constant
-        - NaN results are converted to 0.0
-    """
-
     @classmethod
     def INPUT_TYPES(cls):  # type: ignore
-        return {
-            "optional": {
-                "a": (
-                    "FLOAT,INT",
-                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
-                ),
-                "b": (
-                    "FLOAT,INT",
-                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
-                ),
-                "c": (
-                    "FLOAT,INT",
-                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
-                ),
-                "d": (
-                    "FLOAT,INT",
-                    {"default": 0, "min": -MAX_FLOAT, "max": MAX_FLOAT, "step": 0.01},
-                ),
-            },
+        input_letters = string.ascii_lowercase[:10]  # Get an array of all letters from a to j
+        inputs = {
             "required": {
-                "value": ("STRING", {"multiline": True, "default": ""}),
+                "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),
+                "value": ("STRING", {"default": ""}),
             },
+            "optional": {},
         }
+
+        for letter in input_letters:
+            inputs["optional"].update(
+                {
+                    letter: (
+                        "INT,FLOAT",
+                        {
+                            "default": 0,
+                            "min": -MAX_FLOAT,
+                            "max": MAX_FLOAT,
+                            "step": 0.01,
+                            "forceInput": True,
+                        },
+                    )
+                }
+            )
+
+        return inputs
 
     RETURN_TYPES = (
         "INT",
@@ -550,14 +523,10 @@ class MathOperator:
         - NaN results are converted to 0.0
     """
 
-    def execute(
-        self,
-        a: float | int = 0,
-        b: float | int = 0,
-        c: float | int = 0,
-        d: float | int = 0,
-        value: str = "",
-    ) -> tuple[int, float]:
+    def execute(self, num_slots: str = "1", value: str = "", **kwargs) -> tuple[int, float]:
+        if int(num_slots) != len(kwargs.keys()):
+            raise ValueError("Number of inputs is not equal to number of slots")
+
         def safe_xor(x, y):
             if isinstance(x, float) or isinstance(y, float):
                 # Convert to integers if either operand is a float
@@ -589,15 +558,7 @@ class MathOperator:
             if isinstance(node, ast.Constant):  # number
                 return node.n
             if isinstance(node, ast.Name):  # variable
-                if node.id == "a":
-                    return a
-                if node.id == "b":
-                    return b
-                if node.id == "c":
-                    return c
-                if node.id == "d":
-                    return d
-
+                return kwargs.get(node.id)
             if isinstance(node, ast.BinOp):  # <left> <operator> <right>
                 return operators[type(node.op)](eval_(node.left), eval_(node.right))  # type: ignore
             if isinstance(node, ast.UnaryOp):  # <operator> <operand> e.g., -1
