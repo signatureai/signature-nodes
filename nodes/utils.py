@@ -748,12 +748,12 @@ class BatchBuilder:
         for i in range(1, 11):
             inputs["optional"].update(
                 {
-                    f"value_{i}": ("IMAGE", {"forceInput": True}),
+                    f"value_{i}": ("IMAGE, MASK", {"forceInput": True}),
                 }
             )
         return inputs
 
-    RETURN_TYPES = ("IMAGE",)
+    RETURN_TYPES = (any_type,)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "batch_builder"
@@ -762,17 +762,24 @@ class BatchBuilder:
         if f"value_{int(num_slots)}" not in kwargs.keys():
             raise ValueError("Number of inputs is not equal to number of slots")
 
-        base_image = kwargs.get("value_1")
-        base_image_shape = base_image.shape
+        base = kwargs.get("value_1")
+        base_shape = TensorImage.from_BWHC(base).shape
         images = []
+
         for i in range(1, int(num_slots) + 1):
             image = kwargs.get(f"value_{i}")
-            image_shape = image.shape
+            image_shape = TensorImage.from_BWHC(image).shape
 
-            if base_image_shape[1:] == image_shape[1:]:
+            # Ensure mask tensors are properly shaped (add channels dimension if needed)
+            if len(image_shape) == 3 or (len(image_shape) == 4 and image_shape[1] == 1):
+                # For masks, ensure they're in the correct format (B,1,H,W)
+                if len(image.shape) == 3:
+                    image = image.unsqueeze(3)  # Add channel dimension
+
+            if base_shape[1:] == image_shape[1:]:
                 images.append(image)
             else:
-                raise ValueError(f"Image in value_{i} is not the same as the image in value_1")
+                raise ValueError(f"Image/Mask in value_{i} is not the same shape as the image/mask in value_1")
 
         images = torch.cat(images, dim=0)
         return (images,)
