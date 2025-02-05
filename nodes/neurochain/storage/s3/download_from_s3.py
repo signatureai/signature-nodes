@@ -2,9 +2,10 @@ import os
 
 import boto3
 import requests
+from neurochain.utils.utils import get_secret
 
 from ....categories import S3_CAT
-from ...utils import COMFY_IMAGES_DIR, get_secret
+from ...utils import COMFY_IMAGES_DIR
 
 
 class DownloadFromS3:
