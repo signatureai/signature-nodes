@@ -758,6 +758,7 @@ class BatchBuilder:
         return inputs
 
     RETURN_TYPES = (any_type,)
+    RETURN_NAMES = ("ANY",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "batch_builder"
