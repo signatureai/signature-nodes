@@ -1,5 +1,9 @@
 import { app } from "../../../scripts/app.js";
 
+const extNames = ["signature.batch_builder", "signature.list_builder"]
+
+const classNames = ["signature_list_builder", "signature_batch_builder"]
+
 function updateTypesBasedOnConnection(node) {
   // Find if there's at least one connected input among visible and hidden inputs
   const allInputs = [...node.inputs, ...(node.inputsHidden || [])];
@@ -20,6 +24,7 @@ function updateTypesBasedOnConnection(node) {
   const allOutputs = [...node.outputs, ...(node.outputsHidden || [])];
   allOutputs[0].type = typeToUse;
   allOutputs[0].name = typeToUse === "*" ? "ANY" : typeToUse;
+  allOutputs[0].localized_name = typeToUse === "*" ? "ANY" : typeToUse;
 }
 
 function handleNumSlots(node, widget) {
@@ -95,66 +100,67 @@ function widgetLogic(node, widget, isInitial = false) {
   }
 }
 
-const ext = {
-  name: "signature.list_builder",
-
-  async beforeRegisterNodeDef(nodeType, nodeData, app) {
-    const className = nodeType.comfyClass;
-    if (className === "signature_list_builder") {
-      // Ensure the prototype exists
-      if (!nodeType.prototype) {
-        nodeType.prototype = {};
+extNames.forEach((name) => {
+  const ext = {
+    name: name,
+  
+    async beforeRegisterNodeDef(nodeType, nodeData, app) {
+      const className = nodeType.comfyClass;
+      if (classNames.includes(className)) {
+        // Ensure the prototype exists
+        if (!nodeType.prototype) {
+          nodeType.prototype = {};
+        }
+  
+        nodeType.prototype.onConnectionsChange = function (
+          type,
+          index,
+          connected,
+          link_info,
+        ) {
+          const slot = this.inputs[index];
+          if (!slot) return;
+          updateTypesBasedOnConnection(this);
+        };
       }
-
-      nodeType.prototype.onConnectionsChange = function (
-        type,
-        index,
-        connected,
-        link_info,
-      ) {
-        const slot = this.inputs[index];
-        if (!slot) return;
-        updateTypesBasedOnConnection(this);
-      };
-    }
-  },
-
-  async nodeCreated(node) {
-    const className = node.comfyClass;
-    if (className === "signature_list_builder") {
-      for (const w of node.widgets || []) {
-        let widgetValue = w.value;
-        let originalDescriptor = Object.getOwnPropertyDescriptor(w, "value");
-        Object.defineProperty(w, "value", {
-          get() {
-            let valueToReturn =
-              originalDescriptor && originalDescriptor.get
-                ? originalDescriptor.get.call(w)
-                : widgetValue;
-            return valueToReturn;
-          },
-          set(newVal) {
-            const oldVal = widgetValue;
-
-            if (originalDescriptor && originalDescriptor.set) {
-              originalDescriptor.set.call(w, newVal);
-            } else {
-              widgetValue = newVal;
-            }
-
-            if (oldVal !== newVal) {
-              widgetLogic(node, w);
-            }
-          },
-        });
+    },
+  
+    async nodeCreated(node) {
+      const className = node.comfyClass;
+      if (classNames.includes(className)) {
+        for (const w of node.widgets || []) {
+          let widgetValue = w.value;
+          let originalDescriptor = Object.getOwnPropertyDescriptor(w, "value");
+          Object.defineProperty(w, "value", {
+            get() {
+              let valueToReturn =
+                originalDescriptor && originalDescriptor.get
+                  ? originalDescriptor.get.call(w)
+                  : widgetValue;
+              return valueToReturn;
+            },
+            set(newVal) {
+              const oldVal = widgetValue;
+  
+              if (originalDescriptor && originalDescriptor.set) {
+                originalDescriptor.set.call(w, newVal);
+              } else {
+                widgetValue = newVal;
+              }
+  
+              if (oldVal !== newVal) {
+                widgetLogic(node, w);
+              }
+            },
+          });
+        }
+  
+        const numSlotsWidget = node.widgets.find((w) => w.name === "num_slots");
+        if (numSlotsWidget) {
+          handleNumSlots(node, numSlotsWidget);
+        }
       }
-
-      const numSlotsWidget = node.widgets.find((w) => w.name === "num_slots");
-      if (numSlotsWidget) {
-        handleNumSlots(node, numSlotsWidget);
-      }
-    }
-  },
-};
-
-app.registerExtension(ext);
+    },
+  };
+  app.registerExtension(ext);
+})

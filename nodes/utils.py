@@ -1,7 +1,7 @@
 import ast
 import time
-
 import torch
+
 from signature_core.functional.color import (
     grayscale_to_rgb,
     rgb_to_grayscale,
@@ -13,6 +13,10 @@ from signature_core.img.tensor_image import TensorImage
 
 from .categories import UTILS_CAT
 from .shared import any_type, clean_memory
+
+
+def clamp(value, min_value, max_value):
+    return max(min(value, max_value), min_value)
 
 
 class Any2String:
@@ -717,3 +721,69 @@ class ListToOutputList:
 
     def execute(self, list: list[any]) -> tuple[list[any]]:
         return (list,)
+
+
+class BatchBuilder:
+    """Builds a batch from input images.
+
+    A node that constructs a batch from provided input images usign the first one as the base. Used in node-based
+    workflows to combine multiple images into a single batch output.
+
+    Args:
+        images (Image): Input images to combine into a batch.
+
+    Returns:
+        tuple: A tuple containing:
+            - batch: The constructed batch containing all input images
+
+    Notes:
+        - This node is typically used in node graph systems to aggregate multiple image inputs into a single batch output
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        inputs = {
+            "required": {
+                "num_slots": ([str(i) for i in range(1, 11)], {"default": "1"}),
+            },
+            "optional": {},
+        }
+
+        for i in range(1, 11):
+            inputs["optional"].update(
+                {
+                    f"value_{i}": ("IMAGE, MASK", {"forceInput": True}),
+                }
+            )
+        return inputs
+
+    RETURN_TYPES = (any_type,)
+    FUNCTION = "execute"
+    CATEGORY = UTILS_CAT
+    CLASS_ID = "batch_builder"
+
+    def execute(self, num_slots: str = "1", **kwargs) -> tuple[torch.Tensor]:
+        if f"value_{int(num_slots)}" not in kwargs.keys():
+            raise ValueError("Number of inputs is not equal to number of slots")
+
+        base = kwargs.get("value_1")
+        base_shape = TensorImage.from_BWHC(base).shape
+        images = []
+
+        for i in range(1, int(num_slots) + 1):
+            image = kwargs.get(f"value_{i}")
+            image_shape = TensorImage.from_BWHC(image).shape
+
+            # Ensure mask tensors are properly shaped (add channels dimension if needed)
+            if len(image_shape) == 3 or (len(image_shape) == 4 and image_shape[1] == 1):
+                # For masks, ensure they're in the correct format (B,1,H,W)
+                if len(image.shape) == 3:
+                    image = image.unsqueeze(3)  # Add channel dimension
+
+            if base_shape[1:] == image_shape[1:]:
+                images.append(image)
+            else:
+                raise ValueError(f"Image/Mask in value_{i} is not the same shape as the image/mask in value_1")
+
+        images = torch.cat(images, dim=0)
+        return (images,)
