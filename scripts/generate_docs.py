@@ -102,10 +102,7 @@ def _extract_class_metadata(node: ast.ClassDef) -> dict:
         if isinstance(item, ast.FunctionDef):
             if item.name != "INPUT_TYPES":
                 continue
-            if not any(
-                isinstance(d, ast.Name) and d.id == "classmethod"
-                for d in item.decorator_list
-            ):
+            if not any(isinstance(d, ast.Name) and d.id == "classmethod" for d in item.decorator_list):
                 continue
 
             for stmt in item.body:
@@ -185,11 +182,7 @@ def _process_param_info(tuple_node):
 
     if len(tuple_node.elts) > 1 and isinstance(tuple_node.elts[1], ast.Dict):
         for opt_k, opt_v in zip(tuple_node.elts[1].keys, tuple_node.elts[1].values):
-            opt_name = (
-                opt_k.value
-                if isinstance(opt_k, ast.Constant)
-                else getattr(opt_k, "s", str(opt_k))
-            )
+            opt_name = opt_k.value if isinstance(opt_k, ast.Constant) else getattr(opt_k, "s", str(opt_k))
             if isinstance(opt_v, ast.Constant):
                 param_info[opt_name] = opt_v.value
 
@@ -226,9 +219,7 @@ def create_category_files(docs_dir: Path, categories: list):
                 module_classes.extend(classes)
                 module_content += content
 
-        _write_module_documentation(
-            nodes_docs_dir, category["output_base_name"], module_classes, module_content
-        )
+        _write_module_documentation(nodes_docs_dir, category["output_base_name"], module_classes, module_content)
 
 
 def _read_file_content(filepath: str) -> str:
@@ -236,9 +227,7 @@ def _read_file_content(filepath: str) -> str:
         return f.read()
 
 
-def _write_module_documentation(
-    docs_dir: Path, module_name: str, classes: list, content: str
-):
+def _write_module_documentation(docs_dir: Path, module_name: str, classes: list, content: str):
     doc_file = docs_dir / f"{module_name}.md"
     with open(doc_file, "w") as doc:
         title = module_name.replace("_", " ").title()
@@ -276,9 +265,7 @@ def _write_class_documentation(**kwargs):
     description = []
     for section in sections:
         # If the section doesn't contain ": " or starts with a known keyword, treat it as description
-        if not any(
-            section.startswith(k + ":") for k in ["Args", "Returns", "Raises", "Notes"]
-        ):
+        if not any(section.startswith(k + ":") for k in ["Args", "Returns", "Raises", "Notes"]):
             description.append(section.strip())
         else:
             break
@@ -352,11 +339,7 @@ def _write_code_documentation(doc, class_name: str, module_name: str, content: s
                 if not in_class:
                     continue
 
-                if (
-                    stripped
-                    and class_indent is not None
-                    and current_indent <= class_indent
-                ):
+                if stripped and class_indent is not None and current_indent <= class_indent:
                     # We've reached the end of the class
                     break
 
@@ -376,15 +359,11 @@ def _write_code_documentation(doc, class_name: str, module_name: str, content: s
                 indented_lines = ["    " + line if line else "" for line in class_lines]
                 doc.write("\n".join(indented_lines) + "\n")
             else:
-                doc.write(
-                    f"    class {class_name}:\n        # Source code extraction failed\n"
-                )
+                doc.write(f"    class {class_name}:\n        # Source code extraction failed\n")
 
         except Exception as e:
             print(f"Warning: Could not extract source for class {class_name}: {e}")
-            doc.write(
-                f"    class {class_name}:\n        # Source code extraction failed\n"
-            )
+            doc.write(f"    class {class_name}:\n        # Source code extraction failed\n")
     doc.write("    ```\n\n")
 
 
@@ -393,9 +372,7 @@ def _write_dict_input(doc, group_name: str, name: str, type_info: dict):
     if "ast.List" in type_name:
         type_name = "LIST"
     default = type_info.get("default", "")
-    extras = ", ".join(
-        f"{k}={v}" for k, v in type_info.items() if k not in ["type", "default"]
-    )
+    extras = ", ".join(f"{k}={v}" for k, v in type_info.items() if k not in ["type", "default"])
     doc.write(f"| {group_name} | {name} | `{type_name}` | {default} | {extras} |\n")
 
 
@@ -408,9 +385,7 @@ def create_mkdocs_config(categories: list):
         )
         for category in categories
     ]
-    for parts, output_base_name in sorted(
-        parts_and_output_base_names, key=lambda x: -len(x[0])
-    ):
+    for parts, output_base_name in sorted(parts_and_output_base_names, key=lambda x: -len(x[0])):
         current_level = category_tree
         for part in parts[:-1]:
             if part not in current_level:
@@ -489,9 +464,7 @@ def copy_readme_to_index(project_base_dir: Path):
     with open(readme_path, encoding="utf-8") as f:
         content = f.read()
 
-    content = content.replace(
-        "# Signature for ComfyUI", "# Signature Nodes Documentation"
-    )
+    content = content.replace("# Signature for ComfyUI", "# Signature Nodes Documentation")
 
     os.makedirs(project_base_dir / "docs", exist_ok=True)
 
