@@ -429,17 +429,18 @@ class ResizeWithMegapixels:
         interpolation: str = "lanczos",
         antialias: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        # Get original dimensions from input tensors if available
         if isinstance(image, torch.Tensor):
-            if len(image.shape) == 4:
-                _, orig_height, orig_width, _ = image.shape
-            else:
-                orig_height, orig_width, _ = image.shape
+            image_shape = image.shape
+            if len(image_shape) == 4:  # B,H,W,C
+                _, orig_height, orig_width, _ = image_shape
+            else:  # H,W,C
+                orig_height, orig_width, _ = image_shape
         elif isinstance(mask, torch.Tensor):
-            if len(mask.shape) == 4:
-                _, orig_height, orig_width, _ = mask.shape
-            else:
-                _, orig_height, orig_width = mask.shape
+            mask_shape = mask.shape
+            if len(mask_shape) == 3:  # B,H,W
+                _, orig_height, orig_width = mask_shape
+            else:  # H,W
+                orig_height, orig_width = mask_shape
         else:
             raise ValueError("Either image or mask must be provided")
 
