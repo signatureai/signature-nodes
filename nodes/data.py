@@ -1,8 +1,9 @@
 import json
 import tomllib
-import torch
+
 import jq
 import tomli_w
+import torch
 import yaml
 
 from .categories import DATA_CAT
@@ -42,7 +43,16 @@ class Json2Dict:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "json_str": ("STRING", {"default": "", "forceInput": True}),
+                "json_str": (
+                    "STRING",
+                    {
+                        "default": (
+                            '{\n  "dict1": {"key1": "value1", "key2": "value2"},\n  "dict2": {"key1": "value3", '
+                            '"key2": "value4"}\n}'
+                        ),
+                        "multiline": True,
+                    },
+                ),
             },
         }
 
