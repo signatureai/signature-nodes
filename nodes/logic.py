@@ -183,6 +183,8 @@ class Compare:
 class LoopStart:
     """Initiates a loop with optional initial values for each iteration.
 
+    This node is deprecated. Use the "Do While Loop Start" node instead.
+
     A control node that starts a loop, allowing for a specified number of iterations. It can accept
     optional initial values for each iteration, which can be used within the loop. This node is useful
     for creating iterative workflows where the same set of operations is performed multiple times.
@@ -210,6 +212,7 @@ class LoopStart:
     RETURN_TYPES = ByPassTypeTuple(tuple(["FLOW_CONTROL"] + [any_type] * MAX_FLOW_NUM))
     RETURN_NAMES = ByPassTypeTuple(tuple(["flow"] + [f"value_{i}" for i in range(MAX_FLOW_NUM)]))
     FUNCTION = "execute"
+    DEPRECATED = True
 
     CATEGORY = LABS_CAT + "/Loops"
 
@@ -222,6 +225,8 @@ class LoopStart:
 
 class LoopEnd:
     """Ends a loop and returns the final values after the loop execution.
+
+    This node is deprecated. Use the "Do While Loop End" node instead.
 
     A control node that signifies the end of a loop initiated by a `LoopStart` node. It processes the
     flow control signal and can return the final values from the loop iterations. This node is useful
@@ -265,7 +270,7 @@ class LoopEnd:
     RETURN_TYPES = ByPassTypeTuple(tuple([any_type] * MAX_FLOW_NUM))
     RETURN_NAMES = ByPassTypeTuple(tuple(f"value_{i}" for i in range(MAX_FLOW_NUM)))
     FUNCTION = "execute"
-
+    DEPRECATED = True
     CATEGORY = LABS_CAT + "/Loops"
 
     def explore_dependencies(self, node_id, dynprompt, upstream):

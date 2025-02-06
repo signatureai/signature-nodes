@@ -68,13 +68,10 @@ const ext = {
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
     const class_name = nodeType.comfyClass;
 
-    nodeType.prototype.onConnectionsChange = function (
-      type,
-      index,
-      connected,
-      link_info,
-    ) {
+    nodeType.prototype.onConnectionsChange = function (type, index, connected, link_info) {
       if (
+        class_name === "signature_do_while_loop_start" ||
+        class_name === "signature_do_while_loop_end" ||
         class_name === "signature_loop_start" ||
         class_name === "signature_loop_end"
       ) {
@@ -125,7 +122,12 @@ const ext = {
   },
   async nodeCreated(node) {
     const class_name = node.comfyClass;
-    if (class_name === "signature_loop_start" || class_name === "signature_loop_end") {
+    if (
+      class_name === "signature_do_while_loop_start" ||
+      class_name === "signature_do_while_loop_end" ||
+      class_name === "signature_loop_start" ||
+      class_name === "signature_loop_end"
+    ) {
       setDefaults(node);
       setNodeColors(node, COLOR_THEMES["pale_blue"]);
     }
