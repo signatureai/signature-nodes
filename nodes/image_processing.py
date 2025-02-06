@@ -273,7 +273,7 @@ class Resize:
                     {"default": 1024, "min": 32, "step": 2, "max": 40960},
                 ),
                 "mode": (["STRETCH", "FIT", "FILL", "ASPECT"],),
-                "interpolation": (["bilinear", "nearest", "bicubic", "area"],),
+                "interpolation": (["lanczos", "bilinear", "nearest", "bicubic", "area"],),
                 "antialias": (
                     "BOOLEAN",
                     {"default": True},
@@ -295,7 +295,7 @@ class Resize:
         width: int = 1024,
         height: int = 1024,
         mode: str = "default",
-        interpolation: str = "nearest",
+        interpolation: str = "lanczos",
         antialias: bool = True,
     ):
         input_image = (
@@ -368,7 +368,7 @@ class ResizeWithMegapixels:
             "optional": {
                 "image": ("IMAGE", {"default": None}),
                 "mask": ("MASK", {"default": None}),
-                "interpolation": (["bilinear", "nearest", "bicubic", "area"],),
+                "interpolation": (["lanczos", "bilinear", "nearest", "bicubic", "area"],),
                 "antialias": (
                     "BOOLEAN",
                     {"default": True},
@@ -426,7 +426,7 @@ class ResizeWithMegapixels:
         megapixels: float = 1.0,
         image: Optional[torch.Tensor] = None,
         mask: Optional[torch.Tensor] = None,
-        interpolation: str = "bilinear",
+        interpolation: str = "lanczos",
         antialias: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         if not isinstance(image, torch.Tensor) and not isinstance(mask, torch.Tensor):
