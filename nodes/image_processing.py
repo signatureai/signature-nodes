@@ -1,8 +1,9 @@
+import math
+from typing import Optional
+
 import comfy  # type: ignore
 import folder_paths  # type: ignore
-import math
 import torch
-from typing import Optional
 from comfy import model_management  # type: ignore
 from signature_core.functional.color import rgba_to_rgb
 from signature_core.functional.transform import (
@@ -342,7 +343,6 @@ class ResizeWithMegapixels:
 
     Raises:
         ValueError: If neither image nor mask is provided
-        ValueError: If megapixels is outside valid range
         ValueError: If invalid interpolation method
         RuntimeError: If input tensors have invalid dimensions
 
@@ -429,16 +429,19 @@ class ResizeWithMegapixels:
         interpolation: str = "lanczos",
         antialias: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        if not isinstance(image, torch.Tensor) and not isinstance(mask, torch.Tensor):
-            raise ValueError("Either image or mask must be provided")
-
         # Get original dimensions from input tensors if available
         if isinstance(image, torch.Tensor):
-            _, orig_height, orig_width, _ = image.shape
+            if len(image.shape) == 4:
+                _, orig_height, orig_width, _ = image.shape
+            else:
+                orig_height, orig_width, _ = image.shape
         elif isinstance(mask, torch.Tensor):
-            _, orig_height, orig_width, _ = mask.shape
+            if len(mask.shape) == 4:
+                _, orig_height, orig_width, _ = mask.shape
+            else:
+                _, orig_height, orig_width = mask.shape
         else:
-            orig_width = orig_height = 1
+            raise ValueError("Either image or mask must be provided")
 
         target_width, target_height = self.get_dimensions(megapixels, orig_width, orig_height)
 
