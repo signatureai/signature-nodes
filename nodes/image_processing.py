@@ -430,17 +430,13 @@ class ResizeWithMegapixels:
         antialias: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         if isinstance(image, torch.Tensor):
-            image_shape = image.shape
-            if len(image_shape) == 4:  # B,H,W,C
-                _, orig_height, orig_width, _ = image_shape
-            else:  # H,W,C
-                orig_height, orig_width, _ = image_shape
+            image_shape = TensorImage.from_BWHC(image).shape
+            _, orig_height, orig_width, _ = image_shape
+
         elif isinstance(mask, torch.Tensor):
-            mask_shape = mask.shape
-            if len(mask_shape) == 3:  # B,H,W
-                _, orig_height, orig_width = mask_shape
-            else:  # H,W
-                orig_height, orig_width = mask_shape
+            mask_shape = TensorImage.from_BWHC(mask).shape
+            _, _, orig_height, orig_width = mask_shape
+
         else:
             raise ValueError("Either image or mask must be provided")
 
