@@ -239,6 +239,8 @@ class Resize:
             - "bicubic": Cubic interpolation (smoother)
             - "area": Area averaging (good for downscaling)
         antialias (bool): Whether to apply antialiasing when downscaling
+        multiple_of (int, optional): Ensure output dimensions are multiples of this value.
+            If provided, final dimensions will be adjusted to nearest multiple.
 
     Returns:
         tuple:
@@ -259,6 +261,7 @@ class Resize:
         - FILL mode ensures target size but may crop content
         - ASPECT mode preserves proportions using longest edge
         - Antialiasing recommended when downscaling
+        - When multiple_of is set, final dimensions will be adjusted to nearest multiple
     """
 
     @classmethod
@@ -279,6 +282,10 @@ class Resize:
                     "BOOLEAN",
                     {"default": True},
                 ),
+                "multiple_of": (
+                    "INT",
+                    {"default": 1, "min": 1, "step": 1, "max": 1024},
+                ),
             },
         }
 
@@ -288,6 +295,33 @@ class Resize:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
+    DESCRIPTION = """🖼️ Image Resize Node
+
+    This node helps you resize your images and masks to specific dimensions. Think of it like adjusting your canvas size, but with some smart options!
+
+    What it does:
+    - Resizes images as well as masks to any size you want (between 32 and 40,960 pixels)
+    - Gives you different ways to handle the resizing
+
+    Resize Modes:
+    - STRETCH: Like stretching a rubber image to fit exactly (might distort)
+    - FIT: Like putting a photo in a frame while keeping everything visible (might leave empty space)
+    - FILL: Like zooming until the frame is completely filled (might crop edges)
+    - ASPECT: Keeps everything looking natural by maintaining proportions
+
+    Pro Tips:
+    - Use "lanczos" for the highest quality resizing (especially good for photos and detailed art)
+    - Use "bilinear" or "bicubic" for smooth, natural-looking results
+    - Use "nearest" if you want to keep sharp edges (good for pixel art or masks)
+    - Turn on "antialias" when making images smaller to avoid jagged edges
+    - Use "multiple_of" if you need dimensions to be divisible by a certain number (useful for some AI models that require specific sizes)
+
+    Perfect for:
+    - Preparing images for AI models
+    - Standardizing image sizes in your workflow
+    - Resizing while keeping image quality
+    - Making sure your images fit specific size requirements
+    """
 
     def execute(
         self,
@@ -298,6 +332,7 @@ class Resize:
         mode: str = "default",
         interpolation: str = "lanczos",
         antialias: bool = True,
+        multiple_of: int = 1,
     ):
         input_image = (
             TensorImage.from_BWHC(image)
@@ -309,6 +344,11 @@ class Resize:
             if isinstance(mask, torch.Tensor)
             else TensorImage(torch.zeros((1, 1, width, height)))
         )
+
+        if multiple_of > 1:
+            width = round(width / multiple_of) * multiple_of
+            height = round(height / multiple_of) * multiple_of
+
         output_image = resize(input_image, width, height, mode, interpolation, antialias).get_BWHC()
         output_mask = resize(input_mask, width, height, mode, interpolation, antialias).get_BWHC()
 
@@ -373,6 +413,10 @@ class ResizeWithMegapixels:
                     "BOOLEAN",
                     {"default": True},
                 ),
+                "multiple_of": (
+                    "INT",
+                    {"default": 1, "min": 1, "step": 1, "max": 1024},
+                ),
             },
         }
 
@@ -428,6 +472,7 @@ class ResizeWithMegapixels:
         mask: Optional[torch.Tensor] = None,
         interpolation: str = "lanczos",
         antialias: bool = True,
+        multiple_of: int = 1,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         if isinstance(image, torch.Tensor):
             shape = TensorImage.from_BWHC(image).shape
@@ -452,6 +497,7 @@ class ResizeWithMegapixels:
             mode="ASPECT",
             interpolation=interpolation,
             antialias=antialias,
+            multiple_of=multiple_of,
         )
 
         return (output_image, output_mask)
