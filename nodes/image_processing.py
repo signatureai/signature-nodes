@@ -347,12 +347,8 @@ class Resize:
             else TensorImage(torch.zeros((1, 1, width, height)))
         )
 
-        if multiple_of > 1:
-            width = round(width / multiple_of) * multiple_of
-            height = round(height / multiple_of) * multiple_of
-
-        output_image = resize(input_image, width, height, mode, interpolation, antialias).get_BWHC()
-        output_mask = resize(input_mask, width, height, mode, interpolation, antialias).get_BWHC()
+        output_image = resize(input_image, width, height, mode, interpolation, antialias, multiple_of).get_BWHC()
+        output_mask = resize(input_mask, width, height, mode, interpolation, antialias, multiple_of).get_BWHC()
 
         return (
             output_image,
