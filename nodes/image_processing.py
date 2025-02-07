@@ -297,7 +297,8 @@ class Resize:
     CATEGORY = IMAGE_PROCESSING_CAT
     DESCRIPTION = """🖼️ Image Resize Node
 
-    This node helps you resize your images and masks to specific dimensions. Think of it like adjusting your canvas size, but with some smart options!
+    This node helps you resize your images and masks to specific dimensions.
+    Think of it like adjusting your canvas size,but with some smart options!
 
     What it does:
     - Resizes images as well as masks to any size you want (between 32 and 40,960 pixels)
@@ -314,7 +315,8 @@ class Resize:
     - Use "bilinear" or "bicubic" for smooth, natural-looking results
     - Use "nearest" if you want to keep sharp edges (good for pixel art or masks)
     - Turn on "antialias" when making images smaller to avoid jagged edges
-    - Use "multiple_of" if you need dimensions to be divisible by a certain number (useful for some AI models that require specific sizes)
+    - Use "multiple_of" if you need dimensions to be divisible by a certain number
+    (useful for some AI models that require specific sizes)
 
     Perfect for:
     - Preparing images for AI models
