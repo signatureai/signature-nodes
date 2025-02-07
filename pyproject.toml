@@ -58,13 +58,3 @@ pythonpath = [
 
 [tool.setuptools]
 packages = ["nodes", "services"]
-
-[tool.uv.sources]
-neurochain = { index = "signature" }
-signature-core = { index = "signature" }
-signature-flows = { index = "signature" }
-
-[[tool.uv.index]]
-name = "signature"
-url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/"
-explicit = true
