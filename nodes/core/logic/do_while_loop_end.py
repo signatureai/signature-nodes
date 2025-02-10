@@ -1,5 +1,7 @@
 from comfy_execution.graph_utils import GraphBuilder, is_link  # type: ignore
 
+from nodes import NODE_CLASS_MAPPINGS as ALL_NODE_CLASS_MAPPINGS  # type: ignore
+
 from ...categories import LABS_CAT
 from ...shared import ByPassTypeTuple, any_type
 
@@ -54,17 +56,36 @@ class DoWhileLoopEnd:
     FUNCTION = "execute"
     CATEGORY = LABS_CAT + "/Loops"
 
-    def explore_dependencies(self, node_id, dynprompt, upstream):
+    def explore_dependencies(self, node_id, dynprompt, upstream, parent_ids):
         node_info = dynprompt.get_node(node_id)
         if "inputs" not in node_info:
             return
         for _, v in node_info["inputs"].items():
             if is_link(v):
                 parent_id = v[0]
+                display_id = dynprompt.get_display_node_id(parent_id)
+                display_node = dynprompt.get_node(display_id)
+                class_type = display_node["class_type"]
+                if class_type not in ["signature_for_loop_end", "signature_do_while_loop_end"]:
+                    parent_ids.append(display_id)
                 if parent_id not in upstream:
                     upstream[parent_id] = []
-                    self.explore_dependencies(parent_id, dynprompt, upstream)
+                    self.explore_dependencies(parent_id, dynprompt, upstream, parent_ids)
+
                 upstream[parent_id].append(node_id)
+
+    def explore_output_nodes(self, dynprompt, upstream, output_nodes, parent_ids):
+        for parent_id in upstream:
+            display_id = dynprompt.get_display_node_id(parent_id)
+            for output_id in output_nodes:
+                id = output_nodes[output_id][0]
+                if id in parent_ids and display_id == id and output_id not in upstream[parent_id]:
+                    if "." in parent_id:
+                        arr = parent_id.split(".")
+                        arr[len(arr) - 1] = output_id
+                        upstream[parent_id].append(".".join(arr))
+                    else:
+                        upstream[parent_id].append(output_id)
 
     def collect_contained(self, node_id, upstream, contained):
         if node_id not in upstream:
@@ -84,18 +105,35 @@ class DoWhileLoopEnd:
 
         # We want to loop
         if dynprompt is not None:
-            _ = dynprompt.get_node(unique_id)
+            dynprompt.get_node(unique_id)
         upstream = {}
         # Get the list of all nodes between the open and close nodes
-        self.explore_dependencies(unique_id, dynprompt, upstream)
+        parent_ids = []
+        self.explore_dependencies(unique_id, dynprompt, upstream, parent_ids)
+        parent_ids = list(set(parent_ids))
 
+        if dynprompt is not None:
+            prompts = dynprompt.get_original_prompt()
+        output_nodes = {}
+        for id in prompts:
+            node = prompts[id]
+            if "inputs" not in node:
+                continue
+            class_type = node["class_type"]
+            class_def = ALL_NODE_CLASS_MAPPINGS[class_type]
+            if hasattr(class_def, "OUTPUT_NODE") and class_def.OUTPUT_NODE:
+                for k, v in node["inputs"].items():
+                    if is_link(v):
+                        output_nodes[id] = v
+
+        graph = GraphBuilder()
+        self.explore_output_nodes(dynprompt, upstream, output_nodes, parent_ids)
         contained = {}
         open_node = flow[0]
         self.collect_contained(open_node, upstream, contained)
         contained[unique_id] = True
         contained[open_node] = True
 
-        graph = GraphBuilder()
         for node_id in contained:
             if dynprompt is not None:
                 original_node = dynprompt.get_node(node_id)
