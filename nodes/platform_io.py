@@ -309,9 +309,10 @@ class InputNumber:
                 "value": (
                     "FLOAT",
                     {
-                        "default": 0,
+                        "default": 0.0,
                         "min": -18446744073709551615,
                         "max": 18446744073709551615,
+                        "step": 0.1,
                     },
                 ),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
@@ -331,8 +332,10 @@ class InputNumber:
         value: float = 0,
         metadata: str = "{}",
     ) -> tuple[float]:
-        type_map = {"int": int, "float": float}
-        value = type_map[subtype](value)
+        if subtype == "int":
+            value = round(value)
+        elif subtype == "float":
+            value = float(value)
         clean_memory()
         return (value,)
 
