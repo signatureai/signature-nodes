@@ -4,8 +4,7 @@ from nodes import NODE_CLASS_MAPPINGS as ALL_NODE_CLASS_MAPPINGS  # type: ignore
 
 from ...categories import LABS_CAT
 from ...shared import ByPassTypeTuple, any_type
-
-MAX_FLOW_NUM = 10
+from .shared import MAX_FLOW_NUM
 
 
 class DoWhileLoopEnd:
