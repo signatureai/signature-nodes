@@ -25,7 +25,6 @@ class FillTemplate:
                 if isinstance(value, dict):
                     template = replace_key(template, value, parent_path + key + ".")
                 else:
-                    print(f"Replacing {parent_path}{key}")
                     template = template.replace(f"[{parent_path}{key}]", str(value))
             return template
 
