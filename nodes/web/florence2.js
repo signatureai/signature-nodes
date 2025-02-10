@@ -71,7 +71,7 @@ app.registerExtension({
         const oldVal = widgetValue;
 
         if (originalDescriptor && originalDescriptor.set) {
-          originalDescriptor.set.call(w, newVal);
+          originalDescriptor.set.call(widgetTaskToken, newVal);
         } else {
           widgetValue = newVal;
         }

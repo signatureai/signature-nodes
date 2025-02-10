@@ -35,8 +35,9 @@ class DoWhileLoopEnd:
     def INPUT_TYPES(cls):
         inputs = {
             "required": {
-                "flow": ("FLOW_CONTROL", {"rawLink": True}),
-                "end_loop": ("BOOLEAN", {}),
+                "flow": ("FLOW_CONTROL", {"rawLink": True, "forceInput": True}),
+                "end_loop": ("BOOLEAN", {"forceInput": True}),
+                "num_slots": ([str(i) for i in range(1, MAX_FLOW_NUM + 1)], {"default": "1"}),
             },
             "optional": {},
             "hidden": {
@@ -45,7 +46,7 @@ class DoWhileLoopEnd:
             },
         }
         for i in range(MAX_FLOW_NUM):
-            inputs["optional"][f"init_value_{i}"] = (any_type,)
+            inputs["optional"][f"init_value_{i}"] = (any_type, {"forceInput": True})
         return inputs
 
     RETURN_TYPES = ByPassTypeTuple(tuple([any_type] * MAX_FLOW_NUM))

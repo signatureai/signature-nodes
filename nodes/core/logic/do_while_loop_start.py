@@ -26,10 +26,13 @@ class DoWhileLoopStart:
     @classmethod
     def INPUT_TYPES(cls):
         inputs = {
+            "required": {
+                "num_slots": ([str(i) for i in range(1, MAX_FLOW_NUM + 1)], {"default": "1"}),
+            },
             "optional": {},
         }
         for i in range(MAX_FLOW_NUM):
-            inputs["optional"][f"init_value_{i}"] = (any_type,)
+            inputs["optional"][f"init_value_{i}"] = (any_type, {"forceInput": True})
         return inputs
 
     RETURN_TYPES = ByPassTypeTuple(tuple(["FLOW_CONTROL"] + [any_type] * MAX_FLOW_NUM))
