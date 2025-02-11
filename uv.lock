@@ -2427,7 +2427,7 @@ wheels = [
 
 [[package]]
 name = "neurochain"
-version = "2.0.1.dev0"
+version = "2.0.0"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple" }
 dependencies = [
     { name = "accelerate" },
@@ -2450,7 +2450,6 @@ dependencies = [
     { name = "numpy" },
     { name = "ollama" },
     { name = "openai" },
-    { name = "opencv-python" },
     { name = "pandas" },
     { name = "pillow" },
     { name = "pydantic" },
@@ -2477,9 +2476,9 @@ dependencies = [
     { name = "weaviate-client" },
     { name = "websockets" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.1.dev0/neurochain-2.0.1.dev0.tar.gz", hash = "sha256:3c94d8a5b5cb78790f56cd6b3d0c76518718c77ef7996d56c70ba0a198c6269e" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0/neurochain-2.0.0.tar.gz", hash = "sha256:ca9ed7b7b17a3f667598c1960c4075a1902f3aa450b1c2409187ce41ba5cea8e" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.1.dev0/neurochain-2.0.1.dev0-py3-none-any.whl", hash = "sha256:67c96da441ad5d0c8634c890996babc5e6f55d3d2fc3fa9af2108604484de304" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0/neurochain-2.0.0-py3-none-any.whl", hash = "sha256:a7d221cecfdf9685e22e2e8607040b6213ae5c89cfeed2d99eeb18881e000251" },
 ]
 
 [[package]]
@@ -4327,11 +4326,11 @@ doc = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.35.95" },
-    { name = "httpx", specifier = "<=0.28.1" },
+    { name = "httpx", specifier = ">=0.25.0" },
     { name = "huggingface-hub", specifier = ">=0.26.2" },
     { name = "jq", specifier = ">=1.8.0" },
     { name = "matplotlib", specifier = ">=3.10.0" },
-    { name = "neurochain", specifier = "==2.0.1.dev0" },
+    { name = "neurochain", specifier = "==2.0.0" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.3" },
