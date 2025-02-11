@@ -173,11 +173,11 @@ async function saveWorkflow(app) {
       try {
         e.preventDefault();
         const workflowIdSelectedDiv = form.querySelector('div[data-selected="true"]');
-        const workflowId = workflowIdSelectedDiv ? workflowIdSelectedDiv.getAttribute("data-workflow-id") : undefined;
+        const workflowId = workflowIdSelectedDiv ? workflowIdSelectedDiv.getAttribute("data-workflow-id") : "";
 
         const formData = {
-          baseWorkflowId: workflowId,
-          name: form.querySelectorAll('input[type="text"]')[1].value,
+          baseWorkflowId: workflowId || "",
+          name: form.querySelector('input[type="text"]').value,
           description: form.querySelector("textarea").value,
           type: form.querySelector("select").value,
           coverImage: form.querySelector('input[type="file"]').files[0],
@@ -548,7 +548,7 @@ function showForm() {
               let page = 0;
               let lastPageReached = false;
               const initialOptions = [
-                $el("option", { value: undefined, textContent: "Create new workflow" }),
+                $el("option", { value: "", textContent: "Create new workflow" }),
                 ...(await getWorkflowsListForForm(page, limit)),
               ];
               container.append(
@@ -562,7 +562,7 @@ function showForm() {
                       backgroundColor: index === 0 ? "#2D9CDB" : "transparent",
                     },
                     $: (el) => {
-                      el.setAttribute("data-workflow-id", opt.value || "new");
+                      el.setAttribute("data-workflow-id", opt.value || "");
                       if (index === 0) el.setAttribute("data-selected", "true");
                     },
                     onclick: (e) => {
@@ -597,7 +597,7 @@ function showForm() {
                           cursor: "pointer",
                         },
                         $: (el) => {
-                          el.setAttribute("data-workflow-id", opt.value || "new");
+                          el.setAttribute("data-workflow-id", opt.value || "");
                           if (index === 0) el.setAttribute("data-selected", "true");
                         },
                         onclick: (e) => {
