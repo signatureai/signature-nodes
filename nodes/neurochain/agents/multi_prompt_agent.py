@@ -20,5 +20,4 @@ class MultiPromptAgent:
         for idx, prompt in enumerate(prompts):
             model_resp, metadata = agent.predict(prompt)
             results[idx] = {"prompt": prompt, "response": json.loads(model_resp), "metadata": metadata}
-            print(model_resp)
         return (results,)
