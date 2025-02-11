@@ -341,7 +341,6 @@ function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
   );
 }
 
-// const signatureApiBaseUrl = "http://localhost:8080";
 const signatureApiBaseUrl = "https://signature-api-qa.signature-eks-staging.signature.ai";
 
 async function loginRequest(email, password) {
