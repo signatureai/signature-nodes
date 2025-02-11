@@ -105,11 +105,9 @@ async function requiresAuth(app, next) {
   // Tokens are stored in cookies
   let accessToken = document.cookie.match(/accessToken=([^;]+)/)?.[1];
   let refreshToken = document.cookie.match(/refreshToken=([^;]+)/)?.[1];
-  console.log("Access token:", accessToken);
-  console.log("Refresh token:", refreshToken);
 
   if (refreshToken !== undefined && refreshToken !== null && refreshToken !== "") {
-    console.log("Refresh token is valid, trying to refresh");
+    console.log("Trying to refresh token");
     try {
       const refreshTokenResponse = await refreshTokenRequest();
       if (refreshTokenResponse.success) {
@@ -117,7 +115,7 @@ async function requiresAuth(app, next) {
         refreshToken = refreshTokenResponse.result.refreshToken;
         document.cookie = `accessToken=${accessToken}; path=/`;
         document.cookie = `refreshToken=${refreshToken}; path=/`;
-        console.log("Refresh token refreshed successfully");
+        console.log("Token refreshed successfully");
       } else {
         throw new Error("Refresh token failed, success was false");
       }
@@ -138,7 +136,6 @@ async function requiresAuth(app, next) {
       e.preventDefault();
       const username = loginForm.querySelector("input[type='text']").value;
       const password = loginForm.querySelector("input[type='password']").value;
-      console.log("logging in with", username, password);
       try {
         const loginResponse = await loginRequest(username, password);
         if (loginResponse.success) {
@@ -584,7 +581,7 @@ function showForm() {
               container.addEventListener("scroll", async (e) => {
                 console.log("scroll");
                 if (container.scrollHeight - container.scrollTop === container.clientHeight && !lastPageReached) {
-                  console.log("scroll end, loading more");
+                  console.log("Loading next workflows page");
                   // Load more items
                   page++;
                   const nextOptions = await getWorkflowsListForForm(page, limit);
