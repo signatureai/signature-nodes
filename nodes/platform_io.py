@@ -10,7 +10,7 @@ from signature_core.img.tensor_image import TensorImage
 from uuid_extensions import uuid7str
 
 from .categories import PLATFORM_IO_CAT
-from .shared import BASE_COMFY_DIR, any_type, clean_memory
+from .shared import BASE_COMFY_DIR, any_type
 
 
 class InputImage:
@@ -66,7 +66,8 @@ class InputImage:
     DESCRIPTION = """# InputImage Node - Your Gateway for Images in ComfyUI
 
     ## What it Does 🎨
-    This node is your main entry point for bringing images into ComfyUI workflows. Think of it as a universal image loader that can handle:
+    This node is your main entry point for bringing images into ComfyUI workflows. Think of it as a universal image
+    loader that can handle:
     - Images from web URLs (anything starting with "http")
     - Base64-encoded images
     - Single images or multiple images at once
@@ -102,7 +103,8 @@ class InputImage:
     - Outputs images in the format ComfyUI expects (BCHW tensor format)
     - Perfect for feeding into other ComfyUI nodes like upscalers, ControlNet, or image processors
 
-    Think of this node as your universal image importer - it handles all the technical conversion stuff so you can focus on the creative aspects of your workflow! 🎨✨"""
+    Think of this node as your universal image importer - it handles all the technical conversion stuff so you can focus
+    on the creative aspects of your workflow! 🎨✨"""
 
     # TODO: confirm if title, required and metadata inputs are needed
     def execute(
@@ -178,7 +180,6 @@ class InputImage:
                 outputs[i] = output.get_grayscale().get_BWHC()
             else:
                 outputs[i] = post_process(output, include_alpha).get_BWHC()
-        clean_memory()
         return (outputs,)
 
 
@@ -231,7 +232,7 @@ class InputConnector:
     DEPRECATED = True
 
     # TODO: confirm if title, subtype required and metadata inputs are needed
-    def execute(
+    def execute(  # nosec: B107
         self,
         title: str = "Input Connector",
         subtype: str = "google_drive",
@@ -250,7 +251,6 @@ class InputConnector:
             output_path=input_folder,
             override=override,
         )
-        clean_memory()
         return (data,)
 
 
@@ -311,7 +311,6 @@ class InputText:
     ) -> tuple[str]:
         if fallback and value == "":
             value = fallback
-        clean_memory()
         return (value,)
 
 
@@ -376,7 +375,6 @@ class InputNumber:
             value = round(value)
         elif subtype == "float":
             value = float(value)
-        clean_memory()
         return (value,)
 
 
@@ -428,7 +426,6 @@ class InputBoolean:
         value: bool = False,
         metadata: str = "{}",
     ) -> tuple[bool]:
-        clean_memory()
         return (value,)
 
 
@@ -591,7 +588,6 @@ class Output:
                         "value": value_json,
                     }
                 )
-        clean_memory()
         return {"ui": {"signature_output": results}}
 
 
