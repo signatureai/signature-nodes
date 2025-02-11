@@ -1,12 +1,6 @@
 import { app } from "../../scripts/app.js";
 
-function showMessage(
-  message,
-  color,
-  detailedInfo = null,
-  backgroundColor = "#00000000",
-  extraBody = null,
-) {
+function showMessage(message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) {
   let dialogContent = `
       <div style="
         text-align: center;
@@ -33,8 +27,9 @@ function showMessage(
             ${message}
           </p>
         </div>
-        ${detailedInfo
-      ? `
+        ${
+          detailedInfo
+            ? `
           <pre style="
             text-align: left;
             white-space: pre-wrap;
@@ -45,8 +40,8 @@ function showMessage(
             width: 100%;
           ">${detailedInfo}</pre>
         `
-      : ""
-    }
+            : ""
+        }
       </div>`;
 
   app.ui.dialog.show(dialogContent);
@@ -94,9 +89,7 @@ async function getManifest(workflow) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Error getting manifest:", errorText);
-      throw new Error(
-        `Failed to get manifest: ${response.status} ${response.statusText}`,
-      );
+      throw new Error(`Failed to get manifest: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -104,6 +97,70 @@ async function getManifest(workflow) {
   } catch (error) {
     console.error("Error in getManifest:", error);
     throw error;
+  }
+}
+
+// Wraps the next function in an auth check
+async function requiresAuth(app, next) {
+  // Tokens are stored in cookies
+  let accessToken = document.cookie.match(/accessToken=([^;]+)/)?.[1];
+  let refreshToken = document.cookie.match(/refreshToken=([^;]+)/)?.[1];
+  console.log("Access token:", accessToken);
+  console.log("Refresh token:", refreshToken);
+
+  if (refreshToken !== undefined && refreshToken !== null && refreshToken !== "") {
+    console.log("Refresh token is valid, trying to refresh");
+    try {
+      const refreshTokenResponse = await refreshTokenRequest();
+      if (refreshTokenResponse.success) {
+        accessToken = refreshTokenResponse.result.accessToken;
+        refreshToken = refreshTokenResponse.result.refreshToken;
+        document.cookie = `accessToken=${accessToken}; path=/`;
+        document.cookie = `refreshToken=${refreshToken}; path=/`;
+        console.log("Refresh token refreshed successfully");
+      } else {
+        throw new Error("Refresh token failed, success was false");
+      }
+    } catch (error) {
+      console.error("Invalid refresh token, showing login form", error);
+      accessToken = undefined;
+      refreshToken = undefined;
+      document.cookie = `accessToken=; path=/`;
+      document.cookie = `refreshToken=; path=/`;
+    }
+  }
+
+  if (!accessToken || !refreshToken) {
+    console.log("Access token is invalid, showing login form");
+    const loginForm = await showLoginForm();
+    const loginButton = loginForm.querySelector('a[href="#"]');
+    loginButton.onclick = async (e) => {
+      e.preventDefault();
+      const username = loginForm.querySelector("input[type='text']").value;
+      const password = loginForm.querySelector("input[type='password']").value;
+      console.log("logging in with", username, password);
+      try {
+        const loginResponse = await loginRequest(username, password);
+        if (loginResponse.success) {
+          accessToken = loginResponse.result.accessToken;
+          refreshToken = loginResponse.result.refreshToken;
+          if (!accessToken || !refreshToken) {
+            throw new Error("Login failed, access token or refresh token was not set");
+          }
+          document.cookie = `accessToken=${accessToken}; path=/`;
+          document.cookie = `refreshToken=${refreshToken}; path=/`;
+          app.ui.dialog.close();
+          next(app);
+        } else {
+          throw new Error("Login failed, success was false");
+        }
+      } catch (error) {
+        console.error("Error in login:", error);
+        showMessage("Login failed, please try again", "#ff0000");
+      }
+    };
+  } else {
+    next(app);
   }
 }
 
@@ -118,8 +175,11 @@ async function saveWorkflow(app) {
     submitButton.onclick = async (e) => {
       try {
         e.preventDefault();
+        const workflowIdSelectedDiv = form.querySelector('div[data-selected="true"]');
+        const workflowId = workflowIdSelectedDiv ? workflowIdSelectedDiv.getAttribute("data-workflow-id") : undefined;
+
         const formData = {
-          baseWorkflowId: form.querySelectorAll('input[type="text"]')[0].value,
+          baseWorkflowId: workflowId,
           name: form.querySelectorAll('input[type="text"]')[1].value,
           description: form.querySelector("textarea").value,
           type: form.querySelector("select").value,
@@ -127,13 +187,7 @@ async function saveWorkflow(app) {
         };
         app.ui.dialog.close();
 
-        showMessage(
-          "Generating manifest...",
-          "#ffffff",
-          null,
-          "#00000000",
-          getLoadingSpinner("#00ff00"),
-        );
+        showMessage("Generating manifest...", "#ffffff", null, "#00000000", getLoadingSpinner("#00ff00"));
         // Get manifest and check for missing dependencies
         const manifestResponse = await getManifest(workflow_api);
         const manifestData = JSON.parse(manifestResponse);
@@ -143,13 +197,11 @@ async function saveWorkflow(app) {
           let detailedInfo = "";
 
           if (manifestData.missing_nodes?.length) {
-            detailedInfo +=
-              "Missing Nodes:\n- " + manifestData.missing_nodes.join("\n- ") + "\n\n";
+            detailedInfo += "Missing Nodes:\n- " + manifestData.missing_nodes.join("\n- ") + "\n\n";
           }
 
           if (manifestData.missing_models?.length) {
-            detailedInfo +=
-              "Missing Models:\n- " + manifestData.missing_models.join("\n- ");
+            detailedInfo += "Missing Models:\n- " + manifestData.missing_models.join("\n- ");
           }
           showMessage(errorMessage, "#ff0000", detailedInfo);
           return;
@@ -162,8 +214,7 @@ async function saveWorkflow(app) {
         submitData.append("workflowType", formData.type.toLowerCase());
         submitData.append(
           "coverImage",
-          formData.coverImage ||
-          new File([new Blob([""], { type: "image/png" })], "default.png"),
+          formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
         );
 
         const workflowString = JSON.stringify(workflow, null, 2);
@@ -203,11 +254,7 @@ async function saveWorkflow(app) {
     };
   } catch (error) {
     console.error("Error in saveWorkflow:", error);
-    showMessage(
-      "An error occurred while submitting the workflow",
-      "#ff0000ff",
-      error.message,
-    );
+    showMessage("An error occurred while submitting the workflow", "#ff0000ff", error.message);
   }
 }
 
@@ -293,8 +340,176 @@ function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
             ></iframe>
           `,
       }),
-    ]).outerHTML,
+    ]).outerHTML
   );
+}
+
+// const signatureApiBaseUrl = "http://localhost:8080";
+const signatureApiBaseUrl = "https://signature-api-qa.signature-eks-staging.signature.ai";
+
+async function loginRequest(email, password) {
+  const url = `${signatureApiBaseUrl}/api/v1/user/login`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to login: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+async function refreshTokenRequest() {
+  const refreshToken = document.cookie.match(/refreshToken=([^;]+)/)?.[1];
+
+  const url = `${signatureApiBaseUrl}/api/v1/user/refresh-token`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${refreshToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to refresh token: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+function showLoginForm() {
+  const formContent = $el("div", [
+    $el("h2", {
+      style: {
+        textAlign: "center",
+        marginBottom: "20px",
+        color: "#ffffff",
+        width: "500px",
+      },
+      textContent: "Login",
+    }),
+    $el(
+      "div",
+      {
+        style: {
+          width: "500px",
+        },
+      },
+      [
+        // Email field
+        $el(
+          "div",
+          {
+            style: {
+              marginBottom: "10px",
+            },
+          },
+          [
+            $el("label", {
+              style: { display: "block", marginBottom: "5px" },
+              textContent: "Email",
+            }),
+            $el("input", {
+              type: "text",
+              placeholder: "Email",
+              style: {
+                width: "100%",
+                padding: "5px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+              },
+            }),
+          ]
+        ),
+        $el(
+          "div",
+          {
+            style: {
+              marginBottom: "10px",
+            },
+          },
+          [
+            $el("label", {
+              style: { display: "block", marginBottom: "5px" },
+              textContent: "Password",
+            }),
+            $el("input", {
+              type: "password",
+              placeholder: "Password",
+              style: {
+                width: "100%",
+                padding: "5px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+              },
+            }),
+          ]
+        ),
+        $el("div", {
+          innerHTML: `
+          <a href="#"
+             style="
+               display: flex;
+               align-items: center;
+               gap: 8px;
+               margin: 10px;
+               padding: 12px 24px;
+               background-color: #2D9CDB;
+               color: white;
+               border: none;
+               border-radius: 6px;
+               cursor: pointer;
+               text-decoration: none;
+               font-size: 16px;
+               transition: background-color 0.2s ease;
+               justify-content: center;
+             "
+             onmouseover="this.style.backgroundColor='#2486BE'"
+             onmouseout="this.style.backgroundColor='#2D9CDB'"
+          >
+            <div style="text-align: center">Login</div>
+          </a>
+        `,
+        }),
+      ]
+    ),
+  ]);
+
+  app.ui.dialog.show(formContent);
+
+  return formContent;
+}
+
+async function getWorkflowsListForForm(page = 0, limit = 100) {
+  const offset = page * limit;
+  const accessToken = document.cookie.match(/accessToken=([^;]+)/)?.[1];
+  const url = `${signatureApiBaseUrl}/api/v1_management/workflow?offset=${offset}&limit=${limit}`;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get workflows: ${response.status} ${response.statusText}`);
+  }
+
+  const parsedResponse = await response.json();
+  if (parsedResponse.result && parsedResponse.result.data && parsedResponse.result.data.length !== 0) {
+    return parsedResponse.result.data.map((workflow) => {
+      return $el("option", { value: workflow.uuid, textContent: `${workflow.name} (${workflow.uuid})` });
+    });
+  } else {
+    return [];
+  }
 }
 
 function showForm() {
@@ -313,7 +528,7 @@ function showForm() {
       "div",
       {
         style: {
-          width: "500px",
+          width: "800px",
         },
       },
       [
@@ -321,17 +536,88 @@ function showForm() {
         $el("div", { style: { marginBottom: "10px" } }, [
           $el("label", {
             style: { display: "block", marginBottom: "5px" },
-            textContent: "Base Workflow ID",
+            textContent: "Workflow",
           }),
-          $el("input", {
-            type: "text",
+          $el("div", {
             style: {
               width: "100%",
-              padding: "5px",
-              borderRadius: "4px",
+              maxHeight: "80px",
+              overflowY: "auto",
               border: "1px solid #ccc",
+              borderRadius: "4px",
+              backgroundColor: "#1e1e1e",
             },
-            placeholder: "Optional: Enter base workflow ID",
+            $: async (container) => {
+              let limit = 100;
+              let page = 0;
+              let lastPageReached = false;
+              const initialOptions = [
+                $el("option", { value: undefined, textContent: "Create new workflow" }),
+                ...(await getWorkflowsListForForm(page, limit)),
+              ];
+              container.append(
+                ...initialOptions.map((opt, index) =>
+                  $el("div", {
+                    textContent: opt.textContent,
+                    style: {
+                      padding: "5px",
+                      color: "white",
+                      cursor: "pointer",
+                      backgroundColor: index === 0 ? "#2D9CDB" : "transparent",
+                    },
+                    $: (el) => {
+                      el.setAttribute("data-workflow-id", opt.value || "new");
+                      if (index === 0) el.setAttribute("data-selected", "true");
+                    },
+                    onclick: (e) => {
+                      container.querySelectorAll("div").forEach((div) => {
+                        div.style.backgroundColor = "transparent";
+                        div.removeAttribute("data-selected");
+                      });
+                      e.target.style.backgroundColor = "#2D9CDB";
+                      e.target.setAttribute("data-selected", "true");
+                    },
+                  })
+                )
+              );
+
+              container.addEventListener("scroll", async (e) => {
+                console.log("scroll");
+                if (container.scrollHeight - container.scrollTop === container.clientHeight && !lastPageReached) {
+                  console.log("scroll end, loading more");
+                  // Load more items
+                  page++;
+                  const nextOptions = await getWorkflowsListForForm(page, limit);
+                  if (nextOptions.length === 0 || nextOptions.length < limit) {
+                    lastPageReached = true;
+                  }
+                  container.append(
+                    ...nextOptions.map((opt, index) =>
+                      $el("div", {
+                        textContent: opt.textContent,
+                        style: {
+                          padding: "5px",
+                          color: "white",
+                          cursor: "pointer",
+                        },
+                        $: (el) => {
+                          el.setAttribute("data-workflow-id", opt.value || "new");
+                          if (index === 0) el.setAttribute("data-selected", "true");
+                        },
+                        onclick: (e) => {
+                          container.querySelectorAll("div").forEach((div) => {
+                            div.style.backgroundColor = "transparent";
+                            div.removeAttribute("data-selected");
+                          });
+                          e.target.style.backgroundColor = "#2D9CDB";
+                          e.target.setAttribute("data-selected", "true");
+                        },
+                      })
+                    )
+                  );
+                }
+              });
+            },
           }),
         ]),
         // Name field
@@ -388,7 +674,7 @@ function showForm() {
             [
               $el("option", { value: "standard", textContent: "Standard" }),
               $el("option", { value: "training", textContent: "Training" }),
-            ],
+            ]
           ),
         ]),
         // Cover Image field
@@ -433,7 +719,7 @@ function showForm() {
           </a>
         `,
         }),
-      ],
+      ]
     ),
   ]);
 
@@ -467,10 +753,10 @@ function createMenuItem(label, iconClass, onClick) {
           [
             $el("span", { className: `p-menubar-item-icon pi ${iconClass}` }),
             $el("span", { className: "p-menubar-item-label", textContent: label }),
-          ],
+          ]
         ),
       ]),
-    ],
+    ]
   );
   return menuItem;
 }
@@ -492,21 +778,17 @@ const ext = {
           $el("li", {
             className: "p-menubar-separator",
             role: "separator",
-          }),
+          })
         );
 
         // Add Open from Signature menu item
         menuList.appendChild(
-          createMenuItem("Open from Signature", "pi-cloud-download", () =>
-            console.log("open from signature"),
-          ),
+          createMenuItem("Open from Signature", "pi-cloud-download", () => console.log("open from signature"))
         );
 
         // Add Deploy to Signature menu item
         menuList.appendChild(
-          createMenuItem("Deploy to Signature", "pi-cloud-upload", () =>
-            saveWorkflow(app),
-          ),
+          createMenuItem("Deploy to Signature", "pi-cloud-upload", () => requiresAuth(app, saveWorkflow))
         );
       }
     }
