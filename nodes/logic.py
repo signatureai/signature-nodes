@@ -35,8 +35,8 @@ class Switch:
     def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
-                "on_true": (any_type,),
-                "on_false": (any_type,),
+                "on_true": (any_type, {"lazy": True}),
+                "on_false": (any_type, {"lazy": True}),
                 "condition": ("BOOLEAN", {"default": True}),
             }
         }
@@ -46,22 +46,12 @@ class Switch:
     FUNCTION = "execute"
     CATEGORY = LOGIC_CAT
 
-    # TODO: check if this is needed
-
-    # def check_lazy_status(
-    #     self, condition: bool, on_true: any = None, on_false: any = None
-    # ) -> any:
-    #     if condition and on_true is None:
-    #         on_true = ["on_true"]
-    #         if isinstance(on_true, ExecutionBlocker):
-    #             on_true = on_true.message  # type: ignore
-    #         return on_true
-    #     if not condition and on_false is None:
-    #         on_false = ["on_false"]
-    #         if isinstance(on_false, ExecutionBlocker):
-    #             on_false = on_false.message  # type: ignore
-    #         return on_false
-    #     return None
+    def check_lazy_status(self, condition: bool, on_true: any = None, on_false: any = None) -> any:
+        if condition and on_true is None:
+            return ["on_true"]
+        if not condition and on_false is None:
+            return ["on_false"]
+        return None
 
     def execute(self, on_true: any, on_false: any, condition: bool = True) -> tuple[any]:
         return (on_true if condition else on_false,)
