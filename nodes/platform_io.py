@@ -63,6 +63,46 @@ class InputImage:
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
     OUTPUT_IS_LIST = (True,)
+    DESCRIPTION = """# InputImage Node - Your Gateway for Images in ComfyUI
+
+    ## What it Does 🎨
+    This node is your main entry point for bringing images into ComfyUI workflows. Think of it as a universal image loader that can handle:
+    - Images from web URLs (anything starting with "http")
+    - Base64-encoded images
+    - Single images or multiple images at once
+    - Regular images and masks
+    - Images with or without transparency
+
+    ## How to Use It 🚀
+
+    ### Basic Settings
+    - **Title**: Just a label for your node (default: "Input Image")
+    - **Subtype**: Choose between:
+        - `image` - for regular images
+        - `mask` - for masks (automatically converts to grayscale)
+    - **Include Alpha**: Toggle transparency handling
+        - OFF: Removes transparency (default)
+        - ON: Keeps transparency channel
+    - **Multiple**: Allow multiple images
+        - OFF: Takes only first image (default)
+        - ON: Processes all provided images
+
+    ### Input Methods
+    1. Web Images: Just paste the image URL (must start with "http")
+    2. Multiple Images: With "Multiple" enabled, separate URLs with spaces
+    3. Fallback: Optional backup image if main input fails
+
+    ## Tips & Tricks 💡
+    - For batch processing, enable "Multiple" and input several URLs separated by spaces
+    - When working with masks, set "subtype" to "mask" for automatic grayscale conversion
+    - If you need transparency in your workflow, make sure to enable "Include Alpha"
+    - The node automatically handles various image formats and color spaces
+
+    ## Output
+    - Outputs images in the format ComfyUI expects (BCHW tensor format)
+    - Perfect for feeding into other ComfyUI nodes like upscalers, ControlNet, or image processors
+
+    Think of this node as your universal image importer - it handles all the technical conversion stuff so you can focus on the creative aspects of your workflow! 🎨✨"""
 
     # TODO: confirm if title, required and metadata inputs are needed
     def execute(
@@ -96,8 +136,8 @@ class InputImage:
         def process_value(value: str, multiple: bool) -> list[str]:
             if not value:
                 return []
-            if "," in value:
-                items = value.split(",")
+            if " " in value:
+                items = value.split(" ")
                 return items if multiple else [items[0]]
             return [value]
 
