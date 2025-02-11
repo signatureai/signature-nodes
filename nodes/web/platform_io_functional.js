@@ -9,31 +9,7 @@ const NODES = {
   signature_output: "Output",
 };
 
-const COLOR_THEMES = {
-  red: { nodeColor: "#332222", nodeBgColor: "#553333" },
-  green: { nodeColor: "#223322", nodeBgColor: "#335533" },
-  blue: { nodeColor: "#222233", nodeBgColor: "#333355" },
-  pale_blue: { nodeColor: "#2a363b", nodeBgColor: "#3f5159" },
-  cyan: { nodeColor: "#223333", nodeBgColor: "#335555" },
-  purple: { nodeColor: "#332233", nodeBgColor: "#553355" },
-  yellow: { nodeColor: "#443322", nodeBgColor: "#665533" },
-  orange: { nodeColor: "#663322", nodeBgColor: "#995533" },
-  none: { nodeColor: null, nodeBgColor: null }, // no color
-};
-
-function setNodeColors(node, theme) {
-  if (!theme) {
-    return;
-  }
-  node.shape = "box";
-  if (theme.nodeColor && theme.nodeBgColor) {
-    node.color = theme.nodeColor;
-    node.bgcolor = theme.nodeBgColor;
-  }
-}
-
 function output(node, widget) {
-  setNodeColors(node, COLOR_THEMES["purple"]);
   const widgetType = widget.value.toUpperCase();
   if (node.inputs !== undefined) {
     for (const input of node.inputs) {
@@ -61,7 +37,6 @@ function output(node, widget) {
 }
 
 function inputImage(node, widget) {
-  setNodeColors(node, COLOR_THEMES["pale_blue"]);
   const name = widget.value;
   const type = widget.value.toUpperCase();
   if (node.inputs !== undefined) {
@@ -78,28 +53,7 @@ function inputImage(node, widget) {
   }
 }
 
-function inputText(node, widget) {
-  const value = widget.value;
-  if (value === "string") {
-    setNodeColors(node, COLOR_THEMES["yellow"]);
-  }
-
-  if (value === "positive_prompt") {
-    setNodeColors(node, COLOR_THEMES["green"]);
-  }
-
-  if (value === "negative_prompt") {
-    setNodeColors(node, COLOR_THEMES["red"]);
-  }
-}
-
-function inputBoolean(node, widget) {
-  setNodeColors(node, COLOR_THEMES["orange"]);
-}
-
 function inputNumber(node, widget) {
-  setNodeColors(node, COLOR_THEMES["cyan"]);
-
   const widgetType = widget.value.toUpperCase();
   if (node.inputs !== undefined) {
     if (node.inputs.length > 0) {
@@ -122,11 +76,14 @@ function inputNumber(node, widget) {
     }
   }
 
+  if (node.type === "signature_input_number") {
+    return;
+  }
   if (valueWidget !== null) {
     if (widget.value === "int") {
-      valueWidget.options.precision = 0;
-      valueWidget.options.round = 0;
-      valueWidget.options.step = 1;
+      valueWidget.options.precision = 0.0;
+      valueWidget.options.round = 0.0;
+      valueWidget.options.step = 1.0;
     } else {
       valueWidget.options.precision = 2;
       valueWidget.options.round = 0.01;
@@ -136,8 +93,6 @@ function inputNumber(node, widget) {
 }
 
 function inputSelector(node, widget) {
-  setNodeColors(node, COLOR_THEMES["purple"]);
-
   const widgetType = widget.value.toUpperCase();
 
   const widgets = node.widgets || [];
@@ -154,9 +109,6 @@ const nodeWidgetHandlers = {
   signature_input_image: {
     subtype: inputImage,
   },
-  signature_input_text: {
-    subtype: inputText,
-  },
   signature_input_number: {
     subtype: inputNumber,
   },
@@ -165,9 +117,6 @@ const nodeWidgetHandlers = {
   },
   signature_input_selector: {
     subtype: inputSelector,
-  },
-  signature_input_boolean: {
-    subtype: inputBoolean,
   },
   signature_output: {
     subtype: output,
@@ -178,6 +127,7 @@ const nodeWidgetHandlers = {
 function widgetLogic(node, widget) {
   // Retrieve the handler for the current node title and widget name
   const handler = nodeWidgetHandlers[node.comfyClass]?.[widget.name];
+
   if (handler) {
     handler(node, widget);
   }
@@ -216,9 +166,7 @@ const ext = {
           get() {
             // If there's an original getter, use it. Otherwise, return widgetValue.
             let valueToReturn =
-              originalDescriptor && originalDescriptor.get
-                ? originalDescriptor.get.call(w)
-                : widgetValue;
+              originalDescriptor && originalDescriptor.get ? originalDescriptor.get.call(w) : widgetValue;
             return valueToReturn;
           },
           set(newVal) {

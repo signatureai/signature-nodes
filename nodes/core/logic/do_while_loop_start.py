@@ -1,7 +1,6 @@
 from ...categories import LABS_CAT
 from ...shared import ByPassTypeTuple, any_type
-
-MAX_FLOW_NUM = 10
+from .shared import MAX_FLOW_NUM
 
 
 class DoWhileLoopStart:

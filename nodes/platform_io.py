@@ -10,7 +10,7 @@ from signature_core.img.tensor_image import TensorImage
 from uuid_extensions import uuid7str
 
 from .categories import PLATFORM_IO_CAT
-from .shared import BASE_COMFY_DIR, any_type, clean_memory
+from .shared import BASE_COMFY_DIR, any_type
 
 
 class InputImage:
@@ -63,6 +63,48 @@ class InputImage:
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
     OUTPUT_IS_LIST = (True,)
+    DESCRIPTION = """# InputImage Node - Your Gateway for Images in ComfyUI
+
+    ## What it Does 🎨
+    This node is your main entry point for bringing images into ComfyUI workflows. Think of it as a universal image
+    loader that can handle:
+    - Images from web URLs (anything starting with "http")
+    - Base64-encoded images
+    - Single images or multiple images at once
+    - Regular images and masks
+    - Images with or without transparency
+
+    ## How to Use It 🚀
+
+    ### Basic Settings
+    - **Title**: Just a label for your node (default: "Input Image")
+    - **Subtype**: Choose between:
+        - `image` - for regular images
+        - `mask` - for masks (automatically converts to grayscale)
+    - **Include Alpha**: Toggle transparency handling
+        - OFF: Removes transparency (default)
+        - ON: Keeps transparency channel
+    - **Multiple**: Allow multiple images
+        - OFF: Takes only first image (default)
+        - ON: Processes all provided images
+
+    ### Input Methods
+    1. Web Images: Just paste the image URL (must start with "http")
+    2. Multiple Images: With "Multiple" enabled, separate URLs with spaces
+    3. Fallback: Optional backup image if main input fails
+
+    ## Tips & Tricks 💡
+    - For batch processing, enable "Multiple" and input several URLs separated by spaces
+    - When working with masks, set "subtype" to "mask" for automatic grayscale conversion
+    - If you need transparency in your workflow, make sure to enable "Include Alpha"
+    - The node automatically handles various image formats and color spaces
+
+    ## Output
+    - Outputs images in the format ComfyUI expects (BCHW tensor format)
+    - Perfect for feeding into other ComfyUI nodes like upscalers, ControlNet, or image processors
+
+    Think of this node as your universal image importer - it handles all the technical conversion stuff so you can focus
+    on the creative aspects of your workflow! 🎨✨"""
 
     # TODO: confirm if title, required and metadata inputs are needed
     def execute(
@@ -96,8 +138,8 @@ class InputImage:
         def process_value(value: str, multiple: bool) -> list[str]:
             if not value:
                 return []
-            if "," in value:
-                items = value.split(",")
+            if " " in value:
+                items = value.split(" ")
                 return items if multiple else [items[0]]
             return [value]
 
@@ -138,7 +180,6 @@ class InputImage:
                 outputs[i] = output.get_grayscale().get_BWHC()
             else:
                 outputs[i] = post_process(output, include_alpha).get_BWHC()
-        clean_memory()
         return (outputs,)
 
 
@@ -191,7 +232,7 @@ class InputConnector:
     DEPRECATED = True
 
     # TODO: confirm if title, subtype required and metadata inputs are needed
-    def execute(
+    def execute(  # nosec: B107
         self,
         title: str = "Input Connector",
         subtype: str = "google_drive",
@@ -210,7 +251,6 @@ class InputConnector:
             output_path=input_folder,
             override=override,
         )
-        clean_memory()
         return (data,)
 
 
@@ -271,7 +311,6 @@ class InputText:
     ) -> tuple[str]:
         if fallback and value == "":
             value = fallback
-        clean_memory()
         return (value,)
 
 
@@ -309,9 +348,10 @@ class InputNumber:
                 "value": (
                     "FLOAT",
                     {
-                        "default": 0,
+                        "default": 0.0,
                         "min": -18446744073709551615,
                         "max": 18446744073709551615,
+                        "step": 0.1,
                     },
                 ),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
@@ -331,9 +371,10 @@ class InputNumber:
         value: float = 0,
         metadata: str = "{}",
     ) -> tuple[float]:
-        type_map = {"int": int, "float": float}
-        value = type_map[subtype](value)
-        clean_memory()
+        if subtype == "int":
+            value = round(value)
+        elif subtype == "float":
+            value = float(value)
         return (value,)
 
 
@@ -385,7 +426,6 @@ class InputBoolean:
         value: bool = False,
         metadata: str = "{}",
     ) -> tuple[bool]:
-        clean_memory()
         return (value,)
 
 
@@ -548,7 +588,6 @@ class Output:
                         "value": value_json,
                     }
                 )
-        clean_memory()
         return {"ui": {"signature_output": results}}
 
 
