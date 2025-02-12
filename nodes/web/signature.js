@@ -1,5 +1,10 @@
 import { app } from "../../scripts/app.js";
 
+const deleteCookiesTokens = () => {
+  document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+  document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+};
+
 function showMessage(message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) {
   let dialogContent = `
       <div style="
@@ -124,15 +129,13 @@ async function requiresAuth(app, next) {
       }
     } catch (error) {
       console.error("Invalid refresh token, showing login form", error);
-      accessToken = undefined;
-      refreshToken = undefined;
-      document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-      document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+      deleteCookiesTokens();
     }
   }
 
   if (!accessToken || !refreshToken) {
     console.log("Access token is invalid, showing login form");
+    deleteCookiesTokens();
     const loginForm = await showLoginForm();
     const loginButton = loginForm.querySelector('a[href="#"]');
     loginButton.onclick = async (e) => {
@@ -144,18 +147,22 @@ async function requiresAuth(app, next) {
         if (loginResponse.success) {
           accessToken = loginResponse.result.accessToken;
           refreshToken = loginResponse.result.refreshToken;
+          const accessTokenExpiresAt = loginResponse.result.expiresAt;
+          const accessTokenExpiresAtDate = new Date(accessTokenExpiresAt);
           if (!accessToken || !refreshToken) {
             throw new Error("Login failed, access token or refresh token was not set");
           }
-          document.cookie = `accessToken=${accessToken}; path=/`;
+          document.cookie = `accessToken=${accessToken}; expires=${accessTokenExpiresAtDate}; path=/`;
           document.cookie = `refreshToken=${refreshToken}; path=/`;
           app.ui.dialog.close();
           next(app);
         } else {
+          deleteCookiesTokens();
           throw new Error("Login failed, success was false");
         }
       } catch (error) {
         console.error("Error in login:", error);
+        deleteCookiesTokens();
         showMessage("Login failed, please try again", "#ff0000");
       }
     };
