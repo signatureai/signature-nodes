@@ -112,8 +112,10 @@ async function requiresAuth(app, next) {
       const refreshTokenResponse = await refreshTokenRequest();
       if (refreshTokenResponse.success) {
         accessToken = refreshTokenResponse.result.accessToken;
+        accessTokenExpiresAt = refreshTokenResponse.result.expiresAt;
         refreshToken = refreshTokenResponse.result.refreshToken;
-        document.cookie = `accessToken=${accessToken}; path=/`;
+
+        document.cookie = `accessToken=${accessToken}; expires=${accessTokenExpiresAt}; path=/`;
         document.cookie = `refreshToken=${refreshToken}; path=/`;
         console.log("Token refreshed successfully");
       } else {
