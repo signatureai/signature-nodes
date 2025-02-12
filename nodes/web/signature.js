@@ -114,8 +114,9 @@ async function requiresAuth(app, next) {
         accessToken = refreshTokenResponse.result.accessToken;
         const accessTokenExpiresAt = refreshTokenResponse.result.expiresAt;
         refreshToken = refreshTokenResponse.result.refreshToken;
-        
-        document.cookie = `accessToken=${accessToken}; expires=${accessTokenExpiresAt}; path=/`;
+        const accessTokenExpiresAtDate = new Date(accessTokenExpiresAt);
+
+        document.cookie = `accessToken=${accessToken}; expires=${accessTokenExpiresAtDate}; path=/`;
         document.cookie = `refreshToken=${refreshToken}; path=/`;
         console.log("Token refreshed successfully");
       } else {
@@ -125,8 +126,8 @@ async function requiresAuth(app, next) {
       console.error("Invalid refresh token, showing login form", error);
       accessToken = undefined;
       refreshToken = undefined;
-      document.cookie = `accessToken=; path=/`;
-      document.cookie = `refreshToken=; path=/`;
+      document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+      document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
     }
   }
 
