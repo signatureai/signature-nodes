@@ -30,7 +30,7 @@ AUDIO_CAT = f"{NEUROCHAIN_CAT}/🔊 Audio"
 
 CLEARML_CAT = f"{NEUROCHAIN_CAT}/ClearML"
 
-DOJO_CAT = f"{NEUROCHAIN_CAT}/⛩️ Dojo"
+DOJO_CAT = f"{NAME}/⛩️ Dojo"
 
 EVALUATION_CAT = f"{NEUROCHAIN_CAT}/🔎 Evaluation"
 
