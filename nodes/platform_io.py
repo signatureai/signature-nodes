@@ -16,8 +16,7 @@ from .shared import BASE_COMFY_DIR, any_type
 class InputImage:
     """Processes and validates image inputs from various sources for the platform.
 
-    This class handles image input processing, supporting both single and multiple images from URLs or
-    base64 strings. It includes functionality for alpha channel management and mask generation.
+    This class handles image input processing, supporting both single and multiple images from URLs. It includes functionality for alpha channel management and mask generation.
 
     Args:
         title (str): Display title for the input node. Defaults to "Input Image".
@@ -25,7 +24,7 @@ class InputImage:
         required (bool): Whether the input is required. Defaults to True.
         include_alpha (bool): Whether to preserve alpha channel. Defaults to False.
         multiple (bool): Allow multiple image inputs. Defaults to False.
-        value (str): Image data as URL or base64 string.
+        value (str): Image data as URL.
         metadata (str): JSON string containing additional metadata. Defaults to "{}".
         fallback (any): Optional fallback value if no input is provided.
 
@@ -51,7 +50,13 @@ class InputImage:
                 "required": ("BOOLEAN", {"default": True}),
                 "include_alpha": ("BOOLEAN", {"default": False}),
                 "multiple": ("BOOLEAN", {"default": False}),
-                "value": ("STRING", {"default": "", "multiline": True}),
+                "value": (
+                    "STRING",
+                    {
+                        "default": "https://www.example.com/images/sample.jpg",
+                        "multiline": True,
+                    },
+                ),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
             },
             "optional": {
@@ -69,7 +74,6 @@ class InputImage:
     This node is your main entry point for bringing images into ComfyUI workflows. Think of it as a universal image
     loader that can handle:
     - Images from web URLs (anything starting with "http")
-    - Base64-encoded images
     - Single images or multiple images at once
     - Regular images and masks
     - Images with or without transparency
@@ -143,16 +147,15 @@ class InputImage:
                 return items if multiple else [items[0]]
             return [value]
 
-        def load_image(url_or_base64: str) -> TensorImage:
-            if not url_or_base64:
+        def load_image(url: str) -> TensorImage:
+            if not url:
                 raise ValueError("Empty input string")
 
-            if url_or_base64.startswith("http"):
-                return TensorImage.from_web(url_or_base64)
             try:
-                return TensorImage.from_base64(url_or_base64)
+                if url.startswith("http"):
+                    return TensorImage.from_web(url)
             except Exception as e:
-                raise ValueError(f"Unsupported input format: {url_or_base64}") from e
+                raise ValueError(f"Unsupported input format: {url}") from e
 
         value_list = process_value(value, multiple)
         outputs: list[torch.Tensor] = []

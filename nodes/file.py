@@ -90,11 +90,16 @@ class ImageFromBase64:
 
     @classmethod
     def INPUT_TYPES(cls):  # type: ignore
-        return {"required": {"base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})}}
+        return {
+            "required": {
+                "base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})
+            }
+        }
 
     RETURN_TYPES = ("IMAGE", "MASK")
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
+    DEPRECATED = True
 
     def execute(self, base64: str = "BASE64 HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_base64(base64)
