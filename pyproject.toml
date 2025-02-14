@@ -34,6 +34,16 @@ doc = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.5.49",
 ]
+test = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "coverage>=7.4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=./ --cov-report=xml"
+python_files = ["test_*.py"]
 
 [tool.ruff]
 line-length = 120
@@ -48,13 +58,8 @@ select = [
 ]
 
 [tool.bandit]
-skips = ["B113", "B311"]
+skips = ["B113", "B311", "B101"]
 assert_used.skips = ["**/test_*.py"]
-
-[tool.pytest.ini_options]
-pythonpath = [
-  "."
-]
 
 [tool.setuptools]
 packages = ["nodes", "services"]
