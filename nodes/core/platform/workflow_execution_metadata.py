@@ -22,7 +22,7 @@ class WorkflowExecutionMetadata:
     def INPUT_TYPES(cls):
         return {
             "hidden": {
-                "json_str": (
+                "signature_input_json_str": (
                     "STRING",
                     {
                         "default": "{}",
@@ -37,8 +37,8 @@ class WorkflowExecutionMetadata:
     CLASS_ID = "json_dict"
     CATEGORY = PLATFORM_IO_CAT
 
-    def execute(self, json_str: str) -> tuple[str, str, str, str]:
-        json_dict = json.loads(json_str)
+    def execute(self, signature_input_json_str: str) -> tuple[str, str, str, str]:
+        json_dict = json.loads(signature_input_json_str)
         return (
             json_dict.get("backend_api_host", ""),
             json_dict.get("generate_service_host", ""),
