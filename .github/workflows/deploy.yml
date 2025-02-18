@@ -98,8 +98,8 @@ jobs:
     secrets:
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} # type: ignore
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCOUNT_REGION: ${{ secrets.AWS_ACCOUNT_REGION }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # type: ignore
+      AWS_ACCOUNT_REGION: ${{ secrets.AWS_ACCOUNT_REGION }} # type: ignore
 
   deploy-staging:
     name: Deploy to Staging
@@ -177,8 +177,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }} # type: ignore
+          release_name: Release ${{ env.VERSION }} # type: ignore
           draft: false
           prerelease: false
 
