@@ -1,5 +1,5 @@
 import { app } from "../../../scripts/app.js";
-
+import { addStyling } from "./platform_io_style.js";
 const NODES = {
   signature_input_image: "Input Image",
   signature_input_text: "Input Text",
@@ -140,7 +140,7 @@ const ext = {
     const title = node.comfyClass;
     if (NODES.hasOwnProperty(title)) {
       // node.title = NODES[title];
-
+      addStyling(node, title);
       node.validateLinks = function () {
         if (node.outputs !== undefined) {
           if (node.outputs[0].type !== "*" && node.outputs[0].links) {
