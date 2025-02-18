@@ -139,6 +139,7 @@ jobs:
           DEV_VERSION="v${MAJOR}.${MINOR}.${PATCH}.dev${NEW_DEV}"
 
           echo "Creating development version: $DEV_VERSION"
+          echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV
 
       - name: Create Development Tag
         run: |
