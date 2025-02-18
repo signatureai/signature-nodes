@@ -1,4 +1,3 @@
-
 const COLOR_THEMES = {
   red: { nodeColor: "#332222", nodeBgColor: "#553333" },
   green: { nodeColor: "#223322", nodeBgColor: "#335533" },
@@ -31,17 +30,25 @@ function inputImage(node) {
 }
 
 function inputText(node, widget) {
+  if (!widget) {
+    return; // Skip styling if no widget is provided
+  }
+
   const value = widget.value;
-  if (value === "string") {
-    setNodeColors(node, COLOR_THEMES["yellow"]);
+  if (!value) {
+    return; // Skip styling if no value is set
   }
 
-  if (value === "positive_prompt") {
-    setNodeColors(node, COLOR_THEMES["green"]);
-  }
-
-  if (value === "negative_prompt") {
-    setNodeColors(node, COLOR_THEMES["red"]);
+  switch (value.toLowerCase()) {
+    case "string":
+      setNodeColors(node, COLOR_THEMES["yellow"]);
+      break;
+    case "positive_prompt":
+      setNodeColors(node, COLOR_THEMES["green"]);
+      break;
+    case "negative_prompt":
+      setNodeColors(node, COLOR_THEMES["red"]);
+      break;
   }
 }
 
@@ -81,12 +88,11 @@ const nodeStylingWidgetHandlers = {
   },
 };
 
-export const addStyling = (node, title) => {
+export const addStyling = (node, title, widget) => {
   if (nodeStylingWidgetHandlers.hasOwnProperty(title)) {
     const handler = nodeStylingWidgetHandlers[title];
     if (handler.subtype) {
-      handler.subtype(node);
+      handler.subtype(node, widget);
     }
   }
 };
-

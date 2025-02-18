@@ -23,9 +23,7 @@ function output(node, widget) {
   for (const w of widgets) {
     if (w.name === "title") {
       if (w.value.startsWith("Output ")) {
-        // console.log("=======> " + widget.value);
         if (widget.value[0] === undefined) {
-          // console.log("=======> undefined $$$");
           break;
         }
         const modStr = widget.value[0].toUpperCase() + widget.value.slice(1);
@@ -105,9 +103,35 @@ function inputSelector(node, widget) {
   }
 }
 
+function inputText(node, widget) {
+  // Safety check for widget
+  if (!widget) {
+    console.error("Widget is undefined in inputText");
+    return;
+  }
+
+  const widgetType = widget.value?.toUpperCase() || "";
+  if (node.inputs !== undefined) {
+    if (node.inputs.length > 0) {
+      if (node.inputs[0].name === "value") {
+        node.inputs[0].type = widgetType;
+      }
+    }
+  }
+  if (node.outputs !== undefined) {
+    node.outputs[0].type = widgetType;
+    node.outputs[0].name = widget.value;
+  }
+
+  addStyling(node, "signature_input_text", widget);
+}
+
 const nodeWidgetHandlers = {
   signature_input_image: {
     subtype: inputImage,
+  },
+  signature_input_text: {
+    subtype: inputText,
   },
   signature_input_number: {
     subtype: inputNumber,
@@ -138,9 +162,11 @@ const ext = {
 
   nodeCreated(node) {
     const title = node.comfyClass;
+
     if (NODES.hasOwnProperty(title)) {
-      // node.title = NODES[title];
-      addStyling(node, title);
+      // Only set initial shape, don't try to style yet
+      node.shape = "box";
+
       node.validateLinks = function () {
         if (node.outputs !== undefined) {
           if (node.outputs[0].type !== "*" && node.outputs[0].links) {
@@ -159,27 +185,33 @@ const ext = {
       for (const w of node.widgets || []) {
         let widgetValue = w.value;
         widgetLogic(node, w);
-        // Store the original descriptor if it exists
-        let originalDescriptor = Object.getOwnPropertyDescriptor(w, "value");
 
-        Object.defineProperty(w, "value", {
-          get() {
-            // If there's an original getter, use it. Otherwise, return widgetValue.
-            let valueToReturn =
-              originalDescriptor && originalDescriptor.get ? originalDescriptor.get.call(w) : widgetValue;
-            return valueToReturn;
-          },
-          set(newVal) {
-            // If there's an original setter, use it. Otherwise, set widgetValue.
-            if (originalDescriptor && originalDescriptor.set) {
-              originalDescriptor.set.call(w, newVal);
-            } else {
-              widgetValue = newVal;
-            }
+        // Check if the widget already has a value property descriptor
+        const descriptor = Object.getOwnPropertyDescriptor(w, "value");
 
+        // Only add our custom getter/setter if there isn't already one
+        if (!descriptor || (!descriptor.get && !descriptor.set)) {
+          // Store the actual value in a separate property
+          w._value = widgetValue;
+
+          try {
+            Object.defineProperty(w, "value", {
+              get() {
+                return w._value;
+              },
+              set(newVal) {
+                w._value = newVal;
+                widgetLogic(node, w);
+              },
+              configurable: true, // Allow property to be redefined if needed
+            });
+          } catch (error) {
+            console.warn("Could not define custom property for widget:", error);
+            // Fallback: just set the value and run widget logic
+            w.value = widgetValue;
             widgetLogic(node, w);
-          },
-        });
+          }
+        }
       }
     }
   },
