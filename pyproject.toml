@@ -1,6 +1,6 @@
 [project]
 name = "signature-nodes"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Signature Nodes"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -12,7 +12,7 @@ dependencies = [
     "matplotlib>=3.10.0",
     "python-dotenv>=1.0.1",
     "pyyaml>=6.0.2",
-    "requests>=2.32.3",
+    "requests>=2.32.2",
     "spandrel>=0.4.1",
     "tomli-w>=1.1.0",
     "torch>=2.5.1",
@@ -74,3 +74,6 @@ name = "signature"
 url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/"
 explicit = true
 publish = false
+
+[tool.setuptools.dynamic]
+version = {attr = "version.__version__"}
