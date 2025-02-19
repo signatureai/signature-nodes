@@ -288,7 +288,7 @@ class InputText:
         return {
             "required": {
                 "title": ("STRING", {"default": "Input Text"}),
-                "subtype": (["string", "positive_prompt", "negative_prompt"],),
+                "subtype": (["string"],),
                 "required": ("BOOLEAN", {"default": True}),
                 "value": ("STRING", {"multiline": True, "default": ""}),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),

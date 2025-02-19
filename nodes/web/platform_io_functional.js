@@ -122,8 +122,6 @@ function inputText(node, widget) {
     node.outputs[0].type = widgetType;
     node.outputs[0].name = widget.value;
   }
-
-  addStyling(node, "signature_input_text", widget);
 }
 
 const nodeWidgetHandlers = {
@@ -213,6 +211,7 @@ const ext = {
           }
         }
       }
+      addStyling(node, title);
     }
   },
 };

@@ -29,27 +29,8 @@ function inputImage(node) {
   setNodeColors(node, COLOR_THEMES["pale_blue"]);
 }
 
-function inputText(node, widget) {
-  if (!widget) {
-    return; // Skip styling if no widget is provided
-  }
-
-  const value = widget.value;
-  if (!value) {
-    return; // Skip styling if no value is set
-  }
-
-  switch (value.toLowerCase()) {
-    case "string":
-      setNodeColors(node, COLOR_THEMES["yellow"]);
-      break;
-    case "positive_prompt":
-      setNodeColors(node, COLOR_THEMES["green"]);
-      break;
-    case "negative_prompt":
-      setNodeColors(node, COLOR_THEMES["red"]);
-      break;
-  }
+function inputText(node) {
+  setNodeColors(node, COLOR_THEMES["yellow"]);
 }
 
 function inputBoolean(node) {
@@ -88,11 +69,11 @@ const nodeStylingWidgetHandlers = {
   },
 };
 
-export const addStyling = (node, title, widget) => {
+export const addStyling = (node, title) => {
   if (nodeStylingWidgetHandlers.hasOwnProperty(title)) {
     const handler = nodeStylingWidgetHandlers[title];
     if (handler.subtype) {
-      handler.subtype(node, widget);
+      handler.subtype(node);
     }
   }
 };
