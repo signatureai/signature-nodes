@@ -1,9 +1,12 @@
 import { app } from "../../scripts/app.js";
-
-const deleteCookiesTokens = () => {
-  document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-  document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-};
+import {
+  deleteAuthTokens,
+  getAccessToken,
+  getRefreshToken,
+  getWorkflowsListForForm,
+  loginRequest,
+  refreshTokenRequest
+} from "./signature_api/main.js";
 
 function showMessage(message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) {
   let dialogContent = `
@@ -107,67 +110,57 @@ async function getManifest(workflow) {
 
 // Wraps the next function in an auth check
 async function requiresAuth(app, next) {
-  // Tokens are stored in cookies
-  let accessToken = document.cookie.match(/accessToken=([^;]+)/)?.[1];
-  let refreshToken = document.cookie.match(/refreshToken=([^;]+)/)?.[1];
+  try {
+    // Try to get tokens
+    let refreshToken = getRefreshToken();
+    let accessToken = getAccessToken();
 
-  if (refreshToken !== undefined && refreshToken !== null && refreshToken !== "") {
-    console.log("Trying to refresh token");
-    try {
-      const refreshTokenResponse = await refreshTokenRequest();
-      if (refreshTokenResponse.success) {
-        accessToken = refreshTokenResponse.result.accessToken;
-        const accessTokenExpiresAt = refreshTokenResponse.result.expiresAt;
-        refreshToken = refreshTokenResponse.result.refreshToken;
-        const accessTokenExpiresAtDate = new Date(accessTokenExpiresAt);
-
-        document.cookie = `accessToken=${accessToken}; expires=${accessTokenExpiresAtDate}; path=/`;
-        document.cookie = `refreshToken=${refreshToken}; path=/`;
-        console.log("Token refreshed successfully");
-      } else {
-        throw new Error("Refresh token failed, success was false");
-      }
-    } catch (error) {
-      console.error("Invalid refresh token, showing login form", error);
-      deleteCookiesTokens();
-    }
-  }
-
-  if (!accessToken || !refreshToken) {
-    console.log("Access token is invalid, showing login form");
-    deleteCookiesTokens();
-    const loginForm = await showLoginForm();
-    const loginButton = loginForm.querySelector('a[href="#"]');
-    loginButton.onclick = async (e) => {
-      e.preventDefault();
-      const username = loginForm.querySelector("input[type='text']").value;
-      const password = loginForm.querySelector("input[type='password']").value;
+    if (refreshToken) {
+      console.log("Trying to refresh token");
       try {
-        const loginResponse = await loginRequest(username, password);
-        if (loginResponse.success) {
-          accessToken = loginResponse.result.accessToken;
-          refreshToken = loginResponse.result.refreshToken;
-          const accessTokenExpiresAt = loginResponse.result.expiresAt;
-          const accessTokenExpiresAtDate = new Date(accessTokenExpiresAt);
-          if (!accessToken || !refreshToken) {
-            throw new Error("Login failed, access token or refresh token was not set");
-          }
-          document.cookie = `accessToken=${accessToken}; expires=${accessTokenExpiresAtDate}; path=/`;
-          document.cookie = `refreshToken=${refreshToken}; path=/`;
-          app.ui.dialog.close();
-          next(app);
+        const refreshTokenResponse = await refreshTokenRequest();
+        if (refreshTokenResponse.success) {
+          accessToken = refreshTokenResponse.result.accessToken;
+          refreshToken = refreshTokenResponse.result.refreshToken;
+          console.log("Token refreshed successfully");
         } else {
-          deleteCookiesTokens();
-          throw new Error("Login failed, success was false");
+          throw new Error("Refresh token failed, success was false");
         }
       } catch (error) {
-        console.error("Error in login:", error);
-        deleteCookiesTokens();
-        showMessage("Login failed, please try again", "#ff0000");
+        console.error("Invalid refresh token, showing login form", error);
+        deleteAuthTokens();
       }
-    };
-  } else {
-    next(app);
+    } else {
+      console.log("Access token is invalid, showing login form");
+      deleteAuthTokens();
+      const loginForm = await showLoginForm();
+      const loginButton = loginForm.querySelector('a[href="#"]');
+      loginButton.onclick = async (e) => {
+        e.preventDefault();
+        const email = loginForm.querySelector("input[type='text']").value;
+        const password = loginForm.querySelector("input[type='password']").value;
+        try {
+          const loginResponse = await loginRequest(email, password);
+          if (loginResponse.success) {
+            app.ui.dialog.close();
+            next(app);
+          } else {
+            deleteAuthTokens();
+            throw new Error("Login failed, success was false");
+          }
+        } catch (error) {
+          console.error("Error in login:", error);
+          deleteAuthTokens();
+          showMessage("Login failed, please try again", "#ff0000");
+        }
+      };
+    }
+
+    // Re-check tokens after potential refresh
+  } catch (error) {
+    console.error("Auth error:", error);
+    deleteAuthTokens();
+    showMessage("Authentication failed", "#ff0000", error.message);
   }
 }
 
@@ -351,43 +344,6 @@ function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
   );
 }
 
-const signatureApiBaseUrl = "https://signature-api-qa.signature-eks-staging.signature.ai";
-
-async function loginRequest(email, password) {
-  const url = `${signatureApiBaseUrl}/api/v1/user/login`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to login: ${response.status} ${response.statusText}`);
-  }
-
-  return response.json();
-}
-
-async function refreshTokenRequest() {
-  const refreshToken = document.cookie.match(/refreshToken=([^;]+)/)?.[1];
-
-  const url = `${signatureApiBaseUrl}/api/v1/user/refresh-token`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to refresh token: ${response.status} ${response.statusText}`);
-  }
-
-  return response.json();
-}
 
 function showLoginForm() {
   const formContent = $el("div", [
@@ -490,32 +446,6 @@ function showLoginForm() {
   app.ui.dialog.show(formContent);
 
   return formContent;
-}
-
-async function getWorkflowsListForForm(page = 0, limit = 100) {
-  const offset = page * limit;
-  const accessToken = document.cookie.match(/accessToken=([^;]+)/)?.[1];
-  const url = `${signatureApiBaseUrl}/api/v1_management/workflow?offset=${offset}&limit=${limit}`;
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to get workflows: ${response.status} ${response.statusText}`);
-  }
-
-  const parsedResponse = await response.json();
-  if (parsedResponse.result && parsedResponse.result.data && parsedResponse.result.data.length !== 0) {
-    return parsedResponse.result.data.map((workflow) => {
-      return $el("option", { value: workflow.uuid, textContent: `${workflow.name} (${workflow.uuid})` });
-    });
-  } else {
-    return [];
-  }
 }
 
 function showForm() {
@@ -776,7 +706,7 @@ const ext = {
   async setup(app) {
     if (app.menu) {
       // Find the menu list
-      const menuList = document.querySelector("#pv_id_8_0_list");
+      const menuList = document.querySelector("#pv_id_9_0_list");
 
       if (menuList) {
         // Add separator
