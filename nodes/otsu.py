@@ -3,10 +3,31 @@ import torch
 from torchvision import ops
 from torchvision.transforms import v2
 
+from .categories import NAME
+
 
 class OTSUNode:
-    # TODO: Add node documentation
-    CATEGORY = "example"  # TODO: Change this to the correct category
+    """A node that performs Otsu's thresholding on an input image.
+
+    This node implements Otsu's method, which automatically determines an optimal threshold
+    value by minimizing intra-class intensity variance. It converts the input image to
+    grayscale and applies binary thresholding using the computed optimal threshold.
+
+    Args:
+        image (torch.Tensor): The input image tensor to threshold.
+                            Expected shape: (B, H, W, C)
+
+    Returns:
+        tuple[float, torch.Tensor]: A tuple containing:
+            - The computed Otsu threshold value
+            - The thresholded binary image as a tensor with shape (B, H, W, C)
+
+    Notes:
+        - The input image is automatically converted to grayscale before thresholding
+        - The output binary image contains values of 0 and 255
+        - The threshold computation is performed using OpenCV's implementation
+    """
+    CATEGORY = f"{NAME}/🧪 Experimental"
 
     @classmethod
     def INPUT_TYPES(s):
