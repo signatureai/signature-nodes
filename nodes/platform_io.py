@@ -125,7 +125,9 @@ class InputImage:
         def post_process(output: TensorImage, include_alpha: bool) -> TensorImage:
             if output.shape[1] not in [3, 4]:
                 if len(output.shape) == 2:  # (H,W)
-                    output = TensorImage(output.unsqueeze(0).unsqueeze(0).expand(-1, 3, -1, -1))
+                    output = TensorImage(
+                        output.unsqueeze(0).unsqueeze(0).expand(-1, 3, -1, -1)
+                    )
                 elif len(output.shape) == 3:  # (B,H,W)
                     output = TensorImage(output.unsqueeze(1).expand(-1, 3, -1, -1))
                 elif len(output.shape) == 4 and output.shape[1] == 1:  # (B,1,H,W)
@@ -288,7 +290,7 @@ class InputText:
         return {
             "required": {
                 "title": ("STRING", {"default": "Input Text"}),
-                "subtype": (["string", "positive_prompt", "negative_prompt"],),
+                "subtype": (["string"],),
                 "required": ("BOOLEAN", {"default": True}),
                 "value": ("STRING", {"multiline": True, "default": ""}),
                 "metadata": ("STRING", {"default": "{}", "multiline": True}),
