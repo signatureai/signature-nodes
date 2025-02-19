@@ -3,10 +3,10 @@ import torch
 from torchvision import ops
 from torchvision.transforms import v2
 
-from .categories import NAME
+from .categories import LABS_CAT
 
 
-class OTSUNode:
+class OTSUThreshold:
     """A node that performs Otsu's thresholding on an input image.
 
     This node implements Otsu's method, which automatically determines an optimal threshold
@@ -27,7 +27,8 @@ class OTSUNode:
         - The output binary image contains values of 0 and 255
         - The threshold computation is performed using OpenCV's implementation
     """
-    CATEGORY = f"{NAME}/🧪 Experimental"
+    CLASS_ID = "otsu_threshold"
+    CATEGORY = LABS_CAT
 
     @classmethod
     def INPUT_TYPES(s):
