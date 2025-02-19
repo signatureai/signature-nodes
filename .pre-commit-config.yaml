@@ -25,6 +25,8 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.7
     hooks:
+      - id: ruff # linter
+        args: ["--fix"]
       - id: ruff-format # formatter
       - id: ruff # linter
         args: ["--fix", "--extend-ignore", "E741"]

@@ -12,15 +12,15 @@ dependencies = [
     "matplotlib>=3.10.0",
     "python-dotenv>=1.0.1",
     "pyyaml>=6.0.2",
-    "requests>=2.32.2",
+    "requests>=2.32.3",
     "spandrel>=0.4.1",
     "tomli-w>=1.1.0",
     "torch>=2.5.1",
     "transformers>=4.46.3",
     "uuid7>=0.1.0",
-    "neurochain==2.0.0.dev5",
-    "signature-flows==1.0.5.dev4",
-    "signature-core==1.0.0.dev5",
+    "neurochain>=2.0.0.dev4",
+    "signature-core>=1.0.0.dev5",
+    "signature-flows>=1.0.5.dev3",
 ]
 
 [dependency-groups]
