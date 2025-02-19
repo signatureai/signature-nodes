@@ -26,5 +26,5 @@ repos:
     rev: v0.8.6
     hooks:
       - id: ruff # linter
-        args: ["--fix", "--ignore", "E402"]
+        args: ["--fix"]
       - id: ruff-format # formatter
