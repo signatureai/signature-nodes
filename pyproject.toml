@@ -1,6 +1,6 @@
 [project]
 name = "signature-nodes"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Signature Nodes"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -63,6 +63,9 @@ assert_used.skips = ["**/test_*.py"]
 
 [tool.setuptools]
 packages = ["nodes", "services"]
+
+[tool.setuptools.dynamic]
+version = {attr = "version.__version__"}
 
 [tool.uv.sources]
 signature-core = { index = "signature" }

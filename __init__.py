@@ -10,6 +10,8 @@ from shutil import copyfile
 
 from dotenv import load_dotenv
 
+from version import __version__
+
 from .utils import parallel_for
 
 logger = logging.getLogger(__name__)
@@ -41,9 +43,9 @@ SIGNATURE_CORE_AVAILABLE = False
 SIGNATURE_FLOWS_AVAILABLE = False
 NEUROCHAIN_AVAILABLE = False
 
-try:
-    from signature_core import __version__
 
+try:
+    signature_core_module = importlib.import_module("signature_core")
     SIGNATURE_CORE_AVAILABLE = True
 except ImportError:
     raise ImportError("signature_core package not available")
