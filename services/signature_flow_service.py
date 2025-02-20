@@ -13,7 +13,7 @@ from .. import BASE_COMFY_DIR
 
 current_dir = os.getcwd()
 sys.path.append(BASE_COMFY_DIR)
-from server import PromptServer  # type: ignore
+from server import PromptServer  # type: ignore # noqa: E402
 
 sys.path.append(current_dir)
 

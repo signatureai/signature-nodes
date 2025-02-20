@@ -42,7 +42,6 @@ class WorkflowExecutionMetadata:
         "backend_cognito_secret",
     )
     FUNCTION = "execute"
-    CLASS_ID = "json_dict"
     CATEGORY = PLATFORM_IO_CAT
 
     def execute(self, json_str: str) -> tuple[str, str, str, str, str, str, str]:

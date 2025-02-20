@@ -8,30 +8,40 @@ from ...categories import AGENT_CAT
 DEFAULT_TEXT = """# Deep Learning
 
 ## Introduction
-Deep learning is a subset of machine learning in artificial intelligence (AI) that has networks capable of learning from data that is unstructured or unlabeled. Also known as deep neural learning or deep neural network.
+Deep learning is a subset of machine learning in artificial intelligence (AI) that has networks capable of learning from
+ data that is unstructured or unlabeled. Also known as deep neural learning or deep neural network.
 
 ## How It Works
-Deep learning models are based on artificial [[neural networks]] (ANNs) with multiple layers, hence the term "deep." These models are designed to mimic the way the human brain processes information, allowing them to identify patterns and make decisions with minimal human intervention.
+Deep learning models are based on artificial [[neural networks]] (ANNs) with multiple layers, hence the term "deep."
+These models are designed to mimic the way the human brain processes information, allowing them to identify patterns and
+make decisions with minimal human intervention.
 
 ## Key Components
-1. **[[Neural Networks]]**: The foundation of deep learning, consisting of layers of nodes (neurons) that process input data and pass it through the network.
+1. **[[Neural Networks]]**: The foundation of deep learning, consisting of layers of nodes (neurons) that process input
+data and pass it through the network.
 2. **Layers**:
    - **Input Layer**: The initial layer that receives the raw data.
    - **Hidden Layers**: Intermediate layers that perform computations and extract features from the data.
    - **Output Layer**: The final layer that produces the prediction or classification result.
-3. **[[Activation Functions]]**: Functions that determine whether a neuron should be activated or not, introducing non-linearity into the model.
-4. **Loss Function**: A function that measures the difference between the predicted output and the actual output, guiding the training process.
-5. **Optimization Algorithms**: Methods used to adjust the weights of the network to minimize the loss function, such as [[gradient descent]].
+3. **[[Activation Functions]]**: Functions that determine whether a neuron should be activated or not,
+introducing non-linearity into the model.
+4. **Loss Function**: A function that measures the difference between the predicted output and the actual output,
+guiding the training process.
+5. **Optimization Algorithms**: Methods used to adjust the weights of the network to minimize the loss function,
+such as [[gradient descent]].
 
 ## Applications
 Deep learning has a wide range of applications, including:
 - **Image and Speech Recognition**: Identifying objects in images or transcribing spoken words into text.
-- **Natural Language Processing (NLP)**: Understanding and generating human language, such as in chatbots and translation services.
+- **Natural Language Processing (NLP)**: Understanding and generating human language, such as in chatbots and
+translation services.
 - **Autonomous Vehicles**: Enabling self-driving cars to perceive and navigate their environment.
 - **Healthcare**: Assisting in diagnosis and treatment planning by analyzing medical images and patient data.
 
 ## Conclusion
-Deep learning is a powerful and rapidly evolving field that is transforming various industries by enabling machines to learn from vast amounts of data and perform complex tasks with high accuracy. As research and technology continue to advance, the potential applications and impact of deep learning are expected to grow even further."""
+Deep learning is a powerful and rapidly evolving field that is transforming various industries by enabling machines to
+learn from vast amounts of data and perform complex tasks with high accuracy. As research and technology continue
+to advance, the potential applications and impact of deep learning are expected to grow even further."""
 
 
 class TextSummarizer:
