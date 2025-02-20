@@ -3996,7 +3996,15 @@ wheels = [
 
 [[package]]
 name = "signature-nodes"
+<<<<<<< HEAD
 version = "0.1.0"
+=======
+<<<<<<< HEAD
+version = "1.0.0.dev12"
+=======
+version = "0.0.0"
+>>>>>>> c0bb907 (Squashed commit of the following:)
+>>>>>>> 9e280cb (Squashed commit of the following:)
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
