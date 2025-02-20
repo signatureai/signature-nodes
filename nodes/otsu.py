@@ -32,7 +32,7 @@ class OTSUThreshold:
     CATEGORY = LABS_CAT
 
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):  # type: ignore
         return {
             "required": {
                 "image": ("IMAGE",),
@@ -45,7 +45,7 @@ class OTSUThreshold:
     def execute(self, image: torch.Tensor) -> tuple[float, torch.Tensor]:
         img_transformed = v2.Compose(
             [
-                ops.Permute(dims=(0, 3, 2, 1)),
+                ops.Permute(dims=[0, 3, 2, 1]),
                 v2.Grayscale(),
                 v2.ToDtype(torch.uint8, scale=True),
             ]
@@ -55,5 +55,5 @@ class OTSUThreshold:
         thresh, out = cv.threshold(img_np, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
         out_torch = torch.from_numpy(out).to(image.device).unsqueeze(0).unsqueeze(0)
-        out_transformed = v2.Compose([v2.RGB(), ops.Permute(dims=(0, 3, 2, 1))])(out_torch)
+        out_transformed = v2.Compose([v2.RGB(), ops.Permute(dims=[0, 3, 2, 1])])(out_torch)
         return (thresh, out_transformed)
