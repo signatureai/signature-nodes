@@ -61,11 +61,16 @@ select = [
 skips = ["B113", "B311", "B101"]
 assert_used.skips = ["**/test_*.py"]
 
+[build-system]
+requires = ["setuptools"]
+
 [tool.setuptools]
 packages = ["nodes", "services"]
 
 [tool.uv.sources]
 neurochain = { index = "signature" }
+signature-flows = { index = "signature" }
+signature-core = { index = "signature" }
 
 [[tool.uv.index]]
 name = "signature"
