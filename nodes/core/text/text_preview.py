@@ -51,4 +51,4 @@ class TextPreview:
             if text_string != "":
                 text_string += "\n"
             text_string += str(t.shape) if isinstance(t, torch.Tensor) else str(t)
-        return {"ui": {"text": [text_string]}}
+        return {"ui": {"text": [text_string]}}  # type: ignore
