@@ -1,4 +1,5 @@
 import random
+from typing import Optional
 
 import comfy.model_management  # type: ignore
 import folder_paths  # type: ignore
@@ -10,7 +11,6 @@ from signature_core.models.lama import Lama
 from signature_core.models.salient_object_detection import SalientObjectDetection
 from signature_core.models.seemore import SeeMore
 from spandrel import ModelLoader
-from typing import Optional
 
 from nodes import SaveImage  # type: ignore
 

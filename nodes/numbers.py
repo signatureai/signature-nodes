@@ -3,6 +3,7 @@ import math
 import operator as op
 import random
 import string
+
 from .. import MAX_FLOAT, MAX_INT
 from .categories import NUMBERS_CAT
 from .utils import clamp

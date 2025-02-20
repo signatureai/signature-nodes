@@ -27,6 +27,7 @@ class OTSUThreshold:
         - The output binary image contains values of 0 and 255
         - The threshold computation is performed using OpenCV's implementation
     """
+
     CLASS_ID = "otsu_threshold"
     CATEGORY = LABS_CAT
 

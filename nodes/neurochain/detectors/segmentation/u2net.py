@@ -26,4 +26,3 @@ class U2NetNode:
         model = U2Net(model_id=clearml_model_id, checkpoint_dir=checkpoint_dir)
         output = model.predict(image)
         return (output,)
-

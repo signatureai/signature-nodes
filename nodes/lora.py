@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import folder_paths  # type: ignore
 import torch
@@ -6,7 +7,6 @@ import torch
 # comfy related imports
 from comfy import sd, utils  # type: ignore
 from signature_core.img.tensor_image import TensorImage
-from typing import Optional
 from uuid_extensions import uuid7str
 
 from .categories import LABS_CAT, LORA_CAT

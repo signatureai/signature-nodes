@@ -1,7 +1,7 @@
 import ast
 import time
-import torch
 
+import torch
 from signature_core.functional.color import (
     grayscale_to_rgb,
     rgb_to_grayscale,
@@ -737,7 +737,8 @@ class BatchBuilder:
             - batch: The constructed batch containing all input images
 
     Notes:
-        - This node is typically used in node graph systems to aggregate multiple image inputs into a single batch output
+        - This node is typically used in node graph systems to
+        aggregate multiple image inputs into a single batch output
     """
 
     @classmethod

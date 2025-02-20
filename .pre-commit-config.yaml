@@ -25,6 +25,12 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.6
     hooks:
-      - id: ruff # linter
-        args: ["--fix"]
       - id: ruff-format # formatter
+      - id: ruff # linter
+        args: ["--fix", "--extend-ignore", "E741"]
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.6.2
+    hooks:
+      - id: uv-sync
+      - id: uv-lock

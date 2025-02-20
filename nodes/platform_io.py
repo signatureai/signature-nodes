@@ -16,7 +16,8 @@ from .shared import BASE_COMFY_DIR, any_type
 class InputImage:
     """Processes and validates image inputs from various sources for the platform.
 
-    This class handles image input processing, supporting both single and multiple images from URLs. It includes functionality for alpha channel management and mask generation.
+    This class handles image input processing, supporting both single and multiple images from URLs. It includes
+    functionality for alpha channel management and mask generation.
 
     Args:
         title (str): Display title for the input node. Defaults to "Input Image".
