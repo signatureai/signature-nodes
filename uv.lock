@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.13' and sys_platform == 'darwin'",
@@ -282,7 +283,7 @@ dependencies = [
 ]
 sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/botocore/1.36.0/botocore-1.36.0.tar.gz", hash = "sha256:0232029ff9ae3f5b50cdb25cbd257c16f87402b6d31a05bd6483638ee6434c4b" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/botocore/1.36.0/botocore-1.36.0-py3-none-any.whl", hash = "sha256:b54b11f0cfc47fc1243ada0f7f461266c279968487616720fa8ebb02183917d7" },
+    { url = "https://files.pythonhosted.org/packages/0b/87/c5aa3eeb820937ac1c00c0e2172aaacbfba2b2de2467b8162bef6b6f5b1f/botocore-1.36.0-py3-none-any.whl", hash = "sha256:b54b11f0cfc47fc1243ada0f7f461266c279968487616720fa8ebb02183917d7", size = 13297503 },
 ]
 
 [[package]]
@@ -645,12 +646,11 @@ wheels = [
 
 [[package]]
 name = "datasets"
-version = "3.3.1"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+version = "3.1.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "dill" },
-    { name = "filelock" },
     { name = "fsspec", extra = ["http"] },
     { name = "huggingface-hub" },
     { name = "multiprocess" },
@@ -663,9 +663,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/datasets/3.3.1/datasets-3.3.1.tar.gz", hash = "sha256:7dfb7bb345513bce194cf612cebd6f78e46f7d981342b89364b5ab813c7049a9" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/b2/25ef6d54dcb2d1412e5efec59449d1af92e7a6d969e27adfe9965e780c1f/datasets-3.1.0.tar.gz", hash = "sha256:c92cac049e0f9f85b0dd63739c68e564c657b1624bc2b66b1e13489062832e27", size = 558115 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/datasets/3.3.1/datasets-3.3.1-py3-none-any.whl", hash = "sha256:85182cbfa18faed0fb9dfc202f2668f1fed130fb88f8b3651b3cd8c4b3e61b1b" },
+    { url = "https://files.pythonhosted.org/packages/ed/a5/33cf000137545a08b0a3a6ea76c8ccbd87917f78bb5d737f9f56f3b11ef6/datasets-3.1.0-py3-none-any.whl", hash = "sha256:dc8808a6d17838fe05e13b39aa7ac3ea0fd0806ed7004eaf4d4eb2c2a356bc61", size = 480554 },
 ]
 
 [[package]]
@@ -720,10 +720,10 @@ wheels = [
 [[package]]
 name = "dill"
 version = "0.3.8"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/dill/0.3.8/dill-0.3.8.tar.gz", hash = "sha256:3ebe3c479ad625c4553aca177444d89b486b1d84982eeacded644afc0cf797ca" }
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/4d/ac7ffa80c69ea1df30a8aa11b3578692a5118e7cd1aa157e3ef73b092d15/dill-0.3.8.tar.gz", hash = "sha256:3ebe3c479ad625c4553aca177444d89b486b1d84982eeacded644afc0cf797ca", size = 184847 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/dill/0.3.8/dill-0.3.8-py3-none-any.whl", hash = "sha256:c36ca9ffb54365bdd2f8eb3eff7d2a21237f8452b57ace88b1ac615b7e815bd7" },
+    { url = "https://files.pythonhosted.org/packages/c9/7a/cef76fd8438a42f96db64ddaa85280485a9c395e7df3db8158cfec1eee34/dill-0.3.8-py3-none-any.whl", hash = "sha256:c36ca9ffb54365bdd2f8eb3eff7d2a21237f8452b57ace88b1ac615b7e815bd7", size = 116252 },
 ]
 
 [[package]]
@@ -776,15 +776,15 @@ sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeart
 [[package]]
 name = "duckduckgo-search"
 version = "7.3.2"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
+    { name = "httpx", extra = ["brotli", "http2", "socks"] },
     { name = "lxml" },
-    { name = "primp" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/duckduckgo-search/7.3.2/duckduckgo_search-7.3.2.tar.gz", hash = "sha256:bfaffad8da476deeaf10e1016691eaa724debea80b6198d63c877f2f236f8018" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/10/b70410e2282d6d2ef33bb0ee59183a1171932584212a529e9f4df2b38586/duckduckgo_search-7.3.2.tar.gz", hash = "sha256:bfaffad8da476deeaf10e1016691eaa724debea80b6198d63c877f2f236f8018", size = 24214 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/duckduckgo-search/7.3.2/duckduckgo_search-7.3.2-py3-none-any.whl", hash = "sha256:7133579414ac0395351fc448bb2d31546edd66a1487e39091eee4ef908fa1b81" },
+    { url = "https://files.pythonhosted.org/packages/50/3d/ff57423bc7fc2c6e1f3fe6205cd08b6ffecb8b293af950d221a9e522b2f9/duckduckgo_search-7.3.2-py3-none-any.whl", hash = "sha256:7133579414ac0395351fc448bb2d31546edd66a1487e39091eee4ef908fa1b81", size = 19917 },
 ]
 
 [[package]]
@@ -960,10 +960,10 @@ wheels = [
 [[package]]
 name = "fsspec"
 version = "2024.9.0"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/fsspec/2024.9.0/fsspec-2024.9.0.tar.gz", hash = "sha256:4b0afb90c2f21832df142f292649035d80b421f60a9e1c027802e5a0da2b04e8" }
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/62/7c/12b0943011daaaa9c35c2a2e22e5eb929ac90002f08f1259d69aedad84de/fsspec-2024.9.0.tar.gz", hash = "sha256:4b0afb90c2f21832df142f292649035d80b421f60a9e1c027802e5a0da2b04e8", size = 286206 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/fsspec/2024.9.0/fsspec-2024.9.0-py3-none-any.whl", hash = "sha256:a0947d552d8a6efa72cc2c730b12c41d043509156966cca4fb157b0f2a0c574b" },
+    { url = "https://files.pythonhosted.org/packages/1d/a0/6aaea0c2fbea2f89bfd5db25fb1e3481896a423002ebe4e55288907a97a3/fsspec-2024.9.0-py3-none-any.whl", hash = "sha256:a0947d552d8a6efa72cc2c730b12c41d043509156966cca4fb157b0f2a0c574b", size = 179253 },
 ]
 
 [package.optional-dependencies]
@@ -1237,7 +1237,7 @@ version = "0.14.0"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/h11/0.14.0/h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/h11/0.14.0/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761" },
+    { url = "https://files.pythonhosted.org/packages/95/04/ff642e65ad6b90db43e668d70ffb6736436c7ce41fcc549f4e9472234127/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761", size = 58259 },
 ]
 
 [[package]]
@@ -1268,17 +1268,16 @@ wheels = [
 [[package]]
 name = "httpx"
 version = "0.27.0"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "certifi" },
     { name = "httpcore" },
     { name = "idna" },
-    { name = "sniffio" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/httpx/0.27.0/httpx-0.27.0.tar.gz", hash = "sha256:a0cb88a46f32dc874e04ee956e4c2764aba2aa228f650b06788ba6bda2962ab5" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/2d/3da5bdf4408b8b2800061c339f240c1802f2e82d55e50bd39c5a881f47f0/httpx-0.27.0.tar.gz", hash = "sha256:a0cb88a46f32dc874e04ee956e4c2764aba2aa228f650b06788ba6bda2962ab5", size = 126413 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/httpx/0.27.0/httpx-0.27.0-py3-none-any.whl", hash = "sha256:71d5465162c13681bff01ad59b2cc68dd838ea1f10e51574bac27103f00c91a5" },
+    { url = "https://files.pythonhosted.org/packages/41/7b/ddacf6dcebb42466abd03f368782142baa82e08fc0c1f8eaa05b4bae87d5/httpx-0.27.0-py3-none-any.whl", hash = "sha256:71d5465162c13681bff01ad59b2cc68dd838ea1f10e51574bac27103f00c91a5", size = 75590 },
 ]
 
 [[package]]
@@ -1293,7 +1292,7 @@ wheels = [
 [[package]]
 name = "huggingface-hub"
 version = "0.26.2"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
     { name = "fsspec" },
@@ -1303,9 +1302,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/huggingface-hub/0.26.2/huggingface_hub-0.26.2.tar.gz", hash = "sha256:b100d853465d965733964d123939ba287da60a547087783ddff8a323f340332b" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/a8/882ae5d1cfa7c9c5be32feee4cee56d9873078913953423e47a756da110d/huggingface_hub-0.26.2.tar.gz", hash = "sha256:b100d853465d965733964d123939ba287da60a547087783ddff8a323f340332b", size = 375621 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/huggingface-hub/0.26.2/huggingface_hub-0.26.2-py3-none-any.whl", hash = "sha256:98c2a5a8e786c7b2cb6fdeb2740893cba4d53e312572ed3d8afafda65b128c46" },
+    { url = "https://files.pythonhosted.org/packages/60/bf/cea0b9720c32fa01b0c4ec4b16b9f4ae34ca106b202ebbae9f03ab98cd8f/huggingface_hub-0.26.2-py3-none-any.whl", hash = "sha256:98c2a5a8e786c7b2cb6fdeb2740893cba4d53e312572ed3d8afafda65b128c46", size = 447536 },
 ]
 
 [[package]]
@@ -2338,17 +2337,17 @@ wheels = [
 [[package]]
 name = "multiprocess"
 version = "0.70.16"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dill" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/multiprocess/0.70.16/multiprocess-0.70.16.tar.gz", hash = "sha256:161af703d4652a0e1410be6abccecde4a7ddffd19341be0a7011b94aeb171ac1" }
+sdist = { url = "https://files.pythonhosted.org/packages/b5/ae/04f39c5d0d0def03247c2893d6f2b83c136bf3320a2154d7b8858f2ba72d/multiprocess-0.70.16.tar.gz", hash = "sha256:161af703d4652a0e1410be6abccecde4a7ddffd19341be0a7011b94aeb171ac1", size = 1772603 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/multiprocess/0.70.16/multiprocess-0.70.16-py310-none-any.whl", hash = "sha256:c4a9944c67bd49f823687463660a2d6daae94c289adff97e0f9d696ba6371d02" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/multiprocess/0.70.16/multiprocess-0.70.16-py311-none-any.whl", hash = "sha256:af4cabb0dac72abfb1e794fa7855c325fd2b55a10a44628a3c1ad3311c04127a" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/multiprocess/0.70.16/multiprocess-0.70.16-py312-none-any.whl", hash = "sha256:fc0544c531920dde3b00c29863377f87e1632601092ea2daca74e4beb40faa2e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/multiprocess/0.70.16/multiprocess-0.70.16-py38-none-any.whl", hash = "sha256:a71d82033454891091a226dfc319d0cfa8019a4e888ef9ca910372a446de4435" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/multiprocess/0.70.16/multiprocess-0.70.16-py39-none-any.whl", hash = "sha256:a0bafd3ae1b732eac64be2e72038231c1ba97724b60b09400d68f229fcc2fbf3" },
+    { url = "https://files.pythonhosted.org/packages/bc/f7/7ec7fddc92e50714ea3745631f79bd9c96424cb2702632521028e57d3a36/multiprocess-0.70.16-py310-none-any.whl", hash = "sha256:c4a9944c67bd49f823687463660a2d6daae94c289adff97e0f9d696ba6371d02", size = 134824 },
+    { url = "https://files.pythonhosted.org/packages/50/15/b56e50e8debaf439f44befec5b2af11db85f6e0f344c3113ae0be0593a91/multiprocess-0.70.16-py311-none-any.whl", hash = "sha256:af4cabb0dac72abfb1e794fa7855c325fd2b55a10a44628a3c1ad3311c04127a", size = 143519 },
+    { url = "https://files.pythonhosted.org/packages/0a/7d/a988f258104dcd2ccf1ed40fdc97e26c4ac351eeaf81d76e266c52d84e2f/multiprocess-0.70.16-py312-none-any.whl", hash = "sha256:fc0544c531920dde3b00c29863377f87e1632601092ea2daca74e4beb40faa2e", size = 146741 },
+    { url = "https://files.pythonhosted.org/packages/ea/89/38df130f2c799090c978b366cfdf5b96d08de5b29a4a293df7f7429fa50b/multiprocess-0.70.16-py38-none-any.whl", hash = "sha256:a71d82033454891091a226dfc319d0cfa8019a4e888ef9ca910372a446de4435", size = 132628 },
+    { url = "https://files.pythonhosted.org/packages/da/d9/f7f9379981e39b8c2511c9e0326d212accacb82f12fbfdc1aa2ce2a7b2b6/multiprocess-0.70.16-py39-none-any.whl", hash = "sha256:a0bafd3ae1b732eac64be2e72038231c1ba97724b60b09400d68f229fcc2fbf3", size = 133351 },
 ]
 
 [[package]]
@@ -2380,7 +2379,7 @@ wheels = [
 
 [[package]]
 name = "neurochain"
-version = "2.0.0.dev5"
+version = "2.0.0.dev2"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -2417,9 +2416,9 @@ dependencies = [
     { name = "weaviate-client" },
     { name = "websockets" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev5/neurochain-2.0.0.dev5.tar.gz", hash = "sha256:62bf497fec330a51ba622216faf2fe4bd8c0b6e9ff085c87e0b7a0ec688252ee" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev2/neurochain-2.0.0.dev2.tar.gz", hash = "sha256:d7a77bcc9c46e12cc7fddc52bbb69134d0addcb3400c050e5985d69102c563f8" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev5/neurochain-2.0.0.dev5-py3-none-any.whl", hash = "sha256:bfa8ec6a5a3af645a1188b94af88f4916667488edca0ce313b254d84ed9903a9" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev2/neurochain-2.0.0.dev2-py3-none-any.whl", hash = "sha256:bd9278d7562e886339dd74d30becf27a4c79f48f7b16660fee581ed3787695ff" },
 ]
 
 [[package]]
@@ -2475,8 +2474,7 @@ name = "nvidia-cublas-cu12"
 version = "12.4.5.8"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cublas-cu12/12.4.5.8/nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0f8aa1706812e00b9f19dfe0cdb3999b092ccb8ca168c0db5b8ea712456fd9b3" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cublas-cu12/12.4.5.8/nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl", hash = "sha256:2fc8da60df463fdefa81e323eef2e36489e1c94335b5358bcb38360adf75ac9b" },
+    { url = "https://files.pythonhosted.org/packages/ae/71/1c91302526c45ab494c23f61c7a84aa568b8c1f9d196efa5993957faf906/nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl", hash = "sha256:2fc8da60df463fdefa81e323eef2e36489e1c94335b5358bcb38360adf75ac9b", size = 363438805 },
 ]
 
 [[package]]
@@ -2484,8 +2482,7 @@ name = "nvidia-cuda-cupti-cu12"
 version = "12.4.127"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cuda-cupti-cu12/12.4.127/nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:79279b35cf6f91da114182a5ce1864997fd52294a87a16179ce275773799458a" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cuda-cupti-cu12/12.4.127/nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:9dec60f5ac126f7bb551c055072b69d85392b13311fcc1bcda2202d172df30fb" },
+    { url = "https://files.pythonhosted.org/packages/67/42/f4f60238e8194a3106d06a058d494b18e006c10bb2b915655bd9f6ea4cb1/nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:9dec60f5ac126f7bb551c055072b69d85392b13311fcc1bcda2202d172df30fb", size = 13813957 },
 ]
 
 [[package]]
@@ -2493,8 +2490,7 @@ name = "nvidia-cuda-nvrtc-cu12"
 version = "12.4.127"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cuda-nvrtc-cu12/12.4.127/nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0eedf14185e04b76aa05b1fea04133e59f465b6f960c0cbf4e37c3cb6b0ea198" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cuda-nvrtc-cu12/12.4.127/nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:a178759ebb095827bd30ef56598ec182b85547f1508941a3d560eb7ea1fbf338" },
+    { url = "https://files.pythonhosted.org/packages/2c/14/91ae57cd4db3f9ef7aa99f4019cfa8d54cb4caa7e00975df6467e9725a9f/nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:a178759ebb095827bd30ef56598ec182b85547f1508941a3d560eb7ea1fbf338", size = 24640306 },
 ]
 
 [[package]]
@@ -2502,8 +2498,7 @@ name = "nvidia-cuda-runtime-cu12"
 version = "12.4.127"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cuda-runtime-cu12/12.4.127/nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:961fe0e2e716a2a1d967aab7caee97512f71767f852f67432d572e36cb3a11f3" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cuda-runtime-cu12/12.4.127/nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:64403288fa2136ee8e467cdc9c9427e0434110899d07c779f25b5c068934faa5" },
+    { url = "https://files.pythonhosted.org/packages/ea/27/1795d86fe88ef397885f2e580ac37628ed058a92ed2c39dc8eac3adf0619/nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:64403288fa2136ee8e467cdc9c9427e0434110899d07c779f25b5c068934faa5", size = 883737 },
 ]
 
 [[package]]
@@ -2525,8 +2520,7 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cufft-cu12/11.2.1.3/nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_aarch64.whl", hash = "sha256:5dad8008fc7f92f5ddfa2101430917ce2ffacd86824914c82e28990ad7f00399" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cufft-cu12/11.2.1.3/nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl", hash = "sha256:f083fc24912aa410be21fa16d157fed2055dab1cc4b6934a0e03cba69eb242b9" },
+    { url = "https://files.pythonhosted.org/packages/27/94/3266821f65b92b3138631e9c8e7fe1fb513804ac934485a8d05776e1dd43/nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl", hash = "sha256:f083fc24912aa410be21fa16d157fed2055dab1cc4b6934a0e03cba69eb242b9", size = 211459117 },
 ]
 
 [[package]]
@@ -2534,8 +2528,7 @@ name = "nvidia-curand-cu12"
 version = "10.3.5.147"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-curand-cu12/10.3.5.147/nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_aarch64.whl", hash = "sha256:1f173f09e3e3c76ab084aba0de819c49e56614feae5c12f69883f4ae9bb5fad9" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-curand-cu12/10.3.5.147/nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl", hash = "sha256:a88f583d4e0bb643c49743469964103aa59f7f708d862c3ddb0fc07f851e3b8b" },
+    { url = "https://files.pythonhosted.org/packages/8a/6d/44ad094874c6f1b9c654f8ed939590bdc408349f137f9b98a3a23ccec411/nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl", hash = "sha256:a88f583d4e0bb643c49743469964103aa59f7f708d862c3ddb0fc07f851e3b8b", size = 56305206 },
 ]
 
 [[package]]
@@ -2548,8 +2541,7 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cusolver-cu12/11.6.1.9/nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_aarch64.whl", hash = "sha256:d338f155f174f90724bbde3758b7ac375a70ce8e706d70b018dd3375545fc84e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cusolver-cu12/11.6.1.9/nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl", hash = "sha256:19e33fa442bcfd085b3086c4ebf7e8debc07cfe01e11513cc6d332fd918ac260" },
+    { url = "https://files.pythonhosted.org/packages/3a/e1/5b9089a4b2a4790dfdea8b3a006052cfecff58139d5a4e34cb1a51df8d6f/nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl", hash = "sha256:19e33fa442bcfd085b3086c4ebf7e8debc07cfe01e11513cc6d332fd918ac260", size = 127936057 },
 ]
 
 [[package]]
@@ -2560,8 +2552,7 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cusparse-cu12/12.3.1.170/nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_aarch64.whl", hash = "sha256:9d32f62896231ebe0480efd8a7f702e143c98cfaa0e8a76df3386c1ba2b54df3" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-cusparse-cu12/12.3.1.170/nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl", hash = "sha256:ea4f11a2904e2a8dc4b1833cc1b5181cde564edd0d5cd33e3c168eff2d1863f1" },
+    { url = "https://files.pythonhosted.org/packages/db/f7/97a9ea26ed4bbbfc2d470994b8b4f338ef663be97b8f677519ac195e113d/nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl", hash = "sha256:ea4f11a2904e2a8dc4b1833cc1b5181cde564edd0d5cd33e3c168eff2d1863f1", size = 207454763 },
 ]
 
 [[package]]
@@ -2577,8 +2568,7 @@ name = "nvidia-nvjitlink-cu12"
 version = "12.4.127"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-nvjitlink-cu12/12.4.127/nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:4abe7fef64914ccfa909bc2ba39739670ecc9e820c83ccc7a6ed414122599b83" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-nvjitlink-cu12/12.4.127/nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:06b3b9b25bf3f8af351d664978ca26a16d2c5127dbd53c0497e28d1fb9611d57" },
+    { url = "https://files.pythonhosted.org/packages/ff/ff/847841bacfbefc97a00036e0fce5a0f086b640756dc38caea5e1bb002655/nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:06b3b9b25bf3f8af351d664978ca26a16d2c5127dbd53c0497e28d1fb9611d57", size = 21066810 },
 ]
 
 [[package]]
@@ -2586,8 +2576,7 @@ name = "nvidia-nvtx-cu12"
 version = "12.4.127"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-nvtx-cu12/12.4.127/nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_aarch64.whl", hash = "sha256:7959ad635db13edf4fc65c06a6e9f9e55fc2f92596db928d169c0bb031e88ef3" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/nvidia-nvtx-cu12/12.4.127/nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:781e950d9b9f60d8241ccea575b32f5105a5baf4c2351cab5256a24869f12a1a" },
+    { url = "https://files.pythonhosted.org/packages/87/20/199b8713428322a2f22b722c62b8cc278cc53dffa9705d744484b5035ee9/nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl", hash = "sha256:781e950d9b9f60d8241ccea575b32f5105a5baf4c2351cab5256a24869f12a1a", size = 99144 },
 ]
 
 [[package]]
@@ -2893,16 +2882,16 @@ wheels = [
 [[package]]
 name = "pathos"
 version = "0.3.2"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dill" },
     { name = "multiprocess" },
     { name = "pox" },
     { name = "ppft" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/pathos/0.3.2/pathos-0.3.2.tar.gz", hash = "sha256:4f2a42bc1e10ccf0fe71961e7145fc1437018b6b21bd93b2446abc3983e49a7a" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/99/7fcb91495e40735958a576b9bde930cc402d594e9ad5277bdc9b6326e1c8/pathos-0.3.2.tar.gz", hash = "sha256:4f2a42bc1e10ccf0fe71961e7145fc1437018b6b21bd93b2446abc3983e49a7a", size = 166506 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/pathos/0.3.2/pathos-0.3.2-py3-none-any.whl", hash = "sha256:d669275e6eb4b3fbcd2846d7a6d1bba315fe23add0c614445ba1408d8b38bafe" },
+    { url = "https://files.pythonhosted.org/packages/f4/7f/cea34872c000d17972dad998575d14656d7c6bcf1a08a8d66d73c1ef2cca/pathos-0.3.2-py3-none-any.whl", hash = "sha256:d669275e6eb4b3fbcd2846d7a6d1bba315fe23add0c614445ba1408d8b38bafe", size = 82075 },
 ]
 
 [[package]]
@@ -3036,23 +3025,23 @@ dependencies = [
 ]
 sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/pre-commit/4.1.0/pre_commit-4.1.0.tar.gz", hash = "sha256:ae3f018575a588e30dfddfab9a05448bfbd6b73d78709617b5a2b853549716d4" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/pre-commit/4.1.0/pre_commit-4.1.0-py2.py3-none-any.whl", hash = "sha256:d29e7cb346295bcc1cc75fc3e92e343495e3ea0196c9ec6ba53f49f10ab6ae7b" },
+    { url = "https://files.pythonhosted.org/packages/43/b3/df14c580d82b9627d173ceea305ba898dca135feb360b6d84019d0803d3b/pre_commit-4.1.0-py2.py3-none-any.whl", hash = "sha256:d29e7cb346295bcc1cc75fc3e92e343495e3ea0196c9ec6ba53f49f10ab6ae7b", size = 220560 },
 ]
 
 [[package]]
 name = "primp"
-version = "0.13.0"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0.tar.gz", hash = "sha256:59f872a8cb3293fac3f451a60e5f9c724264d7a76302b65deaaf31a2bd26b32c" }
+version = "0.12.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/98/e1/16de42a8f1763e957a957c5ebfdbab7eb6a870f43608bc47c912f6196136/primp-0.12.1.tar.gz", hash = "sha256:2989375b512b0fec77b4e6cc53d3fef1f2f76103b6565873f040dfea92023279", size = 110674 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:b47da9123a0efe5a8ab063c2906aba05a6d06ebbb4e63c8f685635962b4d7451" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:acfe86b5cf69481936f82908ccbcb773fa7f89f423d82609c701f278eb297236" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e24410c83772b0afeeac213c75969e153b53195a7da90f7220bb4385616b487" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-manylinux_2_34_aarch64.whl", hash = "sha256:0149e745134c355ed585e54dd95fb6e7e39ed3532951976d7c803b0d181aa976" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-manylinux_2_34_armv7l.whl", hash = "sha256:a6ff2607af26d5c362be1a077e0a3cf027054d04fef0706b86b5cacdb65b441d" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:0b0884d661b235766239f627e987786eed64d4400dbec55819504f570412cf94" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:e601bd8121681c1fc43dd1abeefd4333b524033a1c3bad1e6f401a01798f4c94" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/primp/0.13.0/primp-0.13.0-cp38-abi3-win_amd64.whl", hash = "sha256:37eefc04e728ae964e7986d37c507b79676f9d2833e356504acc9b1301150ace" },
+    { url = "https://files.pythonhosted.org/packages/d4/d9/169b5cf7dde1b06c61824db51ef9d1025b9ce1b4eb1cc4ded30af3b41892/primp-0.12.1-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:48af13b6731ab33f7045c620c7fecf4804745e2756c22ace604de24b46d07ee7", size = 3161467 },
+    { url = "https://files.pythonhosted.org/packages/7a/99/e9e78e3598387b08f544dfcec73484363fcbdf58b8049a5d7ef5c689c1d8/primp-0.12.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:83030fd7b4059125738f76f56d21322c631c6a7bb7b0f4bd58ef63c59a7ea4e3", size = 2936362 },
+    { url = "https://files.pythonhosted.org/packages/03/41/64c7b848ef7a6ac578951b75f9950efce7a3353a9f77049d0b993118be17/primp-0.12.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:79380b72b3afad1aead8c4ac91797dce37605561e9a4be9dd9291d6132fdc5e7", size = 3258669 },
+    { url = "https://files.pythonhosted.org/packages/d7/61/ab27bf76f2784a1e5b559670db8475b30cc577f7652a798586e12f6f27fa/primp-0.12.1-cp38-abi3-manylinux_2_34_aarch64.whl", hash = "sha256:286e3e620fe027a103336e5b825949350fbb5121530f57ec04cc27112cd81ea9", size = 3231871 },
+    { url = "https://files.pythonhosted.org/packages/b0/98/8c6c3703bd3b286e2ef90d0376aadccbfa61d8e7a5ec0d9af420a36097a0/primp-0.12.1-cp38-abi3-manylinux_2_34_armv7l.whl", hash = "sha256:61841d3061f74d17ff124c808a00bb2efa2dcbefff18e01510363dd9c3aa0300", size = 2986939 },
+    { url = "https://files.pythonhosted.org/packages/4f/7e/e1ddb1da14ed11d416cc3d683f752f18c4bacab3c5b2cd44fd1d725e0f1c/primp-0.12.1-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:5407e49166e61287010e9bf6daf84b7b0597a15286a7fb3ad0be36ee43555b4b", size = 3391011 },
+    { url = "https://files.pythonhosted.org/packages/9f/71/1abab2beb64337ae050576bf24c60ee31f7c1cac878d25af3546ac696c07/primp-0.12.1-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:e0fad52ff964126be5996030b636ac92b110871738ff2523b3e74dcda381f226", size = 3578634 },
+    { url = "https://files.pythonhosted.org/packages/0a/8d/f8b879fd6fa7b3ca9237d7236efb73169e228083c1b58e16ffa086c4e7ad/primp-0.12.1-cp38-abi3-win_amd64.whl", hash = "sha256:97c8fdc145eb3e9935658a8fff5c9bdc0552fcac3dfb15a1867d3ea08529e056", size = 3120451 },
 ]
 
 [[package]]
@@ -3612,17 +3601,17 @@ wheels = [
 
 [[package]]
 name = "requests"
-version = "2.32.2"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+version = "2.32.3"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "charset-normalizer" },
     { name = "idna" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/requests/2.32.2/requests-2.32.2.tar.gz", hash = "sha256:dd951ff5ecf3e3b3aa26b40703ba77495dab41da839ae72ef3c8e5d8e2433289" }
+sdist = { url = "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760", size = 131218 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/requests/2.32.2/requests-2.32.2-py3-none-any.whl", hash = "sha256:fc06670dd0ed212426dfeb94fc1b983d917c4f9847c863f313c9dfaaffb7c23c" },
+    { url = "https://files.pythonhosted.org/packages/f9/9b/335f9764261e915ed497fcdeb11df5dfd6f7bf257d4a6a2a686d80da4d54/requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6", size = 64928 },
 ]
 
 [[package]]
@@ -3737,27 +3726,27 @@ wheels = [
 
 [[package]]
 name = "ruff"
-version = "0.9.7"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7.tar.gz", hash = "sha256:643757633417907510157b206e490c3aa11cab0c087c912f60e07fbafa87a4c6" }
+version = "0.9.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2a/e1/e265aba384343dd8ddd3083f5e33536cd17e1566c41453a5517b5dd443be/ruff-0.9.6.tar.gz", hash = "sha256:81761592f72b620ec8fa1068a6fd00e98a5ebee342a3642efd84454f3031dca9", size = 3639454 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-linux_armv6l.whl", hash = "sha256:99d50def47305fe6f233eb8dabfd60047578ca87c9dcb235c9723ab1175180f4" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:d59105ae9c44152c3d40a9c40d6331a7acd1cdf5ef404fbe31178a77b174ea66" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-macosx_11_0_arm64.whl", hash = "sha256:f313b5800483770bd540cddac7c90fc46f895f427b7820f18fe1822697f1fec9" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:042ae32b41343888f59c0a4148f103208bf6b21c90118d51dc93a68366f4e903" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:87862589373b33cc484b10831004e5e5ec47dc10d2b41ba770e837d4f429d721" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a17e1e01bee0926d351a1ee9bc15c445beae888f90069a6192a07a84af544b6b" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:7c1f880ac5b2cbebd58b8ebde57069a374865c73f3bf41f05fe7a179c1c8ef22" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:e63fc20143c291cab2841dbb8260e96bafbe1ba13fd3d60d28be2c71e312da49" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:91ff963baed3e9a6a4eba2a02f4ca8eaa6eba1cc0521aec0987da8d62f53cbef" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:88362e3227c82f63eaebf0b2eff5b88990280fb1ecf7105523883ba8c3aaf6fb" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:0372c5a90349f00212270421fe91874b866fd3626eb3b397ede06cd385f6f7e0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:d76b8ab60e99e6424cd9d3d923274a1324aefce04f8ea537136b8398bbae0a62" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-musllinux_1_2_i686.whl", hash = "sha256:0c439bdfc8983e1336577f00e09a4e7a78944fe01e4ea7fe616d00c3ec69a3d0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:115d1f15e8fdd445a7b4dc9a30abae22de3f6bcabeb503964904471691ef7606" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-win32.whl", hash = "sha256:e9ece95b7de5923cbf38893f066ed2872be2f2f477ba94f826c8defdd6ec6b7d" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-win_amd64.whl", hash = "sha256:3770fe52b9d691a15f0b87ada29c45324b2ace8f01200fb0c14845e499eb0c2c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/ruff/0.9.7/ruff-0.9.7-py3-none-win_arm64.whl", hash = "sha256:b075a700b2533feb7a01130ff656a4ec0d5f340bb540ad98759b8401c32c2037" },
+    { url = "https://files.pythonhosted.org/packages/76/e3/3d2c022e687e18cf5d93d6bfa2722d46afc64eaa438c7fbbdd603b3597be/ruff-0.9.6-py3-none-linux_armv6l.whl", hash = "sha256:2f218f356dd2d995839f1941322ff021c72a492c470f0b26a34f844c29cdf5ba", size = 11714128 },
+    { url = "https://files.pythonhosted.org/packages/e1/22/aff073b70f95c052e5c58153cba735748c9e70107a77d03420d7850710a0/ruff-0.9.6-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:b908ff4df65dad7b251c9968a2e4560836d8f5487c2f0cc238321ed951ea0504", size = 11682539 },
+    { url = "https://files.pythonhosted.org/packages/75/a7/f5b7390afd98a7918582a3d256cd3e78ba0a26165a467c1820084587cbf9/ruff-0.9.6-py3-none-macosx_11_0_arm64.whl", hash = "sha256:b109c0ad2ececf42e75fa99dc4043ff72a357436bb171900714a9ea581ddef83", size = 11132512 },
+    { url = "https://files.pythonhosted.org/packages/a6/e3/45de13ef65047fea2e33f7e573d848206e15c715e5cd56095589a7733d04/ruff-0.9.6-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1de4367cca3dac99bcbd15c161404e849bb0bfd543664db39232648dc00112dc", size = 11929275 },
+    { url = "https://files.pythonhosted.org/packages/7d/f2/23d04cd6c43b2e641ab961ade8d0b5edb212ecebd112506188c91f2a6e6c/ruff-0.9.6-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:ac3ee4d7c2c92ddfdaedf0bf31b2b176fa7aa8950efc454628d477394d35638b", size = 11466502 },
+    { url = "https://files.pythonhosted.org/packages/b5/6f/3a8cf166f2d7f1627dd2201e6cbc4cb81f8b7d58099348f0c1ff7b733792/ruff-0.9.6-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5dc1edd1775270e6aa2386119aea692039781429f0be1e0949ea5884e011aa8e", size = 12676364 },
+    { url = "https://files.pythonhosted.org/packages/f5/c4/db52e2189983c70114ff2b7e3997e48c8318af44fe83e1ce9517570a50c6/ruff-0.9.6-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:4a091729086dffa4bd070aa5dab7e39cc6b9d62eb2bef8f3d91172d30d599666", size = 13335518 },
+    { url = "https://files.pythonhosted.org/packages/66/44/545f8a4d136830f08f4d24324e7db957c5374bf3a3f7a6c0bc7be4623a37/ruff-0.9.6-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d1bbc6808bf7b15796cef0815e1dfb796fbd383e7dbd4334709642649625e7c5", size = 12823287 },
+    { url = "https://files.pythonhosted.org/packages/c5/26/8208ef9ee7431032c143649a9967c3ae1aae4257d95e6f8519f07309aa66/ruff-0.9.6-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:589d1d9f25b5754ff230dce914a174a7c951a85a4e9270613a2b74231fdac2f5", size = 14592374 },
+    { url = "https://files.pythonhosted.org/packages/31/70/e917781e55ff39c5b5208bda384fd397ffd76605e68544d71a7e40944945/ruff-0.9.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dc61dd5131742e21103fbbdcad683a8813be0e3c204472d520d9a5021ca8b217", size = 12500173 },
+    { url = "https://files.pythonhosted.org/packages/84/f5/e4ddee07660f5a9622a9c2b639afd8f3104988dc4f6ba0b73ffacffa9a8c/ruff-0.9.6-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:5e2d9126161d0357e5c8f30b0bd6168d2c3872372f14481136d13de9937f79b6", size = 11906555 },
+    { url = "https://files.pythonhosted.org/packages/f1/2b/6ff2fe383667075eef8656b9892e73dd9b119b5e3add51298628b87f6429/ruff-0.9.6-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:68660eab1a8e65babb5229a1f97b46e3120923757a68b5413d8561f8a85d4897", size = 11538958 },
+    { url = "https://files.pythonhosted.org/packages/3c/db/98e59e90de45d1eb46649151c10a062d5707b5b7f76f64eb1e29edf6ebb1/ruff-0.9.6-py3-none-musllinux_1_2_i686.whl", hash = "sha256:c4cae6c4cc7b9b4017c71114115db0445b00a16de3bcde0946273e8392856f08", size = 12117247 },
+    { url = "https://files.pythonhosted.org/packages/ec/bc/54e38f6d219013a9204a5a2015c09e7a8c36cedcd50a4b01ac69a550b9d9/ruff-0.9.6-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:19f505b643228b417c1111a2a536424ddde0db4ef9023b9e04a46ed8a1cb4656", size = 12554647 },
+    { url = "https://files.pythonhosted.org/packages/a5/7d/7b461ab0e2404293c0627125bb70ac642c2e8d55bf590f6fce85f508f1b2/ruff-0.9.6-py3-none-win32.whl", hash = "sha256:194d8402bceef1b31164909540a597e0d913c0e4952015a5b40e28c146121b5d", size = 9949214 },
+    { url = "https://files.pythonhosted.org/packages/ee/30/c3cee10f915ed75a5c29c1e57311282d1a15855551a64795c1b2bbe5cf37/ruff-0.9.6-py3-none-win_amd64.whl", hash = "sha256:03482d5c09d90d4ee3f40d97578423698ad895c87314c4de39ed2af945633caa", size = 10999914 },
+    { url = "https://files.pythonhosted.org/packages/e8/a8/d71f44b93e3aa86ae232af1f2126ca7b95c0f515ec135462b3e1f351441c/ruff-0.9.6-py3-none-win_arm64.whl", hash = "sha256:0e2bb706a2be7ddfea4a4af918562fdc1bcb16df255e5fa595bbd800ce322a5a", size = 10177499 },
 ]
 
 [[package]]
@@ -3775,43 +3764,43 @@ wheels = [
 [[package]]
 name = "safetensors"
 version = "0.4.5"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5.tar.gz", hash = "sha256:d73de19682deabb02524b3d5d1f8b3aaba94c72f1bbfc7911b9b9d5d391c0310" }
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/46/a1c56ed856c6ac3b1a8b37abe5be0cac53219367af1331e721b04d122577/safetensors-0.4.5.tar.gz", hash = "sha256:d73de19682deabb02524b3d5d1f8b3aaba94c72f1bbfc7911b9b9d5d391c0310", size = 65702 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:21f848d7aebd5954f92538552d6d75f7c1b4500f51664078b5b49720d180e47c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:bb07000b19d41e35eecef9a454f31a8b4718a185293f0d0b1c4b61d6e4487971" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:09dedf7c2fda934ee68143202acff6e9e8eb0ddeeb4cfc24182bef999efa9f42" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:59b77e4b7a708988d84f26de3ebead61ef1659c73dcbc9946c18f3b1786d2688" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5d3bc83e14d67adc2e9387e511097f254bd1b43c3020440e708858c684cbac68" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:39371fc551c1072976073ab258c3119395294cf49cdc1f8476794627de3130df" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a6c19feda32b931cae0acd42748a670bdf56bee6476a046af20181ad3fee4090" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:a659467495de201e2f282063808a41170448c78bada1e62707b07a27b05e6943" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:bad5e4b2476949bcd638a89f71b6916fa9a5cae5c1ae7eede337aca2100435c0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:a3a315a6d0054bc6889a17f5668a73f94f7fe55121ff59e0a199e3519c08565f" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-none-win32.whl", hash = "sha256:a01e232e6d3d5cf8b1667bc3b657a77bdab73f0743c26c1d3c5dd7ce86bd3a92" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp311-none-win_amd64.whl", hash = "sha256:cbd39cae1ad3e3ef6f63a6f07296b080c951f24cec60188378e43d3713000c04" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:473300314e026bd1043cef391bb16a8689453363381561b8a3e443870937cc1e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:801183a0f76dc647f51a2d9141ad341f9665602a7899a693207a82fb102cc53e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1524b54246e422ad6fb6aea1ac71edeeb77666efa67230e1faf6999df9b2e27f" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:b3139098e3e8b2ad7afbca96d30ad29157b50c90861084e69fcb80dec7430461" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:65573dc35be9059770808e276b017256fa30058802c29e1038eb1c00028502ea" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:fd33da8e9407559f8779c82a0448e2133737f922d71f884da27184549416bfed" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3685ce7ed036f916316b567152482b7e959dc754fcc4a8342333d222e05f407c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:dde2bf390d25f67908278d6f5d59e46211ef98e44108727084d4637ee70ab4f1" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:7469d70d3de970b1698d47c11ebbf296a308702cbaae7fcb993944751cf985f4" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:3a6ba28118636a130ccbb968bc33d4684c48678695dba2590169d5ab03a45646" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-none-win32.whl", hash = "sha256:c859c7ed90b0047f58ee27751c8e56951452ed36a67afee1b0a87847d065eec6" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp312-none-win_amd64.whl", hash = "sha256:b5a8810ad6a6f933fff6c276eae92c1da217b39b4d8b1bc1c0b8af2d270dc532" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:25e5f8e2e92a74f05b4ca55686234c32aac19927903792b30ee6d7bd5653d54e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:81efb124b58af39fcd684254c645e35692fea81c51627259cdf6d67ff4458916" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:585f1703a518b437f5103aa9cf70e9bd437cb78eea9c51024329e4fb8a3e3679" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:4b99fbf72e3faf0b2f5f16e5e3458b93b7d0a83984fe8d5364c60aa169f2da89" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:b17b299ca9966ca983ecda1c0791a3f07f9ca6ab5ded8ef3d283fff45f6bcd5f" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:76ded72f69209c9780fdb23ea89e56d35c54ae6abcdec67ccb22af8e696e449a" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2783956926303dcfeb1de91a4d1204cd4089ab441e622e7caee0642281109db3" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:d94581aab8c6b204def4d7320f07534d6ee34cd4855688004a4354e63b639a35" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:67e1e7cb8678bb1b37ac48ec0df04faf689e2f4e9e81e566b5c63d9f23748523" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/safetensors/0.4.5/safetensors-0.4.5-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:dbd280b07e6054ea68b0cb4b16ad9703e7d63cd6890f577cb98acc5354780142" },
+    { url = "https://files.pythonhosted.org/packages/9a/a5/25bcf75e373412daf1fd88045ab3aa8140a0d804ef0e70712c4f2c5b94d8/safetensors-0.4.5-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:21f848d7aebd5954f92538552d6d75f7c1b4500f51664078b5b49720d180e47c", size = 392256 },
+    { url = "https://files.pythonhosted.org/packages/08/8c/ece3bf8756506a890bd980eca02f47f9d98dfbf5ce16eda1368f53560f67/safetensors-0.4.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:bb07000b19d41e35eecef9a454f31a8b4718a185293f0d0b1c4b61d6e4487971", size = 381490 },
+    { url = "https://files.pythonhosted.org/packages/39/83/c4a7ce01d626e46ea2b45887f2e59b16441408031e2ce2f9fe01860c6946/safetensors-0.4.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:09dedf7c2fda934ee68143202acff6e9e8eb0ddeeb4cfc24182bef999efa9f42", size = 441093 },
+    { url = "https://files.pythonhosted.org/packages/47/26/cc52de647e71bd9a0b0d78ead0d31d9c462b35550a817aa9e0cab51d6db4/safetensors-0.4.5-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:59b77e4b7a708988d84f26de3ebead61ef1659c73dcbc9946c18f3b1786d2688", size = 438960 },
+    { url = "https://files.pythonhosted.org/packages/06/78/332538546775ee97e749867df2d58f2282d9c48a1681e4891eed8b94ec94/safetensors-0.4.5-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5d3bc83e14d67adc2e9387e511097f254bd1b43c3020440e708858c684cbac68", size = 478031 },
+    { url = "https://files.pythonhosted.org/packages/d9/03/a3c8663f1ddda54e624ecf43fce651659b49e8e1603c52c3e464b442acfa/safetensors-0.4.5-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:39371fc551c1072976073ab258c3119395294cf49cdc1f8476794627de3130df", size = 494754 },
+    { url = "https://files.pythonhosted.org/packages/e6/ee/69e498a892f208bd1da4104d4b9be887f8611bf4942144718b6738482250/safetensors-0.4.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a6c19feda32b931cae0acd42748a670bdf56bee6476a046af20181ad3fee4090", size = 435013 },
+    { url = "https://files.pythonhosted.org/packages/a2/61/f0cfce984515b86d1260f556ba3b782158e2855e6a318446ac2613786fa9/safetensors-0.4.5-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:a659467495de201e2f282063808a41170448c78bada1e62707b07a27b05e6943", size = 455984 },
+    { url = "https://files.pythonhosted.org/packages/e7/a9/3e3b48fcaade3eb4e347d39ebf0bd44291db21a3e4507854b42a7cb910ac/safetensors-0.4.5-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:bad5e4b2476949bcd638a89f71b6916fa9a5cae5c1ae7eede337aca2100435c0", size = 619513 },
+    { url = "https://files.pythonhosted.org/packages/80/23/2a7a1be24258c0e44c1d356896fd63dc0545a98d2d0184925fa09cd3ec76/safetensors-0.4.5-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:a3a315a6d0054bc6889a17f5668a73f94f7fe55121ff59e0a199e3519c08565f", size = 604841 },
+    { url = "https://files.pythonhosted.org/packages/b4/5c/34d082ff1fffffd8545fb22cbae3285ab4236f1f0cfc64b7e58261c2363b/safetensors-0.4.5-cp311-none-win32.whl", hash = "sha256:a01e232e6d3d5cf8b1667bc3b657a77bdab73f0743c26c1d3c5dd7ce86bd3a92", size = 272602 },
+    { url = "https://files.pythonhosted.org/packages/6d/41/948c96c8a7e9fef57c2e051f1871c108a6dbbc6d285598bdb1d89b98617c/safetensors-0.4.5-cp311-none-win_amd64.whl", hash = "sha256:cbd39cae1ad3e3ef6f63a6f07296b080c951f24cec60188378e43d3713000c04", size = 285973 },
+    { url = "https://files.pythonhosted.org/packages/bf/ac/5a63082f931e99200db95fd46fb6734f050bb6e96bf02521904c6518b7aa/safetensors-0.4.5-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:473300314e026bd1043cef391bb16a8689453363381561b8a3e443870937cc1e", size = 392015 },
+    { url = "https://files.pythonhosted.org/packages/73/95/ab32aa6e9bdc832ff87784cdf9da26192b93de3ef82b8d1ada8f345c5044/safetensors-0.4.5-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:801183a0f76dc647f51a2d9141ad341f9665602a7899a693207a82fb102cc53e", size = 381774 },
+    { url = "https://files.pythonhosted.org/packages/d6/6c/7e04b7626809fc63f3698f4c50e43aff2864b40089aa4506c918a75b8eed/safetensors-0.4.5-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1524b54246e422ad6fb6aea1ac71edeeb77666efa67230e1faf6999df9b2e27f", size = 441134 },
+    { url = "https://files.pythonhosted.org/packages/58/2b/ffe7c86a277e6c1595fbdf415cfe2903f253f574a5405e93fda8baaa582c/safetensors-0.4.5-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:b3139098e3e8b2ad7afbca96d30ad29157b50c90861084e69fcb80dec7430461", size = 438467 },
+    { url = "https://files.pythonhosted.org/packages/67/9c/f271bd804e08c7fda954d17b70ff281228a88077337a9e70feace4f4cc93/safetensors-0.4.5-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:65573dc35be9059770808e276b017256fa30058802c29e1038eb1c00028502ea", size = 476566 },
+    { url = "https://files.pythonhosted.org/packages/4c/ad/4cf76a3e430a8a26108407fa6cb93e6f80d996a5cb75d9540c8fe3862990/safetensors-0.4.5-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:fd33da8e9407559f8779c82a0448e2133737f922d71f884da27184549416bfed", size = 492253 },
+    { url = "https://files.pythonhosted.org/packages/d9/40/a6f75ea449a9647423ec8b6f72c16998d35aa4b43cb38536ac060c5c7bf5/safetensors-0.4.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3685ce7ed036f916316b567152482b7e959dc754fcc4a8342333d222e05f407c", size = 434769 },
+    { url = "https://files.pythonhosted.org/packages/52/47/d4b49b1231abf3131f7bb0bc60ebb94b27ee33e0a1f9569da05f8ac65dee/safetensors-0.4.5-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:dde2bf390d25f67908278d6f5d59e46211ef98e44108727084d4637ee70ab4f1", size = 457166 },
+    { url = "https://files.pythonhosted.org/packages/c3/cd/006468b03b0fa42ff82d795d47c4193e99001e96c3f08bd62ef1b5cab586/safetensors-0.4.5-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:7469d70d3de970b1698d47c11ebbf296a308702cbaae7fcb993944751cf985f4", size = 619280 },
+    { url = "https://files.pythonhosted.org/packages/22/4d/b6208d918e83daa84b424c0ac3191ae61b44b3191613a3a5a7b38f94b8ad/safetensors-0.4.5-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:3a6ba28118636a130ccbb968bc33d4684c48678695dba2590169d5ab03a45646", size = 605390 },
+    { url = "https://files.pythonhosted.org/packages/e8/20/bf0e01825dc01ed75538021a98b9a046e60ead63c6c6700764c821a8c873/safetensors-0.4.5-cp312-none-win32.whl", hash = "sha256:c859c7ed90b0047f58ee27751c8e56951452ed36a67afee1b0a87847d065eec6", size = 273250 },
+    { url = "https://files.pythonhosted.org/packages/f1/5f/ab6b6cec85b40789801f35b7d2fb579ae242d8193929974a106d5ff5c835/safetensors-0.4.5-cp312-none-win_amd64.whl", hash = "sha256:b5a8810ad6a6f933fff6c276eae92c1da217b39b4d8b1bc1c0b8af2d270dc532", size = 286307 },
+    { url = "https://files.pythonhosted.org/packages/90/61/0e27b1403e311cba0be20026bee4ee822d90eda7dad372179e7f18bb99f3/safetensors-0.4.5-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:25e5f8e2e92a74f05b4ca55686234c32aac19927903792b30ee6d7bd5653d54e", size = 392062 },
+    { url = "https://files.pythonhosted.org/packages/b1/9f/cc31fafc9f5d79da10a83a820ca37f069bab0717895ad8cbcacf629dd1c5/safetensors-0.4.5-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:81efb124b58af39fcd684254c645e35692fea81c51627259cdf6d67ff4458916", size = 382517 },
+    { url = "https://files.pythonhosted.org/packages/a4/c7/4fda8a0ebb96662550433378f4a74c677fa5fc4d0a43a7ec287d1df254a9/safetensors-0.4.5-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:585f1703a518b437f5103aa9cf70e9bd437cb78eea9c51024329e4fb8a3e3679", size = 441378 },
+    { url = "https://files.pythonhosted.org/packages/14/31/9abb431f6209de9c80dab83e1112ebd769f1e32e7ab7ab228a02424a4693/safetensors-0.4.5-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:4b99fbf72e3faf0b2f5f16e5e3458b93b7d0a83984fe8d5364c60aa169f2da89", size = 438831 },
+    { url = "https://files.pythonhosted.org/packages/37/37/99bfb195578a808b8d045159ee9264f8da58d017ac0701853dcacda14d4e/safetensors-0.4.5-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:b17b299ca9966ca983ecda1c0791a3f07f9ca6ab5ded8ef3d283fff45f6bcd5f", size = 477112 },
+    { url = "https://files.pythonhosted.org/packages/7d/05/fac3ef107e60d2a78532bed171a91669d4bb259e1236f5ea8c67a6976c75/safetensors-0.4.5-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:76ded72f69209c9780fdb23ea89e56d35c54ae6abcdec67ccb22af8e696e449a", size = 493373 },
+    { url = "https://files.pythonhosted.org/packages/cf/7a/825800ee8c68214b4fd3506d5e19209338c69b41e01c6e14dd13969cc8b9/safetensors-0.4.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2783956926303dcfeb1de91a4d1204cd4089ab441e622e7caee0642281109db3", size = 435422 },
+    { url = "https://files.pythonhosted.org/packages/5e/6c/7a3233c08bde558d6c33a41219119866cb596139a4673cc6c24024710ffd/safetensors-0.4.5-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:d94581aab8c6b204def4d7320f07534d6ee34cd4855688004a4354e63b639a35", size = 457382 },
+    { url = "https://files.pythonhosted.org/packages/a0/58/0b7bcba3788ff503990cf9278d611b56c029400612ba93e772c987b5aa03/safetensors-0.4.5-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:67e1e7cb8678bb1b37ac48ec0df04faf689e2f4e9e81e566b5c63d9f23748523", size = 619301 },
+    { url = "https://files.pythonhosted.org/packages/82/cc/9c2cf58611daf1c83ce5d37f9de66353e23fcda36008b13fd3409a760aa3/safetensors-0.4.5-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:dbd280b07e6054ea68b0cb4b16ad9703e7d63cd6890f577cb98acc5354780142", size = 605580 },
 ]
 
 [[package]]
@@ -3958,7 +3947,7 @@ wheels = [
 
 [[package]]
 name = "signature-core"
-version = "1.0.0.dev5"
+version = "1.0.0.dev8"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "albumentations" },
@@ -3978,9 +3967,9 @@ dependencies = [
     { name = "torchvision" },
     { name = "typed-json-dataclass" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev5/signature_core-1.0.0.dev5.tar.gz", hash = "sha256:db8ec2a3d7db1799679f49a031556a6d582ecfc01fe8aee606bbc5708c028b32" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev8/signature_core-1.0.0.dev8.tar.gz", hash = "sha256:a82c33bc0830ad9daf8b6c93c906db70f6d2b2d9a8927862f261ac6a07d19292" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev5/signature_core-1.0.0.dev5-py3-none-any.whl", hash = "sha256:1c57f1856d9a4def734d6ac6f7882f34d82051b49c6869c590976ea7130eee70" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev8/signature_core-1.0.0.dev8-py3-none-any.whl", hash = "sha256:11d18d392b7bb0cdf5dd1cf546e3a3657e2dabb7b0cdd720a7893b20bb81906c" },
 ]
 
 [[package]]
@@ -4006,7 +3995,7 @@ wheels = [
 
 [[package]]
 name = "signature-nodes"
-version = "0.0.0"
+version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
@@ -4051,12 +4040,12 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=0.26.2" },
     { name = "jq", specifier = ">=1.8.0" },
     { name = "matplotlib", specifier = ">=3.10.0" },
-    { name = "neurochain", specifier = "==2.0.0.dev5", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "neurochain", specifier = "==2.0.0.dev2", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "requests", specifier = ">=2.32.2" },
-    { name = "signature-core", specifier = "==1.0.0.dev5" },
-    { name = "signature-flows", specifier = "==1.0.5.dev4" },
+    { name = "requests", specifier = ">=2.32.3" },
+    { name = "signature-core", specifier = "==1.0.0.dev8", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "signature-flows", specifier = "==1.0.3", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "spandrel", specifier = ">=0.4.1" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "torch", specifier = ">=2.5.1" },
@@ -4164,7 +4153,7 @@ version = "1.3.1"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/sniffio/1.3.1/sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/sniffio/1.3.1/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2" },
+    { url = "https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2", size = 10235 },
 ]
 
 [[package]]
@@ -4427,48 +4416,48 @@ wheels = [
 [[package]]
 name = "tokenizers"
 version = "0.20.3"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "huggingface-hub" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3.tar.gz", hash = "sha256:2278b34c5d0dd78e087e1ca7f9b1dcbf129d80211afa645f214bd6e051037539" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/25/b1681c1c30ea3ea6e584ae3fffd552430b12faa599b558c4c4783f56d7ff/tokenizers-0.20.3.tar.gz", hash = "sha256:2278b34c5d0dd78e087e1ca7f9b1dcbf129d80211afa645f214bd6e051037539", size = 340513 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:585b51e06ca1f4839ce7759941e66766d7b060dccfdc57c4ca1e5b9a33013a90" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:61cbf11954f3b481d08723ebd048ba4b11e582986f9be74d2c3bdd9293a4538d" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ef820880d5e4e8484e2fa54ff8d297bb32519eaa7815694dc835ace9130a3eea" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:67ef4dcb8841a4988cd00dd288fb95dfc8e22ed021f01f37348fd51c2b055ba9" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:ff1ef8bd47a02b0dc191688ccb4da53600df5d4c9a05a4b68e1e3de4823e78eb" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:444d188186eab3148baf0615b522461b41b1f0cd58cd57b862ec94b6ac9780f1" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:37c04c032c1442740b2c2d925f1857885c07619224a533123ac7ea71ca5713da" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:453c7769d22231960ee0e883d1005c93c68015025a5e4ae56275406d94a3c907" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:4bb31f7b2847e439766aaa9cc7bccf7ac7088052deccdb2275c952d96f691c6a" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:843729bf0f991b29655a069a2ff58a4c24375a553c70955e15e37a90dd4e045c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-none-win32.whl", hash = "sha256:efcce3a927b1e20ca694ba13f7a68c59b0bd859ef71e441db68ee42cf20c2442" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp311-none-win_amd64.whl", hash = "sha256:88301aa0801f225725b6df5dea3d77c80365ff2362ca7e252583f2b4809c4cc0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:49d12a32e190fad0e79e5bdb788d05da2f20d8e006b13a70859ac47fecf6ab2f" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:282848cacfb9c06d5e51489f38ec5aa0b3cd1e247a023061945f71f41d949d73" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:abe4e08c7d0cd6154c795deb5bf81d2122f36daf075e0c12a8b050d824ef0a64" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:ca94fc1b73b3883c98f0c88c77700b13d55b49f1071dfd57df2b06f3ff7afd64" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:ef279c7e239f95c8bdd6ff319d9870f30f0d24915b04895f55b1adcf96d6c60d" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:16384073973f6ccbde9852157a4fdfe632bb65208139c9d0c0bd0176a71fd67f" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:312d522caeb8a1a42ebdec87118d99b22667782b67898a76c963c058a7e41d4f" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f2b7cb962564785a83dafbba0144ecb7f579f1d57d8c406cdaa7f32fe32f18ad" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:124c5882ebb88dadae1fc788a582299fcd3a8bd84fc3e260b9918cf28b8751f5" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:2b6e54e71f84c4202111a489879005cb14b92616a87417f6c102c833af961ea2" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-none-win32.whl", hash = "sha256:83d9bfbe9af86f2d9df4833c22e94d94750f1d0cd9bfb22a7bb90a86f61cdb1c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp312-none-win_amd64.whl", hash = "sha256:44def74cee574d609a36e17c8914311d1b5dbcfe37c55fd29369d42591b91cf2" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:e0b630e0b536ef0e3c8b42c685c1bc93bd19e98c0f1543db52911f8ede42cf84" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:a02d160d2b19bcbfdf28bd9a4bf11be4cb97d0499c000d95d4c4b1a4312740b6" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0e3d80d89b068bc30034034b5319218c7c0a91b00af19679833f55f3becb6945" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:174a54910bed1b089226512b4458ea60d6d6fd93060254734d3bc3540953c51c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:098b8a632b8656aa5802c46689462c5c48f02510f24029d71c208ec2c822e771" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:78c8c143e3ae41e718588281eb3e212c2b31623c9d6d40410ec464d7d6221fb5" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:2b26b0aadb18cd8701077362ba359a06683662d5cafe3e8e8aba10eb05c037f1" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:07d7851a72717321022f3774e84aa9d595a041d643fafa2e87fbc9b18711dac0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:bd44e48a430ada902c6266a8245f5036c4fe744fcb51f699999fbe82aa438797" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:a4c186bb006ccbe1f5cc4e0380d1ce7806f5955c244074fd96abc55e27b77f01" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-none-win32.whl", hash = "sha256:6e19e0f1d854d6ab7ea0c743d06e764d1d9a546932be0a67f33087645f00fe13" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/tokenizers/0.20.3/tokenizers-0.20.3-cp313-none-win_amd64.whl", hash = "sha256:d50ede425c7e60966a9680d41b58b3a0950afa1bb570488e2972fa61662c4273" },
+    { url = "https://files.pythonhosted.org/packages/c6/93/6742ef9206409d5ce1fdf44d5ca1687cdc3847ba0485424e2c731e6bcf67/tokenizers-0.20.3-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:585b51e06ca1f4839ce7759941e66766d7b060dccfdc57c4ca1e5b9a33013a90", size = 2674224 },
+    { url = "https://files.pythonhosted.org/packages/aa/14/e75ece72e99f6ef9ae07777ca9fdd78608f69466a5cecf636e9bd2f25d5c/tokenizers-0.20.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:61cbf11954f3b481d08723ebd048ba4b11e582986f9be74d2c3bdd9293a4538d", size = 2558991 },
+    { url = "https://files.pythonhosted.org/packages/46/54/033b5b2ba0c3ae01e026c6f7ced147d41a2fa1c573d00a66cb97f6d7f9b3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ef820880d5e4e8484e2fa54ff8d297bb32519eaa7815694dc835ace9130a3eea", size = 2892476 },
+    { url = "https://files.pythonhosted.org/packages/e6/b0/cc369fb3297d61f3311cab523d16d48c869dc2f0ba32985dbf03ff811041/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:67ef4dcb8841a4988cd00dd288fb95dfc8e22ed021f01f37348fd51c2b055ba9", size = 2802775 },
+    { url = "https://files.pythonhosted.org/packages/1a/74/62ad983e8ea6a63e04ed9c5be0b605056bf8aac2f0125f9b5e0b3e2b89fa/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:ff1ef8bd47a02b0dc191688ccb4da53600df5d4c9a05a4b68e1e3de4823e78eb", size = 3086138 },
+    { url = "https://files.pythonhosted.org/packages/6b/ac/4637ba619db25094998523f9e6f5b456e1db1f8faa770a3d925d436db0c3/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:444d188186eab3148baf0615b522461b41b1f0cd58cd57b862ec94b6ac9780f1", size = 3098076 },
+    { url = "https://files.pythonhosted.org/packages/58/ce/9793f2dc2ce529369807c9c74e42722b05034af411d60f5730b720388c7d/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:37c04c032c1442740b2c2d925f1857885c07619224a533123ac7ea71ca5713da", size = 3379650 },
+    { url = "https://files.pythonhosted.org/packages/50/f6/2841de926bc4118af996eaf0bdf0ea5b012245044766ffc0347e6c968e63/tokenizers-0.20.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:453c7769d22231960ee0e883d1005c93c68015025a5e4ae56275406d94a3c907", size = 2994005 },
+    { url = "https://files.pythonhosted.org/packages/a3/b2/00915c4fed08e9505d37cf6eaab45b12b4bff8f6719d459abcb9ead86a4b/tokenizers-0.20.3-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:4bb31f7b2847e439766aaa9cc7bccf7ac7088052deccdb2275c952d96f691c6a", size = 8977488 },
+    { url = "https://files.pythonhosted.org/packages/e9/ac/1c069e7808181ff57bcf2d39e9b6fbee9133a55410e6ebdaa89f67c32e83/tokenizers-0.20.3-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:843729bf0f991b29655a069a2ff58a4c24375a553c70955e15e37a90dd4e045c", size = 9294935 },
+    { url = "https://files.pythonhosted.org/packages/50/47/722feb70ee68d1c4412b12d0ea4acc2713179fd63f054913990f9e259492/tokenizers-0.20.3-cp311-none-win32.whl", hash = "sha256:efcce3a927b1e20ca694ba13f7a68c59b0bd859ef71e441db68ee42cf20c2442", size = 2197175 },
+    { url = "https://files.pythonhosted.org/packages/75/68/1b4f928b15a36ed278332ac75d66d7eb65d865bf344d049c452c18447bf9/tokenizers-0.20.3-cp311-none-win_amd64.whl", hash = "sha256:88301aa0801f225725b6df5dea3d77c80365ff2362ca7e252583f2b4809c4cc0", size = 2381616 },
+    { url = "https://files.pythonhosted.org/packages/07/00/92a08af2a6b0c88c50f1ab47d7189e695722ad9714b0ee78ea5e1e2e1def/tokenizers-0.20.3-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:49d12a32e190fad0e79e5bdb788d05da2f20d8e006b13a70859ac47fecf6ab2f", size = 2667951 },
+    { url = "https://files.pythonhosted.org/packages/ec/9a/e17a352f0bffbf415cf7d73756f5c73a3219225fc5957bc2f39d52c61684/tokenizers-0.20.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:282848cacfb9c06d5e51489f38ec5aa0b3cd1e247a023061945f71f41d949d73", size = 2555167 },
+    { url = "https://files.pythonhosted.org/packages/27/37/d108df55daf4f0fcf1f58554692ff71687c273d870a34693066f0847be96/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:abe4e08c7d0cd6154c795deb5bf81d2122f36daf075e0c12a8b050d824ef0a64", size = 2898389 },
+    { url = "https://files.pythonhosted.org/packages/b2/27/32f29da16d28f59472fa7fb38e7782069748c7e9ab9854522db20341624c/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:ca94fc1b73b3883c98f0c88c77700b13d55b49f1071dfd57df2b06f3ff7afd64", size = 2795866 },
+    { url = "https://files.pythonhosted.org/packages/29/4e/8a9a3c89e128c4a40f247b501c10279d2d7ade685953407c4d94c8c0f7a7/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:ef279c7e239f95c8bdd6ff319d9870f30f0d24915b04895f55b1adcf96d6c60d", size = 3085446 },
+    { url = "https://files.pythonhosted.org/packages/b4/3b/a2a7962c496ebcd95860ca99e423254f760f382cd4bd376f8895783afaf5/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:16384073973f6ccbde9852157a4fdfe632bb65208139c9d0c0bd0176a71fd67f", size = 3094378 },
+    { url = "https://files.pythonhosted.org/packages/1f/f4/a8a33f0192a1629a3bd0afcad17d4d221bbf9276da4b95d226364208d5eb/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:312d522caeb8a1a42ebdec87118d99b22667782b67898a76c963c058a7e41d4f", size = 3385755 },
+    { url = "https://files.pythonhosted.org/packages/9e/65/c83cb3545a65a9eaa2e13b22c93d5e00bd7624b354a44adbdc93d5d9bd91/tokenizers-0.20.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f2b7cb962564785a83dafbba0144ecb7f579f1d57d8c406cdaa7f32fe32f18ad", size = 2997679 },
+    { url = "https://files.pythonhosted.org/packages/55/e9/a80d4e592307688a67c7c59ab77e03687b6a8bd92eb5db763a2c80f93f57/tokenizers-0.20.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:124c5882ebb88dadae1fc788a582299fcd3a8bd84fc3e260b9918cf28b8751f5", size = 8989296 },
+    { url = "https://files.pythonhosted.org/packages/90/af/60c957af8d2244321124e893828f1a4817cde1a2d08d09d423b73f19bd2f/tokenizers-0.20.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:2b6e54e71f84c4202111a489879005cb14b92616a87417f6c102c833af961ea2", size = 9303621 },
+    { url = "https://files.pythonhosted.org/packages/be/a9/96172310ee141009646d63a1ca267c099c462d747fe5ef7e33f74e27a683/tokenizers-0.20.3-cp312-none-win32.whl", hash = "sha256:83d9bfbe9af86f2d9df4833c22e94d94750f1d0cd9bfb22a7bb90a86f61cdb1c", size = 2188979 },
+    { url = "https://files.pythonhosted.org/packages/bd/68/61d85ae7ae96dde7d0974ff3538db75d5cdc29be2e4329cd7fc51a283e22/tokenizers-0.20.3-cp312-none-win_amd64.whl", hash = "sha256:44def74cee574d609a36e17c8914311d1b5dbcfe37c55fd29369d42591b91cf2", size = 2380725 },
+    { url = "https://files.pythonhosted.org/packages/07/19/36e9eaafb229616cb8502b42030fa7fe347550e76cb618de71b498fc3222/tokenizers-0.20.3-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:e0b630e0b536ef0e3c8b42c685c1bc93bd19e98c0f1543db52911f8ede42cf84", size = 2666813 },
+    { url = "https://files.pythonhosted.org/packages/b9/c7/e2ce1d4f756c8a62ef93fdb4df877c2185339b6d63667b015bf70ea9d34b/tokenizers-0.20.3-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:a02d160d2b19bcbfdf28bd9a4bf11be4cb97d0499c000d95d4c4b1a4312740b6", size = 2555354 },
+    { url = "https://files.pythonhosted.org/packages/7c/cf/5309c2d173a6a67f9ec8697d8e710ea32418de6fd8541778032c202a1c3e/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0e3d80d89b068bc30034034b5319218c7c0a91b00af19679833f55f3becb6945", size = 2897745 },
+    { url = "https://files.pythonhosted.org/packages/2c/e5/af3078e32f225e680e69d61f78855880edb8d53f5850a1834d519b2b103f/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:174a54910bed1b089226512b4458ea60d6d6fd93060254734d3bc3540953c51c", size = 2794385 },
+    { url = "https://files.pythonhosted.org/packages/0b/a7/bc421fe46650cc4eb4a913a236b88c243204f32c7480684d2f138925899e/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:098b8a632b8656aa5802c46689462c5c48f02510f24029d71c208ec2c822e771", size = 3084580 },
+    { url = "https://files.pythonhosted.org/packages/c6/22/97e1e95ee81f75922c9f569c23cb2b1fdc7f5a7a29c4c9fae17e63f751a6/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:78c8c143e3ae41e718588281eb3e212c2b31623c9d6d40410ec464d7d6221fb5", size = 3093581 },
+    { url = "https://files.pythonhosted.org/packages/d5/14/f0df0ee3b9e516121e23c0099bccd7b9f086ba9150021a750e99b16ce56f/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:2b26b0aadb18cd8701077362ba359a06683662d5cafe3e8e8aba10eb05c037f1", size = 3385934 },
+    { url = "https://files.pythonhosted.org/packages/66/52/7a171bd4929e3ffe61a29b4340fe5b73484709f92a8162a18946e124c34c/tokenizers-0.20.3-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:07d7851a72717321022f3774e84aa9d595a041d643fafa2e87fbc9b18711dac0", size = 2997311 },
+    { url = "https://files.pythonhosted.org/packages/7c/64/f1993bb8ebf775d56875ca0d50a50f2648bfbbb143da92fe2e6ceeb4abd5/tokenizers-0.20.3-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:bd44e48a430ada902c6266a8245f5036c4fe744fcb51f699999fbe82aa438797", size = 8988601 },
+    { url = "https://files.pythonhosted.org/packages/d6/3f/49fa63422159bbc2f2a4ac5bfc597d04d4ec0ad3d2ef46649b5e9a340e37/tokenizers-0.20.3-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:a4c186bb006ccbe1f5cc4e0380d1ce7806f5955c244074fd96abc55e27b77f01", size = 9303950 },
+    { url = "https://files.pythonhosted.org/packages/66/11/79d91aeb2817ad1993ef61c690afe73e6dbedbfb21918b302ef5a2ba9bfb/tokenizers-0.20.3-cp313-none-win32.whl", hash = "sha256:6e19e0f1d854d6ab7ea0c743d06e764d1d9a546932be0a67f33087645f00fe13", size = 2188941 },
+    { url = "https://files.pythonhosted.org/packages/c2/ff/ac8410f868fb8b14b5e619efa304aa119cb8a40bd7df29fc81a898e64f99/tokenizers-0.20.3-cp313-none-win_amd64.whl", hash = "sha256:d50ede425c7e60966a9680d41b58b3a0950afa1bb570488e2972fa61662c4273", size = 2380269 },
 ]
 
 [[package]]
@@ -4522,7 +4511,7 @@ wheels = [
 [[package]]
 name = "torch"
 version = "2.5.1"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
     { name = "fsspec" },
@@ -4537,62 +4526,63 @@ dependencies = [
     { name = "nvidia-curand-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-cusolver-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-cusparse-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
+    { name = "nvidia-cusparselt-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-nccl-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-nvjitlink-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-nvtx-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "setuptools", marker = "python_full_version >= '3.12'" },
     { name = "sympy" },
-    { name = "triton", marker = "python_full_version < '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux'" },
+    { name = "triton", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "typing-extensions" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:de5b7d6740c4b636ef4db92be922f0edc425b65ed78c5076c43c42d362a45457" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:340ce0432cad0d37f5a31be666896e16788f1adf8ad7be481196b503dad675b9" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:603c52d2fe06433c18b747d25f5c333f9c1d58615620578c326d66f258686f9a" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp311-none-macosx_11_0_arm64.whl", hash = "sha256:31f8c39660962f9ae4eeec995e3049b5492eb7360dd4f07377658ef4d728fa4c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:ed231a4b3a5952177fafb661213d690a72caaad97d5824dd4fc17ab9e15cec03" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:3f4b7f10a247e0dcd7ea97dc2d3bfbfc90302ed36d7f3952b0008d0df264e697" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:73e58e78f7d220917c5dbfad1a40e09df9929d3b95d25e57d9f8558f84c9a11c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp312-none-macosx_11_0_arm64.whl", hash = "sha256:8c712df61101964eb11910a846514011f0b6f5920c55dbf567bff8a34163d5b1" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torch/2.5.1/torch-2.5.1-cp313-cp313-manylinux1_x86_64.whl", hash = "sha256:9b61edf3b4f6e3b0e0adda8b3960266b9009d02b37555971f4d1c8f7a05afed7" },
+    { url = "https://files.pythonhosted.org/packages/d1/35/e8b2daf02ce933e4518e6f5682c72fd0ed66c15910ea1fb4168f442b71c4/torch-2.5.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:de5b7d6740c4b636ef4db92be922f0edc425b65ed78c5076c43c42d362a45457", size = 906474467 },
+    { url = "https://files.pythonhosted.org/packages/40/04/bd91593a4ca178ece93ca55f27e2783aa524aaccbfda66831d59a054c31e/torch-2.5.1-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:340ce0432cad0d37f5a31be666896e16788f1adf8ad7be481196b503dad675b9", size = 91919450 },
+    { url = "https://files.pythonhosted.org/packages/0d/4a/e51420d46cfc90562e85af2fee912237c662ab31140ab179e49bd69401d6/torch-2.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:603c52d2fe06433c18b747d25f5c333f9c1d58615620578c326d66f258686f9a", size = 203098237 },
+    { url = "https://files.pythonhosted.org/packages/d0/db/5d9cbfbc7968d79c5c09a0bc0bc3735da079f2fd07cc10498a62b320a480/torch-2.5.1-cp311-none-macosx_11_0_arm64.whl", hash = "sha256:31f8c39660962f9ae4eeec995e3049b5492eb7360dd4f07377658ef4d728fa4c", size = 63884466 },
+    { url = "https://files.pythonhosted.org/packages/8b/5c/36c114d120bfe10f9323ed35061bc5878cc74f3f594003854b0ea298942f/torch-2.5.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:ed231a4b3a5952177fafb661213d690a72caaad97d5824dd4fc17ab9e15cec03", size = 906389343 },
+    { url = "https://files.pythonhosted.org/packages/6d/69/d8ada8b6e0a4257556d5b4ddeb4345ea8eeaaef3c98b60d1cca197c7ad8e/torch-2.5.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:3f4b7f10a247e0dcd7ea97dc2d3bfbfc90302ed36d7f3952b0008d0df264e697", size = 91811673 },
+    { url = "https://files.pythonhosted.org/packages/5f/ba/607d013b55b9fd805db2a5c2662ec7551f1910b4eef39653eeaba182c5b2/torch-2.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:73e58e78f7d220917c5dbfad1a40e09df9929d3b95d25e57d9f8558f84c9a11c", size = 203046841 },
+    { url = "https://files.pythonhosted.org/packages/57/6c/bf52ff061da33deb9f94f4121fde7ff3058812cb7d2036c97bc167793bd1/torch-2.5.1-cp312-none-macosx_11_0_arm64.whl", hash = "sha256:8c712df61101964eb11910a846514011f0b6f5920c55dbf567bff8a34163d5b1", size = 63858109 },
+    { url = "https://files.pythonhosted.org/packages/69/72/20cb30f3b39a9face296491a86adb6ff8f1a47a897e4d14667e6cf89d5c3/torch-2.5.1-cp313-cp313-manylinux1_x86_64.whl", hash = "sha256:9b61edf3b4f6e3b0e0adda8b3960266b9009d02b37555971f4d1c8f7a05afed7", size = 906393265 },
 ]
 
 [[package]]
 name = "torchaudio"
 version = "2.5.1"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "torch" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:7005354aa7dda9ef908e13c2566ee1fe0bd6d7f5bae0583b5e53016cd229fc34" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:7af3f7f92fd33bc9f036a60cdeda4cbeb6bccebd18eae89776dd1e8ed042672e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:4ba24769a72bd686903feaf1040c895d710af2ffbcd25ee7a9794ee285561b26" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:cba8ccab1bff0496ccdc71ebbdcd31d0f7bf97ff3c46276425ff86460f6f8967" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f1cbfdfd1bbdfbe7289d47a74f36ff6c5d87c3205606202fef5a7fb693f61cf0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:9c8fb06fbd8d2016e7b7caf15a3231867c792a2e3b0f2f8f9013633e9c2ce412" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:6bb65416405f40e00b20701257c16e7493bfdd7188e02e87cc5b389c31c10c2c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchaudio/2.5.1/torchaudio-2.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:ec8f12d6be12aed248a0d65a76c7bb341ee5eef969fe2e9dc3154c7cfba1bdf4" },
+    { url = "https://files.pythonhosted.org/packages/6a/97/1780e3dd8733da30ff1051b8cbd8006e4824b76028558a58c31e790c09cd/torchaudio-2.5.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:7005354aa7dda9ef908e13c2566ee1fe0bd6d7f5bae0583b5e53016cd229fc34", size = 1801479 },
+    { url = "https://files.pythonhosted.org/packages/41/33/0f21b15f8e231bb55578f6b32e8c18675585b7bf97cb0aee96b1591e4193/torchaudio-2.5.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:7af3f7f92fd33bc9f036a60cdeda4cbeb6bccebd18eae89776dd1e8ed042672e", size = 3374576 },
+    { url = "https://files.pythonhosted.org/packages/0c/0e/89294062dbca27ed8bc4a89d9ceea0bd64b45ebc005e0306871b3f55bb31/torchaudio-2.5.1-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:4ba24769a72bd686903feaf1040c895d710af2ffbcd25ee7a9794ee285561b26", size = 1672185 },
+    { url = "https://files.pythonhosted.org/packages/32/6a/019e426ab4af487167182a19e115fc03234fe28bc30e22cb0e1a9958f70e/torchaudio-2.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:cba8ccab1bff0496ccdc71ebbdcd31d0f7bf97ff3c46276425ff86460f6f8967", size = 2439124 },
+    { url = "https://files.pythonhosted.org/packages/03/ab/151037a41e2cf4a5d489dfe5e7196b755e0fd83958d5ca7ad8ed85afcb1c/torchaudio-2.5.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f1cbfdfd1bbdfbe7289d47a74f36ff6c5d87c3205606202fef5a7fb693f61cf0", size = 1798042 },
+    { url = "https://files.pythonhosted.org/packages/34/1c/345d11bf492a1414dced70a9572ff1eb2c73013578d24fb4d728a91a09d1/torchaudio-2.5.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:9c8fb06fbd8d2016e7b7caf15a3231867c792a2e3b0f2f8f9013633e9c2ce412", size = 3371851 },
+    { url = "https://files.pythonhosted.org/packages/1c/74/a27c6d0d4c4fad90462f08e99222d3557f118beb8fb560b87d607a727a0a/torchaudio-2.5.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:6bb65416405f40e00b20701257c16e7493bfdd7188e02e87cc5b389c31c10c2c", size = 1668849 },
+    { url = "https://files.pythonhosted.org/packages/99/a1/4220b73ba6e083229099892d9126e01836afe96cf7e2fbfe60b327506f49/torchaudio-2.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:ec8f12d6be12aed248a0d65a76c7bb341ee5eef969fe2e9dc3154c7cfba1bdf4", size = 2435747 },
 ]
 
 [[package]]
 name = "torchvision"
 version = "0.20.1"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
     { name = "pillow" },
     { name = "torch" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:344b339e15e6bbb59ee0700772616d0afefd209920c762b1604368d8c3458322" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:86f6523dee420000fe14c3527f6c8e0175139fda7d995b187f54a0b0ebec7eb6" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:a40d766345927639da322c693934e5f91b1ba2218846c7104b868dea2314ce8e" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp311-cp311-win_amd64.whl", hash = "sha256:5b501d5c04b034d2ecda96a31ed050e383cf8201352e4c9276ca249cbecfded0" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:1a31256ff945d64f006bb306813a7c95a531fe16bfb2535c837dd4c104533d7a" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:17cd78adddf81dac57d7dccc9277a4d686425b1c55715f308769770cb26cad5c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:9f853ba4497ac4691815ad41b523ee23cf5ba4f87b1ce869d704052e233ca8b7" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/torchvision/0.20.1/torchvision-0.20.1-cp312-cp312-win_amd64.whl", hash = "sha256:4a330422c36dbfc946d3a6c1caec3489db07ecdf3675d83369adb2e5a0ca17c4" },
+    { url = "https://files.pythonhosted.org/packages/28/57/4d7ad90be612f5ac6c4bdafcb0ff13e818e14a340a88c8ca00d9ed8c2dad/torchvision-0.20.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:344b339e15e6bbb59ee0700772616d0afefd209920c762b1604368d8c3458322", size = 1787548 },
+    { url = "https://files.pythonhosted.org/packages/de/e9/e190ecec448d5a2abad8348cf085fcb39962a491e3f40dcb023721e04feb/torchvision-0.20.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:86f6523dee420000fe14c3527f6c8e0175139fda7d995b187f54a0b0ebec7eb6", size = 7241222 },
+    { url = "https://files.pythonhosted.org/packages/b1/a3/cbb8177e5e379f0c040b00c6f80f14d323a97e30495d7115d169b101b2f7/torchvision-0.20.1-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:a40d766345927639da322c693934e5f91b1ba2218846c7104b868dea2314ce8e", size = 14267510 },
+    { url = "https://files.pythonhosted.org/packages/69/55/ce836703ff77bb21582c3098d5311f8ddde7eadc7eab04be9561961f4725/torchvision-0.20.1-cp311-cp311-win_amd64.whl", hash = "sha256:5b501d5c04b034d2ecda96a31ed050e383cf8201352e4c9276ca249cbecfded0", size = 1562402 },
+    { url = "https://files.pythonhosted.org/packages/c5/eb/4ba19616378f2bc085999432fded2b7dfdbdccc6dd0fc293203452508100/torchvision-0.20.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:1a31256ff945d64f006bb306813a7c95a531fe16bfb2535c837dd4c104533d7a", size = 1787553 },
+    { url = "https://files.pythonhosted.org/packages/d4/75/00a852275ade58d3dc474530f7a7b6bc999a817148f0eb59d4fde12eb955/torchvision-0.20.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:17cd78adddf81dac57d7dccc9277a4d686425b1c55715f308769770cb26cad5c", size = 7240323 },
+    { url = "https://files.pythonhosted.org/packages/af/f0/ca1445406eb12cbeb7a41fc833a1941ede78e7c55621198b83ecd7bcfd0f/torchvision-0.20.1-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:9f853ba4497ac4691815ad41b523ee23cf5ba4f87b1ce869d704052e233ca8b7", size = 14266936 },
+    { url = "https://files.pythonhosted.org/packages/c3/18/00993d420b1d6e88582e51d4bc82c824c99a2e9c045d50eaf9b34fff729a/torchvision-0.20.1-cp312-cp312-win_amd64.whl", hash = "sha256:4a330422c36dbfc946d3a6c1caec3489db07ecdf3675d83369adb2e5a0ca17c4", size = 1562392 },
 ]
 
 [[package]]
@@ -4610,7 +4600,7 @@ wheels = [
 [[package]]
 name = "transformers"
 version = "4.46.3"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
     { name = "huggingface-hub" },
@@ -4623,21 +4613,21 @@ dependencies = [
     { name = "tokenizers" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/transformers/4.46.3/transformers-4.46.3.tar.gz", hash = "sha256:8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/5a/58f96c83e566f907ae39f16d4401bbefd8bb85c60bd1e6a95c419752ab90/transformers-4.46.3.tar.gz", hash = "sha256:8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc", size = 8627944 }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/transformers/4.46.3/transformers-4.46.3-py3-none-any.whl", hash = "sha256:a12ef6f52841fd190a3e5602145b542d03507222f2c64ebb7ee92e8788093aef" },
+    { url = "https://files.pythonhosted.org/packages/51/51/b87caa939fedf307496e4dbf412f4b909af3d9ca8b189fc3b65c1faa456f/transformers-4.46.3-py3-none-any.whl", hash = "sha256:a12ef6f52841fd190a3e5602145b542d03507222f2c64ebb7ee92e8788093aef", size = 10034536 },
 ]
 
 [[package]]
 name = "triton"
 version = "3.1.0"
-source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock", marker = "(python_full_version < '3.13' and platform_machine != 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'linux')" },
 ]
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/triton/3.1.0/triton-3.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0f34f6e7885d1bf0eaaf7ba875a5f0ce6f3c13ba98f9503651c1e6dc6757ed5c" },
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/triton/3.1.0/triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8182f42fd8080a7d39d666814fa36c5e30cc00ea7eeeb1a2983dbb4c99a0fdc" },
+    { url = "https://files.pythonhosted.org/packages/86/17/d9a5cf4fcf46291856d1e90762e36cbabd2a56c7265da0d1d9508c8e3943/triton-3.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0f34f6e7885d1bf0eaaf7ba875a5f0ce6f3c13ba98f9503651c1e6dc6757ed5c", size = 209506424 },
+    { url = "https://files.pythonhosted.org/packages/78/eb/65f5ba83c2a123f6498a3097746607e5b2f16add29e36765305e4ac7fdd8/triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8182f42fd8080a7d39d666814fa36c5e30cc00ea7eeeb1a2983dbb4c99a0fdc", size = 209551444 },
 ]
 
 [[package]]
