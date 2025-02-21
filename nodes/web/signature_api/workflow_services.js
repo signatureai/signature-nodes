@@ -1,6 +1,6 @@
 import { getAccessToken, signatureApiBaseUrl } from "./main.js";
 
-export const getWorkflowsListForForm = async (page = 0, limit = 100) => {
+export const getWorkflowsListForForm = async (element, page = 0, limit = 100) => {
   const offset = page * limit;
   const accessToken = getAccessToken();
   const url = `${signatureApiBaseUrl}/api/v1_management/workflow?offset=${offset}&limit=${limit}`;
@@ -19,9 +19,28 @@ export const getWorkflowsListForForm = async (page = 0, limit = 100) => {
   const parsedResponse = await response.json();
   if (parsedResponse.result && parsedResponse.result.data && parsedResponse.result.data.length !== 0) {
     return parsedResponse.result.data.map((workflow) => {
-      return $el("option", { value: workflow.uuid, textContent: `${workflow.name} (${workflow.uuid})` });
+      return element("option", { value: workflow.uuid, textContent: `${workflow.name} (${workflow.uuid})` });
     });
   } else {
     return [];
   }
+};
+
+export const getWorkflowById = async (workflowId) => {
+  const accessToken = getAccessToken();
+  const url = `${signatureApiBaseUrl}/api/v1_management/workflow/${workflowId}`;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get workflow: ${response.status} ${response.statusText}`);
+  }
+
+  const parsedResponse = await response.json();
+  return parsedResponse.result;
 };

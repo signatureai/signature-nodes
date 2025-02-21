@@ -22,20 +22,6 @@ SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("sr
 MAX_INT: int = sys.maxsize
 MAX_FLOAT: float = sys.float_info.max
 
-script_file = realpath(__file__)
-script_folder = dirname(script_file)
-if "custom_nodes" in script_folder:
-    base_comfy_dir = script_folder.split("custom_nodes")[0]
-    signature_js = "signature.js"
-    signature_js_path = join(script_folder, "nodes/web/")
-    web_extensions = join(base_comfy_dir, "web/extensions/")
-    src = join(signature_js_path, signature_js)
-    dst = join(web_extensions, signature_js)
-    if exists(web_extensions):
-        if exists(dst):
-            remove(dst)
-        copyfile(src, dst)
-
 
 SIGNATURE_CORE_AVAILABLE = False
 SIGNATURE_FLOWS_AVAILABLE = False

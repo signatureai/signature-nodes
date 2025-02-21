@@ -3,9 +3,10 @@ import {
   deleteAuthTokens,
   getAccessToken,
   getRefreshToken,
+  getWorkflowById,
   getWorkflowsListForForm,
   loginRequest,
-  refreshTokenRequest
+  refreshTokenRequest,
 } from "./signature_api/main.js";
 
 function showMessage(message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) {
@@ -84,6 +85,8 @@ function getLoadingSpinner(color) {
 async function getManifest(workflow) {
   try {
     const url = window.location.href + "flow/create_manifest";
+
+    console.log("url", url);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -111,17 +114,20 @@ async function getManifest(workflow) {
 // Wraps the next function in an auth check
 async function requiresAuth(app, next) {
   try {
+    const dropdownMenu = document.querySelector("#pv_id_9_0_list");
+    dropdownMenu.style.display = "none";
     // Try to get tokens
     let refreshToken = getRefreshToken();
     let accessToken = getAccessToken();
-
     if (refreshToken) {
       console.log("Trying to refresh token");
       try {
         const refreshTokenResponse = await refreshTokenRequest();
         if (refreshTokenResponse.success) {
-          accessToken = refreshTokenResponse.result.accessToken;
-          refreshToken = refreshTokenResponse.result.refreshToken;
+          console.log("refreshTokenResponse", refreshTokenResponse);
+          accessToken = refreshTokenResponse.accessToken;
+          refreshToken = refreshTokenResponse.refreshToken;
+          next(app);
           console.log("Token refreshed successfully");
         } else {
           throw new Error("Refresh token failed, success was false");
@@ -184,6 +190,7 @@ async function saveWorkflow(app) {
           description: form.querySelector("textarea").value,
           type: form.querySelector("select").value,
           coverImage: form.querySelector('input[type="file"]').files[0],
+          coverImageUrl: form.querySelector("#image-preview").src,
         };
         app.ui.dialog.close();
 
@@ -212,10 +219,14 @@ async function saveWorkflow(app) {
         submitData.append("workflowName", formData.name);
         submitData.append("workflowDescription", formData.description);
         submitData.append("workflowType", formData.type.toLowerCase());
-        submitData.append(
-          "coverImage",
-          formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
-        );
+        if (!formData.coverImage && formData.coverImageUrl) {
+          submitData.append("coverImageUrl", formData.coverImageUrl);
+        } else {
+          submitData.append(
+            "coverImage",
+            formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
+          );
+        }
 
         const workflowString = JSON.stringify(workflow, null, 2);
         const workflowBlob = new Blob([workflowString], {
@@ -236,6 +247,7 @@ async function saveWorkflow(app) {
         submitData.append("manifest", manifestBlob, "manifest.json");
 
         const url = window.location.href + "flow/submit_workflow";
+
         const response = await fetch(url, {
           method: "POST",
           body: submitData,
@@ -344,7 +356,6 @@ function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
   );
 }
 
-
 function showLoginForm() {
   const formContent = $el("div", [
     $el("h2", {
@@ -352,7 +363,8 @@ function showLoginForm() {
         textAlign: "center",
         marginBottom: "20px",
         color: "#ffffff",
-        width: "500px",
+        width: "100%",
+        maxWidth: "500px",
       },
       textContent: "Login",
     }),
@@ -360,7 +372,9 @@ function showLoginForm() {
       "div",
       {
         style: {
-          width: "500px",
+          width: "90vw",
+          maxWidth: "500px",
+          margin: "0 auto",
         },
       },
       [
@@ -374,7 +388,11 @@ function showLoginForm() {
           },
           [
             $el("label", {
-              style: { display: "block", marginBottom: "5px" },
+              style: {
+                display: "block",
+                marginBottom: "5px",
+                fontSize: "clamp(14px, 2vw, 16px)",
+              },
               textContent: "Email",
             }),
             $el("input", {
@@ -382,13 +400,15 @@ function showLoginForm() {
               placeholder: "Email",
               style: {
                 width: "100%",
-                padding: "5px",
+                padding: "clamp(4px, 1vw, 8px)",
                 borderRadius: "4px",
                 border: "1px solid #ccc",
+                fontSize: "clamp(14px, 2vw, 16px)",
               },
             }),
           ]
         ),
+        // Password field
         $el(
           "div",
           {
@@ -398,7 +418,11 @@ function showLoginForm() {
           },
           [
             $el("label", {
-              style: { display: "block", marginBottom: "5px" },
+              style: {
+                display: "block",
+                marginBottom: "5px",
+                fontSize: "clamp(14px, 2vw, 16px)",
+              },
               textContent: "Password",
             }),
             $el("input", {
@@ -406,13 +430,15 @@ function showLoginForm() {
               placeholder: "Password",
               style: {
                 width: "100%",
-                padding: "5px",
+                padding: "clamp(4px, 1vw, 8px)",
                 borderRadius: "4px",
                 border: "1px solid #ccc",
+                fontSize: "clamp(14px, 2vw, 16px)",
               },
             }),
           ]
         ),
+        // Login button
         $el("div", {
           innerHTML: `
           <a href="#"
@@ -420,17 +446,19 @@ function showLoginForm() {
                display: flex;
                align-items: center;
                gap: 8px;
-               margin: 10px;
-               padding: 12px 24px;
+               margin: clamp(8px, 2vw, 10px);
+               padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
                background-color: #2D9CDB;
                color: white;
                border: none;
                border-radius: 6px;
                cursor: pointer;
                text-decoration: none;
-               font-size: 16px;
+               font-size: clamp(14px, 2vw, 16px);
                transition: background-color 0.2s ease;
                justify-content: center;
+               min-width: 120px;
+               max-width: 100%;
              "
              onmouseover="this.style.backgroundColor='#2486BE'"
              onmouseout="this.style.backgroundColor='#2D9CDB'"
@@ -444,19 +472,19 @@ function showLoginForm() {
   ]);
 
   app.ui.dialog.show(formContent);
-
   return formContent;
 }
 
 function showForm() {
-  const formContent = $el("div", [
+  const formContent = $el("div", { id: "signature-workflow-submission-form" }, [
     // Add title
     $el("h2", {
       style: {
         textAlign: "center",
         marginBottom: "20px",
         color: "#ffffff",
-        width: "500px",
+        width: "100%",
+        maxWidth: "500px",
       },
       textContent: "Workflow Submission",
     }),
@@ -464,20 +492,27 @@ function showForm() {
       "div",
       {
         style: {
-          width: "800px",
+          width: "90vw",
+          maxWidth: "800px",
+          margin: "0 auto",
         },
       },
       [
-        // Base Workflow ID field (new)
-        $el("div", { style: { marginBottom: "10px" } }, [
+        // Base Workflow ID field
+        $el("div", { style: { marginBottom: "clamp(10px, 2vw, 20px)" } }, [
           $el("label", {
-            style: { display: "block", marginBottom: "5px" },
+            style: {
+              display: "block",
+              marginBottom: "5px",
+              fontSize: "clamp(14px, 2vw, 16px)",
+              color: "white",
+            },
             textContent: "Workflow",
           }),
           $el("div", {
             style: {
               width: "100%",
-              maxHeight: "80px",
+              maxHeight: "clamp(80px, 15vh, 120px)",
               overflowY: "auto",
               border: "1px solid #ccc",
               borderRadius: "4px",
@@ -489,7 +524,7 @@ function showForm() {
               let lastPageReached = false;
               const initialOptions = [
                 $el("option", { value: "", textContent: "Create new workflow" }),
-                ...(await getWorkflowsListForForm(page, limit)),
+                ...(await getWorkflowsListForForm($el, page, limit)),
               ];
               container.append(
                 ...initialOptions.map((opt, index) =>
@@ -505,25 +540,49 @@ function showForm() {
                       el.setAttribute("data-workflow-id", opt.value || "");
                       if (index === 0) el.setAttribute("data-selected", "true");
                     },
-                    onclick: (e) => {
+                    onclick: async (e) => {
                       container.querySelectorAll("div").forEach((div) => {
                         div.style.backgroundColor = "transparent";
                         div.removeAttribute("data-selected");
                       });
                       e.target.style.backgroundColor = "#2D9CDB";
                       e.target.setAttribute("data-selected", "true");
+                      const workflowId = e.target.getAttribute("data-workflow-id");
+                      const workflow = await getWorkflowById(workflowId);
+
+                      // Populate form fields with workflow data
+                      if (workflow) {
+                        const formContainer = document.getElementById("signature-workflow-submission-form");
+                        const nameInput = formContainer.querySelector('input[type="text"]');
+                        const descriptionInput = formContainer.querySelector("textarea");
+                        const typeSelect = formContainer.querySelector("select");
+                        const preview = document.getElementById("image-preview");
+
+                        // Update text fields and select
+                        if (nameInput && workflow.name) nameInput.value = workflow.name;
+                        if (descriptionInput && workflow.description) descriptionInput.value = workflow.description;
+                        if (typeSelect && workflow.type) {
+                          const type = workflow.type.toLowerCase();
+                          if (Array.from(typeSelect.options).some((opt) => opt.value === type)) {
+                            typeSelect.value = type;
+                          }
+                        }
+                        if (workflow.coverImageUrl) {
+                          preview.src = workflow.coverImageUrl;
+                          preview.style.display = "block";
+                        }
+                      }
                     },
                   })
                 )
               );
 
               container.addEventListener("scroll", async (e) => {
-                console.log("scroll");
                 if (container.scrollHeight - container.scrollTop === container.clientHeight && !lastPageReached) {
                   console.log("Loading next workflows page");
                   // Load more items
                   page++;
-                  const nextOptions = await getWorkflowsListForForm(page, limit);
+                  const nextOptions = await getWorkflowsListForForm($el, page, limit);
                   if (nextOptions.length === 0 || nextOptions.length < limit) {
                     lastPageReached = true;
                   }
@@ -557,41 +616,58 @@ function showForm() {
           }),
         ]),
         // Name field
-        $el("div", { style: { marginBottom: "10px" } }, [
+        $el("div", { style: { marginBottom: "clamp(10px, 2vw, 20px)" } }, [
           $el("label", {
-            style: { display: "block", marginBottom: "5px" },
+            style: {
+              display: "block",
+              marginBottom: "5px",
+              fontSize: "clamp(14px, 2vw, 16px)",
+              color: "white",
+            },
             textContent: "Name",
           }),
           $el("input", {
             type: "text",
             style: {
               width: "100%",
-              padding: "5px",
+              padding: "clamp(5px, 1vw, 8px)",
               borderRadius: "4px",
               border: "1px solid #ccc",
+              fontSize: "clamp(14px, 2vw, 16px)",
             },
           }),
         ]),
         // Description field
-        $el("div", { style: { marginBottom: "10px" } }, [
+        $el("div", { style: { marginBottom: "clamp(10px, 2vw, 20px)" } }, [
           $el("label", {
-            style: { display: "block", marginBottom: "5px" },
+            style: {
+              display: "block",
+              marginBottom: "5px",
+              fontSize: "clamp(14px, 2vw, 16px)",
+              color: "white",
+            },
             textContent: "Description",
           }),
           $el("textarea", {
             style: {
               width: "100%",
-              padding: "5px",
+              padding: "clamp(5px, 1vw, 8px)",
               borderRadius: "4px",
               border: "1px solid #ccc",
-              minHeight: "100px",
+              minHeight: "clamp(100px, 20vh, 150px)",
+              fontSize: "clamp(14px, 2vw, 16px)",
             },
           }),
         ]),
         // Type field
-        $el("div", { style: { marginBottom: "10px" } }, [
+        $el("div", { style: { marginBottom: "clamp(10px, 2vw, 20px)" } }, [
           $el("label", {
-            style: { display: "block", marginBottom: "5px" },
+            style: {
+              display: "block",
+              marginBottom: "5px",
+              fontSize: "clamp(14px, 2vw, 16px)",
+              color: "white",
+            },
             textContent: "Type",
           }),
           $el(
@@ -599,12 +675,13 @@ function showForm() {
             {
               style: {
                 width: "100%",
-                padding: "5px",
+                padding: "clamp(5px, 1vw, 8px)",
                 borderRadius: "4px",
                 border: "1px solid #ccc",
                 backgroundColor: "#1e1e1e",
                 color: "white",
-                height: "32px",
+                height: "clamp(32px, 5vh, 40px)",
+                fontSize: "clamp(14px, 2vw, 16px)",
               },
             },
             [
@@ -614,19 +691,52 @@ function showForm() {
           ),
         ]),
         // Cover Image field
-        $el("div", { style: { marginBottom: "10px" } }, [
+        $el("div", { style: { marginBottom: "clamp(10px, 2vw, 20px)" } }, [
           $el("label", {
-            style: { display: "block", marginBottom: "5px" },
+            style: {
+              display: "block",
+              marginBottom: "5px",
+              fontSize: "clamp(14px, 2vw, 16px)",
+              color: "white",
+            },
             textContent: "Cover Image",
           }),
-          $el("input", {
-            type: "file",
-            accept: "image/*",
-            style: {
-              width: "100%",
-              padding: "5px",
-            },
-          }),
+          $el("div", { style: { marginBottom: "10px" } }, [
+            $el("input", {
+              type: "file",
+              accept: "image/png, image/jpeg, image/jpg",
+              style: {
+                width: "100%",
+                padding: "clamp(5px, 1vw, 8px)",
+                fontSize: "clamp(14px, 2vw, 16px)",
+              },
+              onchange: function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = function (e) {
+                    const preview = document.getElementById("image-preview");
+                    if (preview) {
+                      preview.src = e.target.result;
+                      preview.style.display = "block";
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }
+              },
+            }),
+            $el("img", {
+              id: "image-preview",
+              style: {
+                display: "none",
+                maxWidth: "200px",
+                maxHeight: "200px",
+                marginTop: "10px",
+                borderRadius: "4px",
+                objectFit: "contain",
+              },
+            }),
+          ]),
         ]),
         // Submit button
         $el("div", {
@@ -635,18 +745,21 @@ function showForm() {
              style="
                display: flex;
                align-items: center;
-               gap: 8px;
-               margin: 10px;
-               padding: 12px 24px;
+               gap: clamp(8px, 1vw, 12px);
+               margin: clamp(10px, 2vw, 15px);
+               padding: clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px);
                background-color: #2D9CDB;
                color: white;
                border: none;
                border-radius: 6px;
                cursor: pointer;
                text-decoration: none;
-               font-size: 16px;
+               font-size: clamp(14px, 2vw, 16px);
                transition: background-color 0.2s ease;
                justify-content: center;
+               width: fit-content;
+               margin-left: auto;
+               margin-right: auto;
              "
              onmouseover="this.style.backgroundColor='#2486BE'"
              onmouseout="this.style.backgroundColor='#2D9CDB'"
