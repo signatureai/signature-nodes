@@ -1,9 +1,11 @@
-from typing import Optional
 from pathlib import Path
-import torch
+from typing import Optional
+
+from neurochain.detectors import DINOSimilarity
 from torch import Tensor
 
 import folder_paths
+
 from ...categories import LABS_CAT
 
 
@@ -28,4 +30,6 @@ class DINOHeatmap:
 
     def execute(self, image: Tensor, template: Tensor, mask: Optional[Tensor] = None) -> Tensor:
         checkpoint_dir = Path(folder_paths.models_dir) / "checkpoints"  # TODO: Decide on a directory for models
-        return (image,)
+        model = DINOSimilarity(checkpoint_dir=checkpoint_dir)
+        output = model.predict(image, template, mask)
+        return (output,)
