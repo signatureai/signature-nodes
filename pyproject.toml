@@ -81,7 +81,3 @@ publish = false
 
 [tool.setuptools.dynamic]
 version = {attr = "version.__version__"}
-
-[[tool.uv.index]]
-url = "https://pypi.org/"
-default = true
