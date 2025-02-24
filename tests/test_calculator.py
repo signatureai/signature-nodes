@@ -1,7 +1,7 @@
 # tests/test_calculator.py
 
 import pytest
-from calculator import Calculator
+from tests.calculator import Calculator
 
 
 def test_addition():
