@@ -1,3 +1,5 @@
+from neurochain.utils.utils import replace_key
+
 from ...categories import NEUROCHAIN_UTILS_CAT
 
 
@@ -18,16 +20,6 @@ class FillTemplate:
     OUTPUT_NODE = True
 
     def process(self, data_dict: dict, template: str):
-        output = template
-
-        def replace_key(template: str, data: dict, parent_path: str = "") -> str:
-            for key, value in data.items():
-                if isinstance(value, dict):
-                    template = replace_key(template, value, parent_path + key + ".")
-                else:
-                    template = template.replace(f"[{parent_path}{key}]", str(value))
-            return template
-
         output = replace_key(template, data_dict)
 
         return (output,)

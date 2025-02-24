@@ -48,10 +48,10 @@ class AnyType(str):
 
 
 any_type = AnyType("*")
-from .. import BASE_COMFY_DIR
+from .. import BASE_COMFY_DIR  # type: ignore # noqa: E402
 
 sys.path.append(BASE_COMFY_DIR)
-import comfy  # type: ignore
+import comfy  # type: ignore # noqa: E402
 
 
 def clean_memory():

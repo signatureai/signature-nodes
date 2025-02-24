@@ -2,6 +2,8 @@ import { app } from "../../../scripts/app.js";
 
 const NODE_COLORS = { nodeColor: "#2a363b", nodeBgColor: "#3f5159" };
 
+const excludeLoops = ["signature_do_while_loop_start", "signature_do_while_loop_end", "signature_for_loop_start", "signature_for_loop_end"];
+
 function updateInputsOutputs(node, numSlots, startIndex) {
   node.inputsHidden ||= [];
   node.outputsHidden ||= [];
@@ -53,10 +55,7 @@ app.registerExtension({
 
   async nodeCreated(node) {
     if (
-      node.comfyClass !== "signature_do_while_loop_start" &&
-      node.comfyClass !== "signature_do_while_loop_end" &&
-      node.comfyClass !== "signature_for_loop_start" &&
-      node.comfyClass !== "signature_for_loop_end"
+      !excludeLoops.includes(node.comfyClass)
     )
       return;
 

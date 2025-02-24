@@ -1,14 +1,3 @@
-import { app } from "../../../scripts/app.js";
-
-const NODES = {
-  signature_input_image: "Input Image",
-  signature_input_text: "Input Text",
-  signature_input_number: "Input Number",
-  signature_input_slider: "Input Slider",
-  signature_input_boolean: "Input Boolean",
-  signature_output: "Output",
-};
-
 const COLOR_THEMES = {
   red: { nodeColor: "#332222", nodeBgColor: "#553333" },
   green: { nodeColor: "#223322", nodeBgColor: "#335533" },
@@ -32,42 +21,31 @@ function setNodeColors(node, theme) {
   }
 }
 
-function output(node, widget) {
+function output(node) {
   setNodeColors(node, COLOR_THEMES["purple"]);
 }
 
-function inputImage(node, widget) {
+function inputImage(node) {
   setNodeColors(node, COLOR_THEMES["pale_blue"]);
 }
 
-function inputText(node, widget) {
-  const value = widget.value;
-  if (value === "string") {
-    setNodeColors(node, COLOR_THEMES["yellow"]);
-  }
-
-  if (value === "positive_prompt") {
-    setNodeColors(node, COLOR_THEMES["green"]);
-  }
-
-  if (value === "negative_prompt") {
-    setNodeColors(node, COLOR_THEMES["red"]);
-  }
+function inputText(node) {
+  setNodeColors(node, COLOR_THEMES["yellow"]);
 }
 
-function inputBoolean(node, widget) {
+function inputBoolean(node) {
   setNodeColors(node, COLOR_THEMES["orange"]);
 }
 
-function inputNumber(node, widget) {
+function inputNumber(node) {
   setNodeColors(node, COLOR_THEMES["cyan"]);
 }
 
-function inputSelector(node, widget) {
+function inputSelector(node) {
   setNodeColors(node, COLOR_THEMES["purple"]);
 }
 
-const nodeWidgetHandlers = {
+const nodeStylingWidgetHandlers = {
   signature_input_image: {
     subtype: inputImage,
   },
@@ -91,21 +69,11 @@ const nodeWidgetHandlers = {
   },
 };
 
-const ext = {
-  name: "signature.platform_io",
-
-  nodeCreated(node) {
-    const title = node.comfyClass;
-    if (NODES.hasOwnProperty(title)) {
-      // Apply colors based on node type
-      if (nodeWidgetHandlers.hasOwnProperty(title)) {
-        const handler = nodeWidgetHandlers[title];
-        if (handler.subtype) {
-          handler.subtype(node);
-        }
-      }
+export const addStyling = (node, title) => {
+  if (nodeStylingWidgetHandlers.hasOwnProperty(title)) {
+    const handler = nodeStylingWidgetHandlers[title];
+    if (handler.subtype) {
+      handler.subtype(node);
     }
-  },
+  }
 };
-
-app.registerExtension(ext);

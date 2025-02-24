@@ -97,9 +97,9 @@ jobs:
       post-to-pr: true
     secrets:
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCOUNT_REGION: ${{ secrets.AWS_ACCOUNT_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} # type: ignore
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # type: ignore
+      AWS_ACCOUNT_REGION: ${{ secrets.AWS_ACCOUNT_REGION }} # type: ignore
 
   deploy-staging:
     name: Deploy to Staging
@@ -114,22 +114,32 @@ jobs:
       - name: Get latest version
         id: get_version
         run: |
-          # Get the latest tag that matches v*
           LATEST_TAG=$(git describe --tags --match "v*" --abbrev=0 2>/dev/null || echo "v0.0.0")
 
-          # Extract components
-          MAJOR=$(echo $LATEST_TAG | cut -d. -f1 | sed 's/v//')
-          MINOR=$(echo $LATEST_TAG | cut -d. -f2)
-          PATCH=$(echo $LATEST_TAG | cut -d. -f3 | cut -d- -f1)
+          # LATEST_TAG="v1.0.0.dev10" # for testing
 
-          # Count commits since latest tag
-          COMMIT_COUNT=$(git rev-list --count ${LATEST_TAG}..HEAD)
+          echo "Latest version: $LATEST_TAG"
 
-          # Create development version with commit count (e.g., v1.2.3.dev45)
-          DEV_VERSION="v$MAJOR.$MINOR.$PATCH.dev${COMMIT_COUNT}"
+          if [[ $LATEST_TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)(\.dev([0-9]+))?$ ]]; then
+              MAJOR="${BASH_REMATCH[1]}"
+              MINOR="${BASH_REMATCH[2]}"
+              PATCH="${BASH_REMATCH[3]}"
+              DEV="${BASH_REMATCH[5]:-0}"
+          else
+              echo "Error: Invalid tag format $LATEST_TAG"
+              exit 1
+          fi
 
+          if [ "$DEV" -gt 0 ]; then
+              NEW_DEV=$((DEV + 1))
+          else
+              NEW_DEV=1
+          fi
+
+          DEV_VERSION="v${MAJOR}.${MINOR}.${PATCH}.dev${NEW_DEV}"
+
+          echo "Creating development version: $DEV_VERSION"
           echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV
-          echo "::set-output name=version::$DEV_VERSION"
 
       - name: Create Development Tag
         run: |
@@ -167,8 +177,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }} # type: ignore
+          release_name: Release ${{ env.VERSION }} # type: ignore
           draft: false
           prerelease: false
 

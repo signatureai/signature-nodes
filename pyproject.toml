@@ -1,6 +1,6 @@
 [project]
 name = "signature-nodes"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Signature Nodes"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -10,7 +10,6 @@ dependencies = [
     "huggingface-hub>=0.26.2",
     "jq>=1.8.0",
     "matplotlib>=3.10.0",
-    "neurochain==2.0.0.dev1",
     "python-dotenv>=1.0.1",
     "pyyaml>=6.0.2",
     "requests>=2.32.3",
@@ -21,6 +20,9 @@ dependencies = [
     "torch>=2.5.1",
     "transformers>=4.46.3",
     "uuid7>=0.1.0",
+    "neurochain==2.0.0.dev5",
+    "signature-flows==1.0.5.dev4",
+    "signature-core==1.0.0.dev5",
 ]
 
 [dependency-groups]
@@ -61,16 +63,23 @@ select = [
 skips = ["B113", "B311", "B101"]
 assert_used.skips = ["**/test_*.py"]
 
+[build-system]
+requires = ["setuptools>=68.0.0"]
+build-backend = "setuptools.build_meta"
+
 [tool.setuptools]
 packages = ["nodes", "services"]
 
 [tool.uv.sources]
-signature-core = { index = "signature" }
-signature-flows = { index = "signature" }
 neurochain = { index = "signature" }
+signature-flows = { index = "signature" }
+signature-core = { index = "signature" }
 
 [[tool.uv.index]]
 name = "signature"
 url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/"
 explicit = true
 publish = false
+
+[tool.setuptools.dynamic]
+version = {attr = "version.__version__"}
