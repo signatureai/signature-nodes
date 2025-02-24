@@ -7,6 +7,11 @@ from ...categories import LABS_CAT
 
 
 class DINOHeatmap:
+    """A ComfyUI node that generates similarity heatmaps using DINO Vision Transformer.
+
+    This node takes an input image and a template image, optionally with a mask,
+    and produces a heatmap showing regions similar to the template using DINO embeddings.
+    """
     CLASS_ID = "dino_heatmap"
     CATEGORY = LABS_CAT
 
