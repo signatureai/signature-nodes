@@ -1,11 +1,10 @@
 from pathlib import Path
 from typing import Optional
 
-from neurochain.detectors import DINOSimilarity
+from neurochain.detectors.dino import DINOSimilarity
 from torch import Tensor
 
-import folder_paths
-
+from ......folder_paths import models_dir
 from ...categories import LABS_CAT
 
 
@@ -28,8 +27,8 @@ class DINOHeatmap:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
 
-    def execute(self, image: Tensor, template: Tensor, mask: Optional[Tensor] = None) -> Tensor:
-        checkpoint_dir = Path(folder_paths.models_dir) / "checkpoints"  # TODO: Decide on a directory for models
+    def execute(self, image: Tensor, template: Tensor, mask: Optional[Tensor] = None) -> tuple[Tensor,]:
+        checkpoint_dir = Path(models_dir) / "checkpoints"  # TODO: Decide on a directory for models
         model = DINOSimilarity(checkpoint_dir=checkpoint_dir)
         output = model.predict(image, template, mask)
         return (output,)
