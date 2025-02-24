@@ -557,6 +557,7 @@ function showForm() {
                         const descriptionInput = formContainer.querySelector("textarea");
                         const typeSelect = formContainer.querySelector("select");
                         const preview = document.getElementById("image-preview");
+                        const fileInput = formContainer.querySelector('input[type="file"]');
 
                         // Update text fields and select
                         if (nameInput && workflow.name) nameInput.value = workflow.name;
@@ -570,6 +571,7 @@ function showForm() {
                         if (workflow.coverImageUrl) {
                           preview.src = workflow.coverImageUrl;
                           preview.style.display = "block";
+                          fileInput.value = "";
                         }
                       }
                     },
