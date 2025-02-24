@@ -4,7 +4,7 @@ import {
   getAccessToken,
   getRefreshToken,
   loginRequest,
-  refreshTokenRequest
+  refreshTokenRequest,
 } from "./signature_api/main.js";
 
 function showMessage(message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) {
@@ -293,7 +293,7 @@ function createMenuItem(label, iconClass, onClick) {
 
 async function requiresAuth(app, next) {
   try {
-    const dropdownMenu = document.querySelector("#pv_id_9_0_list");
+    const dropdownMenu = document.querySelector("#pv_id_9_0_list") || document.querySelector("#pv_id_10_0_list");
     dropdownMenu.style.display = "none";
     // Try to get tokens
     let refreshToken = getRefreshToken();
@@ -349,9 +349,4 @@ async function requiresAuth(app, next) {
 }
 
 // Export the functions needed by workflows.js
-export {
-  $el,
-  cleanLocalStorage, createMenuItem, requiresAuth, showIframe,
-  showLoginForm, showMessage
-};
-
+export { $el, cleanLocalStorage, createMenuItem, requiresAuth, showIframe, showLoginForm, showMessage };

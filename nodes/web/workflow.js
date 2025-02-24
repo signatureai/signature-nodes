@@ -1,22 +1,12 @@
 import { app } from "../../scripts/app.js";
-import {
-  $el,
-  cleanLocalStorage,
-  createMenuItem,
-  requiresAuth,
-  showMessage,
-} from "./signature.js";
-import {
-  getWorkflowById,
-  getWorkflowsListForForm,
-  getWorkflowVersions,
-} from "./signature_api/main.js";
+import { $el, cleanLocalStorage, createMenuItem, requiresAuth, showMessage } from "./signature.js";
+import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./signature_api/main.js";
 
 const getTotalTabs = () => {
-  const workflowTabs = document.querySelector('.workflow-tabs');
+  const workflowTabs = document.querySelector(".workflow-tabs");
   if (!workflowTabs) return 1; // Default to 1 if no tabs container found
-  
-  const tabElements = workflowTabs.querySelectorAll('.workflow-tab');
+
+  const tabElements = workflowTabs.querySelectorAll(".workflow-tab");
   return tabElements.length || 1; // Return count of tabs, minimum 1
 };
 
@@ -42,11 +32,11 @@ const populateSubmitForm = async (workflowId) => {
       }
     }
     if (workflow.coverImageUrl) {
-    preview.src = workflow.coverImageUrl;
-    preview.style.display = "block";
-    fileInput.value = "";
+      preview.src = workflow.coverImageUrl;
+      preview.style.display = "block";
+      fileInput.value = "";
+    }
   }
-}
 };
 
 // Add a utility function for the spinner
@@ -259,7 +249,7 @@ function showForm() {
                   border: "1px solid #ccc",
                   borderRadius: "4px",
                   backgroundColor: "#1e1e1e",
-                }
+                },
               });
 
               // Create the "Choose another option" button
@@ -278,7 +268,7 @@ function showForm() {
                 onclick: () => {
                   changeButton.style.display = "none";
                   optionsListContainer.style.display = "block";
-                }
+                },
               });
 
               container.append(changeButton, optionsListContainer);
@@ -313,7 +303,7 @@ function showForm() {
                           el.style.backgroundColor = "#2D9CDB";
                           el.setAttribute("data-selected", "true");
                           populateSubmitForm(opt.value);
-                          
+
                           // If this is not the first option, hide the list and show the button
                           if (index > 0) {
                             optionsListContainer.style.display = "none";
@@ -356,20 +346,21 @@ function showForm() {
               optionsListContainer.addEventListener("scroll", async () => {
                 if (isLoading || !hasMore) return;
 
-                const scrolledToBottom = 
-                  optionsListContainer.scrollHeight - optionsListContainer.scrollTop <= optionsListContainer.clientHeight + 50;
+                const scrolledToBottom =
+                  optionsListContainer.scrollHeight - optionsListContainer.scrollTop <=
+                  optionsListContainer.clientHeight + 50;
 
                 if (scrolledToBottom) {
                   try {
                     isLoading = true;
                     offset += limit;
-                    
+
                     const nextOptions = await getWorkflowsListForForm($el, offset, limit);
-                    
+
                     if (nextOptions.length < limit) {
                       hasMore = false;
                     }
-                    
+
                     if (nextOptions.length > 0) {
                       optionsListContainer.append(
                         ...nextOptions.map((opt) =>
@@ -391,12 +382,12 @@ function showForm() {
                               e.target.style.backgroundColor = "#2D9CDB";
                               e.target.setAttribute("data-selected", "true");
                               const workflowId = e.target.getAttribute("data-workflow-id");
-                              
+
                               // Hide list and show button when selecting an option
                               optionsListContainer.style.display = "none";
                               changeButton.style.display = "block";
                               changeButton.textContent = `Current: ${e.target.textContent}`;
-                              
+
                               populateSubmitForm(workflowId);
                             },
                           })
@@ -576,7 +567,6 @@ function showForm() {
   return formContent;
 }
 
-
 function showWorkflowsList() {
   const dialogContent = $el("div", [
     $el("h2", {
@@ -624,7 +614,7 @@ function showWorkflowsList() {
                     const response = await getWorkflowVersions(workflowData.uuid, 0, 100);
 
                     const workflow_versions = response.data;
-                    
+
                     // Create versions dialog
                     const versionsDialog = $el("div", [
                       $el("h2", {
@@ -648,101 +638,114 @@ function showWorkflowsList() {
                           padding: "10px",
                         },
                         $: (container) => {
-                          workflow_versions.forEach(workflow_version => {
-                            const card = $el("div", {
-                              className: "workflow-version-card",
-                              style: {
-                                backgroundColor: "#1e1e1e",
-                                borderRadius: "8px",
-                                padding: "15px",
-                                cursor: "pointer",
-                                transition: "background-color 0.2s",
-                              },
-                              onclick: async () => {
-                                app.ui.dialog.close();
-                                
-                                try {
-                                  app.graph.clear();
-                                  app.loadGraphData(workflow_version.workflow);
-
-                                  const totalTabs = getTotalTabs()
-                                  localStorage.setItem(`workflow - ${totalTabs}`, workflow_version.uuid)
-                                  
-                                  showMessage("Workflow loaded successfully!", "#00ff00");
-                                } catch (error) {
-                                  console.error("Error loading workflow:", error);
-                                  showMessage("Failed to load workflow", "#ff0000", error.message);
-                                }
-                              },
-                            }, [
-                              // Cover image preview
-                              $el("div", {
+                          workflow_versions.forEach((workflow_version) => {
+                            const card = $el(
+                              "div",
+                              {
+                                className: "workflow-version-card",
                                 style: {
-                                  width: "100%",
-                                  height: "150px",
-                                  marginBottom: "10px",
-                                  borderRadius: "4px",
-                                  overflow: "hidden",
-                                  backgroundColor: "#2a2a2a",
+                                  backgroundColor: "#1e1e1e",
+                                  borderRadius: "8px",
+                                  padding: "15px",
+                                  cursor: "pointer",
+                                  transition: "background-color 0.2s",
                                 },
-                              }, [
-                                $el("img", {
-                                  src: workflow_version.coverImageUrl || "",
-                                  style: {
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                  },
-                                  onerror: (e) => {
-                                    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
-                                    e.target.style.padding = "40px";
-                                    e.target.style.boxSizing = "border-box";
+                                onclick: async () => {
+                                  app.ui.dialog.close();
+
+                                  try {
+                                    app.graph.clear();
+                                    app.loadGraphData(workflow_version.workflow);
+
+                                    const totalTabs = getTotalTabs();
+                                    localStorage.setItem(`workflow - ${totalTabs}`, workflow_version.uuid);
+
+                                    showMessage("Workflow loaded successfully!", "#00ff00");
+                                  } catch (error) {
+                                    console.error("Error loading workflow:", error);
+                                    showMessage("Failed to load workflow", "#ff0000", error.message);
                                   }
-                                })
-                              ]),
-                              // Version info
-                              $el("div", {
-                                style: {
-                                  fontSize: "14px",
-                                  color: "#ffffff",
-                                }
-                              }, [
-                                $el("div", {
-                                  style: {
-                                    fontWeight: "bold",
-                                    marginBottom: "5px",
+                                },
+                              },
+                              [
+                                // Cover image preview
+                                $el(
+                                  "div",
+                                  {
+                                    style: {
+                                      width: "100%",
+                                      height: "150px",
+                                      marginBottom: "10px",
+                                      borderRadius: "4px",
+                                      overflow: "hidden",
+                                      backgroundColor: "#2a2a2a",
+                                    },
                                   },
-                                  textContent: `Version ${workflow_version.version}`,
-                                }),
-                                $el("div", {
-                                  style: {
-                                    color: "#888888",
-                                    fontSize: "12px",
+                                  [
+                                    $el("img", {
+                                      src: workflow_version.coverImageUrl || "",
+                                      style: {
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      },
+                                      onerror: (e) => {
+                                        e.target.src =
+                                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
+                                        e.target.style.padding = "40px";
+                                        e.target.style.boxSizing = "border-box";
+                                      },
+                                    }),
+                                  ]
+                                ),
+                                // Version info
+                                $el(
+                                  "div",
+                                  {
+                                    style: {
+                                      fontSize: "14px",
+                                      color: "#ffffff",
+                                    },
                                   },
-                                  textContent: `Name: ${workflow_version.name}`,
-                                }),
-                                $el("div", {
-                                  style: {
-                                    color: "#888888",
-                                    fontSize: "12px",
-                                  },
-                                  textContent: `Created: ${new Date(workflow_version.createdAt).toLocaleString()}`,
-                                }),
-                                $el("div", {
-                                  style: {
-                                    color: "#888888",
-                                    fontSize: "12px",
-                                  },
-                                  textContent: `Updated: ${new Date(workflow_version.updatedAt).toLocaleString()}`,
-                                }),
-                              ]),
-                            ]);
+                                  [
+                                    $el("div", {
+                                      style: {
+                                        fontWeight: "bold",
+                                        marginBottom: "5px",
+                                      },
+                                      textContent: `Version ${workflow_version.version}`,
+                                    }),
+                                    $el("div", {
+                                      style: {
+                                        color: "#888888",
+                                        fontSize: "12px",
+                                      },
+                                      textContent: `Name: ${workflow_version.name}`,
+                                    }),
+                                    $el("div", {
+                                      style: {
+                                        color: "#888888",
+                                        fontSize: "12px",
+                                      },
+                                      textContent: `Created: ${new Date(workflow_version.createdAt).toLocaleString()}`,
+                                    }),
+                                    $el("div", {
+                                      style: {
+                                        color: "#888888",
+                                        fontSize: "12px",
+                                      },
+                                      textContent: `Updated: ${new Date(workflow_version.updatedAt).toLocaleString()}`,
+                                    }),
+                                  ]
+                                ),
+                              ]
+                            );
 
                             // Add hover events to the card
-                            card.addEventListener('mouseover', () => {
+                            card.addEventListener("mouseover", () => {
                               card.style.backgroundColor = "#2a2a2a";
                             });
-                            card.addEventListener('mouseout', () => {
+                            card.addEventListener("mouseout", () => {
                               card.style.backgroundColor = "#1e1e1e";
                             });
 
@@ -816,11 +819,11 @@ function deleteWorkflowFromStorage(tabIndex) {
   // Delete the workflow at the current index
   const currentKey = `workflow - ${tabIndex}`;
   localStorage.removeItem(currentKey);
-  
+
   // Shift down indices for all subsequent workflows
   let nextIndex = tabIndex + 1;
   let nextKey = `workflow - ${nextIndex}`;
-  
+
   while (localStorage.getItem(nextKey) !== null) {
     // Get the workflow from the next index
     const workflowData = localStorage.getItem(nextKey);
@@ -828,11 +831,76 @@ function deleteWorkflowFromStorage(tabIndex) {
     localStorage.setItem(`workflow - ${nextIndex - 1}`, workflowData);
     // Remove the old entry
     localStorage.removeItem(nextKey);
-    
+
     // Move to next index
     nextIndex++;
     nextKey = `workflow - ${nextIndex}`;
   }
+}
+
+const findMenuList = () => {
+  // Try different possible menu list IDs
+  const possibleMenuLists = [
+    "#pv_id_9_0_list",
+    "#pv_id_10_0_list",
+    ".p-menubar-root-list", // Backup selector
+  ];
+
+  for (const selector of possibleMenuLists) {
+    const menuList = document.querySelector(selector);
+    if (menuList) return menuList;
+  }
+  return null;
+};
+
+async function setupMenu(app) {
+  // Check if menu items are already added
+  if (document.querySelector('[data-signature-menu="true"]')) {
+    return true;
+  }
+
+  // Try to find menu list for up to 10 seconds
+  for (let i = 0; i < 20; i++) {
+    const menuList = findMenuList();
+    if (menuList) {
+      // Add separator
+      const separator = $el("li", {
+        className: "p-menubar-separator",
+        role: "separator",
+        "data-signature-menu": "true",
+      });
+      menuList.appendChild(separator);
+
+      // Add Open from Signature menu item
+      const openItem = createMenuItem("Open from Signature", "pi-cloud-download", async () => {
+        try {
+          await requiresAuth(app, showWorkflowsList);
+        } catch (error) {
+          console.error("Error in Open from Signature:", error);
+          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
+        }
+      });
+      openItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(openItem);
+
+      // Add Deploy to Signature menu item
+      const deployItem = createMenuItem("Deploy to Signature", "pi-cloud-upload", async () => {
+        try {
+          await requiresAuth(app, saveWorkflow);
+        } catch (error) {
+          console.error("Error in Deploy to Signature:", error);
+          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
+        }
+      });
+      deployItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(deployItem);
+
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms before retry
+  }
+  console.warn("Could not find menu list after multiple attempts");
+  return false;
 }
 
 const ext = {
@@ -842,9 +910,9 @@ const ext = {
 
     // Add mutation observer to watch for tab deletions
     const setupTabObserver = () => {
-      const tabsContainer = document.querySelector('.workflow-tabs');
+      const tabsContainer = document.querySelector(".workflow-tabs");
       if (tabsContainer) {
-        console.log('Setting up tab observer');
+        console.log("Setting up tab observer");
         const observer = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
             if (mutation.removedNodes.length > 0) {
@@ -858,15 +926,15 @@ const ext = {
                   removedIndex++;
                   prevSibling = prevSibling.previousSibling;
                 }
-                
+
                 // If we're removing the last tab, use the current length
                 if (removedIndex === 0 && mutation.previousSibling === null) {
                   removedIndex = allTabs.length;
                 }
-                
-                console.log('Tab removed at index:', removedIndex);
+
+                console.log("Tab removed at index:", removedIndex);
                 // Delete the workflow from storage for this tab
-                deleteWorkflowFromStorage(removedIndex -1);
+                deleteWorkflowFromStorage(removedIndex - 1);
               });
             }
           });
@@ -875,11 +943,11 @@ const ext = {
         observer.observe(tabsContainer, {
           childList: true,
           subtree: false,
-          attributes: false
+          attributes: false,
         });
-        console.log('Observer setup complete');
+        console.log("Observer setup complete");
       } else {
-        console.log('Tab container not found, retrying in 1s');
+        console.log("Tab container not found, retrying in 1s");
         setTimeout(setupTabObserver, 1000);
       }
     };
@@ -889,28 +957,7 @@ const ext = {
   },
   async setup(app) {
     if (app.menu) {
-      // Find the menu list
-      const menuList = document.querySelector("#pv_id_9_0_list");
-
-      if (menuList) {
-        // Add separator
-        menuList.appendChild(
-          $el("li", {
-            className: "p-menubar-separator",
-            role: "separator",
-          })
-        );
-
-        // Add Open from Signature menu item
-        menuList.appendChild(
-          createMenuItem("Open from Signature", "pi-cloud-download", () => requiresAuth(app, showWorkflowsList))
-        );
-
-        // Add Deploy to Signature menu item
-        menuList.appendChild(
-          createMenuItem("Deploy to Signature", "pi-cloud-upload", () => requiresAuth(app, saveWorkflow))
-        );
-      }
+      await setupMenu(app);
     }
   },
 };
