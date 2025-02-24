@@ -484,7 +484,7 @@ function showForm() {
         marginBottom: "20px",
         color: "#ffffff",
         width: "100%",
-        maxWidth: "500px",
+        maxWidth: "full",
       },
       textContent: "Workflow Submission",
     }),
