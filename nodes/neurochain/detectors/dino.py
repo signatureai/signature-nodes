@@ -1,6 +1,7 @@
 from typing import Optional
 
 from neurochain.detectors.dino import DINOSimilarity
+from signature_core.img.tensor_image import TensorImage
 from torch import Tensor
 
 from ...categories import LABS_CAT
@@ -53,6 +54,12 @@ class DINOHeatmap:
     FUNCTION = "execute"
 
     def execute(self, image: Tensor, template: Tensor, mask: Optional[Tensor] = None) -> tuple[Tensor,]:
+        image = TensorImage.from_BWHC(image)
+        template = TensorImage.from_BWHC(template)
+        mask = TensorImage.from_BWHC(mask) if mask is not None else None
+
         model = DINOSimilarity()
         output = model.predict(image, template, mask)
+
+        output = TensorImage(output).get_BWHC()
         return (output,)
