@@ -36,11 +36,6 @@ repos:
         entry: git fetch --all
         language: system
         pass_filenames: false
-      - id: uv-sync
-        name: uv sync
-        entry: uv sync --frozen
-        language: system
-        pass_filenames: false
       - id: uv-lock
         name: uv lock
         entry: uv lock

@@ -5,15 +5,15 @@ on:
     branches:
       - main
       - develop
-      - 'feature/**'
-      - 'release/**'
-      - 'hotfix/**'
+      - "feature/**"
+      - "release/**"
+      - "hotfix/**"
   pull_request:
     types: [opened, synchronize]
     branches:
       - main
       - develop
-      - 'release/**'
+      - "release/**"
 
 jobs:
   post-job-comment:
@@ -54,7 +54,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install uv
         run: |
@@ -79,8 +79,8 @@ jobs:
       - name: Get Cover
         uses: orgoro/coverage@v3.2
         with:
-            coverageFile: ./coverage.xml
-            token: ${{ secrets.GITHUB_TOKEN }}
+          coverageFile: ./coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v4
@@ -93,7 +93,7 @@ jobs:
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == github.event.pull_request.head.ref)
     uses: ./.github/workflows/security-checks.yml
     with:
-      python-version: '3.11'
+      python-version: "3.11"
       post-to-pr: true
     secrets:
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -134,6 +134,7 @@ jobs:
               NEW_DEV=$((DEV + 1))
           else
               NEW_DEV=1
+              PATCH=$((PATCH + 1))
           fi
 
           DEV_VERSION="v${MAJOR}.${MINOR}.${PATCH}.dev${NEW_DEV}"
