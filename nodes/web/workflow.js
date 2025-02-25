@@ -580,239 +580,448 @@ function showWorkflowsList() {
       textContent: "Available Workflows",
     }),
     $el("div", {
+      id: "workflows-container",
       style: {
         width: "90vw",
         maxWidth: "800px",
         margin: "0 auto",
-        height: "calc(90vh - 100px)", // Adjust for header height
       },
       $: async (container) => {
         let limit = 100;
         let page = 0;
         let lastPageReached = false;
+        let isLoading = false;
 
         const loadWorkflows = async () => {
-          const workflows = await getWorkflowsListForForm($el, page, limit);
-          return workflows.map((workflow) =>
-            $el(
-              "div",
-              {
+          if (isLoading) {
+            return [];
+          }
+
+          try {
+            isLoading = true;
+            const workflows = await getWorkflowsListForForm($el, page * limit, limit);
+
+            if (workflows.length === 0 || workflows.length < limit) {
+              lastPageReached = true;
+            }
+
+            return workflows.map((workflow) =>
+              $el(
+                "div",
+                {
+                  style: {
+                    padding: "15px",
+                    marginBottom: "10px",
+                    backgroundColor: "#1e1e1e",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    transition: "background-color 0.2s",
+                  },
+                  onmouseover: (e) => (e.target.style.backgroundColor = "#2a2a2a"),
+                  onmouseout: (e) => (e.target.style.backgroundColor = "#1e1e1e"),
+                  onclick: async () => {
+                    const workflowData = await getWorkflowById(workflow.value);
+                    if (workflowData) {
+                      app.ui.dialog.close();
+                      showWorkflowVersions(workflowData);
+                    }
+                  },
+                },
+                [
+                  $el(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                      },
+                    },
+                    [
+                      $el("span", {
+                        style: {
+                          fontSize: "16px",
+                          fontWeight: "bold",
+                          color: "#ffffff",
+                        },
+                        textContent: workflow.textContent,
+                      }),
+                      $el("span", {
+                        style: {
+                          fontSize: "14px",
+                          color: "#888888",
+                        },
+                        textContent: workflow.type || "Standard",
+                      }),
+                    ]
+                  ),
+                ]
+              )
+            );
+          } catch (error) {
+            console.error("Error loading workflows:", error);
+            container.appendChild(
+              $el("div", {
                 style: {
                   padding: "15px",
+                  backgroundColor: "#ff000033",
+                  color: "white",
                   marginBottom: "10px",
-                  backgroundColor: "#1e1e1e",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  transition: "background-color 0.2s",
                 },
-                onmouseover: (e) => (e.target.style.backgroundColor = "#2a2a2a"),
-                onmouseout: (e) => (e.target.style.backgroundColor = "#1e1e1e"),
-                onclick: async () => {
-                  const workflowData = await getWorkflowById(workflow.value);
-                  if (workflowData) {
-                    app.ui.dialog.close();
-                    const response = await getWorkflowVersions(workflowData.uuid, 0, 100);
-
-                    const workflow_versions = response.data;
-
-                    // Create versions dialog
-                    const versionsDialog = $el("div", [
-                      $el("h2", {
-                        style: {
-                          textAlign: "center",
-                          marginBottom: "20px",
-                          color: "#ffffff",
-                          width: "100%",
-                        },
-                        textContent: `Versions of "${workflowData.name}"`,
-                      }),
-                      $el("div", {
-                        style: {
-                          width: "90vw",
-                          maxWidth: "1000px",
-                          margin: "0 auto",
-                          maxHeight: "70vh",
-                          display: "grid",
-                          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                          gap: "15px",
-                          padding: "10px",
-                        },
-                        $: (container) => {
-                          workflow_versions.forEach((workflow_version) => {
-                            const card = $el(
-                              "div",
-                              {
-                                className: "workflow-version-card",
-                                style: {
-                                  backgroundColor: "#1e1e1e",
-                                  borderRadius: "8px",
-                                  padding: "15px",
-                                  cursor: "pointer",
-                                  transition: "background-color 0.2s",
-                                },
-                                onclick: async () => {
-                                  app.ui.dialog.close();
-
-                                  try {
-                                    app.graph.clear();
-                                    app.loadGraphData(workflow_version.workflow);
-
-                                    const totalTabs = getTotalTabs();
-                                    localStorage.setItem(`workflow - ${totalTabs}`, workflow_version.uuid);
-
-                                    showMessage("Workflow loaded successfully!", "#00ff00");
-                                  } catch (error) {
-                                    console.error("Error loading workflow:", error);
-                                    showMessage("Failed to load workflow", "#ff0000", error.message);
-                                  }
-                                },
-                              },
-                              [
-                                // Cover image preview
-                                $el(
-                                  "div",
-                                  {
-                                    style: {
-                                      width: "100%",
-                                      height: "150px",
-                                      marginBottom: "10px",
-                                      borderRadius: "4px",
-                                      overflow: "hidden",
-                                      backgroundColor: "#2a2a2a",
-                                    },
-                                  },
-                                  [
-                                    $el("img", {
-                                      src: workflow_version.coverImageUrl || "",
-                                      style: {
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      },
-                                      onerror: (e) => {
-                                        e.target.src =
-                                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
-                                        e.target.style.padding = "40px";
-                                        e.target.style.boxSizing = "border-box";
-                                      },
-                                    }),
-                                  ]
-                                ),
-                                // Version info
-                                $el(
-                                  "div",
-                                  {
-                                    style: {
-                                      fontSize: "14px",
-                                      color: "#ffffff",
-                                    },
-                                  },
-                                  [
-                                    $el("div", {
-                                      style: {
-                                        fontWeight: "bold",
-                                        marginBottom: "5px",
-                                      },
-                                      textContent: `Version ${workflow_version.version}`,
-                                    }),
-                                    $el("div", {
-                                      style: {
-                                        color: "#888888",
-                                        fontSize: "12px",
-                                      },
-                                      textContent: `Name: ${workflow_version.name}`,
-                                    }),
-                                    $el("div", {
-                                      style: {
-                                        color: "#888888",
-                                        fontSize: "12px",
-                                      },
-                                      textContent: `Created: ${new Date(workflow_version.createdAt).toLocaleString()}`,
-                                    }),
-                                    $el("div", {
-                                      style: {
-                                        color: "#888888",
-                                        fontSize: "12px",
-                                      },
-                                      textContent: `Updated: ${new Date(workflow_version.updatedAt).toLocaleString()}`,
-                                    }),
-                                  ]
-                                ),
-                              ]
-                            );
-
-                            // Add hover events to the card
-                            card.addEventListener("mouseover", () => {
-                              card.style.backgroundColor = "#2a2a2a";
-                            });
-                            card.addEventListener("mouseout", () => {
-                              card.style.backgroundColor = "#1e1e1e";
-                            });
-
-                            container.appendChild(card);
-                          });
-                        },
-                      }),
-                    ]);
-
-                    app.ui.dialog.show(versionsDialog);
-                  }
-                },
-              },
-              [
-                $el(
-                  "div",
-                  {
-                    style: {
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "8px",
-                    },
-                  },
-                  [
-                    $el("span", {
-                      style: {
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        color: "#ffffff",
-                      },
-                      textContent: workflow.textContent,
-                    }),
-                    $el("span", {
-                      style: {
-                        fontSize: "14px",
-                        color: "#888888",
-                      },
-                      textContent: workflow.type || "Standard",
-                    }),
-                  ]
-                ),
-              ]
-            )
-          );
+                textContent: `Error: ${error.message}`,
+              })
+            );
+            return [];
+          } finally {
+            isLoading = false;
+          }
         };
 
         // Initial load
-        container.append(...(await loadWorkflows()));
+        const initialWorkflows = await loadWorkflows();
+        container.append(...initialWorkflows);
 
-        // Infinite scroll
-        container.addEventListener("scroll", async () => {
-          if (container.scrollHeight - container.scrollTop <= container.clientHeight + 50 && !lastPageReached) {
-            page++;
-            const nextWorkflows = await loadWorkflows();
-            if (nextWorkflows.length === 0 || nextWorkflows.length < limit) {
-              lastPageReached = true;
-            }
-            container.append(...nextWorkflows);
-          }
+        // Add a loading indicator at the bottom that also serves as a trigger
+        const loadingTrigger = $el("div", {
+          id: "workflows-loading-trigger",
+          style: {
+            padding: "15px",
+            textAlign: "center",
+            color: "#888",
+            display: lastPageReached ? "none" : "block",
+            marginTop: "20px",
+          },
+          innerHTML: `
+            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888; 
+                        border-radius: 50%; border-top-color: transparent; 
+                        animation: spin 1s linear infinite;">
+            </div>
+            <div style="margin-top: 10px;">Loading more workflows...</div>
+          `,
         });
+        container.appendChild(loadingTrigger);
+
+        // Create a style for the spinner animation if it doesn't exist
+        if (!document.getElementById("workflow-spinner-style")) {
+          const style = document.createElement("style");
+          style.id = "workflow-spinner-style";
+          style.textContent = `
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+
+        // Set up Intersection Observer to detect when loading trigger is visible
+        setTimeout(() => {
+          const observer = new IntersectionObserver(
+            async (entries) => {
+              const entry = entries[0];
+
+              if (entry.isIntersecting && !isLoading && !lastPageReached) {
+                page++;
+                const nextWorkflows = await loadWorkflows();
+
+                if (nextWorkflows.length > 0) {
+                  // Insert new workflows before the loading trigger
+                  nextWorkflows.forEach((workflow) => {
+                    container.insertBefore(workflow, loadingTrigger);
+                  });
+                }
+
+                // Hide loading trigger if we've reached the last page
+                if (lastPageReached) {
+                  loadingTrigger.style.display = "none";
+                }
+              }
+            },
+            {
+              root: document.querySelector(".p-dialog-content"),
+              rootMargin: "100px",
+              threshold: 0.1,
+            }
+          );
+
+          observer.observe(loadingTrigger);
+
+          // Clean up observer when dialog closes
+          const originalOnClose = app.ui.dialog.onClose;
+          app.ui.dialog.onClose = () => {
+            if (typeof originalOnClose === "function") {
+              originalOnClose();
+            }
+            observer.disconnect();
+          };
+        }, 500); // Give time for dialog to render
       },
     }),
   ]);
 
   app.ui.dialog.show(dialogContent);
   return dialogContent;
+}
+
+// New function to show workflow versions with infinite scroll
+async function showWorkflowVersions(workflowData) {
+  const versionsDialog = $el("div", [
+    $el("h2", {
+      style: {
+        textAlign: "center",
+        marginBottom: "20px",
+        color: "#ffffff",
+        width: "100%",
+      },
+      textContent: `Versions of "${workflowData.name}"`,
+    }),
+    $el("div", {
+      style: {
+        width: "90vw",
+        maxWidth: "1000px",
+        margin: "0 auto",
+        maxHeight: "70vh",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+        gap: "15px",
+        padding: "10px",
+      },
+      $: async (container) => {
+        let limit = 100;
+        let page = 0;
+        let lastPageReached = false;
+        let isLoading = false;
+
+        const loadVersions = async () => {
+          if (isLoading) {
+            return [];
+          }
+
+          try {
+            isLoading = true;
+            const response = await getWorkflowVersions(workflowData.uuid, page * limit, limit);
+            const workflow_versions = response.data;
+
+            if (workflow_versions.length === 0 || workflow_versions.length < limit) {
+              lastPageReached = true;
+            }
+
+            return workflow_versions.map((workflow_version) => {
+              const card = $el(
+                "div",
+                {
+                  className: "workflow-version-card",
+                  style: {
+                    backgroundColor: "#1e1e1e",
+                    borderRadius: "8px",
+                    padding: "15px",
+                    cursor: "pointer",
+                    transition: "background-color 0.2s",
+                  },
+                  onclick: async () => {
+                    app.ui.dialog.close();
+
+                    try {
+                      app.graph.clear();
+                      app.loadGraphData(workflow_version.workflow);
+
+                      const totalTabs = getTotalTabs();
+                      localStorage.setItem(`workflow - ${totalTabs}`, workflow_version.uuid);
+
+                      showMessage("Workflow loaded successfully!", "#00ff00");
+                    } catch (error) {
+                      console.error("Error loading workflow:", error);
+                      showMessage("Failed to load workflow", "#ff0000", error.message);
+                    }
+                  },
+                },
+                [
+                  // Cover image preview
+                  $el(
+                    "div",
+                    {
+                      style: {
+                        width: "100%",
+                        height: "150px",
+                        marginBottom: "10px",
+                        borderRadius: "4px",
+                        overflow: "hidden",
+                        backgroundColor: "#2a2a2a",
+                      },
+                    },
+                    [
+                      $el("img", {
+                        src: workflow_version.coverImageUrl || "",
+                        style: {
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        },
+                        onerror: (e) => {
+                          e.target.src =
+                            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
+                          e.target.style.padding = "40px";
+                          e.target.style.boxSizing = "border-box";
+                        },
+                      }),
+                    ]
+                  ),
+                  // Version info
+                  $el(
+                    "div",
+                    {
+                      style: {
+                        fontSize: "14px",
+                        color: "#ffffff",
+                      },
+                    },
+                    [
+                      $el("div", {
+                        style: {
+                          fontWeight: "bold",
+                          marginBottom: "5px",
+                        },
+                        textContent: `Version ${workflow_version.version}`,
+                      }),
+                      $el("div", {
+                        style: {
+                          color: "#888888",
+                          fontSize: "12px",
+                        },
+                        textContent: `Name: ${workflow_version.name}`,
+                      }),
+                      $el("div", {
+                        style: {
+                          color: "#888888",
+                          fontSize: "12px",
+                        },
+                        textContent: `Created: ${new Date(workflow_version.createdAt).toLocaleString()}`,
+                      }),
+                      $el("div", {
+                        style: {
+                          color: "#888888",
+                          fontSize: "12px",
+                        },
+                        textContent: `Updated: ${new Date(workflow_version.updatedAt).toLocaleString()}`,
+                      }),
+                    ]
+                  ),
+                ]
+              );
+
+              // Add hover events to the card
+              card.addEventListener("mouseover", () => {
+                card.style.backgroundColor = "#2a2a2a";
+              });
+              card.addEventListener("mouseout", () => {
+                card.style.backgroundColor = "#1e1e1e";
+              });
+
+              return card;
+            });
+          } catch (error) {
+            console.error("Error loading workflow versions:", error);
+            container.appendChild(
+              $el("div", {
+                style: {
+                  padding: "15px",
+                  backgroundColor: "#ff000033",
+                  color: "white",
+                  marginBottom: "10px",
+                  gridColumn: "1 / -1",
+                },
+                textContent: `Error: ${error.message}`,
+              })
+            );
+            return [];
+          } finally {
+            isLoading = false;
+          }
+        };
+
+        // Initial load
+        const initialVersions = await loadVersions();
+        container.append(...initialVersions);
+
+        // Add a loading indicator at the bottom that also serves as a trigger
+        const loadingTrigger = $el("div", {
+          id: "versions-loading-trigger",
+          style: {
+            padding: "15px",
+            textAlign: "center",
+            color: "#888",
+            display: lastPageReached ? "none" : "block",
+            marginTop: "20px",
+            gridColumn: "1 / -1",
+          },
+          innerHTML: `
+            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888; 
+                        border-radius: 50%; border-top-color: transparent; 
+                        animation: spin 1s linear infinite;">
+            </div>
+            <div style="margin-top: 10px;">Loading more versions...</div>
+          `,
+        });
+        container.appendChild(loadingTrigger);
+
+        // Create a style for the spinner animation if it doesn't exist
+        if (!document.getElementById("workflow-spinner-style")) {
+          const style = document.createElement("style");
+          style.id = "workflow-spinner-style";
+          style.textContent = `
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+
+        // Set up Intersection Observer to detect when loading trigger is visible
+        setTimeout(() => {
+          const observer = new IntersectionObserver(
+            async (entries) => {
+              const entry = entries[0];
+
+              if (entry.isIntersecting && !isLoading && !lastPageReached) {
+                page++;
+                const nextVersions = await loadVersions();
+
+                if (nextVersions.length > 0) {
+                  // Insert new versions before the loading trigger
+                  nextVersions.forEach((version) => {
+                    container.insertBefore(version, loadingTrigger);
+                  });
+                }
+
+                // Hide loading trigger if we've reached the last page
+                if (lastPageReached) {
+                  loadingTrigger.style.display = "none";
+                }
+              }
+            },
+            {
+              root: document.querySelector(".p-dialog-content"),
+              rootMargin: "100px",
+              threshold: 0.1,
+            }
+          );
+
+          observer.observe(loadingTrigger);
+
+          // Clean up observer when dialog closes
+          const originalOnClose = app.ui.dialog.onClose;
+          app.ui.dialog.onClose = () => {
+            if (typeof originalOnClose === "function") {
+              originalOnClose();
+            }
+            observer.disconnect();
+          };
+        }, 500); // Give time for dialog to render
+      },
+    }),
+  ]);
+
+  app.ui.dialog.show(versionsDialog);
 }
 
 function deleteWorkflowFromStorage(tabIndex) {
