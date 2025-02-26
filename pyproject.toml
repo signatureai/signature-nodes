@@ -18,7 +18,7 @@ dependencies = [
     "torch>=2.5.1",
     "transformers>=4.46.3",
     "uuid7>=0.1.0",
-    "neurochain==2.0.0.dev5",
+    "neurochain==2.0.0.dev9",
     "signature-flows==1.0.5.dev4",
     "signature-core==1.0.0.dev6",
 ]

@@ -2494,7 +2494,7 @@ wheels = [
 
 [[package]]
 name = "neurochain"
-version = "2.0.0.dev5"
+version = "2.0.0.dev9"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -2531,9 +2531,9 @@ dependencies = [
     { name = "weaviate-client" },
     { name = "websockets" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev5/neurochain-2.0.0.dev5.tar.gz", hash = "sha256:62bf497fec330a51ba622216faf2fe4bd8c0b6e9ff085c87e0b7a0ec688252ee" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev9/neurochain-2.0.0.dev9.tar.gz", hash = "sha256:c4dce5f3c7f3a41a60df6ff5766a9ba2471d457f3f4a7902e3445306ea3137ab" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev5/neurochain-2.0.0.dev5-py3-none-any.whl", hash = "sha256:bfa8ec6a5a3af645a1188b94af88f4916667488edca0ce313b254d84ed9903a9" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.0.0.dev9/neurochain-2.0.0.dev9-py3-none-any.whl", hash = "sha256:b351fa55d89668a4aa8679cddbf35a9a4ac1f70f621cd36e27abb3fee63a5b00" },
 ]
 
 [[package]]
@@ -4143,7 +4143,7 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=0.26.2" },
     { name = "jq", specifier = ">=1.8.0" },
     { name = "matplotlib", specifier = ">=3.10.0" },
-    { name = "neurochain", specifier = "==2.0.0.dev5", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "neurochain", specifier = "==2.0.0.dev9", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.2" },
