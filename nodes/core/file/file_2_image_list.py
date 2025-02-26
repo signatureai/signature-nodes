@@ -42,6 +42,7 @@ class File2ImageList:
     CATEGORY = FILE_CAT
     CLASS_ID = "file_image_list"
     OUTPUT_IS_LIST = (True,)
+    DESCRIPTION = "Converts file references to a list of image tensors. Processes multiple files, extracting supported image formats (PNG, JPG, JPEG, TIFF, BMP) into ComfyUI-compatible format."
 
     def execute(self, files: list[dict]) -> tuple[list[torch.Tensor]]:
         images_list = []

@@ -35,6 +35,7 @@ class File2List:
     FUNCTION = "execute"
     CLASS_ID = "file_list"
     CATEGORY = FILE_CAT
+    DESCRIPTION = "Converts file input to a standardized list format. Processes file data into a consistent structure while preserving metadata and original order. Enables further list-based operations on file collections."
 
     def execute(self, files: list[dict]) -> tuple[list[dict]]:
         return (files,)
