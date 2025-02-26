@@ -65,6 +65,7 @@ class AutoCrop:
 
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
+    DESCRIPTION = "Automatically crops images based on mask content. Detects non-zero regions in a mask and crops both image and mask to those regions with optional padding. Returns crop coordinates for further processing."
 
     def execute(
         self,

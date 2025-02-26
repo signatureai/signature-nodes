@@ -76,22 +76,7 @@ class ResizeWithMegapixels:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = """Resize images based on total pixel count (megapixels) while keeping proportions.
-
-    Instead of specifying exact width and height, this node lets you target a specific image size in megapixels. For
-    example:
-    - 1 megapixel = 1000x1000 pixels for a square image
-    - 0.5 megapixels = roughly 707x707 pixels
-    - 2 megapixels = roughly 1414x1414 pixels
-
-    This is useful when you want to:
-    - Resize a batch of images to a consistent size/quality level
-    - Reduce memory usage by targeting a specific megapixel count
-    - Maintain image proportions while hitting a target file size
-    - Prepare images for specific platforms with megapixel limits
-
-    The image will keep its original proportions - a wide image will stay wide, just with the total pixel count you
-    specify."""
+    DESCRIPTION = "Resizes images based on total pixel count (megapixels) while preserving aspect ratio. Instead of specifying exact dimensions, target a specific image size in megapixels. Useful for batch processing to consistent quality levels or reducing memory usage."
 
     def get_dimensions(self, megapixels: float, original_width: int = 0, original_height: int = 0) -> tuple[int, int]:
         """Calculate target dimensions based on megapixels while preserving aspect ratio.
