@@ -32,6 +32,8 @@ class CreateTrainingRun:
                     "STRING",
                     {"default": "signature-trainings"},
                 ),
+                "api_host": ("STRING", {"default": ""}),
+                "backend_cognito_secret": ("STRING", {"default": ""}),
             }
         }
 
@@ -59,16 +61,20 @@ class CreateTrainingRun:
         user_id: str,
         license_id: str,
         s3_bucket_name: str,
+        api_host: str,
+        backend_cognito_secret: str,
     ):
         return CreateTrainingRunNeurochain(
-            dataset_path,
-            config,
-            model_name,
-            description,
-            model_type,
-            config_type,
-            org_id,
-            user_id,
-            license_id,
-            s3_bucket_name,
+            dataset_path=dataset_path,
+            config=config,
+            model_name=model_name,
+            description=description,
+            model_type=model_type,
+            config_type=config_type,
+            org_id=org_id,
+            user_id=user_id,
+            license_id=license_id,
+            s3_bucket_name=s3_bucket_name,
+            api_host=api_host,
+            backend_cognito_secret=backend_cognito_secret,
         )
