@@ -43,6 +43,7 @@ class BrightnessContrastAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Adjusts image brightness and contrast during generation. Control modification ranges and application frequency. Chain with other augmentations for creative image variations."
 
     def execute(
         self,

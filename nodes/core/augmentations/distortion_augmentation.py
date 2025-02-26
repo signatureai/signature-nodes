@@ -49,6 +49,7 @@ class DistortionAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Applies geometric distortion effects to images with optical, grid, or elastic deformations. Control distortion intensity and application frequency. Chain with other augmentations for complex transformations."
 
     def execute(
         self,

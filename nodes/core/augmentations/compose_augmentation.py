@@ -63,6 +63,7 @@ class ComposeAugmentation:
         True,
         True,
     )
+    DESCRIPTION = "Applies augmentations to images and masks, creating multiple variations with the same transformations. Control the number of samples and use seeds for reproducible results. Connect augmentation nodes to create complex transformation chains."
 
     def execute(
         self,
@@ -76,8 +77,12 @@ class ComposeAugmentation:
         if image is None and mask is not None:
             image = torch.zeros_like(mask)
 
-        image_tensor = TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else None
-        mask_tensor = TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else None
+        image_tensor = (
+            TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else None
+        )
+        mask_tensor = (
+            TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else None
+        )
 
         total_images, total_masks = compose_augmentation(
             augmentation=augmentation,
