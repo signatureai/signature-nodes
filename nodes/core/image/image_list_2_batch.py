@@ -55,6 +55,7 @@ class ImageList2Batch:
     CATEGORY = IMAGE_CAT
     INPUT_IS_LIST = True
     CLASS_ID = "image_list_batch"
+    DESCRIPTION = "Combines multiple images into a single batched tensor. Handles different input sizes through various resize modes (stretch, fit, fill, aspect) with customizable interpolation methods. Useful for batch processing operations."
 
     def execute(
         self,

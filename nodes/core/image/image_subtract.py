@@ -42,6 +42,7 @@ class ImageSubtract:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
+    DESCRIPTION = "Computes the absolute difference between two images. Performs pixel-wise subtraction and takes the absolute value of the result. Useful for comparing images, detecting changes, or creating difference maps."
 
     def execute(self, image_0: torch.Tensor, image_1: torch.Tensor) -> tuple[torch.Tensor]:
         image_0_tensor = TensorImage.from_BWHC(image_0)

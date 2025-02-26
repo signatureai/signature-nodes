@@ -14,10 +14,12 @@ class ImageAverage:
 
     Args:
         image (torch.Tensor): Input image in BWHC format to calculate average from
+        focus_mask (torch.Tensor, optional): Mask to focus calculation on specific areas
 
     Returns:
-        tuple[torch.Tensor]: Single-element tuple containing:
+        tuple[torch.Tensor, str]: Two-element tuple containing:
             - tensor: Uniform color image in BWHC format with same shape as input
+            - str: Hexadecimal color code of the average color
 
     Raises:
         ValueError: If image is not a torch.Tensor
@@ -27,6 +29,7 @@ class ImageAverage:
         - Calculation is performed per color channel
         - Useful for color analysis or creating color-matched solid backgrounds
         - Preserves the original batch size
+        - When focus_mask is provided, only calculates average from masked areas
     """
 
     @classmethod
@@ -44,8 +47,9 @@ class ImageAverage:
     RETURN_NAMES = ("color", "hex_color")
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
+    DESCRIPTION = "Calculates the average color of an input image, creating a uniform color image. Optionally uses a mask to focus on specific areas. Returns both the color image and hexadecimal color code."
 
-    def execute(self, image: torch.Tensor, focus_mask: Optional[torch.Tensor] = None):
+    def execute(self, image: torch.Tensor, focus_mask: Optional[torch.Tensor] = None) -> tuple[torch.Tensor, str]:
         step = TensorImage.from_BWHC(image)
         if focus_mask is not None:
             mask = TensorImage.from_BWHC(focus_mask)
