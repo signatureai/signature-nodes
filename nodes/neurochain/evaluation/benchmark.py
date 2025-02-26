@@ -1,5 +1,4 @@
 import json
-import os
 
 import pandas as pd
 from datasets import load_dataset
@@ -9,6 +8,7 @@ from neurochain.llms.ollama_llm import OllamaLLM
 from neurochain.utils.utils import init_weaviate
 from tqdm import tqdm
 
+from ....env import env
 from ...categories import EVALUATION_CAT
 
 
@@ -32,10 +32,10 @@ class Benchmark:
     OUTPUT_NODE = True
 
     def process(self, dataset_name, revision, split, classifier: Classifier):
-        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-        WEAVIATE_URL = os.environ.get("WEAVIATE_URL", "http://54.216.7.223:10600")
-        WEBSERVICE_URL: str = os.environ.get("SERVER_URL", "https://etudes.signature.ai")
-        ENVIRONMENT: str = os.environ.get("ENVIRONMENT", "dev")
+        OPENAI_API_KEY = env.get("OPENAI_API_KEY")
+        WEAVIATE_URL = env.get("WEAVIATE_URL")
+        WEBSERVICE_URL: str = env.get("SERVER_URL")
+        ENVIRONMENT: str = env.get("ENVIRONMENT")
 
         if ENVIRONMENT == "dev":
             llm = OllamaLLM()
