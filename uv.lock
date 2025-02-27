@@ -4050,7 +4050,7 @@ wheels = [
 
 [[package]]
 name = "signature-core"
-version = "1.0.0.dev6"
+version = "1.0.0.dev8"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "albumentations" },
@@ -4071,14 +4071,14 @@ dependencies = [
     { name = "torchvision" },
     { name = "typed-json-dataclass" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev6/signature_core-1.0.0.dev6.tar.gz", hash = "sha256:92de9cd4a48db93bb2e2d95b7159395b308bcd6b0cd2a8840c3ca73312b8f265" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev8/signature_core-1.0.0.dev8.tar.gz", hash = "sha256:d860d86299b1d92287ebe497e79fbb0a7a04027c226da26d2681bf430aff05af" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev6/signature_core-1.0.0.dev6-py3-none-any.whl", hash = "sha256:965f83c7927c70ced4aff7ec47a9a0d94f6a2bf79ac89844b324c6d2c4c18340" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-core/1.0.0.dev8/signature_core-1.0.0.dev8-py3-none-any.whl", hash = "sha256:60ffc12bf03d9e6a699ce1b0b4de2d91e6b7340d56daeb25b7ad564efe0afd63" },
 ]
 
 [[package]]
 name = "signature-flows"
-version = "1.0.5.dev4"
+version = "1.0.5.dev7"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "certifi" },
@@ -4092,9 +4092,9 @@ dependencies = [
     { name = "uuid7" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.0.5.dev4/signature_flows-1.0.5.dev4.tar.gz", hash = "sha256:ba6595c34398940623e4842520ca9e18872951760bb5346b6774586fbabdb925" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.0.5.dev7/signature_flows-1.0.5.dev7.tar.gz", hash = "sha256:94f33497df2db04cf62538a47dcc8e96d1cf091b6d04df5f4b94033ba6f32c24" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.0.5.dev4/signature_flows-1.0.5.dev4-py3-none-any.whl", hash = "sha256:9df83249c34cad93eac3edfb57765764138b2a7f4deb1dc5fdef2469a50eaa65" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.0.5.dev7/signature_flows-1.0.5.dev7-py3-none-any.whl", hash = "sha256:2a8896197058aca199b841187fc0c3d3daedfc6260c046b4eca5a50b925a68f2" },
 ]
 
 [[package]]
@@ -4147,8 +4147,8 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.2" },
-    { name = "signature-core", specifier = "==1.0.0.dev6", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
-    { name = "signature-flows", specifier = "==1.0.5.dev4", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "signature-core", specifier = "==1.0.0.dev8", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "signature-flows", specifier = "==1.0.5.dev7", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "spandrel", specifier = ">=0.4.1" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "torch", specifier = ">=2.5.1" },
