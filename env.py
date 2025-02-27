@@ -15,6 +15,9 @@ class Environment:
         ("WEAVIATE_URL", False, None, None),
         ("BACKEND_COGNITO_SECRET", True, None, None),
         ("ENVIRONMENT", True, "staging", ["staging", "production"]),
+        ("JENKINS_URL", True, None, None),
+        ("JENKINS_AUTH", True, None, None),
+        ("PARALLEL_PROCESSING", False, "False", ["True", "False"]),
     ]
 
     def __new__(cls):
