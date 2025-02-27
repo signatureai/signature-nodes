@@ -235,6 +235,7 @@ class Wrapper:
     FUNCTION = "execute"
     CATEGORY = LABS_CAT
     DEPRECATED = True
+    DESCRIPTION = "A wrapper class for handling workflow execution and communication with a remote server. Provides functionality to execute workflows, process inputs/outputs, and handle communication with a remote server. Supports uploading files, running workflow jobs, and processing various types of data including images, masks, and primitive types."
 
     def execute(self, **kwargs):
         data = kwargs.get("data")
