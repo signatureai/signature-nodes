@@ -46,6 +46,7 @@ class FloatOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
     DEPRECATED = True
+    DESCRIPTION = "Performs arithmetic operations on two floating-point numbers. Supports addition, subtraction, multiplication, division, and modulo operations between two float values. Returns the calculated result."
 
     def execute(self, left: float = 0.0, right: float = 0.0, operator: str = "+") -> tuple[float]:
         if operator in BASIC_OPERATORS:

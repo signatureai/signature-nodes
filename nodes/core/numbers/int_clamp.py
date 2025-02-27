@@ -52,6 +52,7 @@ class IntClamp:
     RETURN_TYPES = ("INT",)
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
+    DESCRIPTION = "Clamps an integer value between specified minimum and maximum bounds. Constrains an integer input within a defined range, returning the min value if input is too low or max value if input is too high."
 
     def execute(self, number: int = 0, max_value: int = 0, min_value: int = 0) -> tuple[int]:
         if max_value < min_value:

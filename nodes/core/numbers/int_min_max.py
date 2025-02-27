@@ -37,6 +37,7 @@ class IntMinMax:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "int_minmax"
+    DESCRIPTION = "Determines the minimum or maximum value between two integers. Compares two integer inputs and returns either the smaller or larger value based on the specified mode of operation."
 
     def execute(self, a: int = 0, b: int = 0, mode: str = "min") -> tuple[int]:
         if mode in OP_FUNCTIONS:

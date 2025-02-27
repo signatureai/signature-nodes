@@ -52,6 +52,7 @@ class FloatClamp:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
+    DESCRIPTION = "Clamps a floating-point value between specified minimum and maximum bounds. Constrains a float input within a defined range, returning the min value if input is too low or max value if input is too high."
 
     def execute(self, number: float = 0.0, max_value: float = 0.0, min_value: float = 0.0) -> tuple[float]:
         if max_value < min_value:
