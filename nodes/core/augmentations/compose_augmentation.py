@@ -77,12 +77,8 @@ class ComposeAugmentation:
         if image is None and mask is not None:
             image = torch.zeros_like(mask)
 
-        image_tensor = (
-            TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else None
-        )
-        mask_tensor = (
-            TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else None
-        )
+        image_tensor = TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else None
+        mask_tensor = TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else None
 
         total_images, total_masks = compose_augmentation(
             augmentation=augmentation,
@@ -98,6 +94,7 @@ class ComposeAugmentation:
             total_masks = []
         node_image = [image.get_BWHC() for image in total_images]
         node_mask = [mask.get_BWHC() for mask in total_masks]
+
         return (
             node_image,
             node_mask,
