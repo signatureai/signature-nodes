@@ -34,6 +34,7 @@ class TextTrim:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
+    DESCRIPTION = "Removes whitespace from text according to specified trimming rules. Trims whitespace from text input, offering options to remove whitespace from the beginning, end, or both sides of the text."
 
     def execute(self, text: str, trim_type: str = "both") -> tuple[str]:
         trim_types = {
