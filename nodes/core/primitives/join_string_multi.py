@@ -24,6 +24,7 @@ class JoinStringMulti:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "combine"
     CATEGORY = PRIMITIVES_CAT
+    DESCRIPTION = "Creates single string, or a list of strings, from multiple input strings. You can set how many inputs the node has, with the **inputcount** and clicking update."
 
     def combine(
         self,

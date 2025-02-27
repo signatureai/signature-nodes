@@ -31,6 +31,7 @@ class String:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
+    DESCRIPTION = "A node that handles single-line string inputs. Provides functionality for processing single-line text input. Can be used as a basic input node in computational graphs where text processing is required."
 
     def execute(self, value: str = "") -> tuple[str]:
         return (value,)
