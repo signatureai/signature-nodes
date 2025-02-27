@@ -36,21 +36,22 @@ class MaskGaussianBlur:
                 "mask": ("MASK",),
                 "radius": ("INT", {"default": 13}),
                 "sigma": ("FLOAT", {"default": 10.5}),
-                "interations": ("INT", {"default": 1}),
+                "iterations": ("INT", {"default": 1}),
             }
         }
 
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
+    DESCRIPTION = "Applies Gaussian blur to soften mask edges and create smooth transitions. Configurable blur with control over radius, strength, and number of iterations. Useful for creating gradual falloff at mask boundaries."
 
     def execute(
         self,
         mask: torch.Tensor,
         radius: int = 13,
         sigma: float = 10.5,
-        interations: int = 1,
+        iterations: int = 1,
     ) -> tuple[torch.Tensor]:
         tensor_image = TensorImage.from_BWHC(mask)
-        output = gaussian_blur2d(tensor_image, radius, sigma, interations).get_BWHC()
+        output = gaussian_blur2d(tensor_image, radius, sigma, iterations).get_BWHC()
         return (output,)

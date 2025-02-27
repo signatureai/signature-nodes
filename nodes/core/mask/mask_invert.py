@@ -35,6 +35,7 @@ class MaskInvert:
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
+    DESCRIPTION = "Inverts a binary mask by flipping all values. Creates a negative version of the input mask where white becomes black and vice versa. Useful for creating negative space masks or reversing selection areas."
 
     def execute(self, mask: torch.Tensor) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)

@@ -44,6 +44,7 @@ class MaskBitwise:
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
+    DESCRIPTION = "Performs bitwise logical operations between two binary masks. Applies operations like AND (intersection), OR (union), XOR, and bit shifts. Useful for combining or comparing mask regions in precise ways."
 
     def execute(self, mask_1: torch.Tensor, mask_2: torch.Tensor, mode: str = "and") -> tuple[torch.Tensor]:
         input_mask_1 = TensorImage.from_BWHC(mask_1)
