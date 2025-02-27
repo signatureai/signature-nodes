@@ -10,8 +10,14 @@ class ForLoopStart:
     def INPUT_TYPES(cls):
         inputs = {
             "required": {
-                "iterations": ("INT", {"default": 1, "min": 1, "max": 100000, "step": 1}),
-                "num_slots": ([str(i) for i in range(1, MAX_FLOW_NUM)], {"default": "1"}),
+                "iterations": (
+                    "INT",
+                    {"default": 1, "min": 1, "max": 100000, "step": 1},
+                ),
+                "num_slots": (
+                    [str(i) for i in range(1, MAX_FLOW_NUM)],
+                    {"default": "1"},
+                ),
             },
             "optional": {},
             "hidden": {
@@ -27,6 +33,7 @@ class ForLoopStart:
     FUNCTION = "execute"
 
     CATEGORY = LABS_CAT + "/Loops"
+    DESCRIPTION = "Initiates a for loop with a specified number of iterations. Creates a loop that executes a fixed number of times, tracking the current iteration index. Works with ForLoopEnd to create iterative workflows with predictable execution counts."
 
     def execute(self, **kwargs):
         current_index = 0
@@ -35,7 +42,11 @@ class ForLoopStart:
 
         graph = GraphBuilder()
         initial_values = {(f"init_value_{i}"): kwargs.get(f"init_value_{i}", None) for i in range(1, MAX_FLOW_NUM)}
-        graph.node("signature_do_while_loop_start", init_value_0=current_index, **initial_values)
+        graph.node(
+            "signature_do_while_loop_start",
+            init_value_0=current_index,
+            **initial_values,
+        )
         outputs = [kwargs.get(f"init_value_{i}", None) for i in range(1, MAX_FLOW_NUM)]
         return {
             "result": tuple(["stub", current_index] + outputs),

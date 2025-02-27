@@ -41,6 +41,7 @@ class Switch:
     RETURN_NAMES = ("output",)
     FUNCTION = "execute"
     CATEGORY = LOGIC_CAT
+    DESCRIPTION = "Switches between two input values based on a boolean condition. When the condition is True, returns the 'true' value; otherwise, returns the 'false' value. Useful for creating conditional workflows and dynamic value selection."
 
     def check_lazy_status(self, condition: bool, on_true: Any = None, on_false: Any = None) -> Any:
         if condition and on_true is None:

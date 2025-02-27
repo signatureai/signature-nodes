@@ -26,7 +26,10 @@ class DoWhileLoopStart:
     def INPUT_TYPES(cls):
         inputs = {
             "required": {
-                "num_slots": ([str(i) for i in range(1, MAX_FLOW_NUM + 1)], {"default": "1"}),
+                "num_slots": (
+                    [str(i) for i in range(1, MAX_FLOW_NUM + 1)],
+                    {"default": "1"},
+                ),
             },
             "optional": {},
         }
@@ -39,6 +42,7 @@ class DoWhileLoopStart:
     FUNCTION = "execute"
 
     CATEGORY = LABS_CAT + "/Loops"
+    DESCRIPTION = "Initiates a do-while loop with optional initial values. Starts an iterative workflow that executes at least once before checking a condition. Works with DoWhileLoopEnd to create loops that process the same operations multiple times."
 
     def execute(self, **kwargs):
         values = []

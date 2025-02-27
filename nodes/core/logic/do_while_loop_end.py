@@ -38,7 +38,10 @@ class DoWhileLoopEnd:
             "required": {
                 "flow": ("FLOW_CONTROL", {"rawLink": True, "forceInput": True}),
                 "end_loop": ("BOOLEAN", {"forceInput": True}),
-                "num_slots": ([str(i) for i in range(1, MAX_FLOW_NUM + 1)], {"default": "1"}),
+                "num_slots": (
+                    [str(i) for i in range(1, MAX_FLOW_NUM + 1)],
+                    {"default": "1"},
+                ),
             },
             "optional": {},
             "hidden": {
@@ -54,6 +57,7 @@ class DoWhileLoopEnd:
     RETURN_NAMES = ByPassTypeTuple(tuple(f"value_{i}" for i in range(MAX_FLOW_NUM)))
     FUNCTION = "execute"
     CATEGORY = LABS_CAT + "/Loops"
+    DESCRIPTION = "Ends a do-while loop and returns final values after execution. Controls loop termination based on the 'end_loop' condition. Works with DoWhileLoopStart to create iterative workflows that execute at least once before checking the condition."
 
     def explore_dependencies(self, node_id, dynprompt, upstream, parent_ids):
         node_info = dynprompt.get_node(node_id)
@@ -65,7 +69,10 @@ class DoWhileLoopEnd:
                 display_id = dynprompt.get_display_node_id(parent_id)
                 display_node = dynprompt.get_node(display_id)
                 class_type = display_node["class_type"]
-                if class_type not in ["signature_for_loop_end", "signature_do_while_loop_end"]:
+                if class_type not in [
+                    "signature_for_loop_end",
+                    "signature_do_while_loop_end",
+                ]:
                     parent_ids.append(display_id)
                 if parent_id not in upstream:
                     upstream[parent_id] = []
