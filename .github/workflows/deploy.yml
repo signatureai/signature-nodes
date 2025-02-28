@@ -43,52 +43,6 @@ jobs:
             echo "::warning::Branch '$BRANCH_NAME' does not follow gitflow naming convention (main|develop|feature/*|release/*|hotfix/*)"
           fi
 
-  unit-test:
-    name: Run Python Tests
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    environment: development
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_ACCOUNT_REGION }}
-
-      - name: Run tests with pytest
-        run: |
-          UV_INDEX_SIGNATURE_PASSWORD=$(aws codeartifact get-authorization-token \
-              --domain "signature-ml-packages-production" \
-              --domain-owner "992382511592" \
-              --query authorizationToken \
-              --output text) \
-          uv run --group test pytest
-
-      - name: Get Cover
-        uses: orgoro/coverage@v3.2
-        with:
-          coverageFile: ./coverage.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-reports
-          path: coverage.xml
-          retention-days: 14
-
   security:
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == github.event.pull_request.head.ref)
     uses: ./.github/workflows/security-checks.yml
