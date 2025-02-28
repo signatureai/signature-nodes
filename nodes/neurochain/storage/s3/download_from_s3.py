@@ -4,6 +4,7 @@ import boto3
 import requests
 from neurochain.utils.utils import get_secret
 
+from .....env import env
 from ....categories import S3_CAT
 from ...utils import COMFY_IMAGES_DIR
 
@@ -25,13 +26,13 @@ class DownloadFromS3:
     OUTPUT_NODE = True
 
     def process(self, file_name: str, prefix: str):
-        environment = os.environ.get("ENVIRONMENT", "staging")
+        environment = env.get("ENVIRONMENT")
         host = f"https://signature-generate.signature-eks-{environment}.signature.ai"
 
         session = boto3.Session()
         backend_cognito_secret = get_secret(
             session,
-            os.environ.get("BACKEND_COGNITO_SECRET", f"{environment}_backend_cognito_oauth"),
+            env.get("BACKEND_COGNITO_SECRET"),
         )
         if not backend_cognito_secret:
             raise ValueError("Back-end Cognito Secret not found")

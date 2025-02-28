@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from neurochain.agents.classifier import Classifier as ClassifierNode
@@ -6,6 +5,7 @@ from neurochain.llms.gptq_model_exp import GPTQModelEXP
 from neurochain.llms.ollama_llm import OllamaLLM
 from neurochain.utils.utils import init_weaviate
 
+from ....env import env
 from ...categories import AGENT_CAT
 
 
@@ -164,10 +164,10 @@ class Classifier:
                 class_dict = {"name": categ, "description": descriptions[idx]}
                 classes.append(class_dict)
 
-        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-        WEAVIATE_URL = os.environ.get("WEAVIATE_URL", "http://54.216.7.223:10600")
-        WEBSERVICE_URL: str = os.environ.get("SERVER_URL", "https://etudes.signature.ai")
-        ENVIRONMENT: str = os.environ.get("ENVIRONMENT", "dev")
+        OPENAI_API_KEY = env.get("OPENAI_API_KEY")
+        WEAVIATE_URL = env.get("WEAVIATE_URL")
+        WEBSERVICE_URL: str = env.get("SERVER_URL")
+        ENVIRONMENT: str = env.get("ENVIRONMENT")
 
         if ENVIRONMENT == "dev":
             llm = OllamaLLM()

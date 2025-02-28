@@ -1,9 +1,8 @@
-import os
-
 import boto3
 import requests
 from neurochain.utils.utils import get_secret, make_upsert_request
 
+from ....env import env
 from ...categories import VECTORSTORE_CAT
 
 
@@ -24,13 +23,13 @@ class UploadToVectorstore:
     OUTPUT_NODE = True
 
     def process(self, tenant_id: str, chunks):
-        environment = os.environ.get("ENVIRONMENT", "staging")
+        environment = env.get("ENVIRONMENT")
         host = f"https://signature-generate.signature-eks-{environment}.signature.ai"
 
         session = boto3.Session()
         backend_cognito_secret = get_secret(
             session,
-            os.environ.get("BACKEND_COGNITO_SECRET", f"{environment}_backend_cognito_oauth"),
+            env.get("BACKEND_COGNITO_SECRET"),
         )
         if backend_cognito_secret is None:
             raise ValueError("Backend Cognito Secret not found")

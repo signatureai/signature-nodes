@@ -4,17 +4,15 @@ import logging
 import os
 import re
 import sys
-from os import remove, walk
-from os.path import abspath, dirname, exists, join, realpath, sep
-from shutil import copyfile
+from os import walk
+from os.path import abspath, dirname, join, sep
 
-from dotenv import load_dotenv
-
+from .env import env
 from .utils import parallel_for
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+logger.info(f"Environment: {env}")
 
 BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
 SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("src")[0]
