@@ -31,11 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      ## checks for title & subject of commit messages
-      # - name: Conventional Commit Check
-      #   uses: wagoid/commitlint-github-action@v5
-
       - name: Branch Name Check
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
