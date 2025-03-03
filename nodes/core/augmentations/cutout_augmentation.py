@@ -46,7 +46,10 @@ class CutoutAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
-    DESCRIPTION = "Creates random black rectangular cutouts in images. Control number, size, and frequency of cutouts. Useful for regularization and preventing overfitting. Chain with other augmentations for creative effects."
+    DESCRIPTION = """Creates random black rectangular cutouts in images.
+    Control number, size, and frequency of cutouts.
+    Useful for regularization and preventing overfitting.
+    Chain with other augmentations for creative effects."""
 
     def execute(
         self,

@@ -22,7 +22,7 @@ class PlatformEnvs:
     )
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    DESCRIPTION = "Retrieves organization ID and token based on the specified environment."
+    DESCRIPTION = """Retrieves organization ID and token based on the specified environment."""
 
     def execute(self, **kwargs):
         env = kwargs.get("environment") or ""

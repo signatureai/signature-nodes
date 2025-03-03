@@ -53,7 +53,9 @@ class Json2Dict:
     FUNCTION = "execute"
     CLASS_ID = "json_dict"
     CATEGORY = DATA_CAT
-    DESCRIPTION = "Converts JSON-formatted strings to Python dictionaries. Handles nested structures and validates input format. Useful for importing external data into workflows."
+    DESCRIPTION = """
+    Converts JSON-formatted strings to Python dictionaries. Handles nested structures and validates input format.
+    Useful for importing external data into workflows."""
 
     def execute(self, json_str: str = "") -> tuple[dict]:
         json_dict = json.loads(json_str)

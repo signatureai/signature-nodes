@@ -48,7 +48,10 @@ class FlipAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
-    DESCRIPTION = "Applies horizontal or vertical flip transformations to images with adjustable probability. Creates mirror-image variations of your content. Chain with other augmentations for diverse image transformations."
+    DESCRIPTION = """
+    Applies horizontal or vertical flip transformations to images with adjustable probability.
+    Creates mirror-image variations of your content.
+    Chain with other augmentations for diverse image transformations."""
 
     def execute(
         self,

@@ -36,7 +36,11 @@ class TextRegexReplace:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
-    DESCRIPTION = "Performs pattern-based text replacement using regular expressions. Uses regex patterns to find and replace text patterns, supporting complex pattern matching and replacement operations."
+    DESCRIPTION = """
+    Performs pattern-based text replacement using regular expressions.
+    Uses regex patterns to find and replace text patterns,
+    supporting complex pattern matching and replacement operations.
+    """
 
     def execute(self, text: str, pattern: str = "", replacement: str = "") -> tuple[str]:
         return (re.sub(pattern, replacement, text),)

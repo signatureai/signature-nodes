@@ -40,7 +40,11 @@ class ImageFromBase64:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
     DEPRECATED = True
-    DESCRIPTION = "Converts base64-encoded image strings to ComfyUI-compatible tensors with masks. Handles both RGB and RGBA images, extracting transparency as mask. Note: This node is deprecated."
+    DESCRIPTION = """
+    Converts base64-encoded image strings to ComfyUI-compatible tensors with masks.
+    Handles both RGB and RGBA images, extracting transparency as mask.
+    Note: This node is deprecated.
+    """
 
     def execute(self, base64: str = "BASE64 HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_base64(base64)

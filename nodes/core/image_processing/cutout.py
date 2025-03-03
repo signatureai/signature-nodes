@@ -51,7 +51,11 @@ class Cutout:
     RETURN_NAMES = ("rgb", "rgba")
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = "Creates masked cutouts from images with both RGB and RGBA outputs. Extracts portions of an image based on a mask, useful for isolating subjects or creating transparent cutouts for compositing."
+    DESCRIPTION = """
+    Creates masked cutouts from images with both RGB and RGBA outputs.
+    Extracts portions of an image based on a mask,
+    useful for isolating subjects or creating transparent cutouts for compositing.
+    """
 
     def execute(
         self,

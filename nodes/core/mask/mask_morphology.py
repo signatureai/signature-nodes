@@ -74,7 +74,11 @@ class MaskMorphology:
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
-    DESCRIPTION = "Applies morphological operations to transform mask shapes and boundaries. Provides operations like dilation (expand), erosion (shrink), opening, closing, gradient, and more. Useful for refining mask edges and shapes."
+    DESCRIPTION = """
+    Applies morphological operations to transform mask shapes and boundaries.
+    Provides operations like dilation (expand), erosion (shrink), opening, closing, gradient, and more.
+    Useful for refining mask edges and shapes.
+    """
 
     def execute(
         self,

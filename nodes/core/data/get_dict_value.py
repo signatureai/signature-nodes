@@ -54,7 +54,10 @@ class GetDictValue:
     RETURN_NAMES = ("value", "value_type")
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
-    DESCRIPTION = "Retrieves values from dictionaries using keys or JQ path expressions (with leading dot). Returns both the value and its Python type name. Supports nested data structures and complex queries."
+    DESCRIPTION = """
+    Retrieves values from dictionaries using keys or JQ path expressions (with leading dot).
+    Returns both the value and its Python type name.
+    Supports nested data structures and complex queries."""
 
     def execute(self, dict: dict, key: str = "") -> tuple[Any, str]:
         if key.startswith("."):

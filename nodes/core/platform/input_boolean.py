@@ -39,9 +39,12 @@ class InputBoolean:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    DESCRIPTION = "Processes boolean inputs for the platform. Handles boolean input processing with validation and type checking. Returns the original boolean value without modification."
+    DESCRIPTION = """
+    Processes boolean inputs for the platform.
+    Handles boolean input processing with validation and type checking.
+    Returns the original boolean value without modification.
+    """
 
-    # TODO: confirm if title, subtype, and metadata inputs are needed
     def execute(
         self,
         title: str = "Input Boolean",

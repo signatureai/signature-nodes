@@ -57,7 +57,11 @@ class Output:
     INPUT_IS_LIST = True
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    DESCRIPTION = "Manages output processing and file saving for various data types. Handles the processing and saving of different output types including images, masks, numbers, and strings. Includes support for thumbnail generation and metadata management."
+    DESCRIPTION = """
+    Manages output processing and file saving for various data types.
+    Handles the processing and saving of different output types including images, masks, numbers, and strings.
+    Includes support for thumbnail generation and metadata management.
+    """
 
     @classmethod
     def IS_CHANGED(cls, **kwargs):  # type: ignore

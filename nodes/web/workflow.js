@@ -693,8 +693,8 @@ function showWorkflowsList() {
             marginTop: "20px",
           },
           innerHTML: `
-            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888; 
-                        border-radius: 50%; border-top-color: transparent; 
+            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888;
+                        border-radius: 50%; border-top-color: transparent;
                         animation: spin 1s linear infinite;">
             </div>
             <div style="margin-top: 10px;">Loading more workflows...</div>
@@ -955,8 +955,8 @@ async function showWorkflowVersions(workflowData) {
             gridColumn: "1 / -1",
           },
           innerHTML: `
-            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888; 
-                        border-radius: 50%; border-top-color: transparent; 
+            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888;
+                        border-radius: 50%; border-top-color: transparent;
                         animation: spin 1s linear infinite;">
             </div>
             <div style="margin-top: 10px;">Loading more versions...</div>

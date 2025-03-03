@@ -1,5 +1,6 @@
 import ast
 import time
+from typing import Any
 
 import torch
 from signature_core.functional.color import (
@@ -48,9 +49,13 @@ class Any2String:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "any_string"
-    DESCRIPTION = "Converts any input value to its string representation. Converts any input value into a string format using Python's built-in str() function. Useful for debugging, logging, or text-based operations."
+    DESCRIPTION = """
+    Converts any input value to its string representation.
+    Converts any input value into a string format using Python's built-in str() function.
+    Useful for debugging, logging, or text-based operations.
+    """
 
-    def execute(self, value: any) -> tuple[str]:
+    def execute(self, value: Any) -> tuple[str]:
         return (str(value),)
 
 
@@ -83,9 +88,14 @@ class String2Any:
     RETURN_NAMES = ("value",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
-    DESCRIPTION = "Safely converts a string representation to its Python object. Uses Python's ast.literal_eval for secure string evaluation, which only allows literal expressions (strings, numbers, tuples, lists, dicts, booleans, None). Useful for converting string representations of Python objects back to their original Python objects."
+    DESCRIPTION = """
+    Safely converts a string representation to its Python object.
+    Uses Python's ast.literal_eval for secure string evaluation,
+    which only allows literal expressions (strings, numbers, tuples, lists, dicts, booleans, None).
+    Useful for converting string representations of Python objects back to their original Python objects.
+    """
 
-    def execute(self, string: str) -> tuple[any]:
+    def execute(self, string: str) -> tuple[Any]:
         try:
             return (ast.literal_eval(string),)
         except (ValueError, SyntaxError) as e:
@@ -119,9 +129,13 @@ class Any2Int:
     RETURN_TYPES = ("INT",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
-    DESCRIPTION = "Converts any input value to its int representation. Converts any input value into a int format using Python's built-in int() function. Useful for debugging, logging, or text-based operations."
+    DESCRIPTION = """
+    Converts any input value to its int representation.
+    Converts any input value into a int format using Python's built-in int() function.
+    Useful for debugging, logging, or text-based operations.
+    """
 
-    def execute(self, value: any) -> tuple[int]:
+    def execute(self, value: Any) -> tuple[int]:
         return (int(value),)
 
 
@@ -152,9 +166,13 @@ class Any2Float:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
-    DESCRIPTION = "Converts any input value to its float representation. Converts any input value into a float format using Python's built-in float() function. Useful for debugging, logging, or text-based operations."
+    DESCRIPTION = """
+    Converts any input value to its float representation.
+    Converts any input value into a float format using Python's built-in float() function.
+    Useful for debugging, logging, or text-based operations.
+    """
 
-    def execute(self, value: any) -> tuple[float]:
+    def execute(self, value: Any) -> tuple[float]:
         return (float(value),)
 
 
@@ -191,9 +209,13 @@ class Any2Image:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "any_image"
-    DESCRIPTION = "Converts any inputs value to image format. A utility node that handles conversion of tensor inputs to a compatible image format for use in image processing workflows."
+    DESCRIPTION = """
+    Converts any inputs value to image format.
+    A utility node that handles conversion of tensor inputs to a compatible image format,
+    for use in image processing workflows.
+    """
 
-    def execute(self, value: any) -> tuple[torch.Tensor]:
+    def execute(self, value: Any) -> tuple[torch.Tensor]:
         if isinstance(value, torch.Tensor):
             return (value,)
         raise ValueError(f"Unsupported type: {type(value)}")
@@ -230,7 +252,7 @@ class Any2Any:
     CATEGORY = UTILS_CAT
     CLASS_ID = "any2any"
 
-    def execute(self, value: any) -> tuple[any]:
+    def execute(self, value: Any) -> tuple[Any]:
         return (value,)
 
 
@@ -264,7 +286,11 @@ class RGB2HSV:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "rgb_hsv"
-    DESCRIPTION = "Converts RGB images to HSV color space. Transforms images from RGB (Red, Green, Blue) color space to HSV (Hue, Saturation, Value) color space while preserving the image structure and dimensions."
+    DESCRIPTION = """
+    Converts RGB images to HSV color space.
+    Transforms images from RGB (Red, Green, Blue) color space to HSV (Hue, Saturation, Value)
+    color space while preserving the image structure and dimensions.
+    """
 
     def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
@@ -302,7 +328,11 @@ class RGB2HLS:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "rgb_hls"
-    DESCRIPTION = "Converts RGB images to HLS color space. Transforms images from RGB (Red, Green, Blue) color space to HLS (Hue, Lightness, Saturation) color space while preserving the image structure and dimensions."
+    DESCRIPTION = """
+    Converts RGB images to HLS color space.
+    Transforms images from RGB (Red, Green, Blue) color space to HLS (Hue, Lightness, Saturation)
+    color space while preserving the image structure and dimensions.
+    """
 
     def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
@@ -341,7 +371,11 @@ class RGBA2RGB:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "rgba2rgb"
-    DESCRIPTION = "Converts RGBA images to RGB format. Transforms images from RGBA (Red, Green, Blue, Alpha) format to RGB format by removing the alpha channel. Passes through RGB images unchanged."
+    DESCRIPTION = """
+    Converts RGBA images to RGB format.
+    Transforms images from RGBA (Red, Green, Blue, Alpha) format to RGB format by removing the alpha channel.
+    Passes through RGB images unchanged.
+    """
 
     def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
@@ -381,7 +415,11 @@ class RGB2GRAY:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
-    DESCRIPTION = "Converts RGB images to grayscale format. This node transforms RGB color images to single-channel grayscale images using standard luminance conversion factors."
+    DESCRIPTION = """
+    Converts RGB images to grayscale format.
+    This node transforms RGB color images to single-channel grayscale images
+    using standard luminance conversion factors.
+    """
 
     def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         image_tensor = TensorImage.from_BWHC(image)
@@ -419,7 +457,11 @@ class GRAY2RGB:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
-    DESCRIPTION = "Converts grayscale images to RGB format. This node transforms single-channel grayscale images to three-channel RGB images by replicating the grayscale values across channels."
+    DESCRIPTION = """
+    Converts grayscale images to RGB format.
+    This node transforms single-channel grayscale images to three-channel RGB images
+    by replicating the grayscale values across channels.
+    """
 
     def execute(self, image: torch.Tensor) -> tuple[torch.Tensor]:
         output = image
@@ -464,9 +506,14 @@ class PurgeVRAM:
     OUTPUT_NODE = True
     # DEPRECATED = True
     CLASS_ID = "purge_vram"
-    DESCRIPTION = "Cleans up VRAM by forcing memory deallocation and cache clearing. A utility node that performs comprehensive VRAM cleanup by collecting garbage, emptying CUDA cache, and unloading models. Useful for managing memory usage in complex workflows."
+    DESCRIPTION = """
+    Cleans up VRAM by forcing memory deallocation and cache clearing.
+    A utility node that performs comprehensive VRAM cleanup by collecting garbage,
+    emptying CUDA cache, and unloading models.
+    Useful for managing memory usage in complex workflows.
+    """
 
-    def execute(self, anything: any) -> tuple[any]:
+    def execute(self, anything: Any) -> tuple[Any]:
         clean_memory()
         return (anything,)
 
@@ -507,9 +554,13 @@ class WaitSeconds:
     RETURN_NAMES = ("value",)
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
-    DESCRIPTION = "Pauses execution for a specified number of seconds. A utility node that introduces a delay in the workflow by sleeping for a given duration. This can be useful for timing control, pacing operations, or waiting for external processes to complete."
+    DESCRIPTION = """
+    Pauses execution for a specified number of seconds.
+    A utility node that introduces a delay in the workflow by sleeping for a given duration.
+    This can be useful for timing control, pacing operations, or waiting for external processes to complete.
+    """
 
-    def execute(self, value: any, seconds: float = 1.0) -> tuple[any]:
+    def execute(self, value: Any, seconds: float = 1.0) -> tuple[Any]:
         time.sleep(seconds)
         return (value,)
 
@@ -567,9 +618,13 @@ class ListBuilder:
         True,
         False,
     )
-    DESCRIPTION = "Builds a list from input elements. A node that constructs a list from provided input elements. Used in node-based workflows to combine multiple elements into a single list output."
+    DESCRIPTION = """
+    Builds a list from input elements.
+    A node that constructs a list from provided input elements.
+    Used in node-based workflows to combine multiple elements into a single list output.
+    """
 
-    def execute(self, num_slots: str = "1", **kwargs) -> tuple[any, list[any]]:
+    def execute(self, num_slots: str = "1", **kwargs) -> tuple[Any, list[Any]]:
         list_stack = []
         for i in range(1, int(num_slots) + 1):
             list_value = kwargs.get(f"value_{i}")
@@ -616,7 +671,11 @@ class Latent2Dict:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     OUTPUT_NODE = True
-    DESCRIPTION = "Converts a latent tensor representation to a dictionary format. Transforms a LATENT input (containing tensor data) into a structured dictionary that includes type information, shape, and tensor values."
+    DESCRIPTION = """
+    Converts a latent tensor representation to a dictionary format.
+    Transforms a LATENT input (containing tensor data) into a structured dictionary
+    that includes type information, shape, and tensor values.
+    """
 
     def execute(self, latent: dict) -> tuple[dict]:
         latent_dict = {
@@ -673,7 +732,11 @@ class Dict2Latent:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     OUTPUT_NODE = True
-    DESCRIPTION = "Converts a dictionary representation back to a latent tensor format. Transforms a structured dictionary containing tensor data back into the LATENT format used by the system."
+    DESCRIPTION = """
+    Converts a dictionary representation back to a latent tensor format.
+    Transforms a structured dictionary containing tensor data back into the LATENT
+    format used by the system.
+    """
 
     def execute(self, dict: dict) -> tuple[dict]:
         if dict.get("type") != "LATENT":
@@ -710,9 +773,12 @@ class InputListToList:
     OUTPUT_NODE = True
     INPUT_IS_LIST = True
     CLASS_ID = "input_list_to_list"
-    DESCRIPTION = "Converts a list input to a list as a single output. A utility node that takes an input list and returns a single list containing all the inputs."
+    DESCRIPTION = """
+    Converts a list input to a list as a single output.
+    A utility node that takes an input list and returns a single list containing all the inputs.
+    """
 
-    def execute(self, list: list[any]) -> tuple[list[any]]:
+    def execute(self, list: list[Any]) -> tuple[list[Any]]:
         return (list,)
 
 
@@ -734,9 +800,12 @@ class ListToOutputList:
     CATEGORY = UTILS_CAT
     OUTPUT_IS_LIST = (True,)
     CLASS_ID = "list_to_output_list"
-    DESCRIPTION = "Converts a list input to a list as a single output. A utility node that takes a list and returns an output list for iterations."
+    DESCRIPTION = """
+    Converts a list input to a list as a single output.
+    A utility node that takes a list and returns an output list for iterations.
+    """
 
-    def execute(self, list: list[any]) -> tuple[list[any]]:
+    def execute(self, list: list[Any]) -> tuple[list[Any]]:
         return (list,)
 
 
@@ -780,18 +849,26 @@ class BatchBuilder:
     FUNCTION = "execute"
     CATEGORY = UTILS_CAT
     CLASS_ID = "batch_builder"
-    DESCRIPTION = "Builds a batch from input images. A node that constructs a batch from provided input images usign the first one as the base. Used in node-based workflows to combine multiple images into a single batch output."
+    DESCRIPTION = """
+    Builds a batch from input images.
+    A node that constructs a batch from provided input images usign the first one as the base.
+    Used in node-based workflows to combine multiple images into a single batch output.
+    """
 
     def execute(self, num_slots: str = "1", **kwargs) -> tuple[torch.Tensor]:
         if f"value_{int(num_slots)}" not in kwargs.keys():
             raise ValueError("Number of inputs is not equal to number of slots")
 
         base = kwargs.get("value_1")
+        if base is None:
+            raise ValueError("Base image is not provided")
         base_shape = TensorImage.from_BWHC(base).shape
         images = []
 
         for i in range(1, int(num_slots) + 1):
             image = kwargs.get(f"value_{i}")
+            if image is None:
+                raise ValueError(f"Image in value_{i} is not provided")
             image_shape = TensorImage.from_BWHC(image).shape
 
             # Ensure mask tensors are properly shaped (add channels dimension if needed)

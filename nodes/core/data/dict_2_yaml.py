@@ -40,7 +40,9 @@ class Dict2Yaml:
     FUNCTION = "execute"
     CLASS_ID = "dict_yaml"
     CATEGORY = DATA_CAT
-    DESCRIPTION = "Converts Python dictionaries to YAML-formatted strings. Handles nested structures and primitive data types. Useful for data interchange with external systems that require YAML format."
+    DESCRIPTION = """
+    Converts Python dictionaries to YAML-formatted strings. Handles nested structures and primitive data types.
+    Useful for data interchange with external systems that require YAML format."""
 
     def execute(self, dict: dict) -> tuple[str]:
         yaml_str = yaml.dump(dict)

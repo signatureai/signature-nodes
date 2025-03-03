@@ -40,7 +40,11 @@ class GetMaskShape:
     RETURN_NAMES = ("batch", "width", "height", "channels", "debug")
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
-    DESCRIPTION = "Analyzes and returns the dimensional information of a mask tensor. Extracts shape parameters (batch size, width, height, channels) for analysis or debugging. Handles both 3D and 4D tensor inputs."
+    DESCRIPTION = """
+    Analyzes and returns the dimensional information of a mask tensor.
+    Extracts shape parameters (batch size, width, height, channels) for analysis or debugging.
+    Handles both 3D and 4D tensor inputs.
+    """
 
     def execute(self, mask: torch.Tensor) -> tuple[int, int, int, int, str]:
         if len(mask.shape) == 3:

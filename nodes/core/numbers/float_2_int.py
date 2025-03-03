@@ -33,7 +33,11 @@ class Float2Int:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "float2int"
-    DESCRIPTION = "Converts a floating-point number to an integer through truncation. Removes the decimal portion of a float value, truncating towards zero rather than rounding. Useful for workflows requiring integer values."
+    DESCRIPTION = """
+    Converts a floating-point number to an integer through truncation.
+    Removes the decimal portion of a float value, truncating towards zero rather than rounding.
+    Useful for workflows requiring integer values.
+    """
 
     def execute(self, number: float = 0.0) -> tuple[int]:
         try:

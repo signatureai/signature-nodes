@@ -45,7 +45,10 @@ class InputText:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    DESCRIPTION = "Processes text input with fallback support. Handles text input processing with support for different subtypes and optional fallback values when input is empty."
+    DESCRIPTION = """
+    Processes text input with fallback support.
+    Handles text input processing with support for different subtypes and optional fallback values when input is empty.
+    """
 
     def execute(
         self,

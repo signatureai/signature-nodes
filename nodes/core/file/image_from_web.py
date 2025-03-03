@@ -39,7 +39,11 @@ class ImageFromWeb:
     RETURN_TYPES = ("IMAGE", "MASK")
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
-    DESCRIPTION = "Downloads and converts web images to ComfyUI-compatible tensors. Fetches images from URLs and processes them with automatic mask generation for transparency. Supports common web image formats."
+    DESCRIPTION = """
+    Downloads and converts web images to ComfyUI-compatible tensors.
+    Fetches images from URLs and processes them with automatic mask generation for transparency.
+    Supports common web image formats.
+    """
 
     def execute(self, url: str = "URL HERE") -> tuple[torch.Tensor, torch.Tensor]:
         img_arr = TensorImage.from_web(url)
