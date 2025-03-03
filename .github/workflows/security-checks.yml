@@ -1,26 +1,71 @@
 name: Security Checks
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_call:
+    inputs:
+      python-version:
+        required: false
+        type: string
+        default: '3.11'
+        description: 'Python version to use'
+      post-to-pr:
+        required: false
+        type: boolean
+        default: true
+        description: 'Whether to post results to PR'
+    secrets:
+      TOKEN:
+        required: true
+        description: 'GitHub token for PR comments'
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCOUNT_REGION:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+      CODEARTIFACT_INDEX_DOMAIN:
+        required: true
+
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
-  security-checks:
+  security-scan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-
+    environment: development
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: ${{ inputs.python-version }}
 
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_ACCOUNT_REGION }}
+
+      - name: Configure CodeArtifact URLs
+        env:
+          EXTRA_INDEX_DOMAIN: ${{ secrets.CODEARTIFACT_INDEX_DOMAIN }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          echo "Generating AWS CodeArtifact token..."
+          echo "UV_INDEX_SIGNATURE_PASSWORD=$(aws codeartifact get-authorization-token \
+              --domain "${EXTRA_INDEX_DOMAIN}" \
+              --domain-owner "${AWS_ACCOUNT_ID}" \
+              --query authorizationToken \
+              --output text)" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
@@ -28,7 +73,7 @@ jobs:
           uv pip install . --system
 
       - name: Run Bandit
-        continue-on-error: true  # don't fail the whole workflow
+        continue-on-error: true
         id: bandit
         run: |
           bandit -r ./ -c pyproject.toml -f json -o bandit-results.json || echo "Vulnerabilities found"
@@ -46,8 +91,10 @@ jobs:
           pylint --disable=all --enable=security --output-format=json ./ > pylint-results.json || echo "Security issues found"
 
       - name: Post Results to PR
+        if: inputs.post-to-pr
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.TOKEN }}
           script: |
             const fs = require('fs');
             let comment = '## Security Scan Results\n\n';
@@ -82,9 +129,36 @@ jobs:
               comment += '### Safety Check Results\n⚠️ Error processing results\n\n';
             }
 
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+            try {
+              const pylintResults = JSON.parse(fs.readFileSync('pylint-results.json', 'utf8'));
+              comment += '### Pylint Security Results\n';
+              if (pylintResults.length === 0) {
+                comment += '✅ No security issues found\n\n';
+              } else {
+                comment += '⚠️ Security issues found:\n';
+                pylintResults.forEach(issue => {
+                  comment += `- ${issue.message} in ${issue.path}:${issue.line}\n`;
+                });
+              }
+            } catch (e) {
+              comment += '### Pylint Security Results\n⚠️ Error processing results\n\n';
+            }
+
+            if (context.payload.pull_request) {
+              await github.rest.issues.createComment({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+      - name: Upload scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results
+          path: |
+            bandit-results.json
+            safety-results.json
+            pylint-results.json
