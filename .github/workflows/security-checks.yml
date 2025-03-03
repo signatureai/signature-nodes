@@ -13,16 +13,6 @@ on:
         type: boolean
         default: true
         description: 'Whether to post results to PR'
-      extra_index_domain:
-        required: false
-        type: string
-        default: 'signature-ml-packages-production'
-        description: 'AWS CodeArtifact domain name'
-      aws_account_id:
-        required: false
-        type: string
-        default: '992382511592'
-        description: 'AWS account id'
     secrets:
       TOKEN:
         required: true
@@ -32,6 +22,10 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
       AWS_ACCOUNT_REGION:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+      CODEARTIFACT_INDEX_DOMAIN:
         required: true
 
 
@@ -63,8 +57,8 @@ jobs:
 
       - name: Configure CodeArtifact URLs
         env:
-          EXTRA_INDEX_DOMAIN: ${{ inputs.extra_index_domain }}
-          AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
+          EXTRA_INDEX_DOMAIN: ${{ secrets.CODEARTIFACT_INDEX_DOMAIN }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           echo "Generating AWS CodeArtifact token..."
           echo "UV_INDEX_SIGNATURE_PASSWORD=$(aws codeartifact get-authorization-token \
@@ -75,8 +69,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Generating AWS CodeArtifact token..."
-          echo "Access AWS CodeArtifact"
           uv pip install bandit safety pylint --system
           uv pip install . --system
 

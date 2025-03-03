@@ -31,11 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      ## checks for title & subject of commit messages
-      # - name: Conventional Commit Check
-      #   uses: wagoid/commitlint-github-action@v5
-
       - name: Branch Name Check
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
@@ -54,6 +49,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} # type: ignore
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # type: ignore
       AWS_ACCOUNT_REGION: ${{ secrets.AWS_ACCOUNT_REGION }} # type: ignore
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }} # type: ignore
+      CODEARTIFACT_INDEX_DOMAIN: ${{ secrets.CODEARTIFACT_INDEX_DOMAIN }} # type: ignore
 
   deploy-staging:
     name: Deploy to Staging

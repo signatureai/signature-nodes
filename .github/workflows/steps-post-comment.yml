@@ -38,6 +38,14 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
+      # - name: Fetch existing comment content
+      #   id: fetch_comment
+      #   run: |
+      #     echo ${{ env.GITHUB_TOKEN }}
+      #     COMMENT_URL="https://api.github.com/repos/${{ inputs.GITHUB_REPOSITORY }}/issues/comments/${{ inputs.EVENT_COMMENT_ID }}"
+      #     EXISTING_COMMENT=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "$COMMENT_URL" | jq -r '.body')
+      #     echo "EXISTING_COMMENT=$EXISTING_COMMENT" >> $GITHUB_ENV
+
       - name: Post a new comment with the job link
         run: |
           JOB_URL="https://github.com/${{ inputs.GITHUB_REPOSITORY }}/actions/runs/${{ inputs.GITHUB_RUN_ID }}"
