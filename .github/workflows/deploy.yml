@@ -1,0 +1,152 @@
+name: Git Flow CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+      - "release/**"
+      - "hotfix/**"
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+      - develop
+      - "release/**"
+
+jobs:
+  post-job-comment:
+    if: github.event_name == 'pull_request'
+    name: Comment PR
+    uses: ./.github/workflows/steps-post-comment.yml
+    with:
+      EVENT_ISSUE_NUMBER: ${{ github.event.pull_request.number }}
+      GITHUB_RUN_ID: ${{ github.run_id }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      COMMIT_SHA: ${{ github.sha }}
+
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      ## checks for title & subject of commit messages
+      # - name: Conventional Commit Check
+      #   uses: wagoid/commitlint-github-action@v5
+
+      - name: Branch Name Check
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [[ ! "$BRANCH_NAME" =~ ^(main|develop|feature/|release/|hotfix/) ]]; then
+            echo "::warning::Branch '$BRANCH_NAME' does not follow gitflow naming convention (main|develop|feature/*|release/*|hotfix/*)"
+          fi
+
+  security:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/security-checks.yml
+    with:
+      python-version: "3.11"
+      post-to-pr: true
+    secrets:
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} # type: ignore
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # type: ignore
+      AWS_ACCOUNT_REGION: ${{ secrets.AWS_ACCOUNT_REGION }} # type: ignore
+
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest version
+        id: get_version
+        run: |
+          LATEST_TAG=$(git describe --tags --match "v*" --abbrev=0 2>/dev/null || echo "v0.0.0")
+
+          # LATEST_TAG="v1.0.0.dev10" # for testing
+
+          echo "Latest version: $LATEST_TAG"
+
+          if [[ $LATEST_TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)(\.dev([0-9]+))?$ ]]; then
+              MAJOR="${BASH_REMATCH[1]}"
+              MINOR="${BASH_REMATCH[2]}"
+              PATCH="${BASH_REMATCH[3]}"
+              DEV="${BASH_REMATCH[5]:-0}"
+          else
+              echo "Error: Invalid tag format $LATEST_TAG"
+              exit 1
+          fi
+
+          if [ "$DEV" -gt 0 ]; then
+              NEW_DEV=$((DEV + 1))
+          else
+              NEW_DEV=1
+              PATCH=$((PATCH + 1))
+          fi
+
+          DEV_VERSION="v${MAJOR}.${MINOR}.${PATCH}.dev${NEW_DEV}"
+
+          echo "Creating development version: $DEV_VERSION"
+          echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV
+
+      - name: Create Development Tag
+        run: |
+          git tag ${{ env.DEV_VERSION }}
+          git push origin ${{ env.DEV_VERSION }}
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract Version from Branch
+        id: extract_version
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [[ $BRANCH_NAME == release/* ]]; then
+            # Extract version from release branch name (release/1.2.0 -> v1.2.0)
+            VERSION="v${BRANCH_NAME#release/}"
+          elif [[ $BRANCH_NAME == hotfix/* ]]; then
+            # Extract version from hotfix branch name (hotfix/1.2.1 -> v1.2.1)
+            VERSION="v${BRANCH_NAME#hotfix/}"
+          else
+            echo "Error: Version can only be extracted from release or hotfix branches"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "::set-output name=version::$VERSION"
+
+      - name: Create Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }} # type: ignore
+          release_name: Release ${{ env.VERSION }} # type: ignore
+          draft: false
+          prerelease: false
+
+  # notify:
+  #   name: Notifications
+  #   needs: [deploy-staging, deploy-production]
+  #   if: always()
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Slack Notification
+  #       uses: 8398a7/action-slack@v3
+  #       with:
+  #         status: ${{ job.status }}
+  #         fields: repo,message,commit,author,action,eventName,ref,workflow
+  #       env:
+  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
