@@ -63,6 +63,7 @@ class ComposeAugmentation:
         True,
         True,
     )
+    DESCRIPTION = "Applies augmentations to images and masks, creating multiple variations with the same transformations. Control the number of samples and use seeds for reproducible results. Connect augmentation nodes to create complex transformation chains."
 
     def execute(
         self,
@@ -93,6 +94,7 @@ class ComposeAugmentation:
             total_masks = []
         node_image = [image.get_BWHC() for image in total_images]
         node_mask = [mask.get_BWHC() for mask in total_masks]
+
         return (
             node_image,
             node_mask,

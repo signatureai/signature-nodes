@@ -37,6 +37,7 @@ class Base64FromImage:
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
     OUTPUT_NODE = True
+    DESCRIPTION = "Converts images to base64-encoded strings (PNG format). Creates text representations of images suitable for web transmission, APIs, or text-based storage without data URL prefix."
 
     def execute(self, image: torch.Tensor) -> tuple[str]:
         images = TensorImage.from_BWHC(image)

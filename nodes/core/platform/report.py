@@ -17,6 +17,7 @@ class Report:
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
     OUTPUT_NODE = True
+    DESCRIPTION = "Manages report generation and output. Handles the generation and output of reports with support for various data types and formats. Includes support for metadata management and output formatting."
 
     def execute(self, value, report):
         data = {"type": "string", "value": report}

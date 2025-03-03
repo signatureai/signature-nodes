@@ -46,6 +46,7 @@ class GridAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Applies grid-based transformations to images with shuffle or dropout effects. Control grid size and application frequency. Maintains overall image structure while adding local variations. Chain with other augmentations for creative results."
 
     def execute(
         self,

@@ -46,6 +46,7 @@ class ShiftScaleAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Applies random shifting, scaling, and rotation transformations to images. Control transformation ranges and application frequency. Chain with other augmentations for diverse geometric variations."
 
     def execute(
         self,

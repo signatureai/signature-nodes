@@ -43,6 +43,7 @@ class Toml2Dict:
     FUNCTION = "execute"
     CLASS_ID = "toml_dict"
     CATEGORY = DATA_CAT
+    DESCRIPTION = "Converts TOML-formatted strings to Python dictionaries. Handles nested structures and validates input format. Useful for importing configuration data into workflows."
 
     def execute(self, toml_str: str = "") -> tuple[dict]:
         toml_dict = tomllib.loads(toml_str)

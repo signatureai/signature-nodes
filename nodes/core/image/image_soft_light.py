@@ -43,6 +43,7 @@ class ImageSoftLight:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
+    DESCRIPTION = "Applies soft light blend mode between two images. Creates subtle lighting effects based on the interaction between top and bottom layers. Similar to soft light blending in photo editing software."
 
     def execute(self, top: torch.Tensor, bottom: torch.Tensor) -> tuple[torch.Tensor]:
         top_tensor = TensorImage.from_BWHC(top)

@@ -52,6 +52,7 @@ class RandomCropAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Performs random cropping on images with configurable dimensions and frequency. Control crop window size range and target output dimensions. Chain with other augmentations for diverse composition variations."
 
     def execute(
         self,
@@ -62,6 +63,8 @@ class RandomCropAugmentation:
         percent: float = 1.0,
         augmentation: list | None = None,
     ) -> tuple[list]:
-        augmentation = random_crop_augmentation(height, width, min_window, max_window, percent, augmentation)
+        augmentation = random_crop_augmentation(
+            height, width, min_window, max_window, percent, augmentation
+        )
 
         return (augmentation,)

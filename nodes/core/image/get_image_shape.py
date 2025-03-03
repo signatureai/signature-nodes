@@ -44,6 +44,7 @@ class GetImageShape:
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
     CLASS_ID = "get_image_size"
+    DESCRIPTION = "Analyzes and returns the dimensions of an input image. Extracts batch size, width, height, channels, and a formatted shape string. Useful for debugging and dynamic image processing workflows."
 
     def execute(self, image: torch.Tensor) -> tuple[int, int, int, int, str]:
         return (

@@ -41,21 +41,22 @@ class ImageGaussianBlur:
                 "image": ("IMAGE",),
                 "radius": ("INT", {"default": 13}),
                 "sigma": ("FLOAT", {"default": 10.5}),
-                "interations": ("INT", {"default": 1}),
+                "iterations": ("INT", {"default": 1}),
             }
         }
 
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
+    DESCRIPTION = "Applies Gaussian blur filter to images with controllable strength. Adjust blur intensity through radius, sigma, and iteration count. Creates smooth, natural-looking blur effects for softening details or creating depth."
 
     def execute(
         self,
         image: torch.Tensor,
         radius: int = 13,
         sigma: float = 10.5,
-        interations: int = 1,
+        iterations: int = 1,
     ) -> tuple[torch.Tensor]:
         tensor_image = TensorImage.from_BWHC(image)
-        output = gaussian_blur2d(tensor_image, radius, sigma, interations).get_BWHC()
+        output = gaussian_blur2d(tensor_image, radius, sigma, iterations).get_BWHC()
         return (output,)

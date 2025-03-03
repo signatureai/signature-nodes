@@ -35,6 +35,7 @@ class ImageBatch2List:
     CATEGORY = IMAGE_CAT
     CLASS_ID = "image_batch_list"
     OUTPUT_IS_LIST = (True,)
+    DESCRIPTION = "Splits a batched tensor of images into a list of individual images. Converts a single tensor containing multiple images into separate tensors, each with batch size 1. Useful for processing images individually after batch operations."
 
     def execute(self, image: torch.Tensor) -> tuple[list[torch.Tensor]]:
         image_list = [img.unsqueeze(0) for img in image]

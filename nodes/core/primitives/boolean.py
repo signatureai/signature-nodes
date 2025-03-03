@@ -31,6 +31,7 @@ class Boolean:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
+    DESCRIPTION = "A node that handles boolean inputs. Provides functionality for processing boolean (True/False) values. Can be used as a basic input node in computational graphs where conditional logic is required."
 
     def execute(self, value: bool = False) -> tuple[bool]:
         return (value,)

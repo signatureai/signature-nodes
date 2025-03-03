@@ -33,6 +33,7 @@ class TextSplit:
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
     OUTPUT_IS_LIST = (True,)
+    DESCRIPTION = "Splits text into a list of segments using a specified delimiter. Divides input text into multiple segments based on a delimiter, creating a list of substrings."
 
     def execute(self, text: str, delimiter: str = " ") -> tuple[list[str]]:
         return (text.split(delimiter),)

@@ -48,6 +48,7 @@ class DeleteDictKey:
     RETURN_NAMES = ("new_dict",)
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
+    DESCRIPTION = "Removes a key from a dictionary. Supports both direct key removal and path-based deletion using JQ syntax (with leading dot). Returns the modified dictionary with the specified key removed."
 
     def execute(self, dict: dict, key: str = "") -> tuple[dict]:
         if key.startswith("."):

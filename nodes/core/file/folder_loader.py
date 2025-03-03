@@ -41,6 +41,7 @@ class FolderLoader:
     RETURN_TYPES = ("FILE",)
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
+    DESCRIPTION = "Converts folder path information into ComfyUI-compatible file references. Handles both single and multiple folders (separated by '&&'). Automatically prepends proper input folder paths while maintaining folder structure."
 
     def execute(self, value: str = "") -> tuple[list]:
         data = value.split("&&") if "&&" in value else [value]

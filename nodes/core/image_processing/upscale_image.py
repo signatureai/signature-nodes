@@ -85,6 +85,7 @@ class UpscaleImage:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
+    DESCRIPTION = "AI-powered image upscaling with tiled processing and flexible scaling modes. Leverages AI models for high-quality enlargement with options for factor-based rescaling or target size resizing. Efficiently manages GPU memory through tiled processing."
 
     def load_model(self, model_name):
         model_path = folder_paths.get_full_path("upscale_models", model_name)

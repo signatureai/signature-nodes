@@ -47,6 +47,7 @@ class GetImageListItem:
     RETURN_TYPES = "IMAGE"
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
+    DESCRIPTION = "Extracts a single image from a list of images by its index position. Uses zero-based indexing (0 = first image). Useful for selecting specific images from batches for individual processing."
 
     def execute(self, images: list[torch.Tensor], index: int = 0) -> tuple[torch.Tensor]:
         image = images[index]

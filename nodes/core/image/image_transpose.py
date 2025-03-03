@@ -65,8 +65,8 @@ class ImageTranspose:
         "rgba",
     )
     FUNCTION = "execute"
-
     CATEGORY = IMAGE_CAT
+    DESCRIPTION = "Transforms and composites an overlay image onto a base image. Provides comprehensive composition capabilities including resizing, positioning, rotation, and edge feathering. Returns both RGB and RGBA versions."
 
     def execute(
         self,

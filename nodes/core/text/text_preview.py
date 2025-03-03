@@ -40,8 +40,8 @@ class TextPreview:
     RETURN_TYPES = ()
     FUNCTION = "execute"
     OUTPUT_NODE = True
-
     CATEGORY = TEXT_CAT
+    DESCRIPTION = "Processes and generates a preview of text inputs, supporting both strings and tensors. Takes a list of text inputs and generates a formatted preview string. For tensor inputs, it includes shape information in the preview. The node is designed to handle multiple input types and provide a consistent preview format."
 
     def execute(self, value: Any = []) -> tuple[dict]:
         text_string = ""

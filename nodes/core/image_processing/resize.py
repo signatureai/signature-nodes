@@ -86,35 +86,7 @@ class Resize:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = """🖼️ Image Resize Node
-
-    This node helps you resize your images and masks to specific dimensions.
-    Think of it like adjusting your canvas size,but with some smart options!
-
-    What it does:
-    - Resizes images as well as masks to any size you want (between 32 and 40,960 pixels)
-    - Gives you different ways to handle the resizing
-
-    Resize Modes:
-    - STRETCH: Like stretching a rubber image to fit exactly (might distort)
-    - FIT: Like putting a photo in a frame while keeping everything visible (might leave empty space)
-    - FILL: Like zooming until the frame is completely filled (might crop edges)
-    - ASPECT: Keeps everything looking natural by maintaining proportions
-
-    Pro Tips:
-    - Use "lanczos" for the highest quality resizing (especially good for photos and detailed art)
-    - Use "bilinear" or "bicubic" for smooth, natural-looking results
-    - Use "nearest" if you want to keep sharp edges (good for pixel art or masks)
-    - Turn on "antialias" when making images smaller to avoid jagged edges
-    - Use "multiple_of" if you need dimensions to be divisible by a certain number
-    (useful for some AI models that require specific sizes)
-
-    Perfect for:
-    - Preparing images for AI models
-    - Standardizing image sizes in your workflow
-    - Resizing while keeping image quality
-    - Making sure your images fit specific size requirements
-    """
+    DESCRIPTION = "Resizes images and masks to specified dimensions with flexible options. Supports various modes (stretch, fit, fill, aspect), interpolation methods, and dimension constraints. Handles both RGB and grayscale inputs."
 
     def execute(
         self,

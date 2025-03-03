@@ -72,6 +72,7 @@ class LoraStack:
     CATEGORY = LORA_CAT
     CLASS_NAME = "LoraStack(OLD)"
     DEPRECATED = True
+    DESCRIPTION = "Creates a configurable stack of up to 3 LoRA models with adjustable weights. Provides controls to enable/disable and configure each LoRA with independent weights for model and CLIP components. Can extend an existing stack."
 
     def execute(
         self,

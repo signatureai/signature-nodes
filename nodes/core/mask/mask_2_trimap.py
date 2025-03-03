@@ -49,6 +49,7 @@ class Mask2Trimap:
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
     CLASS_ID = "mask_trimap"
+    DESCRIPTION = "Converts a binary mask into a trimap representation with three distinct regions. Creates a trimap by identifying definite foreground, definite background, and uncertain regions using thresholds and morphological operations."
 
     def execute(
         self,

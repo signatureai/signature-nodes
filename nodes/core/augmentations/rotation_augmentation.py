@@ -41,6 +41,7 @@ class RotationAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Rotates images by random angles within specified limits. Control rotation angle range and application frequency. Chain with other augmentations for diverse orientation variations."
 
     def execute(
         self,
@@ -48,5 +49,7 @@ class RotationAugmentation:
         percent: float = 0.5,
         augmentation: Optional[list] = None,
     ) -> tuple[list]:
-        augmentation = rotation_augmentation(limit=limit, percent=percent, augmentation=augmentation)
+        augmentation = rotation_augmentation(
+            limit=limit, percent=percent, augmentation=augmentation
+        )
         return (augmentation,)

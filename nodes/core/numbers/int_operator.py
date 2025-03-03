@@ -47,6 +47,7 @@ class IntOperator:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
     DEPRECATED = True
+    DESCRIPTION = "Performs arithmetic operations on two floats and returns an integer result. Supports addition, subtraction, multiplication, and division between two float values. Returns the calculated result as an integer."
 
     def execute(self, left: float = 0.0, right: float = 0.0, operator: str = "+") -> tuple[int]:
         if operator in BASIC_OPERATORS:

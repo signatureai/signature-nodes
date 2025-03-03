@@ -41,21 +41,22 @@ class ImageUnsharpMask:
                 "image": ("IMAGE",),
                 "radius": ("INT", {"default": 3}),
                 "sigma": ("FLOAT", {"default": 1.5}),
-                "interations": ("INT", {"default": 1}),
+                "iterations": ("INT", {"default": 1}),
             }
         }
 
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
+    DESCRIPTION = "Enhances image sharpness using unsharp mask technique. Works by subtracting a blurred version from the original image to enhance edge details. Control strength with radius, sigma, and iteration count."
 
     def execute(
         self,
         image: torch.Tensor,
         radius: int = 3,
         sigma: float = 1.5,
-        interations: int = 1,
+        iterations: int = 1,
     ) -> tuple[torch.Tensor]:
         tensor_image = TensorImage.from_BWHC(image)
-        output = unsharp_mask(tensor_image, radius, sigma, interations).get_BWHC()
+        output = unsharp_mask(tensor_image, radius, sigma, iterations).get_BWHC()
         return (output,)

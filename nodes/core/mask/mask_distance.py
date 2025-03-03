@@ -33,6 +33,7 @@ class MaskDistance:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
+    DESCRIPTION = "Calculates the Euclidean distance between two binary masks. Computes the average pixel-wise difference between masks, providing a numerical measure of similarity. Smaller values indicate more similar masks."
 
     def execute(self, mask_0: torch.Tensor, mask_1: torch.Tensor) -> tuple[torch.Tensor]:
         tensor1 = TensorImage.from_BWHC(mask_0)

@@ -51,6 +51,7 @@ class BlurAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Adds blur effects to images with gaussian, motion, or median styles. Control blur strength and application frequency. Chain with other augmentations for creative transformations."
 
     def execute(
         self,

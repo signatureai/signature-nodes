@@ -53,6 +53,7 @@ class SetDictValue:
     RETURN_NAMES = ("new_dict",)
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
+    DESCRIPTION = "Sets or updates values in dictionaries using keys or JQ path expressions (with leading dot). Supports any value type and nested data structures. Returns the modified dictionary."
 
     def execute(self, dict: dict, value: Any, key: str = "") -> tuple[dict]:
         if key.startswith("."):

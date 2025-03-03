@@ -9,6 +9,35 @@ from .shared import OP_FUNCTIONS
 
 
 class MathOperator:
+    """Evaluates mathematical expressions with support for variables and multiple operators.
+
+    This class provides a powerful expression evaluator that supports variables (a, b, c, d) and
+    various mathematical operations. It can handle arithmetic, comparison, and logical operations.
+
+    Args:
+        a (float, optional): Value for variable 'a'. Defaults to 0.0.
+        b (float, optional): Value for variable 'b'. Defaults to 0.0.
+        c (float, optional): Value for variable 'c'. Defaults to 0.0.
+        d (float, optional): Value for variable 'd'. Defaults to 0.0.
+        value (str): The mathematical expression to evaluate.
+
+    Returns:
+        tuple[int, float]: A tuple containing both integer and float representations of the result.
+
+    Raises:
+        ValueError: If the expression contains unsupported operations or invalid syntax.
+
+    Notes:
+        - Supports standard arithmetic operators: +, -, *, /, //, %, **
+        - Supports comparison operators: ==, !=, <, <=, >, >=
+        - Supports logical operators: and, or, not
+        - Supports bitwise XOR operator: ^
+        - Supports exponential and logarithmic functions: base**exponent, log(base, value)
+        - Includes functions: min(), max(), round(), sum(), len(), clamp(value, min, max)
+        - Variables are limited by MAX_FLOAT constant
+        - NaN results are converted to 0.0
+    """
+
     @classmethod
     def INPUT_TYPES(cls):
         input_letters = string.ascii_lowercase[:10]  # Get an array of all letters from a to j

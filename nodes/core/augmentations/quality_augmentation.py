@@ -48,6 +48,7 @@ class QualityAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
+    DESCRIPTION = "Simulates image quality degradation through compression artifacts or downscaling. Control quality reduction level and application frequency. Chain with other augmentations for realistic image imperfections."
 
     def execute(
         self,

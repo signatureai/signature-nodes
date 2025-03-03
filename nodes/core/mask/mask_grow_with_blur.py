@@ -72,6 +72,7 @@ class MaskGrowWithBlur:
     RETURN_TYPES = ("MASK", "MASK")
     RETURN_NAMES = ("mask", "inverted mask")
     FUNCTION = "expand_mask"
+    DESCRIPTION = "Expands or contracts a mask with controllable blur and tapering effects. Provides fine control over mask growth with options for smooth transitions, corner softening, and edge effects. Returns both the processed mask and its inverse."
 
     def expand_mask(
         self,

@@ -39,6 +39,7 @@ class Yaml2Dict:
     FUNCTION = "execute"
     CLASS_ID = "yaml_dict"
     CATEGORY = DATA_CAT
+    DESCRIPTION = "Converts YAML-formatted strings to Python dictionaries. Handles nested structures and validates input format. Useful for importing configuration data into workflows."
 
     def execute(self, yaml_str: str = "") -> tuple[dict]:
         yaml_dict = yaml.safe_load(yaml_str)

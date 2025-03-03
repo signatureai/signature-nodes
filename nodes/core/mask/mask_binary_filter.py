@@ -41,6 +41,7 @@ class MaskBinaryFilter:
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
+    DESCRIPTION = "Applies binary thresholding to convert a grayscale mask into a binary mask. Converts all values above threshold to 1 and below threshold to 0, creating a clean black and white mask without intermediate values."
 
     def execute(self, mask: torch.Tensor, threshold: float = 0.01) -> tuple[torch.Tensor]:
         step = TensorImage.from_BWHC(mask)
