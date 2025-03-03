@@ -3,22 +3,25 @@ name: Comment link to Github Actions Run
 on:
   workflow_call:
     inputs:
-      EVENT_COMMENT_ID:
-        description: "The working directory for the environment"
-        required: true
-        type: string
       EVENT_ISSUE_NUMBER:
-        description: "The working directory for the environment"
+        description: 'PR number'
         required: true
         type: string
       GITHUB_RUN_ID:
-        description: "The working directory for the environment"
+        description: 'Workflow run ID'
         required: true
         type: string
       GITHUB_REPOSITORY:
-        description: "The working directory for the environment"
+        description: 'Name of the repository'
         required: true
         type: string
+      COMMIT_SHA:
+        description: 'Commit SHA'
+        required: true
+        type: string
+    # secrets:
+    #   GITHUB_TOKEN:
+    #     required: true
 
 jobs:
   post-comments-steps:
@@ -35,21 +38,21 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      - name: Fetch existing comment content
-        id: fetch_comment
-        run: |
-          echo ${{ env.GITHUB_TOKEN }}
-          COMMENT_URL="https://api.github.com/repos/${{ inputs.GITHUB_REPOSITORY }}/issues/comments/${{ inputs.EVENT_COMMENT_ID }}"
-          EXISTING_COMMENT=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "$COMMENT_URL" | jq -r '.body')
-          echo "EXISTING_COMMENT=$EXISTING_COMMENT" >> $GITHUB_ENV
+      # - name: Fetch existing comment content
+      #   id: fetch_comment
+      #   run: |
+      #     echo ${{ env.GITHUB_TOKEN }}
+      #     COMMENT_URL="https://api.github.com/repos/${{ inputs.GITHUB_REPOSITORY }}/issues/comments/${{ inputs.EVENT_COMMENT_ID }}"
+      #     EXISTING_COMMENT=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "$COMMENT_URL" | jq -r '.body')
+      #     echo "EXISTING_COMMENT=$EXISTING_COMMENT" >> $GITHUB_ENV
 
       - name: Post a new comment with the job link
         run: |
           JOB_URL="https://github.com/${{ inputs.GITHUB_REPOSITORY }}/actions/runs/${{ inputs.GITHUB_RUN_ID }}"
-          COMMENT="🚀 '${EXISTING_COMMENT}' workflow started. You can follow the progress :arrow_right: [here](${JOB_URL})."
+          COMMENT="🚀 '${{ inputs.GITHUB_RUN_ID }}' workflow started. You can follow the progress :arrow_right: [here](${JOB_URL})."
           PAYLOAD=$(jq -n --arg body "$COMMENT" '{body: $body}')
-          echo "Payload: $PAYLOAD"
-          echo "existing comment: ${EXISTING_COMMENT}"
+          echo "Github Run ID: $GITHUB_RUN_ID"
+          echo "PR Number: ${EVENT_ISSUE_NUMBER}"
           ISSUE_URL="https://api.github.com/repos/${{ inputs.GITHUB_REPOSITORY }}/issues/${{ inputs.EVENT_ISSUE_NUMBER }}/comments"
           curl -s -S -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
