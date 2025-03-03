@@ -44,7 +44,7 @@ jobs:
           fi
 
   security:
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == github.event.pull_request.head.ref)
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/security-checks.yml
     with:
       python-version: "3.11"
@@ -103,7 +103,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
     steps:
