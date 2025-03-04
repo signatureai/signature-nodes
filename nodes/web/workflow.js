@@ -572,6 +572,13 @@ function showForm() {
 }
 
 function showWorkflowsList() {
+  let isLoading = true;
+  let lastPageReached = false;
+  let page = 0;
+  let limit = 100;
+  let searchQuery = null;
+  let searchTimeout = null;
+
   const dialogContent = $el("div", [
     $el("h2", {
       style: {
@@ -591,13 +598,6 @@ function showWorkflowsList() {
         margin: "0 auto",
       },
       $: async (container) => {
-        let limit = 100;
-        let page = 0;
-        let lastPageReached = false;
-        let isLoading = false;
-        let searchQuery = null;
-        let searchTimeout = null;
-
         // Create search container with input and buttons
         const searchContainer = $el("div", {
           style: {
@@ -627,18 +627,17 @@ function showWorkflowsList() {
               clearTimeout(searchTimeout);
             }
 
-            if (inputValue.length >= 3) {
+            if (inputValue.length >= 3 || inputValue.length === 0) {
               // Show loading state
               resultsContainer.innerHTML = loadingHTML;
+
+              // Reset pagination state
+              page = 0;
+              lastPageReached = false;
 
               searchTimeout = setTimeout(async () => {
-                await performSearch();
+                await loadWorkflows();
               }, 1000);
-            } else if (inputValue.length === 0) {
-              // Show loading state
-              resultsContainer.innerHTML = loadingHTML;
-
-              await performSearch();
             }
           },
         });
@@ -661,10 +660,14 @@ function showWorkflowsList() {
               clearTimeout(searchTimeout);
             }
 
+            // Reset pagination state
+            page = 0;
+            lastPageReached = false;
+
             // Show loading state
             resultsContainer.innerHTML = loadingHTML;
 
-            await performSearch();
+            await loadWorkflows();
           },
         });
 
@@ -707,24 +710,27 @@ function showWorkflowsList() {
           </div>
         `;
 
-        // Function to perform search
-        const performSearch = async () => {
-          // Reset pagination
-          page = 0;
-          lastPageReached = false;
-          isLoading = false;
-          limit = 9;
+        // Function to load workflows
+        const loadWorkflows = async () => {
+          if (isLoading && page > 0) return; // Prevent multiple simultaneous loads
+
+          isLoading = true;
 
           try {
-            // Show loading state
-            resultsContainer.innerHTML = loadingHTML;
-
             const workflows = await getWorkflowsListForForm($el, page * limit, limit, searchQuery);
 
-            // Clear results container
-            resultsContainer.innerHTML = "";
+            // If this is the first page, clear the container
+            if (page === 0) {
+              resultsContainer.innerHTML = "";
+            } else {
+              // Remove loading trigger if it exists
+              const existingTrigger = document.getElementById("workflows-loading-trigger");
+              if (existingTrigger) {
+                existingTrigger.remove();
+              }
+            }
 
-            if (workflows.length === 0) {
+            if (workflows.length === 0 && page === 0) {
               // Show no results message
               resultsContainer.innerHTML = `
                 <div style="
@@ -751,18 +757,22 @@ function showWorkflowsList() {
               addLoadingTrigger();
             }
           } catch (error) {
-            console.error("Error performing search:", error);
-            resultsContainer.innerHTML = `
-              <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                color: #ff5555;
-              ">
-                Error loading workflows: ${error.message}
-              </div>
-            `;
+            console.error("Error loading workflows:", error);
+            if (page === 0) {
+              resultsContainer.innerHTML = `
+                <div style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100%;
+                  color: #ff5555;
+                ">
+                  Error loading workflows: ${error.message}
+                </div>
+              `;
+            }
+          } finally {
+            isLoading = false;
           }
         };
 
@@ -835,6 +845,9 @@ function showWorkflowsList() {
             existingTrigger.remove();
           }
 
+          // Don't add trigger if we've reached the last page
+          if (lastPageReached) return;
+
           const loadingTrigger = $el("div", {
             id: "workflows-loading-trigger",
             style: {
@@ -884,7 +897,7 @@ function showWorkflowsList() {
         let observer;
 
         // Initial load of workflows
-        await performSearch();
+        await loadWorkflows();
 
         // Set up Intersection Observer to detect when loading trigger is visible
         setTimeout(() => {
@@ -893,49 +906,8 @@ function showWorkflowsList() {
               const entry = entries[0];
 
               if (entry.isIntersecting && !isLoading && !lastPageReached) {
-                isLoading = true;
                 page++;
-
-                try {
-                  const nextWorkflows = await getWorkflowsListForForm($el, page * limit, limit, searchQuery);
-
-                  // Check if we've reached the last page
-                  if (nextWorkflows.length < limit) {
-                    lastPageReached = true;
-                  }
-
-                  if (nextWorkflows.length > 0) {
-                    // Remove the loading trigger
-                    const loadingTrigger = document.getElementById("workflows-loading-trigger");
-                    if (loadingTrigger) {
-                      loadingTrigger.remove();
-                    }
-
-                    // Add the new workflows
-                    addWorkflowsToContainer(nextWorkflows);
-
-                    // Add a new loading trigger if we haven't reached the last page
-                    if (!lastPageReached) {
-                      addLoadingTrigger();
-                    }
-                  } else {
-                    // If no more workflows, remove the loading trigger
-                    const loadingTrigger = document.getElementById("workflows-loading-trigger");
-                    if (loadingTrigger) {
-                      loadingTrigger.remove();
-                    }
-                    lastPageReached = true;
-                  }
-                } catch (error) {
-                  console.error("Error loading more workflows:", error);
-                  // Remove the loading trigger in case of error
-                  const loadingTrigger = document.getElementById("workflows-loading-trigger");
-                  if (loadingTrigger) {
-                    loadingTrigger.remove();
-                  }
-                } finally {
-                  isLoading = false;
-                }
+                await loadWorkflows();
               }
             },
             {
@@ -945,8 +917,11 @@ function showWorkflowsList() {
             }
           );
 
-          // Set up the initial observation
-          addLoadingTrigger();
+          // Set up the initial observation if we have a loading trigger
+          const loadingTrigger = document.getElementById("workflows-loading-trigger");
+          if (loadingTrigger) {
+            observer.observe(loadingTrigger);
+          }
 
           // Clean up observer when dialog closes
           const originalOnClose = app.ui.dialog.onClose;
