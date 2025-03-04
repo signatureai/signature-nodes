@@ -709,14 +709,16 @@ function showWorkflowsList() {
 
         // Function to perform search
         const performSearch = async () => {
+          // Reset pagination
           page = 0;
           lastPageReached = false;
+          isLoading = false;
           limit = 9;
-          console.log("performSearch page", page);
-          console.log("lastPageReached", lastPageReached);
-          console.log("limit", limit);
 
           try {
+            // Show loading state
+            resultsContainer.innerHTML = loadingHTML;
+
             const workflows = await getWorkflowsListForForm($el, page * limit, limit, searchQuery);
 
             // Clear results container
@@ -738,88 +740,15 @@ function showWorkflowsList() {
               return;
             }
 
-            const workflowElements = workflows.map((workflow) =>
-              $el(
-                "div",
-                {
-                  style: {
-                    padding: "15px",
-                    marginBottom: "10px",
-                    backgroundColor: "#1e1e1e",
-                    border: "1px solid #444",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    transition: "background-color 0.2s",
-                  },
-                  onmouseover: (e) => (e.target.style.backgroundColor = "#2a2a2a"),
-                  onmouseout: (e) => (e.target.style.backgroundColor = "#1e1e1e"),
-                  onclick: async () => {
-                    const workflowData = await getWorkflowById(workflow.value);
-                    if (workflowData) {
-                      app.ui.dialog.close();
-                      showWorkflowVersions(workflowData);
-                    }
-                  },
-                },
-                [
-                  $el(
-                    "div",
-                    {
-                      style: {
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                      },
-                    },
-                    [
-                      $el("span", {
-                        style: {
-                          fontSize: "16px",
-                          fontWeight: "bold",
-                          color: "#ffffff",
-                        },
-                        textContent: workflow.textContent,
-                      }),
-                      $el("span", {
-                        style: {
-                          fontSize: "14px",
-                          color: "#888888",
-                        },
-                        textContent: workflow.type || "Standard",
-                      }),
-                    ]
-                  ),
-                ]
-              )
-            );
-
             // Add workflow elements to results container
-            resultsContainer.append(...workflowElements);
-            if (workflows.length < limit || workflows.length === 0) {
-              console.log("lastPageReached set to true");
-              lastPageReached = true;
-            }
+            addWorkflowsToContainer(workflows);
 
-            // Add a loading indicator at the bottom that also serves as a trigger
-            if (!lastPageReached) {
-              const loadingTrigger = $el("div", {
-                id: "workflows-loading-trigger",
-                style: {
-                  padding: "15px",
-                  textAlign: "center",
-                  color: "#888",
-                  marginTop: "10px",
-                },
-                innerHTML: `
-                  <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888;
-                              border-radius: 50%; border-top-color: transparent;
-                              animation: spin 1s linear infinite;">
-                  </div>
-                  <div style="margin-top: 10px;">Loading more workflows...</div>
-                `,
-              });
-              resultsContainer.appendChild(loadingTrigger);
+            // Check if we've reached the last page
+            if (workflows.length < limit) {
+              lastPageReached = true;
+            } else {
+              // Add a loading trigger for infinite scroll
+              addLoadingTrigger();
             }
           } catch (error) {
             console.error("Error performing search:", error);
@@ -831,9 +760,104 @@ function showWorkflowsList() {
                 height: 100%;
                 color: #ff5555;
               ">
-                Error loading workflows
+                Error loading workflows: ${error.message}
               </div>
             `;
+          }
+        };
+
+        // Helper function to add workflows to the container
+        const addWorkflowsToContainer = (workflows) => {
+          const workflowElements = workflows.map((workflow) =>
+            $el(
+              "div",
+              {
+                style: {
+                  padding: "15px",
+                  marginBottom: "10px",
+                  backgroundColor: "#1e1e1e",
+                  border: "1px solid #444",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s",
+                },
+                onmouseover: (e) => (e.target.style.backgroundColor = "#2a2a2a"),
+                onmouseout: (e) => (e.target.style.backgroundColor = "#1e1e1e"),
+                onclick: async () => {
+                  const workflowData = await getWorkflowById(workflow.value);
+                  if (workflowData) {
+                    app.ui.dialog.close();
+                    showWorkflowVersions(workflowData);
+                  }
+                },
+              },
+              [
+                $el(
+                  "div",
+                  {
+                    style: {
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "8px",
+                    },
+                  },
+                  [
+                    $el("span", {
+                      style: {
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        color: "#ffffff",
+                      },
+                      textContent: workflow.textContent,
+                    }),
+                    $el("span", {
+                      style: {
+                        fontSize: "14px",
+                        color: "#888888",
+                      },
+                      textContent: workflow.type || "Standard",
+                    }),
+                  ]
+                ),
+              ]
+            )
+          );
+
+          resultsContainer.append(...workflowElements);
+        };
+
+        // Helper function to add loading trigger
+        const addLoadingTrigger = () => {
+          // Remove any existing loading trigger first
+          const existingTrigger = document.getElementById("workflows-loading-trigger");
+          if (existingTrigger) {
+            existingTrigger.remove();
+          }
+
+          const loadingTrigger = $el("div", {
+            id: "workflows-loading-trigger",
+            style: {
+              padding: "15px",
+              textAlign: "center",
+              color: "#888",
+              marginTop: "10px",
+            },
+            innerHTML: `
+              <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888;
+                          border-radius: 50%; border-top-color: transparent;
+                          animation: spin 1s linear infinite;">
+              </div>
+              <div style="margin-top: 10px;">Loading more workflows...</div>
+            `,
+          });
+
+          resultsContainer.appendChild(loadingTrigger);
+
+          // Set up the intersection observer for this trigger
+          if (observer) {
+            observer.disconnect(); // Disconnect any existing observations
+            observer.observe(loadingTrigger);
           }
         };
 
@@ -856,103 +880,61 @@ function showWorkflowsList() {
         // Show loading state initially
         resultsContainer.innerHTML = loadingHTML;
 
+        // Create the observer at a higher scope so it's accessible
+        let observer;
+
         // Initial load of workflows
         await performSearch();
 
         // Set up Intersection Observer to detect when loading trigger is visible
         setTimeout(() => {
-          const observer = new IntersectionObserver(
+          observer = new IntersectionObserver(
             async (entries) => {
               const entry = entries[0];
-              console.log("isLoading", isLoading);
-              console.log("lastPageReached", lastPageReached);
+
               if (entry.isIntersecting && !isLoading && !lastPageReached) {
                 isLoading = true;
                 page++;
 
                 try {
-                  const nextWorkflows = await getWorkflowsListForForm($el, page * limit, 7, searchQuery);
+                  const nextWorkflows = await getWorkflowsListForForm($el, page * limit, limit, searchQuery);
 
-                  if (nextWorkflows.length === 0 || nextWorkflows.length < limit) {
+                  // Check if we've reached the last page
+                  if (nextWorkflows.length < limit) {
                     lastPageReached = true;
-                    loadingTrigger.remove();
                   }
 
                   if (nextWorkflows.length > 0) {
+                    // Remove the loading trigger
                     const loadingTrigger = document.getElementById("workflows-loading-trigger");
-
-                    // Create workflow elements
-                    const workflowElements = nextWorkflows.map((workflow) =>
-                      $el(
-                        "div",
-                        {
-                          style: {
-                            padding: "15px",
-                            marginBottom: "10px",
-                            backgroundColor: "#1e1e1e",
-                            border: "1px solid #444",
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                            transition: "background-color 0.2s",
-                          },
-                          onmouseover: (e) => (e.target.style.backgroundColor = "#2a2a2a"),
-                          onmouseout: (e) => (e.target.style.backgroundColor = "#1e1e1e"),
-                          onclick: async () => {
-                            const workflowData = await getWorkflowById(workflow.value);
-                            if (workflowData) {
-                              app.ui.dialog.close();
-                              showWorkflowVersions(workflowData);
-                            }
-                          },
-                        },
-                        [
-                          $el(
-                            "div",
-                            {
-                              style: {
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                marginBottom: "8px",
-                              },
-                            },
-                            [
-                              $el("span", {
-                                style: {
-                                  fontSize: "16px",
-                                  fontWeight: "bold",
-                                  color: "#ffffff",
-                                },
-                                textContent: workflow.textContent,
-                              }),
-                              $el("span", {
-                                style: {
-                                  fontSize: "14px",
-                                  color: "#888888",
-                                },
-                                textContent: workflow.type || "Standard",
-                              }),
-                            ]
-                          ),
-                        ]
-                      )
-                    );
-
-                    // Insert new workflows before the loading trigger
-                    workflowElements.forEach((workflow) => {
-                      resultsContainer.insertBefore(workflow, loadingTrigger);
-                    });
-
-                    // Remove loading trigger if we've reached the last page
-                    if (lastPageReached && loadingTrigger) {
+                    if (loadingTrigger) {
                       loadingTrigger.remove();
                     }
+
+                    // Add the new workflows
+                    addWorkflowsToContainer(nextWorkflows);
+
+                    // Add a new loading trigger if we haven't reached the last page
+                    if (!lastPageReached) {
+                      addLoadingTrigger();
+                    }
+                  } else {
+                    // If no more workflows, remove the loading trigger
+                    const loadingTrigger = document.getElementById("workflows-loading-trigger");
+                    if (loadingTrigger) {
+                      loadingTrigger.remove();
+                    }
+                    lastPageReached = true;
                   }
                 } catch (error) {
                   console.error("Error loading more workflows:", error);
+                  // Remove the loading trigger in case of error
+                  const loadingTrigger = document.getElementById("workflows-loading-trigger");
+                  if (loadingTrigger) {
+                    loadingTrigger.remove();
+                  }
                 } finally {
                   isLoading = false;
-                  loadingTrigger.remove();
                 }
               }
             },
@@ -963,11 +945,8 @@ function showWorkflowsList() {
             }
           );
 
-          // Observe the loading trigger if it exists
-          const loadingTrigger = document.getElementById("workflows-loading-trigger");
-          if (loadingTrigger) {
-            observer.observe(loadingTrigger);
-          }
+          // Set up the initial observation
+          addLoadingTrigger();
 
           // Clean up observer when dialog closes
           const originalOnClose = app.ui.dialog.onClose;
@@ -975,7 +954,9 @@ function showWorkflowsList() {
             if (typeof originalOnClose === "function") {
               originalOnClose();
             }
-            observer.disconnect();
+            if (observer) {
+              observer.disconnect();
+            }
           };
         }, 500); // Give time for dialog to render
       },
