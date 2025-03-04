@@ -1,3 +1,3 @@
-import { checkNodesPresence } from "./check_nodes_presence.js";
+import { checkNodeGroupPresence } from "./check_node_group_presence.js";
 
-export { checkNodesPresence };
+export { checkNodeGroupPresence };
