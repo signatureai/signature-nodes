@@ -299,14 +299,12 @@ async function requiresAuth(app, next) {
     let refreshToken = getRefreshToken();
     let accessToken = getAccessToken();
     if (refreshToken) {
-      console.log("Trying to refresh token");
       try {
         const refreshTokenResponse = await refreshTokenRequest();
         if (refreshTokenResponse.success) {
           accessToken = refreshTokenResponse.accessToken;
           refreshToken = refreshTokenResponse.refreshToken;
           next(app);
-          console.log("Token refreshed successfully");
         } else {
           throw new Error("Refresh token failed, success was false");
         }
