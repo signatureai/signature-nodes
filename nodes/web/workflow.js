@@ -1,6 +1,7 @@
 import { app } from "../../scripts/app.js";
 import { $el, cleanLocalStorage, createMenuItem, requiresAuth, showMessage } from "./signature.js";
 import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./signature_api/main.js";
+import { checkNodesPresence } from "./tests/main.js";
 
 const getTotalTabs = () => {
   const workflowTabs = document.querySelector(".workflow-tabs");
@@ -102,6 +103,8 @@ async function saveWorkflow(app) {
 
     const form = await showForm();
     const submitButton = form.querySelector('a[href="#"]');
+    // Check if the workflow has the required nodes
+    await checkNodesPresence(workflow_api, workflow, ["signature_input", "signature_output"]);
     submitButton.onclick = async (e) => {
       try {
         e.preventDefault();
