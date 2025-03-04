@@ -81,7 +81,11 @@ class BackgroundRemoval(SaveImage):
     RETURN_NAMES = ("rgba", "rgb", "mask")
     FUNCTION = "execute"
     CATEGORY = MODELS_CAT
-    DESCRIPTION = "Separates foreground subjects from image backgrounds using AI segmentation models. Offers multiple models with different quality levels and approaches. Returns the transparent background image, original image, and segmentation mask."
+    DESCRIPTION = """
+    Separates foreground subjects from image backgrounds using AI segmentation models.
+    Offers multiple models with different quality levels and approaches.
+    Returns the transparent background image, original image, and segmentation mask.
+    """
 
     def execute(
         self,

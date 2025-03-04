@@ -51,7 +51,11 @@ class MaskPreview(SaveImage):
 
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
-    DESCRIPTION = "Generates and saves a visual preview of a mask as an image file. Converts mask data to a viewable RGB/RGBA format and saves it to a temporary directory. Useful for visualizing masks during workflow development."
+    DESCRIPTION = """
+    Generates and saves a visual preview of a mask as an image file.
+    Converts mask data to a viewable RGB/RGBA format and saves it to a temporary directory.
+    Useful for visualizing masks during workflow development.
+    """
 
     def execute(
         self,

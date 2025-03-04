@@ -76,7 +76,11 @@ class ResizeWithMegapixels:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = "Resizes images based on total pixel count (megapixels) while preserving aspect ratio. Instead of specifying exact dimensions, target a specific image size in megapixels. Useful for batch processing to consistent quality levels or reducing memory usage."
+    DESCRIPTION = """
+    Resizes images based on total pixel count (megapixels) while preserving aspect ratio.
+    Instead of specifying exact dimensions, target a specific image size in megapixels.
+    Useful for batch processing to consistent quality levels or reducing memory usage.
+    """
 
     def get_dimensions(self, megapixels: float, original_width: int = 0, original_height: int = 0) -> tuple[int, int]:
         """Calculate target dimensions based on megapixels while preserving aspect ratio.

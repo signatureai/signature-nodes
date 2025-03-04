@@ -53,9 +53,12 @@ class InputConnector:
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
     DEPRECATED = True
-    DESCRIPTION = "Manages file downloads from external services using authentication tokens. Handles connections to external services (currently Google Drive) to download files using provided authentication tokens and file identifiers."
+    DESCRIPTION = """
+    Manages file downloads from external services using authentication tokens.
+    Handles connections to external services (currently Google Drive) to download files
+    using provided authentication tokens and file identifiers.
+    """
 
-    # TODO: confirm if title, subtype required and metadata inputs are needed
     def execute(  # nosec: B107
         self,
         title: str = "Input Connector",

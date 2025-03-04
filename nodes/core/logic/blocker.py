@@ -41,7 +41,12 @@ class Blocker:
     RETURN_NAMES = ("out",)
     CATEGORY = LABS_CAT
     FUNCTION = "execute"
-    DESCRIPTION = "Controls workflow execution based on a boolean condition. When 'should_continue' is False,blocks downstream execution by returning an ExecutionBlocker. When True, passes through the input value unchanged. Useful for conditional branches."
+    DESCRIPTION = """
+    Controls workflow execution based on a boolean condition.
+    When 'should_continue' is False, blocks downstream execution by returning an ExecutionBlocker.
+    When True, passes through the input value unchanged.
+    Useful for conditional branches.
+    """
 
     def execute(self, should_continue: bool = False, input: Any = None) -> tuple[Any]:
         return (input if should_continue else ExecutionBlocker(None),)

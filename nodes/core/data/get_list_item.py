@@ -49,7 +49,9 @@ class GetListItem:
     RETURN_NAMES = ("item", "value_type")
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
-    DESCRIPTION = "Retrieves items from lists by index position. Returns both the item and its Python type name. Uses zero-based indexing (0 = first item). Supports lists containing any data type."
+    DESCRIPTION = """
+    Retrieves items from lists by index position. Returns both the item and its Python type name.
+    Uses zero-based indexing (0 = first item). Supports lists containing any data type."""
 
     def execute(self, list: list, index: int = 0) -> tuple[Any, str]:
         item = list[index]

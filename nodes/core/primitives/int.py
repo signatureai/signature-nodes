@@ -43,7 +43,11 @@ class Int:
     RETURN_TYPES = ("INT",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
-    DESCRIPTION = "A node that handles integer number inputs with configurable parameters. Provides functionality for processing integer numbers within a specified range and step size. Can be used as a basic input node in computational graphs where whole number values are required."
+    DESCRIPTION = """
+    A node that handles integer number inputs with configurable parameters.
+    Provides functionality for processing integer numbers within a specified range and step size.
+    Can be used as a basic input node in computational graphs where whole number values are required.
+    """
 
     def execute(self, value: int = 0) -> tuple[int]:
         return (value,)

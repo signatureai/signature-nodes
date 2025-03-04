@@ -62,7 +62,11 @@ class MagicEraser(SaveImage):
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = MODELS_CAT
-    DESCRIPTION = "Removes unwanted content from images using the Lama inpainting model. Intelligently fills in masked areas with contextually appropriate content. Supports optional upscaling for higher quality results."
+    DESCRIPTION = """
+    Removes unwanted content from images using the Lama inpainting model.
+    Intelligently fills in masked areas with contextually appropriate content.
+    Supports optional upscaling for higher quality results.
+    """
 
     def execute(
         self,

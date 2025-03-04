@@ -34,7 +34,11 @@ class TextFindReplace:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
-    DESCRIPTION = "Performs simple text replacement without regex support. Replaces all occurrences of a substring with another substring, using exact matching."
+    DESCRIPTION = """
+    Performs simple text replacement without regex support.
+    Replaces all occurrences of a substring with another substring,
+    using exact matching.
+    """
 
     def execute(self, text: str = "", find: str = "", replace: str = "") -> tuple[str]:
         return (text.replace(find, replace),)

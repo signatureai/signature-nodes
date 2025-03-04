@@ -33,7 +33,11 @@ class Int2Float:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "int2float"
-    DESCRIPTION = "Converts an integer to a floating-point number. Transforms integer values to their exact floating-point representation. Useful when numeric operations require float inputs."
+    DESCRIPTION = """
+    Converts an integer to a floating-point number.
+    Transforms integer values to their exact floating-point representation.
+    Useful when numeric operations require float inputs.
+    """
 
     def execute(self, number: int = 0) -> tuple[float]:
         try:

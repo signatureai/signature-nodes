@@ -41,7 +41,9 @@ class Dict2Toml:
     FUNCTION = "execute"
     CLASS_ID = "dict_toml"
     CATEGORY = DATA_CAT
-    DESCRIPTION = "Converts Python dictionaries to TOML-formatted strings. Handles nested structures and primitive data types. Useful for data interchange with external systems that require TOML format."
+    DESCRIPTION = """
+    Converts Python dictionaries to TOML-formatted strings. Handles nested structures and primitive data types.
+    Useful for data interchange with external systems that require TOML format."""
 
     def execute(self, dict: dict) -> tuple[str]:
         toml_str = tomli_w.dumps(dict)

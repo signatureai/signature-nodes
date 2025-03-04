@@ -44,7 +44,10 @@ class PerspectiveAugmentation:
     RETURN_TYPES = ("AUGMENTATION",)
     FUNCTION = "execute"
     CATEGORY = AUGMENTATION_CAT
-    DESCRIPTION = "Applies perspective transformations to images, simulating viewing angle changes. Control effect strength and application frequency. Chain with other augmentations for realistic spatial variations."
+    DESCRIPTION = """
+    Applies perspective transformations to images, simulating viewing angle changes.
+    Control effect strength and application frequency.
+    Chain with other augmentations for realistic spatial variations."""
 
     def execute(
         self,

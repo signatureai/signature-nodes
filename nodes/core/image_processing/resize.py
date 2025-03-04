@@ -86,7 +86,11 @@ class Resize:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = "Resizes images and masks to specified dimensions with flexible options. Supports various modes (stretch, fit, fill, aspect), interpolation methods, and dimension constraints. Handles both RGB and grayscale inputs."
+    DESCRIPTION = """
+    Resizes images and masks to specified dimensions with flexible options.
+    Supports various modes (stretch, fit, fill, aspect), interpolation methods,
+    and dimension constraints. Handles both RGB and grayscale inputs.
+    """
 
     def execute(
         self,

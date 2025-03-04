@@ -35,7 +35,11 @@ class TextCase:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
-    DESCRIPTION = "Transforms text case according to specified formatting rules. Provides various case transformation options for input text, including lowercase, uppercase, capitalization, and title case conversion."
+    DESCRIPTION = """
+    Transforms text case according to specified formatting rules.
+    Provides various case transformation options for input text,
+    including lowercase, uppercase, capitalization, and title case conversion.
+    """
 
     def execute(self, text: str, case: str = "lower") -> tuple[str]:
         return (getattr(text, case)(),)

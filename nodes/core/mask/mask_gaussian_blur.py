@@ -43,7 +43,11 @@ class MaskGaussianBlur:
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
-    DESCRIPTION = "Applies Gaussian blur to soften mask edges and create smooth transitions. Configurable blur with control over radius, strength, and number of iterations. Useful for creating gradual falloff at mask boundaries."
+    DESCRIPTION = """
+    Applies Gaussian blur to soften mask edges and create smooth transitions.
+    Configurable blur with control over radius, strength, and number of iterations.
+    Useful for creating gradual falloff at mask boundaries.
+    """
 
     def execute(
         self,

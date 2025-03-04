@@ -45,7 +45,11 @@ class ImageBaseColor:
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
     CLASS_ID = "image_base_color"
-    DESCRIPTION = "Creates a solid color image with specified dimensions. Generates a uniform color image using a hex color code (#RRGGBB format). Useful for backgrounds, color testing, or as base layers for compositing."
+    DESCRIPTION = """
+    Creates a solid color image with specified dimensions.
+    Generates a uniform color image using a hex color code (#RRGGBB format).
+    Useful for backgrounds, color testing, or as base layers for compositing.
+    """
 
     def execute(self, hex_color: str = "#FFFFFF", width: int = 1024, height: int = 1024) -> tuple[torch.Tensor]:
         hex_color = hex_color.lstrip("#")

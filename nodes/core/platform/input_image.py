@@ -106,7 +106,6 @@ class InputImage:
     Think of this node as your universal image importer - it handles all the technical conversion stuff so you can focus
     on the creative aspects of your workflow! 🎨✨"""
 
-    # TODO: confirm if title, required and metadata inputs are needed
     def execute(
         self,
         title: str = "Input Image",

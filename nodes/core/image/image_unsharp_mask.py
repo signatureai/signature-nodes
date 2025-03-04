@@ -48,7 +48,11 @@ class ImageUnsharpMask:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
-    DESCRIPTION = "Enhances image sharpness using unsharp mask technique. Works by subtracting a blurred version from the original image to enhance edge details. Control strength with radius, sigma, and iteration count."
+    DESCRIPTION = """
+    Enhances image sharpness using unsharp mask technique.
+    Works by subtracting a blurred version from the original image to enhance edge details.
+    Control strength with radius, sigma, and iteration count.
+    """
 
     def execute(
         self,

@@ -61,7 +61,11 @@ class Rotate:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = "Rotates images and masks by a specified angle with optional zoom adjustment. Controls whether to zoom out to show all rotated content or maintain original dimensions. Useful for reorienting content while managing content preservation."
+    DESCRIPTION = """
+    Rotates images and masks by a specified angle with optional zoom adjustment.
+    Controls whether to zoom out to show all rotated content or maintain original dimensions.
+    Useful for reorienting content while managing content preservation.
+    """
 
     def execute(
         self,

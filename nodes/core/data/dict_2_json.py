@@ -44,7 +44,9 @@ class Dict2Json:
     FUNCTION = "execute"
     CLASS_ID = "dict_json"
     CATEGORY = DATA_CAT
-    DESCRIPTION = "Converts Python dictionaries to JSON-formatted strings. Handles nested structures and primitive data types. Useful for data interchange with external systems that require JSON format."
+    DESCRIPTION = """
+    Converts Python dictionaries to JSON-formatted strings. Handles nested structures and primitive data types.
+    Useful for data interchange with external systems that require JSON format."""
 
     def execute(self, dict: dict) -> tuple[str]:
         json_str = json.dumps(dict)

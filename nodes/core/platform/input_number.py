@@ -49,7 +49,11 @@ class InputNumber:
     RETURN_TYPES = (any_type,)
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    DESCRIPTION = "Processes numeric inputs with type conversion. Handles numeric input processing with support for both integer and float values, including automatic type conversion based on the specified subtype."
+    DESCRIPTION = """
+    Processes numeric inputs with type conversion.
+    Handles numeric input processing with support for both integer and float values,
+    including automatic type conversion based on the specified subtype.
+    """
 
     def execute(
         self,

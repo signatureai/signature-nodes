@@ -48,7 +48,11 @@ class BaseMask:
     RETURN_TYPES = ("MASK",)
     FUNCTION = "execute"
     CATEGORY = MASK_CAT
-    DESCRIPTION = "Creates a basic binary mask with specified dimensions. Generates a simple black or white mask with user-defined width and height. Useful as a starting point for more complex mask operations."
+    DESCRIPTION = """
+    Creates a basic binary mask with specified dimensions.
+    Generates a simple black or white mask with user-defined width and height.
+    Useful as a starting point for more complex mask operations.
+    """
 
     def execute(self, color: str = "white", width: int = 1024, height: int = 1024) -> tuple[torch.Tensor]:
         if color == "white":

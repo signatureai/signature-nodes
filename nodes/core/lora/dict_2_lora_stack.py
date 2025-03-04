@@ -41,7 +41,11 @@ class Dict2LoraStack:
     FUNCTION = "execute"
     CATEGORY = LORA_CAT
     CLASS_ID = "dict_to_lora_stack"
-    DESCRIPTION = "Converts a list of LoRA configuration dictionaries into a LORA_STACK format. Transforms dictionaries with lora_name and lora_weight into tuples for LORA_STACK operations. Can optionally extend an existing stack."
+    DESCRIPTION = """
+    Converts a list of LoRA configuration dictionaries into a LORA_STACK format.
+    Transforms dictionaries with lora_name and lora_weight into tuples for LORA_STACK operations.
+    Can optionally extend an existing stack.
+    """
 
     def execute(self, lora_dicts: list, lora_stack: Optional[list] = None):
         loras: list[Optional[tuple]] = [None for _ in lora_dicts]

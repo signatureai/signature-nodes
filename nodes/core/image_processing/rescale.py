@@ -78,7 +78,11 @@ class Rescale:
     )
     FUNCTION = "execute"
     CATEGORY = IMAGE_PROCESSING_CAT
-    DESCRIPTION = "Rescales images and masks by a specified factor while preserving aspect ratio. Supports various interpolation methods and optional antialiasing. Useful for uniform scaling operations."
+    DESCRIPTION = """
+    Rescales images and masks by a specified factor while preserving aspect ratio.
+    Supports various interpolation methods and optional antialiasing.
+    Useful for uniform scaling operations.
+    """
 
     def execute(
         self,

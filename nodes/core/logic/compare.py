@@ -59,7 +59,11 @@ class Compare:
     RETURN_NAMES = ("result",)
     FUNCTION = "execute"
     CATEGORY = LOGIC_CAT
-    DESCRIPTION = "Compares two input values based on a specified comparison operation. Evaluates equality, inequality, and relational comparisons between inputs of any type. Handles special cases for tensors, lists, and tuples."
+    DESCRIPTION = """
+    Compares two input values based on a specified comparison operation.
+    Evaluates equality, inequality, and relational comparisons between inputs of any type.
+    Handles special cases for tensors, lists, and tuples.
+    """
 
     def execute(self, a: Any, b: Any, comparison: str = "a == b") -> tuple[bool]:
         try:

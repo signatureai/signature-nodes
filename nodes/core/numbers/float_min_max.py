@@ -37,7 +37,10 @@ class FloatMinMax:
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
     CLASS_ID = "float_minmax"
-    DESCRIPTION = "Determines the minimum or maximum value between two floating-point numbers. Compares two float inputs and returns either the smaller or larger value based on the specified mode of operation."
+    DESCRIPTION = """
+    Determines the minimum or maximum value between two floating-point numbers.
+    Compares two float inputs and returns either the smaller or larger value based on the specified mode of operation.
+    """
 
     def execute(self, a: float = 0.0, b: float = 0.0, mode: str = "min") -> tuple[float]:
         if mode in OP_FUNCTIONS:

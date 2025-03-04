@@ -11,10 +11,7 @@ class ForLoopEnd:
         inputs = {
             "required": {
                 "flow": ("FLOW_CONTROL", {"rawLink": True, "forceInput": True}),
-                "num_slots": (
-                    [str(i) for i in range(1, MAX_FLOW_NUM)],
-                    {"default": "1"},
-                ),
+                "num_slots": ([str(i) for i in range(1, MAX_FLOW_NUM)], {"default": "1"}),
             },
             "optional": {},
             "hidden": {
@@ -23,17 +20,18 @@ class ForLoopEnd:
             },
         }
         for i in range(1, MAX_FLOW_NUM):
-            inputs["optional"][f"init_value_{i}"] = (
-                any_type,
-                {"rawLink": True, "forceInput": True},
-            )
+            inputs["optional"][f"init_value_{i}"] = (any_type, {"rawLink": True, "forceInput": True})
         return inputs
 
     RETURN_TYPES = ByPassTypeTuple(tuple([any_type] * (MAX_FLOW_NUM - 1)))
     RETURN_NAMES = ByPassTypeTuple(tuple(f"value_{i}" for i in range(1, MAX_FLOW_NUM)))
     FUNCTION = "execute"
     CATEGORY = LABS_CAT + "/Loops"
-    DESCRIPTION = "Ends a for loop and returns final values after all iterations. Works with ForLoopStart to create iterative workflows with a fixed number of iterations. Manages loop state and termination based on the iteration count."
+    DESCRIPTION = """
+    Ends a for loop and returns final values after all iterations.
+    Works with ForLoopStart to create iterative workflows with a fixed number of iterations.
+    Manages loop state and termination based on the iteration count.
+    """
 
     def execute(self, flow: tuple[str], dynprompt=None, unique_id=None, **kwargs):
         graph = GraphBuilder()

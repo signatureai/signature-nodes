@@ -47,7 +47,11 @@ class ImageAverage:
     RETURN_NAMES = ("color", "hex_color")
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
-    DESCRIPTION = "Calculates the average color of an input image, creating a uniform color image. Optionally uses a mask to focus on specific areas. Returns both the color image and hexadecimal color code."
+    DESCRIPTION = """
+    Calculates the average color of an input image, creating a uniform color image.
+    Optionally uses a mask to focus on specific areas. Returns both the color image
+    and hexadecimal color code.
+    """
 
     def execute(self, image: torch.Tensor, focus_mask: Optional[torch.Tensor] = None) -> tuple[torch.Tensor, str]:
         step = TensorImage.from_BWHC(image)

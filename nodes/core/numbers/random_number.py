@@ -29,7 +29,11 @@ class RandomNumber:
     )
     FUNCTION = "execute"
     CATEGORY = NUMBERS_CAT
-    DESCRIPTION = "Generates a random integer and its floating-point representation. Produces a random integer between 0 and MAX_INT and provides both the integer value and its float equivalent. The value changes each time the node is evaluated."
+    DESCRIPTION = """
+    Generates a random integer and its floating-point representation.
+    Produces a random integer between 0 and MAX_INT and provides both the integer value and its float equivalent.
+    The value changes each time the node is evaluated.
+    """
 
     @staticmethod
     def get_random() -> tuple[int, float]:

@@ -32,7 +32,10 @@ class TextConcatenate:
     RETURN_TYPES = ("STRING",)
     FUNCTION = "execute"
     CATEGORY = TEXT_CAT
-    DESCRIPTION = "Combines two text strings into a single string. Joins two input strings together in sequence, without any separator between them."
+    DESCRIPTION = """
+    Combines two text strings into a single string.
+    Joins two input strings together in sequence, without any separator between them.
+    """
 
     def execute(self, text1: str = "", text2: str = "") -> tuple[str]:
         return (text1 + text2,)

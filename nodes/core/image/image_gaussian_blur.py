@@ -48,7 +48,11 @@ class ImageGaussianBlur:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = IMAGE_CAT
-    DESCRIPTION = "Applies Gaussian blur filter to images with controllable strength. Adjust blur intensity through radius, sigma, and iteration count. Creates smooth, natural-looking blur effects for softening details or creating depth."
+    DESCRIPTION = """
+    Applies Gaussian blur filter to images with controllable strength.
+    Adjust blur intensity through radius, sigma, and iteration count.
+    Creates smooth, natural-looking blur effects for softening details or creating depth.
+    """
 
     def execute(
         self,

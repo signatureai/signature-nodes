@@ -59,7 +59,11 @@ class SaveLoraCaptions:
     OUTPUT_NODE = True
     FUNCTION = "execute"
     CATEGORY = LORA_CAT
-    DESCRIPTION = "Saves images and captions in a format suitable for LoRA training. Creates a structured dataset directory with images and corresponding caption files. Supports multiple captions, repeats, and optional text modifications with prefix/suffix."
+    DESCRIPTION = """
+    Saves images and captions in a format suitable for LoRA training.
+    Creates a structured dataset directory with images and corresponding caption files.
+    Supports multiple captions, repeats, and optional text modifications with prefix/suffix.
+    """
 
     def execute(
         self,

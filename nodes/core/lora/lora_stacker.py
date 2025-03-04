@@ -72,7 +72,11 @@ class LoraStacker:
     FUNCTION = "execute"
     CATEGORY = LABS_CAT
     CLASS_ID = "lora_stacker"
-    DESCRIPTION = "Manages multiple LoRA models with configurable weights and modes. Provides an interface for stacking up to 10 LoRA models with independent weight controls. Supports simple mode (single weight) or advanced mode (separate model and CLIP weights)."
+    DESCRIPTION = """
+    Manages multiple LoRA models with configurable weights and modes.
+    Provides an interface for stacking up to 10 LoRA models with independent weight controls.
+    Supports simple mode (single weight) or advanced mode (separate model and CLIP weights).
+    """
 
     def execute(self, **kwargs):
         num_slots = int(kwargs.get("num_slots", 1))

@@ -55,7 +55,11 @@ class Unblur(SaveImage):
     FUNCTION = "execute"
     CATEGORY = MODELS_CAT
     DEPRECATED = True
-    DESCRIPTION = "Enhances image clarity by reducing blur using the SeeMore neural network model. Effective for correcting motion blur, out-of-focus areas, and general image softness. Provides optional preview generation."
+    DESCRIPTION = """
+    Enhances image clarity by reducing blur using the SeeMore neural network model.
+    Effective for correcting motion blur, out-of-focus areas, and general image softness.
+    Provides optional preview generation.
+    """
 
     def execute(
         self,

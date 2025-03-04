@@ -43,7 +43,11 @@ class Float:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "execute"
     CATEGORY = PRIMITIVES_CAT
-    DESCRIPTION = "A node that handles floating-point number inputs with configurable parameters. Provides functionality for processing floating-point numbers within a specified range and step size. Can be used as a basic input node in computational graphs where decimal number precision is required."
+    DESCRIPTION = """
+    A node that handles floating-point number inputs with configurable parameters.
+    Provides functionality for processing floating-point numbers within a specified range and step size.
+    Can be used as a basic input node in computational graphs where decimal number precision is required.
+    """
 
     def execute(self, value: float = 0) -> tuple[float]:
         return (value,)

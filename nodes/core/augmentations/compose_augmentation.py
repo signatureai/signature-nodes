@@ -63,7 +63,10 @@ class ComposeAugmentation:
         True,
         True,
     )
-    DESCRIPTION = "Applies augmentations to images and masks, creating multiple variations with the same transformations. Control the number of samples and use seeds for reproducible results. Connect augmentation nodes to create complex transformation chains."
+    DESCRIPTION = """
+    Applies augmentations to images and masks, creating multiple variations with the same transformations.
+    Control the number of samples and use seeds for reproducible results.
+    Connect augmentation nodes to create complex transformation chains."""
 
     def execute(
         self,

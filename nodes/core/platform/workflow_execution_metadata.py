@@ -31,15 +31,7 @@ class WorkflowExecutionMetadata:
             },
         }
 
-    RETURN_TYPES = (
-        "STRING",
-        "STRING",
-        "STRING",
-        "STRING",
-        "STRING",
-        "STRING",
-        "STRING",
-    )
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
     RETURN_NAMES = (
         "backend_api_host",
         "generate_service_host",
@@ -51,7 +43,12 @@ class WorkflowExecutionMetadata:
     )
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    DESCRIPTION = "Extracts platform execution metadata from a JSON string. Parses a JSON string to extract platform execution metadata including backend API host, generate service host, organisation ID, and client ID."
+    DESCRIPTION = """
+    Extracts platform execution metadata from a JSON string.
+    Parses a JSON string to extract platform execution metadata
+    including backend API host, generate service host, organisation ID,
+    and client ID.
+    """
 
     def execute(self, json_str: str) -> tuple[str, str, str, str, str, str, str]:
         json_dict = json.loads(json_str)

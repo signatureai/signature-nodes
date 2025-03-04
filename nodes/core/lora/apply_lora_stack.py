@@ -48,7 +48,11 @@ class ApplyLoraStack:
     )
     FUNCTION = "execute"
     CATEGORY = LORA_CAT
-    DESCRIPTION = "Applies multiple LoRA models sequentially to a base model and CLIP. Processes each LoRA in the stack with specified weights for both model and CLIP components. Useful for combining multiple style or concept adaptations in a single workflow."
+    DESCRIPTION = """
+    Applies multiple LoRA models sequentially to a base model and CLIP.
+    Processes each LoRA in the stack with specified weights for both model and CLIP components.
+    Useful for combining multiple style or concept adaptations in a single workflow.
+    """
 
     def execute(
         self,

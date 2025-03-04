@@ -41,7 +41,11 @@ class FileLoader:
     RETURN_TYPES = ("FILE",)
     FUNCTION = "execute"
     CATEGORY = FILE_CAT
-    DESCRIPTION = "Converts JSON-formatted strings into ComfyUI-compatible file references. Handles both single and multiple files (separated by '&&'). Automatically prepends proper input folder paths."
+    DESCRIPTION = """
+    Converts JSON-formatted strings into ComfyUI-compatible file references.
+    Handles both single and multiple files (separated by '&&').
+    Automatically prepends proper input folder paths.
+    """
 
     def execute(self, value: str = "") -> tuple[list]:
         data = value.split("&&") if "&&" in value else [value]
