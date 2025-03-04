@@ -1,8 +1,11 @@
 import { getAccessToken, signatureApiBaseUrl } from "./main.js";
 
-export const getWorkflowsListForForm = async (element, offset = 0, limit = 100) => {
+export const getWorkflowsListForForm = async (element, offset = 0, limit = 100, search = null) => {
   const accessToken = getAccessToken();
-  const url = `${signatureApiBaseUrl}/api/v1_management/workflow?offset=${offset}&limit=${limit}`;
+  let url = `${signatureApiBaseUrl}/api/v1_management/workflow?offset=${offset}&limit=${limit}`;
+  if (search) {
+    url += `&search=${search}`;
+  }
   const response = await fetch(url, {
     method: "GET",
     headers: {

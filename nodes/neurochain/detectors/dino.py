@@ -13,6 +13,7 @@ class DINOHeatmap:
     This node takes an input image and a template image, optionally with a mask,
     and produces a heatmap showing regions similar to the template using DINO embeddings.
     """
+
     CLASS_ID = "dino_heatmap"
     CATEGORY = LABS_CAT
     DESCRIPTION = """Generates a similarity heatmap between two images using DINO Vision Transformer.

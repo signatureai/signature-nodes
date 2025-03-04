@@ -238,6 +238,8 @@ function showForm() {
               let offset = 0;
               let isLoading = false;
               let hasMore = true;
+              let searchQuery = null;
+              let searchTimeout = null;
 
               // Create the options list container
               const optionsListContainer = $el("div", {
@@ -275,7 +277,7 @@ function showForm() {
 
               const initialOptions = [
                 $el("option", { value: "", textContent: "Create new workflow" }),
-                ...(await getWorkflowsListForForm($el, offset, limit)),
+                ...(await getWorkflowsListForForm($el, offset, 7, searchQuery)),
               ];
 
               optionsListContainer.append(
@@ -344,6 +346,8 @@ function showForm() {
 
               // Existing scroll event listener code...
               optionsListContainer.addEventListener("scroll", async () => {
+                console.log("isLoading", isLoading);
+                console.log("hasMore", hasMore);
                 if (isLoading || !hasMore) return;
 
                 const scrolledToBottom =
@@ -355,7 +359,7 @@ function showForm() {
                     isLoading = true;
                     offset += limit;
 
-                    const nextOptions = await getWorkflowsListForForm($el, offset, limit);
+                    const nextOptions = await getWorkflowsListForForm($el, offset, 7, searchQuery);
 
                     if (nextOptions.length < limit) {
                       hasMore = false;
@@ -591,21 +595,150 @@ function showWorkflowsList() {
         let page = 0;
         let lastPageReached = false;
         let isLoading = false;
+        let searchQuery = null;
+        let searchTimeout = null;
 
-        const loadWorkflows = async () => {
-          if (isLoading) {
-            return [];
-          }
+        // Create search container with input and buttons
+        const searchContainer = $el("div", {
+          style: {
+            display: "flex",
+            gap: "8px",
+            marginBottom: "10px",
+          },
+        });
 
-          try {
-            isLoading = true;
-            const workflows = await getWorkflowsListForForm($el, page * limit, limit);
+        // Add search input
+        const searchInput = $el("input", {
+          type: "text",
+          placeholder: "Search workflows... (min 3 characters)",
+          style: {
+            flex: 1,
+            padding: "8px",
+            backgroundColor: "#2d2d2d",
+            border: "1px solid #444",
+            borderRadius: "4px",
+            color: "white",
+          },
+          oninput: async (e) => {
+            const inputValue = e.target.value;
+            searchQuery = inputValue.length === 0 ? null : inputValue;
 
-            if (workflows.length === 0 || workflows.length < limit) {
-              lastPageReached = true;
+            if (searchTimeout) {
+              clearTimeout(searchTimeout);
             }
 
-            return workflows.map((workflow) =>
+            if (inputValue.length >= 3) {
+              // Show loading state
+              resultsContainer.innerHTML = loadingHTML;
+
+              searchTimeout = setTimeout(async () => {
+                await performSearch();
+              }, 1000);
+            } else if (inputValue.length === 0) {
+              // Show loading state
+              resultsContainer.innerHTML = loadingHTML;
+
+              await performSearch();
+            }
+          },
+        });
+
+        // Add clear button
+        const clearButton = $el("button", {
+          textContent: "Clear",
+          style: {
+            padding: "8px 16px",
+            backgroundColor: "#666",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          },
+          onclick: async () => {
+            searchInput.value = "";
+            searchQuery = null;
+            if (searchTimeout) {
+              clearTimeout(searchTimeout);
+            }
+
+            // Show loading state
+            resultsContainer.innerHTML = loadingHTML;
+
+            await performSearch();
+          },
+        });
+
+        searchContainer.append(searchInput, clearButton);
+
+        // Create a fixed height results container
+        const resultsContainer = $el("div", {
+          id: "workflows-results",
+          style: {
+            height: "400px", // Fixed height
+            overflowY: "auto",
+            border: "1px solid #444",
+            borderRadius: "4px",
+            backgroundColor: "#1e1e1e",
+            position: "relative", // For absolute positioning of loader
+          },
+        });
+
+        // Loading HTML to display during searches
+        const loadingHTML = `
+          <div style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            background-color: #1e1e1e;
+          ">
+            <div style="
+              width: 40px;
+              height: 40px;
+              border: 3px solid #2D9CDB;
+              border-radius: 50%;
+              border-top-color: transparent;
+              animation: spin 1s linear infinite;
+              margin-bottom: 15px;
+            "></div>
+            <div style="color: #ffffff;">Loading workflows...</div>
+          </div>
+        `;
+
+        // Function to perform search
+        const performSearch = async () => {
+          page = 0;
+          lastPageReached = false;
+          limit = 9;
+          console.log("performSearch page", page);
+          console.log("lastPageReached", lastPageReached);
+          console.log("limit", limit);
+
+          try {
+            const workflows = await getWorkflowsListForForm($el, page * limit, limit, searchQuery);
+
+            // Clear results container
+            resultsContainer.innerHTML = "";
+
+            if (workflows.length === 0) {
+              // Show no results message
+              resultsContainer.innerHTML = `
+                <div style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100%;
+                  color: #888;
+                ">
+                  No workflows found
+                </div>
+              `;
+              return;
+            }
+
+            const workflowElements = workflows.map((workflow) =>
               $el(
                 "div",
                 {
@@ -613,6 +746,7 @@ function showWorkflowsList() {
                     padding: "15px",
                     marginBottom: "10px",
                     backgroundColor: "#1e1e1e",
+                    border: "1px solid #444",
                     borderRadius: "4px",
                     cursor: "pointer",
                     transition: "background-color 0.2s",
@@ -659,48 +793,49 @@ function showWorkflowsList() {
                 ]
               )
             );
-          } catch (error) {
-            console.error("Error loading workflows:", error);
-            container.appendChild(
-              $el("div", {
+
+            // Add workflow elements to results container
+            resultsContainer.append(...workflowElements);
+            if (workflows.length < limit || workflows.length === 0) {
+              console.log("lastPageReached set to true");
+              lastPageReached = true;
+            }
+
+            // Add a loading indicator at the bottom that also serves as a trigger
+            if (!lastPageReached) {
+              const loadingTrigger = $el("div", {
+                id: "workflows-loading-trigger",
                 style: {
                   padding: "15px",
-                  backgroundColor: "#ff000033",
-                  color: "white",
-                  marginBottom: "10px",
+                  textAlign: "center",
+                  color: "#888",
+                  marginTop: "10px",
                 },
-                textContent: `Error: ${error.message}`,
-              })
-            );
-            return [];
-          } finally {
-            isLoading = false;
+                innerHTML: `
+                  <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888;
+                              border-radius: 50%; border-top-color: transparent;
+                              animation: spin 1s linear infinite;">
+                  </div>
+                  <div style="margin-top: 10px;">Loading more workflows...</div>
+                `,
+              });
+              resultsContainer.appendChild(loadingTrigger);
+            }
+          } catch (error) {
+            console.error("Error performing search:", error);
+            resultsContainer.innerHTML = `
+              <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                color: #ff5555;
+              ">
+                Error loading workflows
+              </div>
+            `;
           }
         };
-
-        // Initial load
-        const initialWorkflows = await loadWorkflows();
-        container.append(...initialWorkflows);
-
-        // Add a loading indicator at the bottom that also serves as a trigger
-        const loadingTrigger = $el("div", {
-          id: "workflows-loading-trigger",
-          style: {
-            padding: "15px",
-            textAlign: "center",
-            color: "#888",
-            display: lastPageReached ? "none" : "block",
-            marginTop: "20px",
-          },
-          innerHTML: `
-            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #888;
-                        border-radius: 50%; border-top-color: transparent;
-                        animation: spin 1s linear infinite;">
-            </div>
-            <div style="margin-top: 10px;">Loading more workflows...</div>
-          `,
-        });
-        container.appendChild(loadingTrigger);
 
         // Create a style for the spinner animation if it doesn't exist
         if (!document.getElementById("workflow-spinner-style")) {
@@ -714,37 +849,125 @@ function showWorkflowsList() {
           document.head.appendChild(style);
         }
 
+        // Add elements to container
+        container.append(searchContainer);
+        container.append(resultsContainer);
+
+        // Show loading state initially
+        resultsContainer.innerHTML = loadingHTML;
+
+        // Initial load of workflows
+        await performSearch();
+
         // Set up Intersection Observer to detect when loading trigger is visible
         setTimeout(() => {
           const observer = new IntersectionObserver(
             async (entries) => {
               const entry = entries[0];
-
+              console.log("isLoading", isLoading);
+              console.log("lastPageReached", lastPageReached);
               if (entry.isIntersecting && !isLoading && !lastPageReached) {
+                isLoading = true;
                 page++;
-                const nextWorkflows = await loadWorkflows();
 
-                if (nextWorkflows.length > 0) {
-                  // Insert new workflows before the loading trigger
-                  nextWorkflows.forEach((workflow) => {
-                    container.insertBefore(workflow, loadingTrigger);
-                  });
-                }
+                try {
+                  const nextWorkflows = await getWorkflowsListForForm($el, page * limit, 7, searchQuery);
 
-                // Hide loading trigger if we've reached the last page
-                if (lastPageReached) {
-                  loadingTrigger.style.display = "none";
+                  if (nextWorkflows.length === 0 || nextWorkflows.length < limit) {
+                    lastPageReached = true;
+                    loadingTrigger.remove();
+                  }
+
+                  if (nextWorkflows.length > 0) {
+                    const loadingTrigger = document.getElementById("workflows-loading-trigger");
+
+                    // Create workflow elements
+                    const workflowElements = nextWorkflows.map((workflow) =>
+                      $el(
+                        "div",
+                        {
+                          style: {
+                            padding: "15px",
+                            marginBottom: "10px",
+                            backgroundColor: "#1e1e1e",
+                            border: "1px solid #444",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            transition: "background-color 0.2s",
+                          },
+                          onmouseover: (e) => (e.target.style.backgroundColor = "#2a2a2a"),
+                          onmouseout: (e) => (e.target.style.backgroundColor = "#1e1e1e"),
+                          onclick: async () => {
+                            const workflowData = await getWorkflowById(workflow.value);
+                            if (workflowData) {
+                              app.ui.dialog.close();
+                              showWorkflowVersions(workflowData);
+                            }
+                          },
+                        },
+                        [
+                          $el(
+                            "div",
+                            {
+                              style: {
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                marginBottom: "8px",
+                              },
+                            },
+                            [
+                              $el("span", {
+                                style: {
+                                  fontSize: "16px",
+                                  fontWeight: "bold",
+                                  color: "#ffffff",
+                                },
+                                textContent: workflow.textContent,
+                              }),
+                              $el("span", {
+                                style: {
+                                  fontSize: "14px",
+                                  color: "#888888",
+                                },
+                                textContent: workflow.type || "Standard",
+                              }),
+                            ]
+                          ),
+                        ]
+                      )
+                    );
+
+                    // Insert new workflows before the loading trigger
+                    workflowElements.forEach((workflow) => {
+                      resultsContainer.insertBefore(workflow, loadingTrigger);
+                    });
+
+                    // Remove loading trigger if we've reached the last page
+                    if (lastPageReached && loadingTrigger) {
+                      loadingTrigger.remove();
+                    }
+                  }
+                } catch (error) {
+                  console.error("Error loading more workflows:", error);
+                } finally {
+                  isLoading = false;
+                  loadingTrigger.remove();
                 }
               }
             },
             {
-              root: document.querySelector(".p-dialog-content"),
+              root: resultsContainer,
               rootMargin: "100px",
               threshold: 0.1,
             }
           );
 
-          observer.observe(loadingTrigger);
+          // Observe the loading trigger if it exists
+          const loadingTrigger = document.getElementById("workflows-loading-trigger");
+          if (loadingTrigger) {
+            observer.observe(loadingTrigger);
+          }
 
           // Clean up observer when dialog closes
           const originalOnClose = app.ui.dialog.onClose;
@@ -801,7 +1024,6 @@ async function showWorkflowVersions(workflowData) {
             isLoading = true;
             const response = await getWorkflowVersions(workflowData.uuid, page * limit, limit);
             const workflow_versions = response.data;
-
             if (workflow_versions.length === 0 || workflow_versions.length < limit) {
               lastPageReached = true;
             }
