@@ -1,5 +1,5 @@
 from ....categories import ANY_CAT
-from ...utils import WILDCARD
+from ....shared import any_type
 
 
 class AnyToList:
@@ -9,7 +9,7 @@ class AnyToList:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "any_value": (WILDCARD, {}),
+                "any_value": (any_type, {}),
             }
         }
 

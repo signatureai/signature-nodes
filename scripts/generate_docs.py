@@ -39,7 +39,11 @@ def _init_categories(nodes_dir: Path) -> dict:
     for name, value in module.__dict__.items():
         if name.endswith("_CAT"):
             output_base_name = name[:-4].lower()
-            categories[name] = {"output_base_name": output_base_name, "documentation_path": value, "files": []}
+            categories[name] = {
+                "output_base_name": output_base_name,
+                "documentation_path": value,
+                "files": [],
+            }
 
     return categories
 
@@ -55,14 +59,32 @@ def _extract_classes_with_docs(content: str) -> list[tuple[str, str, dict]]:
         if not isinstance(node, ast.ClassDef):
             continue
 
+        # Get both docstring and DESCRIPTION
         docstring = ast.get_docstring(node)
-        if not docstring:
+        description = _extract_description(node)
+
+        # Use DESCRIPTION if available, otherwise use docstring
+        doc = docstring if docstring else description
+        if not doc:
             continue
 
         metadata = _extract_class_metadata(node)
-        classes.append((node.name, docstring, metadata))
+        classes.append((node.name, doc, metadata))
 
     return classes
+
+
+def _extract_description(node: ast.ClassDef) -> str:
+    """Extract DESCRIPTION class attribute if it exists."""
+    for item in node.body:
+        if isinstance(item, ast.Assign):
+            for target in item.targets:
+                if isinstance(target, ast.Name) and target.id == "DESCRIPTION":
+                    if isinstance(item.value, ast.Constant):
+                        return item.value.value
+                    elif isinstance(item.value, ast.Str):  # For older Python versions
+                        return item.value.s
+    return ""
 
 
 def _extract_class_metadata(node: ast.ClassDef) -> dict:
@@ -357,7 +379,10 @@ def _write_dict_input(doc, group_name: str, name: str, type_info: dict):
 def create_mkdocs_config(categories: list):
     category_tree = {}
     parts_and_output_base_names = [
-        ([p.strip() for p in category["documentation_path"].split("/")][1:], category["output_base_name"])
+        (
+            [p.strip() for p in category["documentation_path"].split("/")][1:],
+            category["output_base_name"],
+        )
         for category in categories
     ]
     for parts, output_base_name in sorted(parts_and_output_base_names, key=lambda x: -len(x[0])):
@@ -386,7 +411,10 @@ def create_mkdocs_config(categories: list):
                 result.append({key: value})
         return result
 
-    nav_structure = [{"Home": "index.md"}, {"Nodes": [*_build_nav_structure(category_tree)]}]
+    nav_structure = [
+        {"Home": "index.md"},
+        {"Nodes": [*_build_nav_structure(category_tree)]},
+    ]
 
     config = f"""site_name: Signature Nodes Documentation
 theme:

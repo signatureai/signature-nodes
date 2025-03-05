@@ -1,11 +1,9 @@
-import os
-
 import boto3
 import requests
-from neurochain.utils.utils import query_vectorstore
+from neurochain.utils.utils import get_secret, query_vectorstore
 
+from ....env import env
 from ...categories import VECTORSTORE_CAT
-from ..utils import get_secret
 
 
 class QueryVectorstore:
@@ -26,14 +24,11 @@ class QueryVectorstore:
     OUTPUT_NODE = True
 
     def process(self, prompt: str, tenant_id: str, k: int = 3):
-        environment = os.environ.get("ENVIRONMENT", "staging")
+        environment = env.get("ENVIRONMENT")
         host = f"https://signature-generate.signature-eks-{environment}.signature.ai"
 
         session = boto3.Session()
-        backend_cognito_secret = get_secret(
-            session,
-            os.environ.get("BACKEND_COGNITO_SECRET", f"{environment}_backend_cognito_oauth"),
-        )
+        backend_cognito_secret = get_secret(session, env.get("BACKEND_COGNITO_SECRET"))
         if backend_cognito_secret is None:
             raise ValueError("Backend Cognito Secret not found")
 

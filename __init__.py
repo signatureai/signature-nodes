@@ -4,37 +4,21 @@ import logging
 import os
 import re
 import sys
-from os import remove, walk
-from os.path import abspath, dirname, exists, join, realpath, sep
-from shutil import copyfile
+from os import walk
+from os.path import abspath, dirname, join, sep
 
-from dotenv import load_dotenv
-
+from .env import env
 from .utils import parallel_for
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+logger.info(f"Environment: {env}")
 
 BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
 SIGNATURE_NODES_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("src")[0]
 
 MAX_INT: int = sys.maxsize
 MAX_FLOAT: float = sys.float_info.max
-
-script_file = realpath(__file__)
-script_folder = dirname(script_file)
-if "custom_nodes" in script_folder:
-    base_comfy_dir = script_folder.split("custom_nodes")[0]
-    signature_js = "signature.js"
-    signature_js_path = join(script_folder, "nodes/web/")
-    web_extensions = join(base_comfy_dir, "web/extensions/")
-    src = join(signature_js_path, signature_js)
-    dst = join(web_extensions, signature_js)
-    if exists(web_extensions):
-        if exists(dst):
-            remove(dst)
-        copyfile(src, dst)
 
 
 SIGNATURE_CORE_AVAILABLE = False
@@ -48,17 +32,19 @@ try:
 except ImportError:
     raise ImportError("signature_core package not available")
 
-neurochain_module = importlib.import_module("neurochain")
-if neurochain_module is not None:
-    NEUROCHAIN_AVAILABLE = True
-else:
+try:
+    neurochain_module = importlib.import_module("neurochain")
+    if neurochain_module is not None:
+        NEUROCHAIN_AVAILABLE = True
+except ImportError:
     logger.warning("neurochain package not available")
 
-flows_module = importlib.import_module("signature_flows")
-if flows_module is not None:
-    os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
-    SIGNATURE_FLOWS_AVAILABLE = True
-else:
+try:
+    flows_module = importlib.import_module("signature_flows")
+    if flows_module is not None:
+        os.environ["COMFYUI_DIR"] = BASE_COMFY_DIR
+        SIGNATURE_FLOWS_AVAILABLE = True
+except ImportError:
     logger.warning("signature_flows package not available")
 
 
@@ -73,7 +59,7 @@ def get_node_class_mappings(nodes_directory: str):
                 continue
             plugin_file_paths.append(join(path, name))
 
-    def process_plugin_file(plugin_file_path: str, idx: int, worker_id: int) -> tuple[dict, dict]:
+    def process_plugin_file(plugin_file_path: str, idx: int = 0, worker_id: int = 0) -> tuple[dict, dict]:
         file_class_mappings = {}
         file_display_mappings = {}
 
@@ -111,10 +97,12 @@ def get_node_class_mappings(nodes_directory: str):
 
         return file_class_mappings, file_display_mappings
 
-    # Process files in parallel
-    results = parallel_for(process_plugin_file, plugin_file_paths)
+    parallel_process = os.getenv("PARALLEL_PROCESSING", "False") == "True"
+    if parallel_process:
+        results = parallel_for(process_plugin_file, plugin_file_paths)
+    else:
+        results = [process_plugin_file(file_path, idx, 0) for idx, file_path in enumerate(plugin_file_paths)]
 
-    # Combine results from all workers
     for file_mappings, file_display_names in results:
         if isinstance(file_mappings, dict) and isinstance(file_display_names, dict):
             node_class_mappings.update(file_mappings)

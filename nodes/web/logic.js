@@ -68,16 +68,8 @@ const ext = {
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
     const class_name = nodeType.comfyClass;
 
-    nodeType.prototype.onConnectionsChange = function (
-      type,
-      index,
-      connected,
-      link_info,
-    ) {
-      if (
-        class_name === "signature_loop_start" ||
-        class_name === "signature_loop_end"
-      ) {
+    nodeType.prototype.onConnectionsChange = function (type, index, connected, link_info) {
+      if (class_name === "signature_loop_start" || class_name === "signature_loop_end") {
         if (type === 1 && link_info && link_info.target_id) {
           const node = app.graph.getNodeById(link_info.target_id);
           if (!node || !node.inputs[index]) return;

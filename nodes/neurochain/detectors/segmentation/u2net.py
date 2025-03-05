@@ -22,8 +22,7 @@ class U2NetNode:
     CATEGORY = SEGMENTATION_CAT
 
     def process(self, image: torch.Tensor, clearml_model_id: str):
-        checkpoint_dir = Path(folder_paths.models_dir) / "checkpoints"
+        checkpoint_dir = Path(folder_paths.models_dir) / "checkpoints"  # TODO: Decide on a directory for models
         model = U2Net(model_id=clearml_model_id, checkpoint_dir=checkpoint_dir)
         output = model.predict(image)
         return (output,)
-

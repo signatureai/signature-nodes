@@ -23,7 +23,5 @@ class OllamaLLM:
     OUTPUT_NODE = True
 
     def process(self, host: str, model_name: str, auto_manage_ollama: bool):
-        llm = Ollama(
-            host=host, model_name=model_name, auto_manage_ollama=auto_manage_ollama
-        )
+        llm = Ollama(host=host, model_name=model_name, auto_manage_ollama=auto_manage_ollama)
         return (llm,)

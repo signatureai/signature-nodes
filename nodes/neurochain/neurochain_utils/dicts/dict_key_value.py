@@ -1,5 +1,5 @@
 from ....categories import DICTS_CAT
-from ...utils import WILDCARD
+from ....shared import any_type
 
 
 class DictKeyValue:
@@ -8,7 +8,7 @@ class DictKeyValue:
         return {
             "required": {
                 "key": ("STRING", {"default": ""}),
-                "value": (WILDCARD,),
+                "value": (any_type,),
             }
         }
 

@@ -1,25 +1,26 @@
 [project]
 name = "signature-nodes"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Signature Nodes"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "boto3>=1.35.95",
-    "httpx>=0.28.1",
+    "httpx>=0.25.0",
     "huggingface-hub>=0.26.2",
     "jq>=1.8.0",
     "matplotlib>=3.10.0",
-    "opencv-python>=4.10.0.84",
-    "pygit2>=1.17.0",
     "python-dotenv>=1.0.1",
     "pyyaml>=6.0.2",
-    "requests>=2.32.3",
+    "requests>=2.32.2",
     "spandrel>=0.4.1",
     "tomli-w>=1.1.0",
     "torch>=2.5.1",
     "transformers>=4.46.3",
     "uuid7>=0.1.0",
+    "neurochain==2.0.1",
+    "signature-flows==1.1.6",
+    "signature-core==2.0.1",
 ]
 
 [dependency-groups]
@@ -33,6 +34,16 @@ doc = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.5.49",
 ]
+test = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "coverage>=7.4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=./ --cov-report=xml"
+python_files = ["test_*.py"]
 
 [tool.ruff]
 line-length = 120
@@ -47,10 +58,26 @@ select = [
 ]
 
 [tool.bandit]
-skips = ["B113", "B311"]
-assert_used.skips = ["*_test.py", "*/test_*.py"]
+skips = ["B113", "B311", "B101"]
+assert_used.skips = ["**/test_*.py"]
 
-[tool.pytest.ini_options]
-pythonpath = [
-  "."
-]
+[build-system]
+requires = ["setuptools>=68.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["nodes", "services"]
+
+[tool.uv.sources]
+neurochain = { index = "signature" }
+signature-flows = { index = "signature" }
+signature-core = { index = "signature" }
+
+[[tool.uv.index]]
+name = "signature"
+url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/"
+explicit = true
+publish = false
+
+[tool.setuptools.dynamic]
+version = {attr = "version.__version__"}

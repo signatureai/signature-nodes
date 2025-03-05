@@ -16,15 +16,28 @@ repos:
       - id: fix-byte-order-marker
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.0
+    rev: 1.8.3
     hooks:
       - id: bandit
         args: ["-c", "pyproject.toml"]
         additional_dependencies: [".[toml]"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.6
+    rev: v0.9.7
     hooks:
-      - id: ruff # linter
-        args: ["--fix", "--ignore", "E402"]
       - id: ruff-format # formatter
+      - id: ruff # linter
+        args: ["--fix", "--extend-ignore", "E741"]
+
+  - repo: local
+    hooks:
+      - id: git-fetch
+        name: git fetch
+        entry: git fetch --all
+        language: system
+        pass_filenames: false
+      - id: uv-lock
+        name: uv lock
+        entry: uv lock
+        language: system
+        pass_filenames: false

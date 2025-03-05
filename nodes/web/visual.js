@@ -8,11 +8,12 @@ const ext = {
     let isSignatureNode = className.startsWith("signature_");
     let isOutputNode = isSignatureNode && className.includes("output");
     let isInputNode = isSignatureNode && className.includes("input");
-    if (isSignatureNode && !isOutputNode && !isInputNode) {
-      const title = node.getTitle();
-      if (title.startsWith("SIG ")) {
-        node.title = title.replace("SIG ", "🔲  ");
-      }
+    let isLoop = isSignatureNode && className.includes("loop");
+    const title = node.getTitle();
+    if (isSignatureNode && title.startsWith("SIG ")) {
+      node.title = title.replace("SIG ", "");
+    }
+    if (isSignatureNode && !isOutputNode && !isInputNode && !isLoop) {
       node.shape = "box";
       node.color = "#36213E";
       node.bgcolor = "#221324";
