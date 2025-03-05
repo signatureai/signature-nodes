@@ -106,21 +106,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract Version from Branch
+      - name: Extract Version from commit
         id: extract_version
         run: |
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          if [[ $BRANCH_NAME == release/* ]]; then
-            # Extract version from release branch name (release/1.2.0 -> v1.2.0)
-            VERSION="v${BRANCH_NAME#release/}"
-          elif [[ $BRANCH_NAME == hotfix/* ]]; then
-            # Extract version from hotfix branch name (hotfix/1.2.1 -> v1.2.1)
-            VERSION="v${BRANCH_NAME#hotfix/}"
-          else
-            echo "Error: Version can only be extracted from release or hotfix branches"
+          VERSION="$(git log -1 --pretty=%B | grep -o 'release/[0-9]\+\.[0-9]\+\.[0-9]\+' | sed 's/release\///' | head -n 1)"
+          if [ -z "$VERSION" ]; then
+            echo "Error: Version not found in commit message"
             exit 1
           fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=v$VERSION" >> $GITHUB_ENV
           echo "::set-output name=version::$VERSION"
 
       - name: Create Release
@@ -133,17 +127,3 @@ jobs:
           release_name: Release ${{ env.VERSION }} # type: ignore
           draft: false
           prerelease: false
-
-  # notify:
-  #   name: Notifications
-  #   needs: [deploy-staging, deploy-production]
-  #   if: always()
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Slack Notification
-  #       uses: 8398a7/action-slack@v3
-  #       with:
-  #         status: ${{ job.status }}
-  #         fields: repo,message,commit,author,action,eventName,ref,workflow
-  #       env:
-  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
