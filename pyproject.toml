@@ -18,9 +18,9 @@ dependencies = [
     "torch>=2.5.1",
     "transformers>=4.46.3",
     "uuid7>=0.1.0",
-    "neurochain==2.0.0.dev9",
-    "signature-flows==1.0.5.dev7",
-    "signature-core==1.0.0.dev8",
+    "neurochain==2.0.1",
+    "signature-flows==1.1.6",
+    "signature-core==2.0.1",
 ]
 
 [dependency-groups]
