@@ -127,10 +127,12 @@ async function saveWorkflow(app) {
     const output_nodes_types = ["signature_output"];
     const nodes_to_bypass = ["PreviewImage", "LoadImage", "signature_mask_preview", "signature_text_preview"];
 
-    // Check if the workflow has the required nodes
+    // Bypass the nodes of the list above and generate a new workflow
     const { workflow } = await bypassNodes(initial_workflow, nodes_to_bypass);
+    // Change the displayed graph to the one generated above and create a new workflow api
     const workflow_api = await getApiFromUpdatedWorkflow(workflow);
 
+    // Check if the workflow has the required nodes
     await checkNodeGroupPresence(workflow_api, workflow, input_nodes_types);
     await checkNodeGroupPresence(workflow_api, workflow, output_nodes_types);
 
