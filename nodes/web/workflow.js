@@ -1723,8 +1723,6 @@ function processNodeItems(items) {
         node.properties = {};
       }
       node.properties.order = index;
-
-      console.log(`Node ${node.id} (${node.title || node.type}): Order changed from ${originalOrder} to ${index}`);
     } else {
       console.warn(`Node with ID ${nodeId} not found in graph`);
     }
@@ -1761,15 +1759,10 @@ function applyNodeOrderChanges() {
   }
 
   const newNodesOrder = processNodeItems(newOrder);
-  // Force graph to update and mark as dirty to ensure it's saved
-  console.log("New nodes order:", newNodesOrder);
-
   app.graph._nodes = newNodesOrder;
-  console.log("app.graph._nodes", app.graph._nodes);
 
   app.graph.setDirtyCanvas(true, true);
 
-  // Force a graph change event to ensure the changes are picked up
   app.graph.change();
 }
 
