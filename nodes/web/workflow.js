@@ -1347,6 +1347,8 @@ async function setupMenu(app) {
 
 // New function to show node order editor dialog
 function showNodeOrderEditor() {
+  const dropdownMenu = document.querySelector("#pv_id_9_0_list") || document.querySelector("#pv_id_10_0_list");
+  dropdownMenu.style.display = "none";
   const nodes = app.graph._nodes;
   if (!nodes || nodes.length === 0) {
     showMessage("No nodes found in the workflow", "#ff0000");
@@ -1382,7 +1384,7 @@ function showNodeOrderEditor() {
         marginBottom: "20px",
         color: "#cccccc",
       },
-      textContent: "Drag nodes to change their execution order",
+      textContent: "Drag nodes to change their display order on the platform",
     }),
     $el("div", {
       style: {
@@ -1439,8 +1441,20 @@ function showNodeOrderEditor() {
                   inputList.appendChild(nodeItem);
                 });
 
-                inputContainer.appendChild(inputList);
-
+                console.log("inputList", inputList.length);
+                if (inputNodes.length > 0) {
+                  inputContainer.appendChild(inputList);
+                } else {
+                  inputContainer.appendChild(
+                    $el("p", {
+                      style: {
+                        textAlign: "center",
+                        color: "#cccccc",
+                      },
+                      textContent: "Workflow has no input nodes",
+                    })
+                  );
+                }
                 // Initialize drag and drop functionality
                 setTimeout(() => {
                   initDragAndDrop(inputList);
@@ -1495,8 +1509,19 @@ function showNodeOrderEditor() {
                   outputList.appendChild(nodeItem);
                 });
 
-                outputContainer.appendChild(outputList);
-
+                if (outputNodes.length > 0) {
+                  outputContainer.appendChild(outputList);
+                } else {
+                  outputContainer.appendChild(
+                    $el("p", {
+                      style: {
+                        textAlign: "center",
+                        color: "#cccccc",
+                      },
+                      textContent: "Workflow has no output nodes",
+                    })
+                  );
+                }
                 // Initialize drag and drop functionality
                 setTimeout(() => {
                   initDragAndDrop(outputList);
@@ -1682,7 +1707,6 @@ function updateNodeOrderDisplay(item, index) {
   const orderDisplay = item.querySelector(".node-order-display");
   if (orderDisplay) {
     const originalIndex = parseInt(item["data-original-index"]);
-    const originalOrder = item["data-original-order"];
     const newOrderSpan = orderDisplay.querySelector(".new-order");
 
     if (newOrderSpan) {
