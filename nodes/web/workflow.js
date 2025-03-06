@@ -243,7 +243,7 @@ function showForm() {
               width: "100%",
             },
             $: async (container) => {
-              const limit = 100;
+              let limit = 100;
               let offset = 0;
               let isLoading = false;
               let hasMore = true;
@@ -286,7 +286,7 @@ function showForm() {
 
               const initialOptions = [
                 $el("option", { value: "", textContent: "Create new workflow" }),
-                ...(await getWorkflowsListForForm($el, offset, 7, searchQuery)),
+                ...(await getWorkflowsListForForm($el, offset, limit, searchQuery)),
               ];
 
               optionsListContainer.append(
@@ -368,7 +368,7 @@ function showForm() {
                     isLoading = true;
                     offset += limit;
 
-                    const nextOptions = await getWorkflowsListForForm($el, offset, 7, searchQuery);
+                    const nextOptions = await getWorkflowsListForForm($el, offset, limit, searchQuery);
 
                     if (nextOptions.length < limit) {
                       hasMore = false;
