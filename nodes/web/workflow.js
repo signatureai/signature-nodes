@@ -1,7 +1,11 @@
 import { app } from "../../scripts/app.js";
 import { $el, cleanLocalStorage, createMenuItem, requiresAuth, showMessage } from "./signature.js";
 import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./signature_api/main.js";
-import { checkNodeGroupPresence } from "./tests/main.js";
+import {
+  bypassNodes,
+  checkNodeGroupPresence,
+  findNodesWithRandomizedControlAfterGenerateWidget,
+} from "./tests/main.js";
 
 const getTotalTabs = () => {
   const workflowTabs = document.querySelector(".workflow-tabs");
@@ -95,14 +99,50 @@ async function getManifest(workflow) {
   }
 }
 
+async function getApiFromUpdatedWorkflow(workflowData) {
+  // Save current graph state
+  // Uncomment if we want to restore the original graph
+  // const currentGraph = app.graph.serialize();
+
+  try {
+    // Clear and load the workflow we want to process
+    app.graph.clear();
+    await app.loadGraphData(workflowData);
+
+    // Generate API representation
+    const graph_api = await app.graphToPrompt();
+    return graph_api["output"];
+  } catch (error) {
+    console.error("Error generating API from workflow:", error);
+    return null;
+  } finally {
+    // Always restore the original graph, even if there was an error
+    // Uncomment if we want to restore the original graph
+    // app.graph.clear();
+    // await app.loadGraphData(currentGraph);
+  }
+}
+
 async function saveWorkflow(app) {
   try {
-    const workflow = app.graph.serialize();
-    const graph_api = await app.graphToPrompt();
-    const workflow_api = graph_api["output"];
+    const initial_workflow = app.graph.serialize();
 
     const input_nodes_types = ["signature_input_image", "signature_input_text"];
     const output_nodes_types = ["signature_output"];
+    const nodes_to_bypass = ["PreviewImage", "LoadImage", "signature_mask_preview", "signature_text_preview"];
+
+    // Check for nodes with randomized control_after_generate widgets
+    const nodesWithControlWidget = await findNodesWithRandomizedControlAfterGenerateWidget();
+
+    if (nodesWithControlWidget && nodesWithControlWidget.cancelled) {
+      // Don't proceed to the next dialog
+      return;
+    }
+
+    // Bypass the nodes of the list above and generate a new workflow
+    const { workflow } = await bypassNodes(initial_workflow, nodes_to_bypass);
+    // Change the displayed graph to the one generated above and create a new workflow api
+    const workflow_api = await getApiFromUpdatedWorkflow(workflow);
 
     // Check if the workflow has the required nodes
     await checkNodeGroupPresence(workflow_api, workflow, input_nodes_types);
