@@ -1358,11 +1358,19 @@ function showNodeOrderEditor() {
   // Filter and sort input and output nodes
   const inputNodes = nodes
     .filter((node) => node.type.includes("signature_input"))
-    .sort((a, b) => (a.order !== undefined ? a.order : 0) - (b.order !== undefined ? b.order : 0));
+    .sort(
+      (a, b) =>
+        (a.properties.signature_order !== undefined ? a.properties.signature_order : 0) -
+        (b.properties.signature_order !== undefined ? b.properties.signature_order : 0)
+    );
 
   const outputNodes = nodes
     .filter((node) => node.type.includes("signature_output"))
-    .sort((a, b) => (a.order !== undefined ? a.order : 0) - (b.order !== undefined ? b.order : 0));
+    .sort(
+      (a, b) =>
+        (a.properties.signature_order !== undefined ? a.properties.signature_order : 0) -
+        (b.properties.signature_order !== undefined ? b.properties.signature_order : 0)
+    );
 
   if (inputNodes.length === 0 && outputNodes.length === 0) {
     showMessage("No input or output nodes found in the workflow", "#ff0000");
@@ -1580,7 +1588,7 @@ function createNodeItem(node, index, nodeType) {
       className: `draggable-node-item ${nodeType}-node`,
       "data-node-id": node.id,
       "data-original-index": index,
-      "data-original-order": node.order !== undefined ? node.order : "unset",
+      "data-original-order": node.properties.order !== undefined ? node.properties.order : "unset",
       "data-node-type": nodeType,
       style: {
         padding: "12px",
@@ -1674,7 +1682,7 @@ function createNodeItem(node, index, nodeType) {
           index + 1
         }</span>
                    <div style="font-size: 11px; color: #666;">Global: ${
-                     node.order !== undefined ? node.order : "unset"
+                     node.properties.order !== undefined ? node.properties.order : "unset"
                    }</div>`,
       }),
     ]
@@ -1736,16 +1744,11 @@ function processNodeItems(items) {
     const node = app.graph.getNodeById(parseInt(nodeId));
 
     if (node) {
-      const originalOrder = node.order !== undefined ? node.order : "unset";
-
-      // Set the order on the node
-      node.order = index;
-
       // Store in properties for serialization - this is crucial for saving to workflow.json
       if (!node.properties) {
         node.properties = {};
       }
-      node.properties.order = index;
+      node.properties.signature_order = index;
     } else {
       console.warn(`Node with ID ${nodeId} not found in graph`);
     }
