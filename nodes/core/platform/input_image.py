@@ -1,6 +1,7 @@
 from typing import Any, Optional
 
 import torch
+from signature_core.functional.color import rgb_to_grayscale
 from signature_core.functional.transform import cutout
 from signature_core.img.tensor_image import TensorImage
 
@@ -176,7 +177,11 @@ class InputImage:
                 raise ValueError(f"Output {i} must be a TensorImage")
 
             if subtype == "mask":
-                outputs[i] = output.get_grayscale().get_BWHC()
+                if output.shape[1] == 4:
+                    rgb = TensorImage(output[:, :3, :, :])
+                    outputs[i] = rgb_to_grayscale(rgb).get_BWHC()
+                else:
+                    outputs[i] = output.get_BWHC()
             else:
                 outputs[i] = post_process(output, include_alpha).get_BWHC()
         return (outputs,)
