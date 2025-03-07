@@ -23,7 +23,7 @@ repos:
         additional_dependencies: [".[toml]"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.7
+    rev: v0.9.9
     hooks:
       - id: ruff-format # formatter
       - id: ruff # linter
