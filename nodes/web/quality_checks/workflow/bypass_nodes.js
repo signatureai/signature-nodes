@@ -1,6 +1,15 @@
+import { showWarningDialog } from "../main.js";
+
 const bypassNodes = async (workflow, nodes_to_bypass) => {
   if (!workflow) {
-    throw new Error("Workflow with nodes is required");
+    const result = await showWarningDialog([], {
+      dialogueTitle: "⚠️ Workflow Error",
+      dialogueMessage1: "Workflow with active nodes is required",
+    });
+
+    if (!result.continue) {
+      return { cancelled: true }; // Return an object with cancelled flag to signal cancellation
+    }
   }
 
   const workflow_nodes = workflow.nodes;

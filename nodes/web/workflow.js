@@ -122,7 +122,7 @@ async function getApiFromUpdatedWorkflow(workflowData) {
   }
 }
 
-async function saveWorkflow(app) {
+const validateWorkflow = async (app) => {
   try {
     const initial_workflow = app.graph.serialize();
 
@@ -135,7 +135,7 @@ async function saveWorkflow(app) {
 
     if (nodesWithControlWidget && nodesWithControlWidget.cancelled) {
       // Don't proceed to the next dialog
-      return;
+      return { cancelled: true };
     }
 
     // Bypass the nodes of the list above and generate a new workflow
@@ -144,8 +144,32 @@ async function saveWorkflow(app) {
     const workflow_api = await getApiFromUpdatedWorkflow(workflow);
 
     // Check if the workflow has the required nodes
-    await checkNodeGroupPresence(workflow_api, workflow, input_nodes_types);
-    await checkNodeGroupPresence(workflow_api, workflow, output_nodes_types);
+    const input_nodes_presence = await checkNodeGroupPresence(workflow_api, workflow, input_nodes_types);
+
+    if (input_nodes_presence.cancelled) {
+      return { cancelled: true };
+    }
+
+    const output_nodes_presence = await checkNodeGroupPresence(workflow_api, workflow, output_nodes_types);
+
+    if (output_nodes_presence.cancelled) {
+      return { cancelled: true };
+    }
+
+    return { cancelled: false };
+  } catch (error) {
+    console.error("Error in validateWorkflow:", error);
+    showMessage("An error occurred while validating the workflow", "#ff0000");
+  }
+};
+
+async function saveWorkflow(app) {
+  try {
+    const validationResult = await validateWorkflow(app);
+
+    if (validationResult.cancelled) {
+      return;
+    }
 
     const form = await showForm();
     const submitButton = form.querySelector('a[href="#"]');
