@@ -1,15 +1,6 @@
-import { bypassNodes } from "./bypass_nodes.js";
-import { checkNodeGroupPresence } from "./check_node_group_presence.js";
-import {
-  findNodesWithRandomizedControlAfterGenerateWidget,
-  highlightNodesWithRandomizedWidgets,
-  showRandomizationWarningDialog,
-} from "./nodes_with_randomized_control_after_generate.js";
+import { bypassNodes } from "./workflow/bypass_nodes.js";
+import { checkNodeGroupPresence } from "./workflow/check_node_group_presence.js";
+import { findNodesWithRandomizedControlAfterGenerateWidget } from "./workflow/nodes_with_randomized_control_after_generate.js";
+import { showWarningDialog } from "./workflow/warning_dialogue.js";
 
-export {
-  bypassNodes,
-  checkNodeGroupPresence,
-  findNodesWithRandomizedControlAfterGenerateWidget,
-  highlightNodesWithRandomizedWidgets,
-  showRandomizationWarningDialog,
-};
+export { bypassNodes, checkNodeGroupPresence, findNodesWithRandomizedControlAfterGenerateWidget, showWarningDialog };
