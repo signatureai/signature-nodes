@@ -1,11 +1,11 @@
 import { app } from "../../scripts/app.js";
-import { $el, cleanLocalStorage, createMenuItem, requiresAuth, showMessage } from "./signature.js";
-import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./signature_api/main.js";
 import {
   bypassNodes,
   checkNodeGroupPresence,
   findNodesWithRandomizedControlAfterGenerateWidget,
-} from "./tests/main.js";
+} from "./quality_checks/main.js";
+import { $el, cleanLocalStorage, createMenuItem, requiresAuth, showMessage } from "./signature.js";
+import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./signature_api/main.js";
 
 const getTotalTabs = () => {
   const workflowTabs = document.querySelector(".workflow-tabs");
@@ -1307,6 +1307,13 @@ async function setupMenu(app) {
       });
       menuList.appendChild(separator);
 
+      // Add Node Order Editor menu item
+      const nodeOrderItem = createMenuItem("Edit Node Order", "pi-sort", () => {
+        showNodeOrderEditor();
+      });
+      nodeOrderItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(nodeOrderItem);
+
       // Add Open from Signature menu item
       const openItem = createMenuItem("Open from Signature", "pi-cloud-download", async () => {
         try {
@@ -1331,13 +1338,6 @@ async function setupMenu(app) {
       deployItem.setAttribute("data-signature-menu", "true");
       menuList.appendChild(deployItem);
 
-      // Add Node Order Editor menu item
-      const nodeOrderItem = createMenuItem("Edit Node Order", "pi-sort", () => {
-        showNodeOrderEditor();
-      });
-      nodeOrderItem.setAttribute("data-signature-menu", "true");
-      menuList.appendChild(nodeOrderItem);
-
       return true;
     }
     await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms before retry
@@ -1348,8 +1348,10 @@ async function setupMenu(app) {
 
 // New function to show node order editor dialog
 function showNodeOrderEditor() {
-  const dropdownMenu = document.querySelector("#pv_id_9_0_list") || document.querySelector("#pv_id_10_0_list");
-  dropdownMenu.style.display = "none";
+  const dropdownMenu = findMenuList();
+  if (dropdownMenu) {
+    dropdownMenu.style.display = "none";
+  }
   const nodes = app.graph._nodes;
   if (!nodes || nodes.length === 0) {
     showMessage("No nodes found in the workflow", "#ff0000");
