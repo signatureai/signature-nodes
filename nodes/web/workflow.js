@@ -101,25 +101,23 @@ async function getManifest(workflow) {
 
 async function getApiFromUpdatedWorkflow(workflowData) {
   // Save current graph state
-  // Uncomment if we want to restore the original graph
-  // const currentGraph = app.graph.serialize();
+  const currentGraph = app.graph.serialize();
 
   try {
-    // Clear and load the workflow we want to process
+    // Clear the current graph
     app.graph.clear();
-    await app.loadGraphData(workflowData);
+
+    // Instead of using app.loadGraphData, use LiteGraph's configure method directly
+    // This loads the graph data without triggering UI-related actions like tab creation
+    app.graph.configure(workflowData);
 
     // Generate API representation
     const graph_api = await app.graphToPrompt();
+
     return graph_api["output"];
   } catch (error) {
     console.error("Error generating API from workflow:", error);
     return null;
-  } finally {
-    // Always restore the original graph, even if there was an error
-    // Uncomment if we want to restore the original graph
-    // app.graph.clear();
-    // await app.loadGraphData(currentGraph);
   }
 }
 
@@ -168,7 +166,7 @@ async function saveWorkflow(app) {
   try {
     const validationResult = await validateWorkflow(app);
 
-    if (validationResult.cancelled) {
+    if (validationResult && validationResult.cancelled) {
       return;
     }
 
