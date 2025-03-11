@@ -1,19 +1,12 @@
-import { app } from "../../scripts/app.js";
 import {
   bypassNodes,
   checkNodeGroupPresence,
   findNodesWithRandomizedControlAfterGenerateWidget,
-} from "./quality_checks/main.js";
-import { $el, cleanLocalStorage, createMenuItem, requiresAuth, showMessage } from "./signature.js";
-import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./signature_api/main.js";
-
-const getTotalTabs = () => {
-  const workflowTabs = document.querySelector(".workflow-tabs");
-  if (!workflowTabs) return 1; // Default to 1 if no tabs container found
-
-  const tabElements = workflowTabs.querySelectorAll(".workflow-tab");
-  return tabElements.length || 1; // Return count of tabs, minimum 1
-};
+} from "../../quality_checks/main.js";
+import { $el } from "../../signature.js";
+import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "../../signature_api/main.js";
+import { showMessage } from "../global/main.js";
+import { getLoadingSpinner, getTotalTabs } from "./utils.js";
 
 const populateSubmitForm = async (workflowId) => {
   const workflow = await getWorkflowById(workflowId);
@@ -44,37 +37,10 @@ const populateSubmitForm = async (workflowId) => {
   }
 };
 
-// Add a utility function for the spinner
-function getLoadingSpinner(color) {
-  if (!document.querySelector("#spinner-animation")) {
-    const style = document.createElement("style");
-    style.id = "spinner-animation";
-    style.textContent = `
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  return `
-    <span class="loading-spinner" style="
-      display: block;
-      width: 80px;
-      height: 80px;
-      border: 3px solid ${color};
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s linear infinite;
-    "></span>
-  `;
-}
-
-async function getManifest(workflow) {
+const getManifest = async (workflow) => {
   try {
     const url = window.location.href + "flow/create_manifest";
 
-    console.log("url", url);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -97,9 +63,9 @@ async function getManifest(workflow) {
     console.error("Error in getManifest:", error);
     throw error;
   }
-}
+};
 
-async function getApiFromUpdatedWorkflow(workflowData) {
+const getApiFromUpdatedWorkflow = async (workflowData) => {
   // Save current graph state
   const currentGraph = app.graph.serialize();
 
@@ -119,7 +85,7 @@ async function getApiFromUpdatedWorkflow(workflowData) {
     console.error("Error generating API from workflow:", error);
     return null;
   }
-}
+};
 
 const validateWorkflow = async (app) => {
   try {
@@ -162,7 +128,7 @@ const validateWorkflow = async (app) => {
   }
 };
 
-async function saveWorkflow(app) {
+const saveWorkflow = async (app) => {
   try {
     const validationResult = await validateWorkflow(app);
 
@@ -263,9 +229,9 @@ async function saveWorkflow(app) {
     console.error("Error in saveWorkflow:", error);
     showMessage("An error occurred while submitting the workflow", "#ff0000ff", error.message);
   }
-}
+};
 
-function showForm() {
+const showForm = () => {
   const formContent = $el("div", { id: "signature-workflow-submission-form" }, [
     // Add title
     $el("h2", {
@@ -640,9 +606,9 @@ function showForm() {
   app.ui.dialog.show(formContent);
   // Return the form content element directly
   return formContent;
-}
+};
 
-function showWorkflowsList() {
+const showWorkflowsList = () => {
   let isLoading = true;
   let lastPageReached = false;
   let page = 0;
@@ -1011,10 +977,10 @@ function showWorkflowsList() {
 
   app.ui.dialog.show(dialogContent);
   return dialogContent;
-}
+};
 
 // New function to show workflow versions with infinite scroll
-async function showWorkflowVersions(workflowData) {
+const showWorkflowVersions = (workflowData) => {
   const versionsDialog = $el("div", [
     $el("h2", {
       style: {
@@ -1271,680 +1237,6 @@ async function showWorkflowVersions(workflowData) {
   ]);
 
   app.ui.dialog.show(versionsDialog);
-}
-
-function deleteWorkflowFromStorage(tabIndex) {
-  // Delete the workflow at the current index
-  const currentKey = `workflow - ${tabIndex}`;
-  localStorage.removeItem(currentKey);
-
-  // Shift down indices for all subsequent workflows
-  let nextIndex = tabIndex + 1;
-  let nextKey = `workflow - ${nextIndex}`;
-
-  while (localStorage.getItem(nextKey) !== null) {
-    // Get the workflow from the next index
-    const workflowData = localStorage.getItem(nextKey);
-    // Move it to the previous index
-    localStorage.setItem(`workflow - ${nextIndex - 1}`, workflowData);
-    // Remove the old entry
-    localStorage.removeItem(nextKey);
-
-    // Move to next index
-    nextIndex++;
-    nextKey = `workflow - ${nextIndex}`;
-  }
-}
-
-const findMenuList = () => {
-  // Try different possible menu list IDs
-  const possibleMenuLists = [
-    "#pv_id_9_0_list",
-    "#pv_id_10_0_list",
-    ".p-menubar-root-list", // Backup selector
-  ];
-
-  for (const selector of possibleMenuLists) {
-    const menuList = document.querySelector(selector);
-    if (menuList) return menuList;
-  }
-  return null;
 };
 
-async function setupMenu(app) {
-  // Check if menu items are already added
-  if (document.querySelector('[data-signature-menu="true"]')) {
-    return true;
-  }
-
-  // Try to find menu list for up to 10 seconds
-  for (let i = 0; i < 20; i++) {
-    const menuList = findMenuList();
-    if (menuList) {
-      // Add separator
-      const separator = $el("li", {
-        className: "p-menubar-separator",
-        role: "separator",
-        "data-signature-menu": "true",
-      });
-      menuList.appendChild(separator);
-
-      // Add Node Order Editor menu item
-      const nodeOrderItem = createMenuItem("Edit Node Order", "pi-sort", () => {
-        showNodeOrderEditor();
-      });
-      nodeOrderItem.setAttribute("data-signature-menu", "true");
-      menuList.appendChild(nodeOrderItem);
-
-      // Add Open from Signature menu item
-      const openItem = createMenuItem("Open from Signature", "pi-cloud-download", async () => {
-        try {
-          await requiresAuth(app, showWorkflowsList);
-        } catch (error) {
-          console.error("Error in Open from Signature:", error);
-          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
-        }
-      });
-      openItem.setAttribute("data-signature-menu", "true");
-      menuList.appendChild(openItem);
-
-      // Add Deploy to Signature menu item
-      const deployItem = createMenuItem("Deploy to Signature", "pi-cloud-upload", async () => {
-        try {
-          await requiresAuth(app, saveWorkflow);
-        } catch (error) {
-          console.error("Error in Deploy to Signature:", error);
-          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
-        }
-      });
-      deployItem.setAttribute("data-signature-menu", "true");
-      menuList.appendChild(deployItem);
-
-      return true;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms before retry
-  }
-  console.warn("Could not find menu list after multiple attempts");
-  return false;
-}
-
-// New function to show node order editor dialog
-function showNodeOrderEditor() {
-  const dropdownMenu = findMenuList();
-  if (dropdownMenu) {
-    dropdownMenu.style.display = "none";
-  }
-  const nodes = app.graph._nodes;
-  if (!nodes || nodes.length === 0) {
-    showMessage("No nodes found in the workflow", "#ff0000");
-    return;
-  }
-
-  // Filter and sort input and output nodes
-  const inputNodes = nodes
-    .filter((node) => node.type.includes("signature_input"))
-    .sort(
-      (a, b) =>
-        (a.properties.signature_order !== undefined ? a.properties.signature_order : 0) -
-        (b.properties.signature_order !== undefined ? b.properties.signature_order : 0)
-    );
-
-  const outputNodes = nodes
-    .filter((node) => node.type.includes("signature_output"))
-    .sort(
-      (a, b) =>
-        (a.properties.signature_order !== undefined ? a.properties.signature_order : 0) -
-        (b.properties.signature_order !== undefined ? b.properties.signature_order : 0)
-    );
-
-  if (inputNodes.length === 0 && outputNodes.length === 0) {
-    showMessage("No input or output nodes found in the workflow", "#ff0000");
-    return;
-  }
-
-  const dialogContent = $el("div", [
-    $el("h2", {
-      style: {
-        textAlign: "center",
-        marginBottom: "20px",
-        color: "#ffffff",
-      },
-      textContent: "Node Order Editor",
-    }),
-    $el("p", {
-      style: {
-        textAlign: "center",
-        marginBottom: "20px",
-        color: "#cccccc",
-      },
-      textContent: "Drag nodes to change their display order on the platform",
-    }),
-    $el("div", {
-      style: {
-        display: "flex",
-        justifyContent: "space-between",
-        gap: "20px",
-        width: "90vw",
-        maxWidth: "1000px",
-        margin: "0 auto",
-      },
-      $: (container) => {
-        // Create the input nodes column
-        const inputColumn = $el(
-          "div",
-          {
-            style: {
-              flex: "1",
-              maxWidth: "calc(50% - 10px)",
-            },
-          },
-          [
-            $el("h3", {
-              style: {
-                textAlign: "center",
-                marginBottom: "15px",
-                color: "#4CAF50",
-              },
-              textContent: "Input Nodes",
-            }),
-            $el("div", {
-              id: "input-nodes-container",
-              style: {
-                backgroundColor: "#1e1e1e",
-                border: "1px solid #444",
-                borderRadius: "4px",
-                padding: "10px",
-                maxHeight: "60vh",
-                overflowY: "auto",
-              },
-              $: (inputContainer) => {
-                // Create the sortable list for input nodes
-                const inputList = $el("div", {
-                  id: "sortable-input-list",
-                  style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  },
-                });
-
-                // Add each input node as a draggable item
-                inputNodes.forEach((node, index) => {
-                  const nodeItem = createNodeItem(node, index, "input");
-                  inputList.appendChild(nodeItem);
-                });
-
-                console.log("inputList", inputList.length);
-                if (inputNodes.length > 0) {
-                  inputContainer.appendChild(inputList);
-                } else {
-                  inputContainer.appendChild(
-                    $el("p", {
-                      style: {
-                        textAlign: "center",
-                        color: "#cccccc",
-                      },
-                      textContent: "Workflow has no input nodes",
-                    })
-                  );
-                }
-                // Initialize drag and drop functionality
-                setTimeout(() => {
-                  initDragAndDrop(inputList);
-                }, 100);
-              },
-            }),
-          ]
-        );
-
-        // Create the output nodes column
-        const outputColumn = $el(
-          "div",
-          {
-            style: {
-              flex: "1",
-              maxWidth: "calc(50% - 10px)",
-            },
-          },
-          [
-            $el("h3", {
-              style: {
-                textAlign: "center",
-                marginBottom: "15px",
-                color: "#FF5722",
-              },
-              textContent: "Output Nodes",
-            }),
-            $el("div", {
-              id: "output-nodes-container",
-              style: {
-                backgroundColor: "#1e1e1e",
-                border: "1px solid #444",
-                borderRadius: "4px",
-                padding: "10px",
-                maxHeight: "60vh",
-                overflowY: "auto",
-              },
-              $: (outputContainer) => {
-                // Create the sortable list for output nodes
-                const outputList = $el("div", {
-                  id: "sortable-output-list",
-                  style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  },
-                });
-
-                // Add each output node as a draggable item
-                outputNodes.forEach((node, index) => {
-                  const nodeItem = createNodeItem(node, index, "output");
-                  outputList.appendChild(nodeItem);
-                });
-
-                if (outputNodes.length > 0) {
-                  outputContainer.appendChild(outputList);
-                } else {
-                  outputContainer.appendChild(
-                    $el("p", {
-                      style: {
-                        textAlign: "center",
-                        color: "#cccccc",
-                      },
-                      textContent: "Workflow has no output nodes",
-                    })
-                  );
-                }
-                // Initialize drag and drop functionality
-                setTimeout(() => {
-                  initDragAndDrop(outputList);
-                }, 100);
-              },
-            }),
-          ]
-        );
-
-        container.append(inputColumn, outputColumn);
-      },
-    }),
-    // Apply button
-    $el(
-      "div",
-      {
-        style: {
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "20px",
-        },
-      },
-      [
-        $el("button", {
-          style: {
-            padding: "10px 20px",
-            backgroundColor: "#2D9CDB",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "16px",
-          },
-          textContent: "Apply Order Changes",
-          onclick: () => {
-            applyNodeOrderChanges();
-            app.ui.dialog.close();
-            showMessage("Node order updated successfully!", "#00ff00");
-          },
-        }),
-      ]
-    ),
-  ]);
-
-  app.ui.dialog.show(dialogContent);
-}
-
-// Helper function to create a node item
-function createNodeItem(node, index, nodeType) {
-  const bgColor = nodeType === "input" ? "#1a3a1a" : "#3a1a1a";
-  const borderColor = nodeType === "input" ? "#2a5a2a" : "#5a2a2a";
-
-  return $el(
-    "div",
-    {
-      className: `draggable-node-item ${nodeType}-node`,
-      "data-node-id": node.id,
-      "data-original-index": index,
-      "data-original-order": node.properties.order !== undefined ? node.properties.order : "unset",
-      "data-node-type": nodeType,
-      style: {
-        padding: "12px",
-        backgroundColor: bgColor,
-        border: `1px solid ${borderColor}`,
-        borderRadius: "4px",
-        cursor: "grab",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        userSelect: "none",
-      },
-    },
-    [
-      $el(
-        "div",
-        {
-          style: {
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            flex: "1",
-            overflow: "hidden",
-          },
-        },
-        [
-          // Node type icon or indicator
-          $el("div", {
-            style: {
-              minWidth: "24px",
-              height: "24px",
-              backgroundColor: node.bgcolor || "#666",
-              borderRadius: "4px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "#fff",
-              fontWeight: "bold",
-            },
-            textContent: node.type.charAt(0).toUpperCase(),
-          }),
-          // Node title and type
-          $el(
-            "div",
-            {
-              style: {
-                display: "flex",
-                flexDirection: "column",
-                overflow: "hidden",
-                flex: "1",
-              },
-            },
-            [
-              $el("div", {
-                style: {
-                  color: "#ffffff",
-                  fontWeight: "bold",
-                  fontSize: "15px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                },
-                title: node.title || node.name || `Node ${node.id}`,
-                textContent: node.title || node.name || `Node ${node.id}`,
-              }),
-              $el("div", {
-                style: {
-                  color: "#aaaaaa",
-                  fontSize: "12px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                },
-                title: `ID: ${node.id} - ${node.widgets.find((widget) => widget.name === "title").value}`,
-                textContent: `ID: ${node.id} - ${node.widgets.find((widget) => widget.name === "title").value}`,
-              }),
-            ]
-          ),
-        ]
-      ),
-      // Order display (relative position within group)
-      $el("div", {
-        className: "node-order-display",
-        style: {
-          color: "#888888",
-          fontSize: "14px",
-          minWidth: "140px",
-          textAlign: "right",
-        },
-        innerHTML: `Position: <span class="original-order">${index + 1}</span> → <span class="new-order">${
-          index + 1
-        }</span>
-                   <div style="font-size: 11px; color: #666;">Global: ${
-                     node.properties.order !== undefined ? node.properties.order : "unset"
-                   }</div>`,
-      }),
-    ]
-  );
-}
-
-// Update the order display on all items
-function updateOrderDisplay() {
-  // Update input nodes
-  const inputList = document.getElementById("sortable-input-list");
-  if (inputList) {
-    const inputItems = inputList.querySelectorAll(".draggable-node-item");
-    inputItems.forEach((item, index) => {
-      updateNodeOrderDisplay(item, index);
-    });
-  }
-
-  // Update output nodes
-  const outputList = document.getElementById("sortable-output-list");
-  if (outputList) {
-    const outputItems = outputList.querySelectorAll(".draggable-node-item");
-    outputItems.forEach((item, index) => {
-      updateNodeOrderDisplay(item, index);
-    });
-  }
-}
-
-// Helper function to update a single node's order display
-function updateNodeOrderDisplay(item, index) {
-  const orderDisplay = item.querySelector(".node-order-display");
-  if (orderDisplay) {
-    const originalIndex = parseInt(item["data-original-index"]);
-    const newOrderSpan = orderDisplay.querySelector(".new-order");
-
-    if (newOrderSpan) {
-      newOrderSpan.textContent = index + 1; // Display 1-based position for user friendliness
-    }
-
-    // Highlight changed orders
-    if (originalIndex !== index) {
-      newOrderSpan.style.color = "#4CAF50";
-      newOrderSpan.style.fontWeight = "bold";
-    } else {
-      newOrderSpan.style.color = "#888888";
-      newOrderSpan.style.fontWeight = "normal";
-    }
-  }
-}
-
-// Helper function to process node items and update their order
-function processNodeItems(items) {
-  const newItems = items.map((item, index) => {
-    let nodeId = item["data-node-id"] || item.id;
-    if (!nodeId) {
-      console.warn("No node ID found for item:", item);
-      return;
-    }
-
-    const node = app.graph.getNodeById(parseInt(nodeId));
-
-    if (node) {
-      // Store in properties for serialization - this is crucial for saving to workflow.json
-      if (!node.properties) {
-        node.properties = {};
-      }
-      node.properties.signature_order = index;
-    } else {
-      console.warn(`Node with ID ${nodeId} not found in graph`);
-    }
-    return node;
-  });
-
-  return newItems;
-}
-
-// Apply the new order to the actual nodes
-function applyNodeOrderChanges() {
-  const allNodes = app.graph._nodes;
-  const newOrder = [];
-  const regularNodes = allNodes.filter(
-    (node) => !node.type.includes("signature_input") && !node.type.includes("signature_output")
-  );
-
-  newOrder.push(...regularNodes);
-
-  // Process input nodes - they always come first
-  const inputList = document.getElementById("sortable-input-list");
-  if (inputList) {
-    // Fix: Use querySelectorAll to get all items properly
-    const inputItems = inputList.childNodes;
-    newOrder.push(...inputItems);
-  }
-
-  // Process output nodes - they always come last
-  const outputList = document.getElementById("sortable-output-list");
-  if (outputList) {
-    // Fix: Use querySelectorAll to get all items properly
-    const outputItems = outputList.childNodes;
-    newOrder.push(...outputItems);
-  }
-
-  const newNodesOrder = processNodeItems(newOrder);
-  app.graph._nodes = newNodesOrder;
-
-  app.graph.setDirtyCanvas(true, true);
-
-  app.graph.change();
-}
-
-// Initialize drag and drop functionality
-function initDragAndDrop(container) {
-  const items = container.querySelectorAll(".draggable-node-item");
-  let draggedItem = null;
-
-  items.forEach((item) => {
-    // Make item draggable
-    item.setAttribute("draggable", "true");
-
-    // Add drag start event
-    item.addEventListener("dragstart", function (e) {
-      draggedItem = item;
-      setTimeout(() => {
-        item.style.opacity = "0.5";
-      }, 0);
-    });
-
-    // Add drag end event
-    item.addEventListener("dragend", function () {
-      if (draggedItem) {
-        draggedItem.style.opacity = "1";
-        draggedItem = null;
-
-        // Update the order display on all items
-        updateOrderDisplay();
-      }
-    });
-
-    // Add dragover event
-    item.addEventListener("dragover", function (e) {
-      e.preventDefault();
-      if (this !== draggedItem && draggedItem) {
-        const rect = this.getBoundingClientRect();
-        const midpoint = (rect.top + rect.bottom) / 2;
-
-        if (e.clientY < midpoint) {
-          // Insert before
-          if (this.previousElementSibling !== draggedItem) {
-            container.insertBefore(draggedItem, this);
-          }
-        } else {
-          // Insert after
-          if (this.nextElementSibling !== draggedItem) {
-            container.insertBefore(draggedItem, this.nextElementSibling);
-          }
-        }
-      }
-    });
-
-    // Add drop event to ensure proper handling
-    item.addEventListener("drop", function (e) {
-      e.preventDefault();
-      // The actual reordering is handled in dragover
-    });
-  });
-
-  // Add dragover and drop handlers to the container itself
-  container.addEventListener("dragover", function (e) {
-    e.preventDefault();
-  });
-
-  container.addEventListener("drop", function (e) {
-    e.preventDefault();
-    if (draggedItem) {
-      draggedItem.style.opacity = "1";
-      updateOrderDisplay();
-      draggedItem = null;
-    }
-  });
-}
-
-const ext = {
-  name: "signature.workflows",
-  async init(app) {
-    cleanLocalStorage();
-
-    // Add mutation observer to watch for tab deletions
-    const setupTabObserver = () => {
-      const tabsContainer = document.querySelector(".workflow-tabs");
-      if (tabsContainer) {
-        console.log("Setting up tab observer");
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.removedNodes.length > 0) {
-              mutation.removedNodes.forEach((node) => {
-                // Get all tabs before the removal
-                const allTabs = Array.from(tabsContainer.children);
-                // Find the index by looking at the previous sibling chain
-                let removedIndex = 0;
-                let prevSibling = mutation.previousSibling;
-                while (prevSibling) {
-                  removedIndex++;
-                  prevSibling = prevSibling.previousSibling;
-                }
-
-                // If we're removing the last tab, use the current length
-                if (removedIndex === 0 && mutation.previousSibling === null) {
-                  removedIndex = allTabs.length;
-                }
-
-                console.log("Tab removed at index:", removedIndex);
-                // Delete the workflow from storage for this tab
-                deleteWorkflowFromStorage(removedIndex - 1);
-              });
-            }
-          });
-        });
-
-        observer.observe(tabsContainer, {
-          childList: true,
-          subtree: false,
-          attributes: false,
-        });
-        console.log("Observer setup complete");
-      } else {
-        console.log("Tab container not found, retrying in 1s");
-        setTimeout(setupTabObserver, 1000);
-      }
-    };
-
-    // Start the observer setup
-    setupTabObserver();
-  },
-  async setup(app) {
-    if (app.menu) {
-      await setupMenu(app);
-    }
-  },
-};
-
-app.registerExtension(ext);
+export { populateSubmitForm, saveWorkflow, showForm, showWorkflowsList, showWorkflowVersions };
