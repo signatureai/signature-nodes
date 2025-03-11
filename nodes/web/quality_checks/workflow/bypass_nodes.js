@@ -1,4 +1,4 @@
-import { showWarningDialog } from "../main.js";
+import { showWarningDialog } from "./warning_dialogue.js";
 
 const bypassNodes = async (workflow, nodes_to_bypass) => {
   if (!workflow) {

@@ -1,4 +1,4 @@
-import { $el } from "../../signature.js";
+import { $el } from "../../helpers/workflow/main.js";
 
 const showWarningDialog = async (nodeList, message, canContinue = true) => {
   return new Promise((resolve) => {

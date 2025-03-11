@@ -3,10 +3,8 @@ import {
   checkNodeGroupPresence,
   findNodesWithRandomizedControlAfterGenerateWidget,
 } from "../../quality_checks/main.js";
-import { $el } from "../../signature.js";
 import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "../../signature_api/main.js";
-import { showMessage } from "../global/main.js";
-import { getLoadingSpinner, getTotalTabs } from "./utils.js";
+import { $el, getLoadingSpinner, getTotalTabs, showMessage } from "./utils.js";
 
 const populateSubmitForm = async (workflowId) => {
   const workflow = await getWorkflowById(workflowId);
@@ -1239,4 +1237,4 @@ const showWorkflowVersions = (workflowData) => {
   app.ui.dialog.show(versionsDialog);
 };
 
-export { populateSubmitForm, saveWorkflow, showForm, showWorkflowsList, showWorkflowVersions };
+export { saveWorkflow, showWorkflowsList };

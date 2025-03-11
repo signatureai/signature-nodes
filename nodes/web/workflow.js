@@ -1,13 +1,16 @@
 import { app } from "../../scripts/app.js";
-import { showMessage } from "./helpers/global/main.js";
 import {
+  $el,
+  cleanLocalStorage,
+  createMenuItem,
   deleteWorkflowFromStorage,
   findMenuList,
+  requiresAuth,
   saveWorkflow,
+  showMessage,
   showNodeOrderEditor,
   showWorkflowsList,
 } from "./helpers/workflow/main.js";
-import { $el, cleanLocalStorage, createMenuItem, requiresAuth } from "./signature.js";
 
 const setupMenu = async (app) => {
   // Check if menu items are already added
