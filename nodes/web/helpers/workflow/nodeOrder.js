@@ -1,7 +1,5 @@
 import { app } from "../../../../scripts/app.js";
-import { $el } from "../../signature.js";
-import { showMessage } from "../global/main.js";
-import { findMenuList } from "./main.js";
+import { $el, findMenuList, showMessage } from "./utils.js";
 
 const showNodeOrderEditor = () => {
   const dropdownMenu = findMenuList();
@@ -515,12 +513,4 @@ const initDragAndDrop = (container) => {
   });
 };
 
-export {
-  applyNodeOrderChanges,
-  createNodeItem,
-  initDragAndDrop,
-  processNodeItems,
-  showNodeOrderEditor,
-  updateNodeOrderDisplay,
-  updateOrderDisplay,
-};
+export { showNodeOrderEditor };

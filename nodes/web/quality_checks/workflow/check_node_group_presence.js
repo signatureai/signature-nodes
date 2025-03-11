@@ -1,4 +1,4 @@
-import { showWarningDialog } from "../main.js";
+import { showWarningDialog } from "./warning_dialogue.js";
 
 const checkNodeGroupPresence = async (workflow_api, workflow, nodes_to_check) => {
   if (!workflow_api) {
