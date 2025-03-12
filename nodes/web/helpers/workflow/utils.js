@@ -7,6 +7,8 @@ import {
   refreshTokenRequest,
 } from "../../signature_api/main.js";
 
+import { showWorkflowsList } from "./form/style.js";
+import { showNodeOrderEditor } from "./node_order/main.js";
 const showMessage = (message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) => {
   let dialogContent = `
         <div style="
@@ -417,6 +419,63 @@ const requiresAuth = async (app, next) => {
   }
 };
 
+const setupMenu = async (app) => {
+  // Check if menu items are already added
+  if (document.querySelector('[data-signature-menu="true"]')) {
+    return true;
+  }
+
+  // Try to find menu list for up to 10 seconds
+  for (let i = 0; i < 20; i++) {
+    const menuList = findMenuList();
+    if (menuList) {
+      // Add separator
+      const separator = $el("li", {
+        className: "p-menubar-separator",
+        role: "separator",
+        "data-signature-menu": "true",
+      });
+      menuList.appendChild(separator);
+
+      // Add Node Order Editor menu item
+      const nodeOrderItem = createMenuItem("Edit Node Order", "pi-sort", () => {
+        showNodeOrderEditor();
+      });
+      nodeOrderItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(nodeOrderItem);
+
+      // Add Open from Signature menu item
+      const openItem = createMenuItem("Open from Signature", "pi-cloud-download", async () => {
+        try {
+          await requiresAuth(app, showWorkflowsList);
+        } catch (error) {
+          console.error("Error in Open from Signature:", error);
+          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
+        }
+      });
+      openItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(openItem);
+
+      // Add Deploy to Signature menu item
+      const deployItem = createMenuItem("Deploy to Signature", "pi-cloud-upload", async () => {
+        try {
+          await requiresAuth(app, saveWorkflow);
+        } catch (error) {
+          console.error("Error in Deploy to Signature:", error);
+          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
+        }
+      });
+      deployItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(deployItem);
+
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms before retry
+  }
+  console.warn("Could not find menu list after multiple attempts");
+  return false;
+};
+
 export {
   $el,
   cleanLocalStorage,
@@ -426,6 +485,7 @@ export {
   getLoadingSpinner,
   getTotalTabs,
   requiresAuth,
+  setupMenu,
   showIframe,
   showLoginForm,
   showMessage,
