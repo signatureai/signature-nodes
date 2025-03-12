@@ -1,4 +1,6 @@
 import { app } from "../../scripts/app.js";
+import { saveWorkflow, showWorkflowsList } from "./helpers/workflow/form/main.js";
+import { showNodeOrderEditor } from "./helpers/workflow/node_order/main.js";
 import {
   $el,
   cleanLocalStorage,
@@ -6,11 +8,8 @@ import {
   deleteWorkflowFromStorage,
   findMenuList,
   requiresAuth,
-  saveWorkflow,
   showMessage,
-  showNodeOrderEditor,
-  showWorkflowsList,
-} from "./helpers/workflow/main.js";
+} from "./helpers/workflow/utils.js";
 
 const setupMenu = async (app) => {
   // Check if menu items are already added
