@@ -18,6 +18,9 @@ class Environment:
         ("JENKINS_URL", True, None, None),
         ("JENKINS_AUTH", True, None, None),
         ("PARALLEL_PROCESSING", False, "False", ["True", "False"]),
+        ("AWS_ACCESS_KEY_ID", True, None, None),
+        ("AWS_SECRET_ACCESS_KEY", True, None, None),
+        ("AWS_DEFAULT_REGION", True, None, None),
     ]
 
     def __new__(cls):
