@@ -1,7 +1,7 @@
 import { app } from "../../../scripts/app.js";
 import { LGraphNode, setColorAndBgColor, showAlert } from "./helpers/setgetnodes/main.js";
 
-app.registerExtension({
+const setnodeExt = {
   name: "Signature.SetNode",
   registerCustomNodes() {
     class SetNode extends LGraphNode {
@@ -304,9 +304,9 @@ app.registerExtension({
 
     SetNode.category = "🔲 Signature Nodes/🛠️ Utils";
   },
-});
+};
 
-app.registerExtension({
+const getnodeExt = {
   name: "Signature.GetNode",
   registerCustomNodes() {
     class GetNode extends LGraphNode {
@@ -479,4 +479,8 @@ app.registerExtension({
 
     GetNode.category = "🔲 Signature Nodes/🛠️ Utils";
   },
-});
+};
+
+app.registerExtension(setnodeExt);
+
+app.registerExtension(getnodeExt);

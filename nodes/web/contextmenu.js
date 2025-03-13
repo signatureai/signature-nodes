@@ -1,7 +1,7 @@
 import { app } from "../../../scripts/app.js";
 import { addMenuHandler, addNode } from "./helpers/contextmenu/utils.js";
 
-app.registerExtension({
+const ext = {
   name: "Signature.Contextmenu",
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
     if (nodeData.input && nodeData.input.required) {
@@ -23,4 +23,6 @@ app.registerExtension({
       });
     }
   },
-});
+};
+
+app.registerExtension(ext);

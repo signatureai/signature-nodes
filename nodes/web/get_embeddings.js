@@ -1,7 +1,7 @@
 import { app } from "../../../scripts/app.js";
 import { updateInputsOutputs } from "./helpers/get_embeddings/utils.js";
 
-app.registerExtension({
+const ext = {
   name: "signature.GetEmbeddings",
 
   async nodeCreated(node) {
@@ -42,4 +42,6 @@ app.registerExtension({
       });
     }
   },
-});
+};
+
+app.registerExtension(ext);

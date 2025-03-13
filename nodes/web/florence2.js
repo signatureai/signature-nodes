@@ -1,7 +1,7 @@
 import { app } from "../../../scripts/app.js";
 import { updateInputsOutputs } from "./helpers/florence2/main.js";
 
-app.registerExtension({
+const ext = {
   name: "signature.Florence",
 
   async nodeCreated(node) {
@@ -67,4 +67,6 @@ app.registerExtension({
       }
     };
   },
-});
+};
+
+app.registerExtension(ext);
