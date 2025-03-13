@@ -1,7 +1,7 @@
 import { app } from "../../../scripts/app.js";
 import { ComfyWidgets } from "../../../scripts/widgets.js";
 
-app.registerExtension({
+const ext = {
   name: "signature.TextPreview",
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
     if (nodeData.name !== "signature_text_preview") return;
@@ -23,9 +23,7 @@ app.registerExtension({
 
       if (values) {
         //console.log("node refresh: ", this?.widgets);
-        const w = this?.widgets?.find(
-          (v) => v.type === "customtext" && v.name === "__preview",
-        );
+        const w = this?.widgets?.find((v) => v.type === "customtext" && v.name === "__preview");
         if (w) {
           let text = "";
 
@@ -55,7 +53,7 @@ app.registerExtension({
             multiline: true,
           },
         ],
-        app,
+        app
       );
       previewer.widget.inputEl.readOnly = true;
       app.graph.setDirtyCanvas(true, false);
@@ -76,4 +74,6 @@ app.registerExtension({
       refresh.call(this, output?.text);
     };
   },
-});
+};
+
+app.registerExtension(ext);
