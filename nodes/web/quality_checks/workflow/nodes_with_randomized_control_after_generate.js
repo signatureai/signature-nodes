@@ -1,4 +1,4 @@
-import { showWarningDialog } from "../main.js";
+import { showWarningDialog } from "./warning_dialogue.js";
 
 const findNodesWithRandomizedControlAfterGenerateWidget = async () => {
   const nodes = app.graph._nodes;

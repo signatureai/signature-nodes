@@ -8,13 +8,14 @@ import {
   refreshTokenRequest,
   setAuthTokens,
 } from "./auth_services.js";
-import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./workflow_services.js";
+import { getManifest, getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "./workflow_services.js";
 
 const signatureApiBaseUrl = "https://signature-api-qa.signature-eks-staging.signature.ai";
 
 export {
   deleteAuthTokens,
   getAccessToken,
+  getManifest,
   getRefreshToken,
   getStoredAuthTokens,
   getWorkflowById,
@@ -24,5 +25,5 @@ export {
   logoutRequest,
   refreshTokenRequest,
   setAuthTokens,
-  signatureApiBaseUrl
+  signatureApiBaseUrl,
 };

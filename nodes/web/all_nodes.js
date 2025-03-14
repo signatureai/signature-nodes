@@ -1,6 +1,6 @@
 import { app } from "../../../scripts/app.js";
 
-app.registerExtension({
+const ext = {
   name: "signature.AllNodes",
   async setup() {
     // to keep Set/Get node virtual connections visible when offscreen
@@ -15,4 +15,6 @@ app.registerExtension({
       return Array.from(visibleNodesSet);
     };
   },
-});
+};
+
+app.registerExtension(ext);

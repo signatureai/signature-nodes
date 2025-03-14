@@ -1,60 +1,134 @@
-import { app } from "../../scripts/app.js";
+import { app } from "../../../../scripts/app.js";
 import {
   deleteAuthTokens,
   getAccessToken,
   getRefreshToken,
   loginRequest,
   refreshTokenRequest,
-} from "./signature_api/main.js";
+} from "../../signature_api/main.js";
+import { saveWorkflow } from "./form/main.js";
+import { showWorkflowsList } from "./list/main.js";
+import { showNodeOrderEditor } from "./node_order/main.js";
 
-function showMessage(message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) {
+const showMessage = (message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) => {
   let dialogContent = `
-      <div style="
-        text-align: center;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        width: 100%;
-      ">
         <div style="
+          text-align: center;
+          padding: 20px;
           display: flex;
+          flex-direction: column;
           align-items: center;
           gap: 20px;
+          width: 100%;
         ">
-          ${extraBody || ""}
-          <p style="
-            color: ${color};
-            font-size: 20px;
-            margin: 0;
-            text-align: center;
-            background-color: ${backgroundColor};
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 20px;
           ">
-            ${message}
-          </p>
-        </div>
-        ${
-          detailedInfo
-            ? `
-          <pre style="
-            text-align: left;
-            white-space: pre-wrap;
-            margin: 0;
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 4px;
-            width: 100%;
-          ">${detailedInfo}</pre>
-        `
-            : ""
-        }
-      </div>`;
+            ${extraBody || ""}
+            <p style="
+              color: ${color};
+              font-size: 20px;
+              margin: 0;
+              text-align: center;
+              background-color: ${backgroundColor};
+            ">
+              ${message}
+            </p>
+          </div>
+          ${
+            detailedInfo
+              ? `
+            <pre style="
+              text-align: left;
+              white-space: pre-wrap;
+              margin: 0;
+              background-color: rgba(0, 0, 0, 0.3);
+              padding: 10px;
+              border-radius: 4px;
+              width: 100%;
+            ">${detailedInfo}</pre>
+          `
+              : ""
+          }
+        </div>`;
 
   app.ui.dialog.show(dialogContent);
-}
+};
 
-function $el(tag, propsOrChildren, children) {
+const getTotalTabs = () => {
+  const workflowTabs = document.querySelector(".workflow-tabs");
+  if (!workflowTabs) return 1; // Default to 1 if no tabs container found
+
+  const tabElements = workflowTabs.querySelectorAll(".workflow-tab");
+  return tabElements.length || 1; // Return count of tabs, minimum 1
+};
+
+const getLoadingSpinner = (color) => {
+  if (!document.querySelector("#spinner-animation")) {
+    const style = document.createElement("style");
+    style.id = "spinner-animation";
+    style.textContent = `
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `;
+    document.head.appendChild(style);
+  }
+
+  return `
+      <span class="loading-spinner" style="
+        display: block;
+        width: 80px;
+        height: 80px;
+        border: 3px solid ${color};
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+      "></span>
+    `;
+};
+
+const findMenuList = () => {
+  // Try different possible menu list IDs
+  const possibleMenuLists = [
+    "#pv_id_9_0_list",
+    "#pv_id_10_0_list",
+    ".p-menubar-root-list", // Backup selector
+  ];
+
+  for (const selector of possibleMenuLists) {
+    const menuList = document.querySelector(selector);
+    if (menuList) return menuList;
+  }
+  return null;
+};
+
+const deleteWorkflowFromStorage = (tabIndex) => {
+  // Delete the workflow at the current index
+  const currentKey = `workflow - ${tabIndex}`;
+  localStorage.removeItem(currentKey);
+
+  // Shift down indices for all subsequent workflows
+  let nextIndex = tabIndex + 1;
+  let nextKey = `workflow - ${nextIndex}`;
+
+  while (localStorage.getItem(nextKey) !== null) {
+    // Get the workflow from the next index
+    const workflowData = localStorage.getItem(nextKey);
+    // Move it to the previous index
+    localStorage.setItem(`workflow - ${nextIndex - 1}`, workflowData);
+    // Remove the old entry
+    localStorage.removeItem(nextKey);
+
+    // Move to next index
+    nextIndex++;
+    nextKey = `workflow - ${nextIndex}`;
+  }
+};
+
+const $el = (tag, propsOrChildren, children) => {
   const split = tag.split(".");
   const element = document.createElement(split.shift());
   if (split.length > 0) {
@@ -92,9 +166,9 @@ function $el(tag, propsOrChildren, children) {
     }
   }
   return element;
-}
+};
 
-function cleanLocalStorage() {
+const cleanLocalStorage = () => {
   const keysToRemove = [];
   // Iterate through all keys in session storage
   for (let i = 0; i < localStorage.length; i++) {
@@ -111,9 +185,9 @@ function cleanLocalStorage() {
     localStorage.removeItem(key);
     // localStorage.setItem(key, cleanWorkflow)
   });
-}
+};
 
-function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
+const showIframe = (url, width = "1400px", height = "1400px", padding = "0px") => {
   app.ui.dialog.show(
     $el("div", [
       $el("div", {
@@ -138,9 +212,9 @@ function showIframe(url, width = "1400px", height = "1400px", padding = "0px") {
       }),
     ]).outerHTML
   );
-}
+};
 
-function showLoginForm() {
+const showLoginForm = () => {
   const formContent = $el("div", [
     $el("h2", {
       style: {
@@ -257,9 +331,9 @@ function showLoginForm() {
 
   app.ui.dialog.show(formContent);
   return formContent;
-}
+};
 
-function createMenuItem(label, iconClass, onClick) {
+const createMenuItem = (label, iconClass, onClick) => {
   const menuItem = $el(
     "li",
     {
@@ -289,9 +363,9 @@ function createMenuItem(label, iconClass, onClick) {
     ]
   );
   return menuItem;
-}
+};
 
-async function requiresAuth(app, next) {
+const requiresAuth = async (app, next) => {
   try {
     const dropdownMenu = document.querySelector("#pv_id_9_0_list") || document.querySelector("#pv_id_10_0_list");
     dropdownMenu.style.display = "none";
@@ -344,7 +418,76 @@ async function requiresAuth(app, next) {
     deleteAuthTokens();
     showMessage("Authentication failed", "#ff0000", error.message);
   }
-}
+};
 
-// Export the functions needed by workflows.js
-export { $el, cleanLocalStorage, createMenuItem, requiresAuth, showIframe, showLoginForm, showMessage };
+const setupMenu = async (app) => {
+  // Check if menu items are already added
+  if (document.querySelector('[data-signature-menu="true"]')) {
+    return true;
+  }
+
+  // Try to find menu list for up to 10 seconds
+  for (let i = 0; i < 20; i++) {
+    const menuList = findMenuList();
+    if (menuList) {
+      // Add separator
+      const separator = $el("li", {
+        className: "p-menubar-separator",
+        role: "separator",
+        "data-signature-menu": "true",
+      });
+      menuList.appendChild(separator);
+
+      // Add Node Order Editor menu item
+      const nodeOrderItem = createMenuItem("Edit Node Order", "pi-sort", () => {
+        showNodeOrderEditor();
+      });
+      nodeOrderItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(nodeOrderItem);
+
+      // Add Open from Signature menu item
+      const openItem = createMenuItem("Open from Signature", "pi-cloud-download", async () => {
+        try {
+          await requiresAuth(app, showWorkflowsList);
+        } catch (error) {
+          console.error("Error in Open from Signature:", error);
+          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
+        }
+      });
+      openItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(openItem);
+
+      // Add Deploy to Signature menu item
+      const deployItem = createMenuItem("Deploy to Signature", "pi-cloud-upload", async () => {
+        try {
+          await requiresAuth(app, saveWorkflow);
+        } catch (error) {
+          console.error("Error in Deploy to Signature:", error);
+          showMessage("Authentication error", "#ff0000", "Please try logging in again.");
+        }
+      });
+      deployItem.setAttribute("data-signature-menu", "true");
+      menuList.appendChild(deployItem);
+
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms before retry
+  }
+  console.warn("Could not find menu list after multiple attempts");
+  return false;
+};
+
+export {
+  $el,
+  cleanLocalStorage,
+  createMenuItem,
+  deleteWorkflowFromStorage,
+  findMenuList,
+  getLoadingSpinner,
+  getTotalTabs,
+  requiresAuth,
+  setupMenu,
+  showIframe,
+  showLoginForm,
+  showMessage,
+};
