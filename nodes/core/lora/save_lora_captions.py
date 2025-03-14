@@ -44,9 +44,10 @@ class SaveLoraCaptions:
         return {
             "required": {
                 "images": ("IMAGE",),
-                "labels": ("STRING", {"forceInput": True}),
+                "labels": ("LIST", {"forceInput": True}),
                 "dataset_name": ("STRING", {"default": ""}),
                 "repeats": ("INT", {"default": 5, "min": 1}),
+                "type": (["ai-toolkit", "simpletuner"],),
             },
             "optional": {
                 "prefix": ("STRING", {"default": ""}),
@@ -65,37 +66,60 @@ class SaveLoraCaptions:
     Supports multiple captions, repeats, and optional text modifications with prefix/suffix.
     """
 
+    # Add a class variable to track the counter across function calls
+    _counter = 0
+
     def execute(
         self,
         images: torch.Tensor,
-        labels: str,
+        labels: list[str],
         dataset_name: str = "",
         repeats: int = 5,
         prefix: Optional[str] = "",
         suffix: Optional[str] = "",
-    ):
-        labels_list = labels.split("\n") if "\n" in labels else [labels]
-
+        type: str = "ai-toolkit",
+    ) -> tuple[str]:
         root_folder = os.path.join(BASE_COMFY_DIR, "loras_datasets")
         if not os.path.exists(root_folder):
             os.mkdir(root_folder)
 
-        uuid = uuid7str()
-        dataset_folder = os.path.join(root_folder, f"{dataset_name}_{uuid}")
-        if not os.path.exists(dataset_folder):
-            os.mkdir(dataset_folder)
-        images_folder = os.path.join(dataset_folder, f"{repeats}_{dataset_name}")
-        if not os.path.exists(images_folder):
-            os.mkdir(images_folder)
+        dataset_folder = None
+        if type == "ai-toolkit":
+            uuid = uuid7str()
+            dataset_folder = os.path.join(root_folder, f"{dataset_name}_{uuid}")
+            if not os.path.exists(dataset_folder):
+                os.mkdir(dataset_folder)
+            images_folder = os.path.join(dataset_folder, f"{repeats}_{dataset_name}")
+            if not os.path.exists(images_folder):
+                os.mkdir(images_folder)
 
-        tensor_images = TensorImage.from_BWHC(images)
-        for i, img in enumerate(tensor_images):
-            # timestamp to be added to the image name
+            tensor_images = TensorImage.from_BWHC(images)
+            for i, img in enumerate(tensor_images):
+                # timestamp to be added to the image name
 
-            TensorImage(img).save(os.path.join(images_folder, f"{dataset_name}_{i}.png"))
-            # write txt label with the same name of the image
-            with open(os.path.join(images_folder, f"{dataset_name}_{i}.txt"), "w") as f:
-                label = prefix + labels_list[i % len(labels_list)] + suffix  # type: ignore
-                f.write(label)
+                TensorImage(img).save(os.path.join(images_folder, f"{dataset_name}_{i}.png"))
+                # write txt label with the same name of the image
+                with open(os.path.join(images_folder, f"{dataset_name}_{i}.txt"), "w") as f:
+                    label = prefix + labels[self._counter % len(labels)] + suffix  # type: ignore
+                    f.write(label)
+                self._counter += 1
+        elif type == "simpletuner":
+            dataset_folder = os.path.join(root_folder, dataset_name)
+            if not os.path.exists(dataset_folder):
+                os.mkdir(dataset_folder)
 
-        return (dataset_folder,)
+            tensor_images = TensorImage.from_BWHC(images)
+            for i, img in enumerate(tensor_images):
+                uuid = uuid7str()
+                # Save images directly to the dataset folder
+                TensorImage(img).save(os.path.join(dataset_folder, f"{dataset_name}_{uuid}.png"))
+
+                # Write txt label with the same name of the image
+                with open(os.path.join(dataset_folder, f"{dataset_name}_{uuid}.txt"), "w") as f:
+                    # Use modulo to cycle through labels if needed
+                    label = str(prefix) + labels[self._counter % len(labels)] + str(suffix)
+                    f.write(label)
+
+                self._counter += 1
+
+        return (str(dataset_folder),)
