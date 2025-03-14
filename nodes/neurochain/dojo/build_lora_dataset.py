@@ -10,7 +10,7 @@ from ...shared import BASE_COMFY_DIR
 
 
 # * Move this to signature dojo
-class SaveLoraCaptions:
+class BuildLoraDataset:
     """Saves images and captions in a format suitable for LoRA training.
 
     Creates a structured dataset directory containing images and their corresponding caption files,
@@ -45,9 +45,9 @@ class SaveLoraCaptions:
             "required": {
                 "images": ("IMAGE",),
                 "labels": ("LIST", {"forceInput": True}),
-                "dataset_name": ("STRING", {"default": ""}),
+                "dataset_name": ("STRING", {"default": "dataset"}),
                 "repeats": ("INT", {"default": 5, "min": 1}),
-                "type": (["ai-toolkit", "simpletuner"],),
+                "training_backend": (["ai-toolkit", "simpletuner"],),
             },
             "optional": {
                 "prefix": ("STRING", {"default": ""}),
@@ -73,18 +73,21 @@ class SaveLoraCaptions:
         self,
         images: torch.Tensor,
         labels: list[str],
-        dataset_name: str = "",
+        dataset_name: str = "dataset",
         repeats: int = 5,
         prefix: Optional[str] = "",
         suffix: Optional[str] = "",
-        type: str = "ai-toolkit",
+        training_backend: str = "ai-toolkit",
     ) -> tuple[str]:
+        print("dataset_name", dataset_name, type(dataset_name))
+        if len(dataset_name) == 0:
+            dataset_name = "dataset"
         root_folder = os.path.join(BASE_COMFY_DIR, "loras_datasets")
         if not os.path.exists(root_folder):
             os.mkdir(root_folder)
 
         dataset_folder = None
-        if type == "ai-toolkit":
+        if training_backend == "ai-toolkit":
             uuid = uuid7str()
             dataset_folder = os.path.join(root_folder, f"{dataset_name}_{uuid}")
             if not os.path.exists(dataset_folder):
@@ -103,7 +106,7 @@ class SaveLoraCaptions:
                     label = prefix + labels[self._counter % len(labels)] + suffix  # type: ignore
                     f.write(label)
                 self._counter += 1
-        elif type == "simpletuner":
+        elif training_backend == "simpletuner":
             dataset_folder = os.path.join(root_folder, dataset_name)
             if not os.path.exists(dataset_folder):
                 os.mkdir(dataset_folder)
