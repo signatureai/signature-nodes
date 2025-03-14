@@ -15,7 +15,7 @@ class CreateTrainingRun:
                 "model_name": ("STRING", {"default": "default_model_name"}),
                 "description": ("STRING", {"multiline": True}),
                 "model_type": (["loras", "flux_lora", "lora"],),
-                "config_type": (["toml", "yaml"],),
+                "config_type": (["toml", "yaml", "json"],),
                 "org_id": (
                     "STRING",
                     {"default": ""},
