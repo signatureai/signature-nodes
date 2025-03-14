@@ -1,4 +1,4 @@
-import { showForm, showWorkflowsList } from "./style.js";
+import { showForm } from "./style.js";
 import { populateSubmitForm, saveWorkflow } from "./utils.js";
 
-export { populateSubmitForm, saveWorkflow, showForm, showWorkflowsList };
+export { populateSubmitForm, saveWorkflow, showForm };

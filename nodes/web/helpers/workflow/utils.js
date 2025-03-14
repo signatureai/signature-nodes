@@ -6,9 +6,10 @@ import {
   loginRequest,
   refreshTokenRequest,
 } from "../../signature_api/main.js";
-
-import { showWorkflowsList } from "./form/style.js";
+import { saveWorkflow } from "./form/main.js";
+import { showWorkflowsList } from "./list/main.js";
 import { showNodeOrderEditor } from "./node_order/main.js";
+
 const showMessage = (message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) => {
   let dialogContent = `
         <div style="
