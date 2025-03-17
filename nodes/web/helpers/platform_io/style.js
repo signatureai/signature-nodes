@@ -10,7 +10,7 @@ const COLOR_THEMES = {
   none: { nodeColor: null, nodeBgColor: null }, // no color
 };
 
-function setNodeColors(node, theme) {
+const setNodeColors = (node, theme) => {
   if (!theme) {
     return;
   }
@@ -19,31 +19,31 @@ function setNodeColors(node, theme) {
     node.color = theme.nodeColor;
     node.bgcolor = theme.nodeBgColor;
   }
-}
+};
 
-function output(node) {
+const output = (node) => {
   setNodeColors(node, COLOR_THEMES["purple"]);
-}
+};
 
-function inputImage(node) {
+const inputImage = (node) => {
   setNodeColors(node, COLOR_THEMES["pale_blue"]);
-}
+};
 
-function inputText(node) {
+const inputText = (node) => {
   setNodeColors(node, COLOR_THEMES["yellow"]);
-}
+};
 
-function inputBoolean(node) {
+const inputBoolean = (node) => {
   setNodeColors(node, COLOR_THEMES["orange"]);
-}
+};
 
-function inputNumber(node) {
+const inputNumber = (node) => {
   setNodeColors(node, COLOR_THEMES["cyan"]);
-}
+};
 
-function inputSelector(node) {
+const inputSelector = (node) => {
   setNodeColors(node, COLOR_THEMES["purple"]);
-}
+};
 
 const nodeStylingWidgetHandlers = {
   signature_input_image: {
@@ -69,7 +69,7 @@ const nodeStylingWidgetHandlers = {
   },
 };
 
-export const addStyling = (node, title) => {
+const addStyling = (node, title) => {
   if (nodeStylingWidgetHandlers.hasOwnProperty(title)) {
     const handler = nodeStylingWidgetHandlers[title];
     if (handler.subtype) {
@@ -77,3 +77,5 @@ export const addStyling = (node, title) => {
     }
   }
 };
+
+export { addStyling };
