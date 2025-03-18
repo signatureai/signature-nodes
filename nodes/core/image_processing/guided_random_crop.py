@@ -25,7 +25,13 @@ class GuidedRandomCrop:
     RETURN_NAMES = ("crops", "debug_view")
     FUNCTION = "guided_crop"
     CATEGORY = "image/processing"
-    DESCRIPTION = "Guided random cropping based on masks"
+    DESCRIPTION = """Takes images and corresponding masks as input. The node identifies areas where the mask is present
+    and randomly samples points within those areas.
+    For each sampled point, it creates a crop of specified width and height,
+    adjusting the crop window position if needed to stay within image boundaries. Returns both the crops and a debug
+    visualization showing the mask area (blue hatched pattern), sampled points (red dots), and crop windows (blue
+    rectangles).
+    """
 
     def guided_crop(
         self, images: torch.Tensor, masks: torch.Tensor, window_width: int, window_height: int, num_samples: int
@@ -45,15 +51,14 @@ class GuidedRandomCrop:
             image = images_np[b]
             mask = masks_np[b]
 
-            # Find valid points inside the mask
+            # Find valid points inside the mask where the mask is greater than 0.5
             valid_points = np.where(mask > 0.5)
+            # If there are no valid points on y-coordinates, skip this image
             if len(valid_points[0]) == 0:
                 continue
 
-            # Sample random points
             point_indices = random.sample(range(len(valid_points[0])), min(num_samples, len(valid_points[0])))
 
-            # Create debug view
             debug_view = image.copy()
 
             # Add semi-transparent mask overlay
@@ -95,10 +100,7 @@ class GuidedRandomCrop:
                     end_y = image.shape[0]
                     start_y -= offset
 
-                # Extract crop
                 crop = image[start_y:end_y, start_x:end_x]
-
-                # No need for padding since we ensure full window size
 
                 crops.append(crop)
 
