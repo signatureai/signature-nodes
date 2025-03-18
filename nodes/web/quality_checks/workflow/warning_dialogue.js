@@ -1,4 +1,4 @@
-import { $el } from "../../helpers/workflow/utils.js";
+import { $el } from "../../helpers/global/main.js";
 
 const showWarningDialog = async (nodeList, message, canContinue = true) => {
   return new Promise((resolve) => {

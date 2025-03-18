@@ -1,5 +1,6 @@
 import { app } from "../../../../../scripts/app.js";
-import { $el, findMenuList, showMessage } from "../utils.js";
+import { $el, findMenuList } from "../../global/main.js";
+import { showMessage } from "../utils.js";
 import { applyNodeOrderChanges, createNodeItem, initDragAndDrop } from "./utils.js";
 
 const showNodeOrderEditor = () => {
