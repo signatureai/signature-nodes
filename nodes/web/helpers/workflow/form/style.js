@@ -1,5 +1,5 @@
 import { getWorkflowsListForForm } from "../../../signature_api/main.js";
-import { $el } from "../utils.js";
+import { $el } from "../../global/main.js";
 import { populateSubmitForm } from "./utils.js";
 
 const showForm = () => {

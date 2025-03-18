@@ -1,4 +1,4 @@
-import { $el } from "../utils.js";
+import { $el } from "../../global/main.js";
 
 const createNodeItem = (node, index, nodeType) => {
   const bgColor = nodeType === "input" ? "#1a3a1a" : "#3a1a1a";

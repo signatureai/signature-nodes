@@ -1,5 +1,6 @@
 import { getWorkflowById, getWorkflowsListForForm, getWorkflowVersions } from "../../../signature_api/main.js";
-import { $el, getTotalTabs, showMessage } from "../utils.js";
+import { $el } from "../../global/main.js";
+import { getTotalTabs, showMessage } from "../utils.js";
 
 const showWorkflowsList = () => {
   let isLoading = true;
