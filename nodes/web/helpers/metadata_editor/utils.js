@@ -143,7 +143,6 @@ const editNodeMetadata = (node) => {
       }
       metadata_widget.value = JSON.stringify(parsed_metadata_widget);
     });
-    console.log("node:", node);
 
     removeMetadataContainer();
   };
