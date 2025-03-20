@@ -9,6 +9,14 @@ const showNodeOrderEditor = () => {
     dropdownMenu.style.display = "none";
   }
   const nodes = app.graph._nodes;
+  nodes.forEach((node) => {
+    if (!node.properties.signature_metadata) {
+      node.properties.signature_metadata = {};
+    }
+    if (!node.properties.signature_metadata.order) {
+      node.properties.signature_metadata.order = 0;
+    }
+  });
   if (!nodes || nodes.length === 0) {
     showMessage("No nodes found in the workflow", "#ff0000");
     return;
@@ -17,19 +25,11 @@ const showNodeOrderEditor = () => {
   // Filter and sort input and output nodes
   const inputNodes = nodes
     .filter((node) => node.type.includes("signature_input"))
-    .sort(
-      (a, b) =>
-        (a.properties.signature_metadata.order !== undefined ? a.properties.signature_metadata.order : 0) -
-        (b.properties.signature_metadata.order !== undefined ? b.properties.signature_metadata.order : 0)
-    );
+    .sort((a, b) => a.properties.signature_metadata.order - b.properties.signature_metadata.order);
 
   const outputNodes = nodes
     .filter((node) => node.type.includes("signature_output"))
-    .sort(
-      (a, b) =>
-        (a.properties.signature_metadata.order !== undefined ? a.properties.signature_metadata.order : 0) -
-        (b.properties.signature_metadata.order !== undefined ? b.properties.signature_metadata.order : 0)
-    );
+    .sort((a, b) => a.properties.signature_metadata.order - b.properties.signature_metadata.order);
 
   if (inputNodes.length === 0 && outputNodes.length === 0) {
     showMessage("No input or output nodes found in the workflow", "#ff0000");
