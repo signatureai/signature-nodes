@@ -14,7 +14,6 @@ const getTotalTabs = () => {
 const populateSubmitForm = async (workflowId) => {
   const workflow = await getWorkflowById(workflowId);
 
-  // Populate form fields with workflow data
   if (workflow) {
     const formContainer = document.getElementById("signature-workflow-submission-form");
     const nameInput = formContainer.querySelector('input[type="text"]');
