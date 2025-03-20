@@ -19,16 +19,16 @@ const showNodeOrderEditor = () => {
     .filter((node) => node.type.includes("signature_input"))
     .sort(
       (a, b) =>
-        (a.properties.signature_order !== undefined ? a.properties.signature_order : 0) -
-        (b.properties.signature_order !== undefined ? b.properties.signature_order : 0)
+        (a.properties.signature_metadata.order !== undefined ? a.properties.signature_metadata.order : 0) -
+        (b.properties.signature_metadata.order !== undefined ? b.properties.signature_metadata.order : 0)
     );
 
   const outputNodes = nodes
     .filter((node) => node.type.includes("signature_output"))
     .sort(
       (a, b) =>
-        (a.properties.signature_order !== undefined ? a.properties.signature_order : 0) -
-        (b.properties.signature_order !== undefined ? b.properties.signature_order : 0)
+        (a.properties.signature_metadata.order !== undefined ? a.properties.signature_metadata.order : 0) -
+        (b.properties.signature_metadata.order !== undefined ? b.properties.signature_metadata.order : 0)
     );
 
   if (inputNodes.length === 0 && outputNodes.length === 0) {
