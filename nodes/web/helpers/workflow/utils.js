@@ -282,8 +282,6 @@ const showLoginForm = () => {
 
 const requiresAuth = async (app, next) => {
   try {
-    const dropdownMenu = document.querySelector("#pv_id_9_0_list") || document.querySelector("#pv_id_10_0_list");
-    dropdownMenu.style.display = "none";
     // Try to get tokens
     let refreshToken = getRefreshToken();
     let accessToken = getAccessToken();
