@@ -167,7 +167,7 @@ const processNodeItems = (items) => {
       if (!node.properties) {
         node.properties = {};
       }
-      node.properties.signature_order = index;
+      node.properties.signature_metadata.order = index;
     } else {
       console.warn(`Node with ID ${nodeId} not found in graph`);
     }
