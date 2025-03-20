@@ -1,13 +1,9 @@
 import { app } from "../../../../../scripts/app.js";
-import { $el, findMenuList } from "../../global/main.js";
+import { $el } from "../../global/main.js";
 import { showMessage } from "../utils.js";
 import { applyNodeOrderChanges, createNodeItem, initDragAndDrop } from "./utils.js";
 
 const showNodeOrderEditor = () => {
-  const dropdownMenu = findMenuList();
-  if (dropdownMenu) {
-    dropdownMenu.style.display = "none";
-  }
   const nodes = app.graph._nodes;
   nodes.forEach((node) => {
     if (!node.properties.signature_metadata) {

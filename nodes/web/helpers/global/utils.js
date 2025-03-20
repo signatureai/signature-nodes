@@ -43,6 +43,7 @@ const findMenuList = () => {
   const possibleMenuLists = [
     "#pv_id_9_0_list",
     "#pv_id_10_0_list",
+    "#pv_id_12_0_list",
     ".p-menubar-root-list", // Backup selector
   ];
 
