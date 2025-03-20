@@ -44,7 +44,7 @@ class GetImageListItem:
             },
         }
 
-    RETURN_TYPES = "IMAGE"
+    RETURN_TYPES = ("IMAGE",)
     FUNCTION = "execute"
     CATEGORY = DATA_CAT
     DESCRIPTION = """
