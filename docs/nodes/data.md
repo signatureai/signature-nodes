@@ -1,18 +1,87 @@
 # Data Nodes
 
-## Json2Dict
+## Dict2Yaml
 
-Converts JSON strings to Python dictionaries for workflow integration.
+Converts Python dictionaries to YAML strings for data interchange.
 
-A node that takes JSON-formatted strings and parses them into Python dictionaries, enabling
-seamless data integration within the workflow. Handles nested JSON structures and validates
-input format.
+A node that serializes Python dictionaries into YAML-formatted strings, facilitating data
+export and communication with external systems that require YAML format.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | json_str | `STRING` |  | forceInput=True |
+| required | dict | `DICT` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| string | `STRING` |
+
+
+??? note "Source code"
+
+    ```python
+    class Dict2Yaml:
+        """Converts Python dictionaries to YAML strings for data interchange.
+
+        A node that serializes Python dictionaries into YAML-formatted strings, facilitating data
+        export and communication with external systems that require YAML format.
+
+        Args:
+            dict (dict): The Python dictionary to serialize.
+                Can contain nested dictionaries, lists, and primitive Python types.
+                All values must be JSON-serializable (dict, list, str, int, float, bool, None).
+
+        Returns:
+            tuple[str]: A single-element tuple containing:
+                - str: The YAML-formatted string representation of the input dictionary.
+
+        Raises:
+            ValueError: When dict is not a dictionary type.
+
+        Notes:
+            - All dictionary keys are converted to strings in the output YAML
+            - Complex Python objects (datetime, custom classes) must be pre-converted to basic types
+            - Handles nested structures of any depth
+            - Unicode characters are properly escaped in the output
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "dict": ("DICT",),
+                },
+            }
+
+        RETURN_TYPES = ("STRING",)
+        FUNCTION = "execute"
+        CLASS_ID = "dict_yaml"
+        CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Converts Python dictionaries to YAML-formatted strings. Handles nested structures and primitive data types.
+        Useful for data interchange with external systems that require YAML format."""
+
+        def execute(self, dict: dict) -> tuple[str]:
+            yaml_str = yaml.dump(dict)
+            return (yaml_str,)
+    ```
+
+## DeleteDictKey
+
+Deletes a key from a dictionary.
+
+A node that provides key-based deletion of a dictionary while determining their Python
+type, enabling dynamic type handling and conditional processing in workflows.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
+| required | key | `STRING` |  |  |
 
 ### Returns
 
@@ -24,56 +93,236 @@ input format.
 ??? note "Source code"
 
     ```python
-    class Json2Dict:
-        """Converts JSON strings to Python dictionaries for workflow integration.
+    class DeleteDictKey:
+        """Deletes a key from a dictionary.
 
-        A node that takes JSON-formatted strings and parses them into Python dictionaries, enabling
-        seamless data integration within the workflow. Handles nested JSON structures and validates
-        input format.
+        A node that provides key-based deletion of a dictionary while determining their Python
+        type, enabling dynamic type handling and conditional processing in workflows.
 
         Args:
-            json_str (str): The JSON-formatted input string to parse.
-                Must be a valid JSON string conforming to standard JSON syntax.
-                Can represent simple key-value pairs or complex nested structures.
+            dict (dict): The source dictionary to delete values.
+                Must be a valid Python dictionary.
+                Can contain values of any type and nested structures.
+            key (str): The lookup key for value deletion.
+                Must be a string type.
+                Case-sensitive and must match exactly.
+                If the key starts with a dot it will be used as a path as in a jq query,
+                e.g. ".key1.key2[0]" will delete the first value of array key2 in the dictionary key1.
+                Defaults to empty string.
 
         Returns:
-            tuple[dict]: A single-element tuple containing:
-                - dict: The parsed Python dictionary representing the JSON structure.
-                       Preserves all nested objects, arrays, and primitive values.
+            tuple[dict]: A tuple containing:
+                - dict: The updated dictionary with the key deleted.
 
         Raises:
-            ValueError: When json_str is not a string type.
-            json.JSONDecodeError: When the input string contains invalid JSON syntax.
+            KeyError: When the specified key doesn't exist in the dictionary.
+            ValueError: When key is not a string or dict parameter is not a dictionary.
 
         Notes:
-            - Accepts any valid JSON format including objects, arrays, and primitive values
-            - Empty JSON objects ('{}') are valid inputs and return empty dictionaries
-            - Preserves all JSON data types: objects, arrays, strings, numbers, booleans, null
-            - Does not support JSON streaming or parsing multiple JSON objects
-            - Unicode characters are properly handled and preserved
+            - Supports dictionaries containing any Python type, including custom classes
+            - Thread-safe for concurrent access
+            - Preserves original data without modifications
+            - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "dict": ("DICT",),
+                    "key": ("STRING", {"default": ""}),
+                },
+            }
+
+        RETURN_TYPES = ("DICT",)
+        RETURN_NAMES = ("new_dict",)
+        FUNCTION = "execute"
+        CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Removes a key from a dictionary.
+        Supports both direct key removal and path-based deletion using JQ syntax (with leading dot).
+        Returns the modified dictionary with the specified key removed."""
+
+        def execute(self, dict: dict, key: str = "") -> tuple[dict]:
+            if key.startswith("."):
+                exists = jq.compile(key).input(dict).first()
+                if exists is None:
+                    raise KeyError(f"Key {key} not found in dictionary")
+                delete_query = f"del({key})"
+                dict = jq.compile(delete_query).input(dict).first()
+            else:
+                if key not in dict:
+                    raise KeyError(f"Key {key} not found in dictionary")
+                del dict[key]
+            return (dict,)
+    ```
+
+## GetDictValue
+
+Retrieves and types dictionary values using string keys.
+
+A node that provides key-based access to dictionary values while determining their Python
+type, enabling dynamic type handling and conditional processing in workflows.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
+| required | key | `STRING` |  |  |
+
+??? note "Source code"
+
+    ```python
+    class GetDictValue:
+        """Retrieves and types dictionary values using string keys.
+
+        A node that provides key-based access to dictionary values while determining their Python
+        type, enabling dynamic type handling and conditional processing in workflows.
+
+        Args:
+            dict (dict): The source dictionary to extract values from.
+                Must be a valid Python dictionary.
+                Can contain values of any type and nested structures.
+            key (str): The lookup key for value retrieval.
+                Must be a string type.
+                Case-sensitive and must match exactly.
+                If the key starts with a dot it will be used as a path as in a jq query,
+                e.g. ".key1.key2[0]" will return the first value of array key2 in the dictionary key1.
+                Defaults to empty string.
+
+        Returns:
+            tuple[Any, str]: A tuple containing:
+                - Any: The value associated with the specified key.
+                - str: The Python type name of the retrieved value (e.g., 'str', 'int', 'dict').
+
+        Raises:
+            ValueError: When key is not a string or dict parameter is not a dictionary.
+            KeyError: When the specified key doesn't exist in the dictionary.
+
+        Notes:
+            - Supports dictionaries containing any Python type, including custom classes
+            - Type name is derived from the object's __class__.__name__
+            - Returns None for missing keys instead of raising KeyError
+            - Thread-safe for concurrent access
+            - Preserves original data without modifications
+            - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
         """
 
         @classmethod
         def INPUT_TYPES(cls):  # type: ignore
             return {
                 "required": {
-                    "json_str": ("STRING", {"default": "", "forceInput": True}),
+                    "dict": ("DICT",),
+                    "key": ("STRING", {"default": ""}),
                 },
             }
 
-        RETURN_TYPES = ("DICT",)
+        RETURN_TYPES = (any_type, "STRING")
+        RETURN_NAMES = ("value", "value_type")
         FUNCTION = "execute"
-        CLASS_ID = "json_dict"
         CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Retrieves values from dictionaries using keys or JQ path expressions (with leading dot).
+        Returns both the value and its Python type name.
+        Supports nested data structures and complex queries."""
 
-        def execute(self, **kwargs):
-            json_str = kwargs.get("json_str")
-            if not isinstance(json_str, str):
-                raise ValueError("Json string must be a string")
-            json_dict = json.loads(json_str)
-            return (json_dict,)
+        def execute(self, dict: dict, key: str = "") -> tuple[Any, str]:
+            if key.startswith("."):
+                value = jq.compile(key).input(dict).first()
+                if value is None:
+                    raise KeyError(f"Key {key} not found in dictionary")
+            else:
+                if key not in dict:
+                    raise KeyError(f"Key {key} not found in dictionary")
+                value = dict.get(key)
+            value_type = type(value).__name__
+            return (value, value_type)
+    ```
+
+## SetDictValue
+
+Sets a value in a dictionary using a string key.
+
+A node that provides key-based update of a dictionary while determining their Python
+type, enabling dynamic type handling and conditional processing in workflows.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
+| required | value | `any_type` |  |  |
+| required | key | `STRING` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| dict | `DICT` |
 
 
+??? note "Source code"
+
+    ```python
+    class SetDictValue:
+        """Sets a value in a dictionary using a string key.
+
+        A node that provides key-based update of a dictionary while determining their Python
+        type, enabling dynamic type handling and conditional processing in workflows.
+
+        Args:
+            dict (dict): The source dictionary to set values.
+                Must be a valid Python dictionary.
+                Can contain values of any type and nested structures.
+            key (str): The lookup key for value setter.
+                Must be a string type.
+                Case-sensitive and must match exactly.
+                If the key starts with a dot it will be used as a path as in a jq query,
+                e.g. ".key1.key2[0]" will set the first value of array key2 in the dictionary key1.
+                Defaults to empty string.
+            value (Any): The value to set.
+                Can be any type of value.
+
+        Returns:
+            tuple[dict]: A tuple containing:
+                - dict: The updated dictionary with the new value set.
+
+        Raises:
+            ValueError: When key is not a string or dict parameter is not a dictionary.
+
+        Notes:
+            - Supports dictionaries containing any Python type, including custom classes
+            - Thread-safe for concurrent access
+            - Preserves original data without modifications
+            - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "dict": ("DICT",),
+                    "value": (any_type,),
+                    "key": ("STRING", {"default": ""}),
+                }
+            }
+
+        RETURN_TYPES = ("DICT",)
+        RETURN_NAMES = ("new_dict",)
+        FUNCTION = "execute"
+        CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Sets or updates values in dictionaries using keys or JQ path expressions (with leading dot).
+        Supports any value type and nested data structures. Returns the modified dictionary."""
+
+        def execute(self, dict: dict, value: Any, key: str = "") -> tuple[dict]:
+            if key.startswith("."):
+                update_query = f'{key} = "{value}"'
+                dict = jq.compile(update_query).input(dict).first()
+            else:
+                dict[key] = value
+            return (dict,)
     ```
 
 ## Dict2Json
@@ -140,13 +389,156 @@ export and communication with external systems that require JSON format.
         FUNCTION = "execute"
         CLASS_ID = "dict_json"
         CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Converts Python dictionaries to JSON-formatted strings. Handles nested structures and primitive data types.
+        Useful for data interchange with external systems that require JSON format."""
 
-        def execute(self, **kwargs):
-            json_dict = kwargs.get("dict")
-            json_str = json.dumps(json_dict)
+        def execute(self, dict: dict) -> tuple[str]:
+            json_str = json.dumps(dict)
             return (json_str,)
+    ```
+
+## Toml2Dict
+
+Converts TOML strings to Python dictionaries for workflow integration.
+
+A node that takes TOML-formatted strings and parses them into Python dictionaries, enabling
+seamless data integration within the workflow. Handles nested TOML structures and validates
+input format.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | toml_str | `STRING` |  | forceInput=True |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| dict | `DICT` |
 
 
+??? note "Source code"
+
+    ```python
+    class Toml2Dict:
+        """Converts TOML strings to Python dictionaries for workflow integration.
+
+        A node that takes TOML-formatted strings and parses them into Python dictionaries, enabling
+        seamless data integration within the workflow. Handles nested TOML structures and validates
+        input format.
+
+        Args:
+            toml_str (str): The TOML-formatted input string to parse.
+                Must be a valid TOML string conforming to standard TOML syntax.
+                Can represent simple key-value pairs or complex nested structures.
+
+        Returns:
+            tuple[dict]: A single-element tuple containing:
+                - dict: The parsed Python dictionary representing the TOML structure.
+                       Preserves all nested objects, arrays, and primitive values.
+
+        Raises:
+            ValueError: When toml_str is not a string type.
+            toml.TomlDecodeError: When the input string contains invalid TOML syntax.
+
+        Notes:
+            - Accepts any valid TOML format including hash tables, arrays, and primitive values
+            - Empty TOML tables ('[table]') are valid inputs and return empty dictionaries
+            - Preserves all TOML data types: hash tables, arrays, strings, numbers, booleans, null
+            - Unicode characters are properly handled and preserved
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "toml_str": ("STRING", {"default": "", "forceInput": True}),
+                },
+            }
+
+        RETURN_TYPES = ("DICT",)
+        FUNCTION = "execute"
+        CLASS_ID = "toml_dict"
+        CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Converts TOML-formatted strings to Python dictionaries. Handles nested structures and validates input format.
+        Useful for importing configuration data into workflows."""
+
+        def execute(self, toml_str: str = "") -> tuple[dict]:
+            toml_dict = tomllib.loads(toml_str)
+            return (toml_dict,)
+    ```
+
+## Dict2Toml
+
+Converts Python dictionaries to TOML strings for data interchange.
+
+A node that serializes Python dictionaries into TOML-formatted strings, facilitating data
+export and communication with external systems that require TOML format.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | dict | `DICT` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| string | `STRING` |
+
+
+??? note "Source code"
+
+    ```python
+    class Dict2Toml:
+        """Converts Python dictionaries to TOML strings for data interchange.
+
+        A node that serializes Python dictionaries into TOML-formatted strings, facilitating data
+        export and communication with external systems that require TOML format.
+
+        Args:
+            dict (dict): The Python dictionary to serialize.
+                Can contain nested dictionaries, lists, and primitive Python types.
+                All values must be JSON-serializable (dict, list, str, int, float, bool, None).
+
+        Returns:
+            tuple[str]: A single-element tuple containing:
+                - str: The TOML-formatted string representation of the input dictionary.
+
+        Raises:
+            ValueError: When dict is not a dictionary type.
+
+        Notes:
+            - All dictionary keys are converted to strings in the output TOML
+            - Complex Python objects (datetime, custom classes) must be pre-converted to basic types
+            - Output is compact TOML without extra whitespace or formatting
+            - Handles nested structures of any depth
+            - Unicode characters are properly escaped in the output
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "dict": ("DICT",),
+                },
+            }
+
+        RETURN_TYPES = ("STRING",)
+        FUNCTION = "execute"
+        CLASS_ID = "dict_toml"
+        CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Converts Python dictionaries to TOML-formatted strings. Handles nested structures and primitive data types.
+        Useful for data interchange with external systems that require TOML format."""
+
+        def execute(self, dict: dict) -> tuple[str]:
+            toml_str = tomli_w.dumps(dict)
+            return (toml_str,)
     ```
 
 ## GetImageListItem
@@ -160,18 +552,14 @@ within a collection, enabling targeted processing of specific images in a sequen
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | images | `IMAGE` |  |  |
+| required | images | `LIST` |  |  |
 | required | index | `INT` | 0 |  |
 
 ### Returns
 
 | Name | Type |
 |------|------|
-| i | `I` |
-| m | `M` |
-| a | `A` |
-| g | `G` |
-| e | `E` |
+| image | `IMAGE` |
 
 
 ??? note "Source code"
@@ -213,29 +601,22 @@ within a collection, enabling targeted processing of specific images in a sequen
         def INPUT_TYPES(cls):  # type: ignore
             return {
                 "required": {
-                    "images": ("IMAGE",),
+                    "images": ("LIST",),
                     "index": ("INT", {"default": 0}),
                 },
             }
 
-        RETURN_TYPES = "IMAGE"
-        RETURN_NAMES = "image"
+        RETURN_TYPES = ("IMAGE",)
         FUNCTION = "execute"
         CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Extracts a single image from a list of images by its index position.
+        Uses zero-based indexing (0 = first image).
+        Useful for selecting specific images from batches for individual processing."""
 
-        def execute(self, **kwargs):
-            images = kwargs.get("images")
-            index = kwargs.get("index")
-            if not isinstance(index, int):
-                raise ValueError("Index must be an integer")
-            if not isinstance(images, list):
-                raise ValueError("Images must be a list")
-            images = images[index]
-            index = kwargs.get("index")
+        def execute(self, images: list[torch.Tensor], index: int = 0) -> tuple[torch.Tensor]:
             image = images[index]
             return (image,)
-
-
     ```
 
 ## GetListItem
@@ -300,94 +681,168 @@ type, enabling dynamic type handling and conditional processing in workflows.
         RETURN_NAMES = ("item", "value_type")
         FUNCTION = "execute"
         CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Retrieves items from lists by index position. Returns both the item and its Python type name.
+        Uses zero-based indexing (0 = first item). Supports lists containing any data type."""
 
-        def execute(self, **kwargs):
-            list_obj = kwargs.get("list")
-            index = kwargs.get("index")
-            if not isinstance(index, int):
-                raise ValueError("Index must be an integer")
-            if not isinstance(list_obj, list):
-                raise ValueError("Input must be a list")
-            item = list_obj[index]
+        def execute(self, list: list, index: int = 0) -> tuple[Any, str]:
+            item = list[index]
             item_type = type(item).__name__
             return (item, item_type)
-
-
     ```
 
-## GetDictValue
+## Json2Dict
 
-Retrieves and types dictionary values using string keys.
+Converts JSON strings to Python dictionaries for workflow integration.
 
-A node that provides key-based access to dictionary values while determining their Python
-type, enabling dynamic type handling and conditional processing in workflows.
+A node that takes JSON-formatted strings and parses them into Python dictionaries, enabling
+seamless data integration within the workflow. Handles nested JSON structures and validates
+input format.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | dict | `DICT` |  |  |
-| required | key | `STRING` |  |  |
+| required | json_str | `STRING` | {
+  "dict1": {"key1": "value1", "key2": "value2"},
+  "dict2": {"key1": "value3", "key2": "value4"}
+} | multiline=True |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| dict | `DICT` |
+
 
 ??? note "Source code"
 
     ```python
-    class GetDictValue:
-        """Retrieves and types dictionary values using string keys.
+    class Json2Dict:
+        """Converts JSON strings to Python dictionaries for workflow integration.
 
-        A node that provides key-based access to dictionary values while determining their Python
-        type, enabling dynamic type handling and conditional processing in workflows.
+        A node that takes JSON-formatted strings and parses them into Python dictionaries, enabling
+        seamless data integration within the workflow. Handles nested JSON structures and validates
+        input format.
 
         Args:
-            dict (dict): The source dictionary to extract values from.
-                Must be a valid Python dictionary.
-                Can contain values of any type and nested structures.
-            key (str): The lookup key for value retrieval.
-                Must be a string type.
-                Case-sensitive and must match exactly.
-                Defaults to empty string.
+            json_str (str): The JSON-formatted input string to parse.
+                Must be a valid JSON string conforming to standard JSON syntax.
+                Can represent simple key-value pairs or complex nested structures.
 
         Returns:
-            tuple[Any, str]: A tuple containing:
-                - Any: The value associated with the specified key.
-                - str: The Python type name of the retrieved value (e.g., 'str', 'int', 'dict').
+            tuple[dict]: A single-element tuple containing:
+                - dict: The parsed Python dictionary representing the JSON structure.
+                       Preserves all nested objects, arrays, and primitive values.
 
         Raises:
-            ValueError: When key is not a string or dict parameter is not a dictionary.
-            KeyError: When the specified key doesn't exist in the dictionary.
+            ValueError: When json_str is not a string type.
+            json.JSONDecodeError: When the input string contains invalid JSON syntax.
 
         Notes:
-            - Supports dictionaries containing any Python type, including custom classes
-            - Type name is derived from the object's __class__.__name__
-            - Returns None for missing keys instead of raising KeyError
-            - Thread-safe for concurrent access
-            - Preserves original data without modifications
-            - Handles nested data structures (dictionaries within dictionaries, lists, etc.)
+            - Accepts any valid JSON format including objects, arrays, and primitive values
+            - Empty JSON objects ('{}') are valid inputs and return empty dictionaries
+            - Preserves all JSON data types: objects, arrays, strings, numbers, booleans, null
+            - Does not support JSON streaming or parsing multiple JSON objects
+            - Unicode characters are properly handled and preserved
         """
 
         @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
+        def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "dict": ("DICT",),
-                    "key": ("STRING", {"default": ""}),
+                    "json_str": (
+                        "STRING",
+                        {
+                            "default": (
+                                '{\n  "dict1": {"key1": "value1", "key2": "value2"},\n  "dict2": {"key1": "value3", '
+                                '"key2": "value4"}\n}'
+                            ),
+                            "multiline": True,
+                        },
+                    ),
                 },
             }
 
-        RETURN_TYPES = (any_type, "STRING")
-        RETURN_NAMES = ("value", "value_type")
+        RETURN_TYPES = ("DICT",)
         FUNCTION = "execute"
+        CLASS_ID = "json_dict"
         CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Converts JSON-formatted strings to Python dictionaries. Handles nested structures and validates input format.
+        Useful for importing external data into workflows."""
 
-        def execute(self, **kwargs):
-            dict_obj = kwargs.get("dict")
-            key = kwargs.get("key")
-            if not isinstance(key, str):
-                raise ValueError("Key must be a string")
-            if not isinstance(dict_obj, dict):
-                raise ValueError("Dict must be a dictionary")
-            value = dict_obj.get(key)
-            value_type = type(value).__name__
-            return (value, value_type)
+        def execute(self, json_str: str = "") -> tuple[dict]:
+            json_dict = json.loads(json_str)
+            return (json_dict,)
+    ```
+
+## Yaml2Dict
+
+Converts YAML strings to Python dictionaries for data interchange.
+
+A node that takes YAML-formatted strings and parses them into Python dictionaries,
+enabling seamless data integration within the workflow. Handles nested YAML structures
+and validates input format.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | yaml_str | `STRING` |  | forceInput=True |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| dict | `DICT` |
+
+
+??? note "Source code"
+
+    ```python
+    class Yaml2Dict:
+        """Converts YAML strings to Python dictionaries for data interchange.
+
+        A node that takes YAML-formatted strings and parses them into Python dictionaries,
+        enabling seamless data integration within the workflow. Handles nested YAML structures
+        and validates input format.
+
+        Args:
+            yaml_str (str): The YAML-formatted input string to parse.
+                Must be a valid YAML string conforming to standard YAML syntax.
+                Can represent simple key-value pairs or complex nested structures.
+
+        Returns:
+            tuple[dict]: A single-element tuple containing:
+                - dict: The parsed Python dictionary representing the YAML structure.
+
+        Raises:
+            ValueError: When yaml_str is not a string type.
+            yaml.YAMLError: When the input string contains invalid YAML syntax.
+
+        Notes:
+            - Accepts any valid YAML format including hash tables, arrays, and primitive values
+            - Preserves all YAML data types: hash tables, arrays, strings, numbers, booleans, null
+            - Unicode characters are properly handled and preserved
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {"yaml_str": ("STRING", {"default": "", "forceInput": True})},
+            }
+
+        RETURN_TYPES = ("DICT",)
+        FUNCTION = "execute"
+        CLASS_ID = "yaml_dict"
+        CATEGORY = DATA_CAT
+        DESCRIPTION = """
+        Converts YAML-formatted strings to Python dictionaries. Handles nested structures and validates input format.
+        Useful for importing configuration data into workflows."""
+
+        def execute(self, yaml_str: str = "") -> tuple[dict]:
+            yaml_dict = yaml.safe_load(yaml_str)
+            return (yaml_dict,)
 
     ```
