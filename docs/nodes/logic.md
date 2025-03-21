@@ -12,9 +12,9 @@ is useful for creating conditional workflows and dynamic value selection.
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
+| required | on_true | `any_type` |  | lazy=True |
+| required | on_false | `any_type` |  | lazy=True |
 | required | condition | `BOOLEAN` | True |  |
-| required | on_true | `any_type` |  |  |
-| required | on_false | `any_type` |  |  |
 
 ??? note "Source code"
 
@@ -46,9 +46,9 @@ is useful for creating conditional workflows and dynamic value selection.
         def INPUT_TYPES(cls):  # type: ignore
             return {
                 "required": {
+                    "on_true": (any_type, {"lazy": True}),
+                    "on_false": (any_type, {"lazy": True}),
                     "condition": ("BOOLEAN", {"default": True}),
-                    "on_true": (any_type,),
-                    "on_false": (any_type,),
                 }
             }
 
@@ -56,84 +56,21 @@ is useful for creating conditional workflows and dynamic value selection.
         RETURN_NAMES = ("output",)
         FUNCTION = "execute"
         CATEGORY = LOGIC_CAT
-
-        def check_lazy_status(self, condition, on_true=None, on_false=None):
-            if condition and on_true is None:
-                on_true = ["on_true"]
-                if isinstance(on_true, ExecutionBlocker):
-                    on_true = on_true.message  # type: ignore
-                return on_true
-            if not condition and on_false is None:
-                on_false = ["on_false"]
-                if isinstance(on_false, ExecutionBlocker):
-                    on_false = on_false.message  # type: ignore
-                return on_false
-            return None
-
-        def execute(self, **kwargs):
-            return (kwargs["on_true"] if kwargs["condition"] else kwargs["on_false"],)
-
-
-    ```
-
-## Blocker
-
-Controls flow execution based on a boolean condition.
-
-A utility node that blocks or allows execution flow based on a boolean flag. When the continue
-flag is False, it blocks execution by returning an ExecutionBlocker. When True, it passes through
-the input value unchanged.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | continue | `BOOLEAN` | False |  |
-| required | in | `any_type` | None |  |
-
-??? note "Source code"
-
-    ```python
-    class Blocker:
-        """Controls flow execution based on a boolean condition.
-
-        A utility node that blocks or allows execution flow based on a boolean flag. When the continue
-        flag is False, it blocks execution by returning an ExecutionBlocker. When True, it passes through
-        the input value unchanged.
-
-        Args:
-            continue (bool): Flag to control execution flow. When False, blocks execution.
-            in (Any): The input value to pass through when execution is allowed.
-
-        Returns:
-            tuple[Any]: A single-element tuple containing either:
-                - The input value if continue is True
-                - An ExecutionBlocker if continue is False
-
-        Notes:
-            - Useful for conditional workflow execution
-            - Can be used to create branches in execution flow
-            - The ExecutionBlocker prevents downstream nodes from executing
+        DESCRIPTION = """
+        Switches between two input values based on a boolean condition.
+        When the condition is True, returns the 'true' value; otherwise, returns the 'false' value.
+        Useful for creating conditional workflows and dynamic value selection.
         """
 
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "continue": ("BOOLEAN", {"default": False}),
-                    "in": (any_type, {"default": None}),
-                },
-            }
+        def check_lazy_status(self, condition: bool, on_true: Any = None, on_false: Any = None) -> Any:
+            if condition and on_true is None:
+                return ["on_true"]
+            if not condition and on_false is None:
+                return ["on_false"]
+            return None
 
-        RETURN_TYPES = (any_type,)
-        RETURN_NAMES = ("out",)
-        CATEGORY = LABS_CAT
-        FUNCTION = "execute"
-
-        def execute(self, **kwargs):
-            return (kwargs["in"] if kwargs["continue"] else ExecutionBlocker(None),)
-
-
+        def execute(self, on_true: Any, on_false: Any, condition: bool = True) -> tuple[Any]:
+            return (on_true if condition else on_false,)
     ```
 
 ## Compare
@@ -215,19 +152,20 @@ node is useful for implementing conditional logic based on the relationship betw
         RETURN_NAMES = ("result",)
         FUNCTION = "execute"
         CATEGORY = LOGIC_CAT
+        DESCRIPTION = """
+        Compares two input values based on a specified comparison operation.
+        Evaluates equality, inequality, and relational comparisons between inputs of any type.
+        Handles special cases for tensors, lists, and tuples.
+        """
 
-        def execute(self, **kwargs):
-            input_a = kwargs.get("a")
-            input_b = kwargs.get("b")
-            comparison = kwargs.get("comparison") or "a == b"
-
+        def execute(self, a: Any, b: Any, comparison: str = "a == b") -> tuple[bool]:
             try:
-                output = self.COMPARE_FUNCTIONS[comparison](input_a, input_b)
+                output = self.COMPARE_FUNCTIONS[comparison](a, b)
             except Exception as e:
-                if isinstance(input_a, torch.Tensor) and isinstance(input_b, torch.Tensor):
-                    output = self.COMPARE_FUNCTIONS[comparison](input_a.shape, input_b.shape)
-                elif isinstance(input_a, (list, tuple)) and isinstance(input_b, (list, tuple)):
-                    output = self.COMPARE_FUNCTIONS[comparison](len(input_a), len(input_b))
+                if isinstance(a, torch.Tensor) and isinstance(b, torch.Tensor):
+                    output = self.COMPARE_FUNCTIONS[comparison](a.shape, b.shape)
+                elif isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+                    output = self.COMPARE_FUNCTIONS[comparison](len(a), len(b))
                 else:
                     raise e
 
@@ -237,189 +175,5 @@ node is useful for implementing conditional logic based on the relationship betw
                 output = all(output)
 
             return (bool(output),)
-
-
-    ```
-
-## LoopStart
-
-Initiates a loop with optional initial values for each iteration.
-
-A control node that starts a loop, allowing for a specified number of iterations. It can accept
-optional initial values for each iteration, which can be used within the loop. This node is useful
-for creating iterative workflows where the same set of operations is performed multiple times.
-
-??? note "Source code"
-
-    ```python
-    class LoopStart:
-        """Initiates a loop with optional initial values for each iteration.
-
-        A control node that starts a loop, allowing for a specified number of iterations. It can accept
-        optional initial values for each iteration, which can be used within the loop. This node is useful
-        for creating iterative workflows where the same set of operations is performed multiple times.
-
-        Args:
-            init_value (Any): The initial value for the first iteration. Can be of any type.
-
-        Returns:
-            tuple[tuple]: A tuple containing a flow control signal and the initial values for each iteration.
-
-        Notes:
-            - The number of initial values can be adjusted by changing the MAX_FLOW_NUM constant.
-            - Each initial value can be of any type, providing flexibility for different workflows.
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            inputs = {
-                "optional": {},
-            }
-            for i in range(MAX_FLOW_NUM):
-                inputs["optional"][f"init_value_{i}"] = (any_type,)
-            return inputs
-
-        RETURN_TYPES = ByPassTypeTuple(tuple(["FLOW_CONTROL"] + [any_type] * MAX_FLOW_NUM))
-        RETURN_NAMES = ByPassTypeTuple(tuple(["flow"] + [f"value_{i}" for i in range(MAX_FLOW_NUM)]))
-        FUNCTION = "execute"
-
-        CATEGORY = LABS_CAT + "/Loops"
-
-        def execute(self, **kwargs):
-            values = []
-            for i in range(MAX_FLOW_NUM):
-                values.append(kwargs.get(f"init_value_{i}", None))
-            return tuple(["stub"] + values)
-
-
-    ```
-
-## LoopEnd
-
-Ends a loop and returns the final values after the loop execution.
-
-A control node that signifies the end of a loop initiated by a `LoopStart` node. It processes the
-flow control signal and can return the final values from the loop iterations. This node is useful
-for managing the completion of iterative workflows and retrieving results after looping.
-
-??? note "Source code"
-
-    ```python
-    class LoopEnd:
-        """Ends a loop and returns the final values after the loop execution.
-
-        A control node that signifies the end of a loop initiated by a `LoopStart` node. It processes the
-        flow control signal and can return the final values from the loop iterations. This node is useful
-        for managing the completion of iterative workflows and retrieving results after looping.
-
-        Args:
-            flow (FLOW_CONTROL): The flow control signal indicating the current state of the loop.
-            end_loop (bool): A boolean flag that indicates whether to end the loop. If True, the loop will terminate.
-            dynprompt (DYNPROMPT, optional): Dynamic prompt information for the node.
-            unique_id (UNIQUE_ID, optional): A unique identifier for the loop instance.
-
-        Returns:
-            tuple: A tuple containing the final values from the loop iterations.
-
-        Notes:
-            - The loop can be terminated based on the `end_loop` flag,
-              allowing for flexible control over the iteration process.
-            - The number of returned values corresponds to the number of initial values provided in the `LoopStart`.
-        """
-
-        def __init__(self):
-            pass
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            inputs = {
-                "required": {
-                    "flow": ("FLOW_CONTROL", {"rawLink": True}),
-                    "end_loop": ("BOOLEAN", {}),
-                },
-                "optional": {},
-                "hidden": {
-                    "dynprompt": "DYNPROMPT",
-                    "unique_id": "UNIQUE_ID",
-                },
-            }
-            for i in range(MAX_FLOW_NUM):
-                inputs["optional"][f"init_value_{i}"] = (any_type,)
-            return inputs
-
-        RETURN_TYPES = ByPassTypeTuple(tuple([any_type] * MAX_FLOW_NUM))
-        RETURN_NAMES = ByPassTypeTuple(tuple(f"value_{i}" for i in range(MAX_FLOW_NUM)))
-        FUNCTION = "execute"
-
-        CATEGORY = LABS_CAT + "/Loops"
-
-        def explore_dependencies(self, node_id, dynprompt, upstream):
-            node_info = dynprompt.get_node(node_id)
-            if "inputs" not in node_info:
-                return
-            for _, v in node_info["inputs"].items():
-                if is_link(v):
-                    parent_id = v[0]
-                    if parent_id not in upstream:
-                        upstream[parent_id] = []
-                        self.explore_dependencies(parent_id, dynprompt, upstream)
-                    upstream[parent_id].append(node_id)
-
-        def collect_contained(self, node_id, upstream, contained):
-            if node_id not in upstream:
-                return
-            for child_id in upstream[node_id]:
-                if child_id not in contained:
-                    contained[child_id] = True
-                    self.collect_contained(child_id, upstream, contained)
-
-        def execute(self, flow, end_loop, dynprompt=None, unique_id=None, **kwargs):
-            if end_loop:
-                # We're done with the loop
-                values = []
-                for i in range(MAX_FLOW_NUM):
-                    values.append(kwargs.get(f"init_value_{i}", None))
-                return tuple(values)
-
-            # We want to loop
-            if dynprompt is not None:
-                _ = dynprompt.get_node(unique_id)
-            upstream = {}
-            # Get the list of all nodes between the open and close nodes
-            self.explore_dependencies(unique_id, dynprompt, upstream)
-
-            contained = {}
-            open_node = flow[0]
-            self.collect_contained(open_node, upstream, contained)
-            contained[unique_id] = True
-            contained[open_node] = True
-
-            graph = GraphBuilder()
-            for node_id in contained:
-                if dynprompt is not None:
-                    original_node = dynprompt.get_node(node_id)
-                    node = graph.node(original_node["class_type"], "Recurse" if node_id == unique_id else node_id)
-                    node.set_override_display_id(node_id)
-            for node_id in contained:
-                if dynprompt is not None:
-                    original_node = dynprompt.get_node(node_id)
-                    node = graph.lookup_node("Recurse" if node_id == unique_id else node_id)
-                    for k, v in original_node["inputs"].items():
-                        if is_link(v) and v[0] in contained:
-                            parent = graph.lookup_node(v[0])
-                            node.set_input(k, parent.out(v[1]))
-                        else:
-                            node.set_input(k, v)
-
-            new_open = graph.lookup_node(open_node)
-            for i in range(MAX_FLOW_NUM):
-                key = f"init_value_{i}"
-                new_open.set_input(key, kwargs.get(key, None))
-            my_clone = graph.lookup_node("Recurse")
-            result = map(lambda x: my_clone.out(x), range(MAX_FLOW_NUM))
-            return {
-                "result": tuple(result),
-                "expand": graph.finalize(),
-            }
 
     ```

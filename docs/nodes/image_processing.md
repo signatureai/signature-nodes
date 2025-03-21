@@ -1,5 +1,244 @@
 # Image Processing Nodes
 
+## Rescale
+
+Rescales images and masks by a specified factor while preserving aspect ratio.
+
+Provides flexible rescaling of images and masks with support for various interpolation
+methods and optional antialiasing. Useful for uniform scaling operations where
+maintaining aspect ratio is important.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| optional | image | `IMAGE` | None |  |
+| optional | mask | `MASK` | None |  |
+| optional | factor | `FLOAT` | 2.0 | min=0.01, max=100.0, step=0.01 |
+| optional | interpolation | `LIST` |  |  |
+| optional | antialias | `BOOLEAN` | True |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| image | `IMAGE` |
+| mask | `MASK` |
+
+
+??? note "Source code"
+
+    ```python
+    class Rescale:
+        """Rescales images and masks by a specified factor while preserving aspect ratio.
+
+        Provides flexible rescaling of images and masks with support for various interpolation
+        methods and optional antialiasing. Useful for uniform scaling operations where
+        maintaining aspect ratio is important.
+
+        Args:
+            image (torch.Tensor, optional): Input image in BWHC format with values in range [0, 1]
+            mask (torch.Tensor, optional): Input mask in BWHC format with values in range [0, 1]
+            factor (float): Scale multiplier (0.01-100.0)
+            interpolation (str): Resampling method to use:
+                - "nearest": Nearest neighbor (sharp, blocky)
+                - "nearest-exact": Nearest neighbor without rounding
+                - "bilinear": Linear interpolation (smooth)
+                - "bicubic": Cubic interpolation (smoother)
+                - "box": Box sampling (good for downscaling)
+                - "hamming": Hamming windowed sampling
+                - "lanczos": Lanczos resampling (sharp, fewer artifacts)
+            antialias (bool): Whether to apply antialiasing when downscaling
+
+        Returns:
+            tuple:
+                - image (torch.Tensor): Rescaled image in BWHC format
+                - mask (torch.Tensor): Rescaled mask in BWHC format
+
+        Raises:
+            ValueError: If neither image nor mask is provided
+            ValueError: If invalid interpolation method specified
+            RuntimeError: If input tensors have invalid dimensions
+
+        Notes:
+            - At least one of image or mask must be provided
+            - Output maintains the same number of channels as input
+            - Antialiasing is recommended when downscaling to prevent artifacts
+            - All interpolation methods preserve the value range [0, 1]
+            - Memory usage scales quadratically with factor
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {
+                "required": {},
+                "optional": {
+                    "image": ("IMAGE", {"default": None}),
+                    "mask": ("MASK", {"default": None}),
+                    "factor": (
+                        "FLOAT",
+                        {"default": 2.0, "min": 0.01, "max": 100.0, "step": 0.01},
+                    ),
+                    "interpolation": (
+                        [
+                            "nearest",
+                            "nearest-exact",
+                            "bilinear",
+                            "bicubic",
+                            "box",
+                            "hamming",
+                            "lanczos",
+                        ],
+                    ),
+                    "antialias": ("BOOLEAN", {"default": True}),
+                },
+            }
+
+        RETURN_TYPES = (
+            "IMAGE",
+            "MASK",
+        )
+        FUNCTION = "execute"
+        CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        Rescales images and masks by a specified factor while preserving aspect ratio.
+        Supports various interpolation methods and optional antialiasing.
+        Useful for uniform scaling operations.
+        """
+
+        def execute(
+            self,
+            image: Optional[torch.Tensor] = None,
+            mask: Optional[torch.Tensor] = None,
+            factor: float = 2.0,
+            interpolation: str = "nearest",
+            antialias: bool = True,
+        ) -> tuple[torch.Tensor, torch.Tensor]:
+            if not isinstance(image, torch.Tensor) and not isinstance(mask, torch.Tensor):
+                raise ValueError("Either image or mask must be provided")
+            input_image = (
+                TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
+            )
+            input_mask = (
+                TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else TensorImage(torch.zeros((1, 1, 1, 1)))
+            )
+            output_image = rescale(
+                input_image,
+                factor,
+                interpolation,
+                antialias,
+            ).get_BWHC()
+            output_mask = rescale(
+                input_mask,
+                factor,
+                interpolation,
+                antialias,
+            ).get_BWHC()
+
+            return (
+                output_image,
+                output_mask,
+            )
+    ```
+
+## Cutout
+
+Creates masked cutouts from images with both RGB and RGBA outputs.
+
+Extracts portions of an image based on a mask, providing both RGB and RGBA
+versions of the result. Useful for isolating subjects or creating transparent
+cutouts for compositing.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | mask | `MASK` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| image | `IMAGE` |
+| image | `IMAGE` |
+
+
+??? note "Source code"
+
+    ```python
+    class Cutout:
+        """Creates masked cutouts from images with both RGB and RGBA outputs.
+
+        Extracts portions of an image based on a mask, providing both RGB and RGBA
+        versions of the result. Useful for isolating subjects or creating transparent
+        cutouts for compositing.
+
+        Args:
+            image (torch.Tensor): Input image in BWHC format with values in range [0, 1]
+            mask (torch.Tensor): Binary or continuous mask in BWHC format with values in range [0, 1]
+
+        Returns:
+            tuple:
+                - rgb (torch.Tensor): Masked image in RGB format (BWHC)
+                - rgba (torch.Tensor): Masked image in RGBA format (BWHC)
+
+        Raises:
+            ValueError: If either image or mask is not provided
+            ValueError: If input tensors have mismatched dimensions
+            RuntimeError: If input tensors have invalid dimensions
+
+        Notes:
+            - Mask values determine transparency in RGBA output
+            - RGB output has masked areas filled with black
+            - RGBA output preserves partial mask values as alpha
+            - Input image must be 3 channels (RGB)
+            - Input mask must be 1 channel
+            - Output maintains original image resolution
+            - All non-zero mask values are considered for cutout
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "image": ("IMAGE",),
+                    "mask": ("MASK",),
+                },
+            }
+
+        RETURN_TYPES = ("IMAGE", "IMAGE")
+        RETURN_NAMES = ("rgb", "rgba")
+        FUNCTION = "execute"
+        CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        Creates masked cutouts from images with both RGB and RGBA outputs.
+        Extracts portions of an image based on a mask,
+        useful for isolating subjects or creating transparent cutouts for compositing.
+        """
+
+        def execute(
+            self,
+            image: Optional[torch.Tensor],
+            mask: Optional[torch.Tensor],
+        ):
+            if not isinstance(image, torch.Tensor) or not isinstance(mask, torch.Tensor):
+                raise ValueError("Either image or mask must be provided")
+
+            tensor_image = TensorImage.from_BWHC(image)
+            tensor_mask = TensorImage.from_BWHC(mask, image.device)
+
+            image_rgb, image_rgba = cutout(tensor_image, tensor_mask)
+
+            out_image_rgb = TensorImage(image_rgb).get_BWHC()
+            out_image_rgba = TensorImage(image_rgba).get_BWHC()
+
+            return (
+                out_image_rgb,
+                out_image_rgba,
+            )
+    ```
+
 ## AutoCrop
 
 Automatically crops an image based on a mask content.
@@ -78,7 +317,10 @@ subjects or focusing on specific masked areas.
                 "required": {
                     "image": ("IMAGE",),
                     "mask": ("MASK",),
-                    "mask_threshold": ("FLOAT", {"default": 0.1, "min": 0.00, "max": 1.00, "step": 0.01}),
+                    "mask_threshold": (
+                        "FLOAT",
+                        {"default": 0.1, "min": 0.00, "max": 1.00, "step": 0.01},
+                    ),
                     "left_padding": ("INT", {"default": 0}),
                     "right_padding": ("INT", {"default": 0}),
                     "top_padding": ("INT", {"default": 0}),
@@ -91,149 +333,40 @@ subjects or focusing on specific masked areas.
 
         FUNCTION = "execute"
         CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        Automatically crops images based on mask content.
+        Detects non-zero regions in a mask and crops both image and mask to those regions with optional padding.
+        Returns crop coordinates for further processing.
+        """
 
-        def execute(self, **kwargs):
-            img_tensor = TensorImage.from_BWHC(kwargs["image"])
-            mask_tensor = TensorImage.from_BWHC(kwargs["mask"])
+        def execute(
+            self,
+            image: torch.Tensor,
+            mask: torch.Tensor,
+            mask_threshold: float = 0.1,
+            left_padding: int = 0,
+            right_padding: int = 0,
+            top_padding: int = 0,
+            bottom_padding: int = 0,
+        ) -> tuple[torch.Tensor, torch.Tensor, int, int, int, int]:
+            img_tensor = TensorImage.from_BWHC(image)
+            mask_tensor = TensorImage.from_BWHC(mask)
             if img_tensor.shape[1] != 3:
                 img_tensor = rgba_to_rgb(img_tensor)
 
             padding = (
-                kwargs["left_padding"],
-                kwargs["right_padding"],
-                kwargs["top_padding"],
-                kwargs["bottom_padding"],
+                left_padding,
+                right_padding,
+                top_padding,
+                bottom_padding,
             )
             img_result, mask_result, min_x, min_y, width, height = auto_crop(
-                img_tensor, mask_tensor, mask_threshold=kwargs["mask_threshold"], padding=padding
+                img_tensor, mask_tensor, mask_threshold=mask_threshold, padding=padding
             )
             output_img = TensorImage(img_result).get_BWHC()
             output_mask = TensorImage(mask_result).get_BWHC()
 
             return (output_img, output_mask, min_x, min_y, width, height)
-
-
-    ```
-
-## Rescale
-
-Rescales images and masks by a specified factor while preserving aspect ratio.
-
-Provides flexible rescaling of images and masks with support for various interpolation
-methods and optional antialiasing. Useful for uniform scaling operations where
-maintaining aspect ratio is important.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| optional | image | `IMAGE` | None |  |
-| optional | mask | `MASK` | None |  |
-| optional | factor | `FLOAT` | 2.0 | min=0.01, max=100.0, step=0.01 |
-| optional | interpolation | `LIST` |  |  |
-| optional | antialias | `BOOLEAN` | True |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| image | `IMAGE` |
-| mask | `MASK` |
-
-
-??? note "Source code"
-
-    ```python
-    class Rescale:
-        """Rescales images and masks by a specified factor while preserving aspect ratio.
-
-        Provides flexible rescaling of images and masks with support for various interpolation
-        methods and optional antialiasing. Useful for uniform scaling operations where
-        maintaining aspect ratio is important.
-
-        Args:
-            image (torch.Tensor, optional): Input image in BWHC format with values in range [0, 1]
-            mask (torch.Tensor, optional): Input mask in BWHC format with values in range [0, 1]
-            factor (float): Scale multiplier (0.01-100.0)
-            interpolation (str): Resampling method to use:
-                - "nearest": Nearest neighbor (sharp, blocky)
-                - "nearest-exact": Nearest neighbor without rounding
-                - "bilinear": Linear interpolation (smooth)
-                - "bicubic": Cubic interpolation (smoother)
-                - "box": Box sampling (good for downscaling)
-                - "hamming": Hamming windowed sampling
-                - "lanczos": Lanczos resampling (sharp, fewer artifacts)
-            antialias (bool): Whether to apply antialiasing when downscaling
-
-        Returns:
-            tuple:
-                - image (torch.Tensor): Rescaled image in BWHC format
-                - mask (torch.Tensor): Rescaled mask in BWHC format
-
-        Raises:
-            ValueError: If neither image nor mask is provided
-            ValueError: If invalid interpolation method specified
-            RuntimeError: If input tensors have invalid dimensions
-
-        Notes:
-            - At least one of image or mask must be provided
-            - Output maintains the same number of channels as input
-            - Antialiasing is recommended when downscaling to prevent artifacts
-            - All interpolation methods preserve the value range [0, 1]
-            - Memory usage scales quadratically with factor
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
-            return {
-                "required": {},
-                "optional": {
-                    "image": ("IMAGE", {"default": None}),
-                    "mask": ("MASK", {"default": None}),
-                    "factor": ("FLOAT", {"default": 2.0, "min": 0.01, "max": 100.0, "step": 0.01}),
-                    "interpolation": (["nearest", "nearest-exact", "bilinear", "bicubic", "box", "hamming", "lanczos"],),
-                    "antialias": ("BOOLEAN", {"default": True}),
-                },
-            }
-
-        RETURN_TYPES = (
-            "IMAGE",
-            "MASK",
-        )
-        FUNCTION = "execute"
-        CATEGORY = IMAGE_PROCESSING_CAT
-
-        def execute(self, **kwargs):
-            image = kwargs.get("image")
-            mask = kwargs.get("mask")
-            if not isinstance(image, torch.Tensor) and not isinstance(mask, torch.Tensor):
-                raise ValueError("Either image or mask must be provided")
-
-            input_image = (
-                TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
-            )
-            input_mask = (
-                TensorImage.from_BWHC(mask) if isinstance(mask, torch.Tensor) else TensorImage(torch.zeros((1, 1, 1, 1)))
-            )
-            output_image = rescale(
-                input_image,
-                kwargs.get("factor", 2.0),
-                kwargs.get("interpolation", "nearest"),
-                kwargs.get("antialias", True),
-            ).get_BWHC()
-            output_mask = rescale(
-                input_mask,
-                kwargs.get("factor", 2.0),
-                kwargs.get("interpolation", "nearest"),
-                kwargs.get("antialias", True),
-            ).get_BWHC()
-
-            return (
-                output_image,
-                output_mask,
-            )
-
-
     ```
 
 ## Resize
@@ -255,6 +388,7 @@ images for specific size requirements while maintaining quality.
 | optional | mode | `LIST` |  |  |
 | optional | interpolation | `LIST` |  |  |
 | optional | antialias | `BOOLEAN` | True |  |
+| optional | multiple_of | `INT` | 1 | min=1, step=1, max=1024 |
 
 ### Returns
 
@@ -290,6 +424,8 @@ images for specific size requirements while maintaining quality.
                 - "bicubic": Cubic interpolation (smoother)
                 - "area": Area averaging (good for downscaling)
             antialias (bool): Whether to apply antialiasing when downscaling
+            multiple_of (int, optional): Ensure output dimensions are multiples of this value.
+                If provided, final dimensions will be adjusted to nearest multiple.
 
         Returns:
             tuple:
@@ -310,6 +446,7 @@ images for specific size requirements while maintaining quality.
             - FILL mode ensures target size but may crop content
             - ASPECT mode preserves proportions using longest edge
             - Antialiasing recommended when downscaling
+            - When multiple_of is set, final dimensions will be adjusted to nearest multiple
         """
 
         @classmethod
@@ -320,12 +457,19 @@ images for specific size requirements while maintaining quality.
                     "image": ("IMAGE", {"default": None}),
                     "mask": ("MASK", {"default": None}),
                     "width": ("INT", {"default": 1024, "min": 32, "step": 2, "max": 40960}),
-                    "height": ("INT", {"default": 1024, "min": 32, "step": 2, "max": 40960}),
+                    "height": (
+                        "INT",
+                        {"default": 1024, "min": 32, "step": 2, "max": 40960},
+                    ),
                     "mode": (["STRETCH", "FIT", "FILL", "ASPECT"],),
-                    "interpolation": (["bilinear", "nearest", "bicubic", "area"],),
+                    "interpolation": (["lanczos", "bilinear", "nearest", "bicubic", "area"],),
                     "antialias": (
                         "BOOLEAN",
                         {"default": True},
+                    ),
+                    "multiple_of": (
+                        "INT",
+                        {"default": 1, "min": 1, "step": 1, "max": 1024},
                     ),
                 },
             }
@@ -336,16 +480,23 @@ images for specific size requirements while maintaining quality.
         )
         FUNCTION = "execute"
         CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        Resizes images and masks to specified dimensions with flexible options.
+        Supports various modes (stretch, fit, fill, aspect), interpolation methods,
+        and dimension constraints. Handles both RGB and grayscale inputs.
+        """
 
-        def execute(self, **kwargs):
-            width = kwargs.get("width", 1024)
-            height = kwargs.get("height", 1024)
-            mode = kwargs.get("mode", "default")
-            interpolation = kwargs.get("interpolation", "nearest")
-            antialias = kwargs.get("antialias", True)
-            image = kwargs.get("image", None)
-            mask = kwargs.get("mask", None)
-
+        def execute(
+            self,
+            image: Optional[torch.Tensor] = None,
+            mask: Optional[torch.Tensor] = None,
+            width: int = 1024,
+            height: int = 1024,
+            mode: str = "default",
+            interpolation: str = "lanczos",
+            antialias: bool = True,
+            multiple_of: int = 1,
+        ):
             input_image = (
                 TensorImage.from_BWHC(image)
                 if isinstance(image, torch.Tensor)
@@ -356,15 +507,247 @@ images for specific size requirements while maintaining quality.
                 if isinstance(mask, torch.Tensor)
                 else TensorImage(torch.zeros((1, 1, width, height)))
             )
-            output_image = resize(input_image, width, height, mode, interpolation, antialias).get_BWHC()
-            output_mask = resize(input_mask, width, height, mode, interpolation, antialias).get_BWHC()
+
+            output_image = resize(input_image, width, height, mode, interpolation, antialias, multiple_of).get_BWHC()
+            output_mask = resize(input_mask, width, height, mode, interpolation, antialias, multiple_of).get_BWHC()
 
             return (
                 output_image,
                 output_mask,
             )
+    ```
+
+## UpscaleImage
+
+AI-powered image upscaling with tiled processing and flexible scaling modes.
+
+A comprehensive image upscaling node that leverages AI models for high-quality image enlargement.
+Supports both factor-based rescaling and target size resizing while efficiently managing GPU
+memory through tiled processing. Compatible with various AI upscaling models and includes
+multiple resampling methods for final adjustments.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | image | `IMAGE` |  |  |
+| required | upscale_model | `<ast.Call object at 0x1007d3730>` |  |  |
+| required | mode | `LIST` |  |  |
+| required | rescale_factor | `FLOAT` | 2 | min=0.01, max=100.0, step=0.01 |
+| required | resize_size | `INT` | 1024 | min=1, max=48000, step=1 |
+| required | resampling_method | `resampling_methods` |  |  |
+| required | tiled_size | `INT` | 512 | min=128, max=2048, step=128 |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| image | `IMAGE` |
 
 
+??? note "Source code"
+
+    ```python
+    class UpscaleImage:
+        """AI-powered image upscaling with tiled processing and flexible scaling modes.
+
+        A comprehensive image upscaling node that leverages AI models for high-quality image enlargement.
+        Supports both factor-based rescaling and target size resizing while efficiently managing GPU
+        memory through tiled processing. Compatible with various AI upscaling models and includes
+        multiple resampling methods for final adjustments.
+
+        Args:
+            image (torch.Tensor): Input image tensor in BCHW format with values in range [0, 1].
+            upscale_model (str): Filename of the AI upscaling model to use.
+            mode (str): Scaling mode, either:
+                - "rescale": Scale relative to original size by a factor
+                - "resize": Scale to a specific target size
+            rescale_factor (float, optional): Scaling multiplier when using "rescale" mode.
+                Defaults to 2.0.
+            resize_size (int, optional): Target size in pixels for longest edge when using "resize" mode.
+                Defaults to 1024.
+            resampling_method (str, optional): Final resampling method for precise size adjustment.
+                Options: "bilinear", "nearest", "bicubic", "area". Defaults to "bilinear".
+            tiled_size (int, optional): Size of processing tiles in pixels. Larger tiles use more GPU memory.
+                Defaults to 512.
+
+        Returns:
+            tuple[torch.Tensor]: Single-element tuple containing:
+                - image (torch.Tensor): Upscaled image in BCHW format with values in range [0, 1]
+
+        Raises:
+            ValueError: If the upscale model is invalid or incompatible
+            RuntimeError: If GPU memory is insufficient even with minimum tile size
+            TypeError: If input tensors are of incorrect type
+
+        Notes:
+            - Models are loaded from the "upscale_models" directory
+            - Processing is done in tiles to manage GPU memory efficiently
+            - For large upscaling factors, multiple passes may be performed
+            - The aspect ratio is always preserved in "resize" mode
+            - If GPU memory is insufficient, tile size is automatically reduced
+            - Tiled processing may show slight seams with some models
+            - Final output is always clamped to [0, 1] range
+            - Model scale factor is automatically detected and respected
+            - Progress bar shows processing status for large images
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            resampling_methods = ["bilinear", "nearest", "bicubic", "area"]
+
+            return {
+                "required": {
+                    "image": ("IMAGE",),
+                    "upscale_model": (folder_paths.get_filename_list("upscale_models"),),
+                    "mode": (["rescale", "resize"],),
+                    "rescale_factor": (
+                        "FLOAT",
+                        {"default": 2, "min": 0.01, "max": 100.0, "step": 0.01},
+                    ),
+                    "resize_size": (
+                        "INT",
+                        {"default": 1024, "min": 1, "max": 48000, "step": 1},
+                    ),
+                    "resampling_method": (resampling_methods,),
+                    "tiled_size": (
+                        "INT",
+                        {"default": 512, "min": 128, "max": 2048, "step": 128},
+                    ),
+                }
+            }
+
+        RETURN_TYPES = ("IMAGE",)
+        FUNCTION = "execute"
+        CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        AI-powered image upscaling with tiled processing and flexible scaling modes.
+        Leverages AI models for high-quality enlargement with options for factor-based rescaling or target size resizing.
+        Efficiently manages GPU memory through tiled processing.
+        """
+
+        def load_model(self, model_name):
+            model_path = folder_paths.get_full_path("upscale_models", model_name)
+            sd = comfy.utils.load_torch_file(model_path, safe_load=True)
+            if "module.layers.0.residual_group.blocks.0.norm1.weight" in sd:
+                sd = comfy.utils.state_dict_prefix_replace(sd, {"module.": ""})
+            out = ModelLoader().load_from_state_dict(sd)
+
+            if not isinstance(out, ImageModelDescriptor):
+                raise ValueError("Upscale model must be a single-image model.")
+
+            return out
+
+        def upscale_with_model(
+            self,
+            image: torch.Tensor,
+            upscale_model: Optional[ImageModelDescriptor],
+            device: Optional[torch.device],
+            tile: int = 512,
+            overlap: int = 32,
+        ) -> torch.Tensor:
+            if upscale_model is None:
+                raise ValueError("upscale_model is required")
+            if device is None:
+                raise ValueError("device is required")
+            if not hasattr(upscale_model, "model"):
+                raise ValueError("upscale_model must have a model attribute")
+            if not hasattr(upscale_model, "scale"):
+                raise ValueError("upscale_model must have a scale attribute")
+
+            memory_required = comfy.model_management.module_size(upscale_model.model)
+            memory_required += (tile * tile * 3) * image.element_size() * max(upscale_model.scale, 1.0) * 384.0
+            memory_required += image.nelement() * image.element_size()
+            comfy.model_management.free_memory(memory_required, device)
+            in_img = image.movedim(-1, -3).to(device)
+
+            s = None
+            oom = True
+            while oom:
+                try:
+                    steps = in_img.shape[0] * comfy.utils.get_tiled_scale_steps(
+                        in_img.shape[3],
+                        in_img.shape[2],
+                        tile_x=tile,
+                        tile_y=tile,
+                        overlap=overlap,
+                    )
+                    pbar = comfy.utils.ProgressBar(steps)
+                    s = comfy.utils.tiled_scale(
+                        in_img,
+                        lambda a: upscale_model(a),
+                        tile_x=tile,
+                        tile_y=tile,
+                        overlap=overlap,
+                        upscale_amount=upscale_model.scale,
+                        pbar=pbar,
+                    )
+                    oom = False
+                except comfy.model_management.OOM_EXCEPTION as e:
+                    tile //= 2
+                    if tile < 128:
+                        raise e
+
+            if not isinstance(s, torch.Tensor):
+                raise ValueError("Upscaling failed")
+            s = torch.clamp(s.movedim(-3, -1), min=0, max=1.0)  # type: ignore
+            return s
+
+        def execute(
+            self,
+            image: torch.Tensor,
+            upscale_model: str,
+            mode: str = "rescale",
+            rescale_factor: float = 2,
+            resize_size: int = 1024,
+            resampling_method: str = "bilinear",
+            tiled_size: int = 512,
+        ):
+            # Load upscale model
+            up_model = self.load_model(upscale_model)
+            device = comfy.model_management.get_torch_device()
+            up_model.to(device)
+
+            # target size
+            _, H, W, _ = image.shape
+            target_size = resize_size if mode == "resize" else max(H, W) * rescale_factor
+            current_size = max(H, W)
+            up_image = image
+            while current_size < target_size:
+                step = self.upscale_with_model(upscale_model=up_model, image=up_image, device=device, tile=tiled_size)
+                del up_image
+                up_image = step.to("cpu")
+                _, H, W, _ = up_image.shape
+                current_size = max(H, W)
+
+            up_model.to("cpu")
+            tensor_image = TensorImage.from_BWHC(up_image)
+
+            if mode == "resize":
+                up_image = resize(
+                    tensor_image,
+                    resize_size,
+                    resize_size,
+                    "ASPECT",
+                    resampling_method,
+                    True,
+                ).get_BWHC()
+            else:
+                # get the max size of the upscaled image
+                _, _, H, W = tensor_image.shape
+                upscaled_max_size = max(H, W)
+
+                original_image = TensorImage.from_BWHC(image)
+                _, _, ori_H, ori_W = original_image.shape
+                original_max_size = max(ori_H, ori_W)
+
+                # rescale_factor is the factor to multiply the original max size
+                original_target_size = rescale_factor * original_max_size
+                scale_factor = original_target_size / upscaled_max_size
+
+                up_image = rescale(tensor_image, scale_factor, resampling_method, True).get_BWHC()
+
+            return (up_image,)
     ```
 
 ## Rotate
@@ -435,7 +818,10 @@ trade-off between content preservation and output size.
                 "optional": {
                     "image": ("IMAGE", {"default": None}),
                     "mask": ("MASK", {"default": None}),
-                    "angle": ("FLOAT", {"default": 0.0, "min": 0, "max": 360.0, "step": 1.0}),
+                    "angle": (
+                        "FLOAT",
+                        {"default": 0.0, "min": 0, "max": 360.0, "step": 1.0},
+                    ),
                     "zoom_to_fit": ("BOOLEAN", {"default": False}),
                 },
             }
@@ -446,13 +832,19 @@ trade-off between content preservation and output size.
         )
         FUNCTION = "execute"
         CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        Rotates images and masks by a specified angle with optional zoom adjustment.
+        Controls whether to zoom out to show all rotated content or maintain original dimensions.
+        Useful for reorienting content while managing content preservation.
+        """
 
-        def execute(self, **kwargs):
-            image = kwargs.get("image", None)
-            mask = kwargs.get("mask", None)
-            angle = kwargs.get("angle", 0.0)
-            zoom_to_fit = kwargs.get("zoom_to_fit", False)
-
+        def execute(
+            self,
+            image: Optional[torch.Tensor] = None,
+            mask: Optional[torch.Tensor] = None,
+            angle: float = 0.0,
+            zoom_to_fit: bool = False,
+        ):
             input_image = (
                 TensorImage.from_BWHC(image) if isinstance(image, torch.Tensor) else TensorImage(torch.zeros((1, 3, 1, 1)))
             )
@@ -466,315 +858,171 @@ trade-off between content preservation and output size.
                 output_image,
                 output_mask,
             )
-
-
     ```
 
-## Cutout
+## ResizeWithMegapixels
 
-Creates masked cutouts from images with both RGB and RGBA outputs.
+Resizes images and masks to a target megapixel count while preserving aspect ratio.
 
-Extracts portions of an image based on a mask, providing both RGB and RGBA
-versions of the result. Useful for isolating subjects or creating transparent
-cutouts for compositing.
+A specialized resizing node that targets a specific image size in megapixels rather than
+exact dimensions. This is useful for batch processing images to a consistent size while
+maintaining their original proportions and managing memory usage.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | image | `IMAGE` |  |  |
-| required | mask | `MASK` |  |  |
+| required | megapixels | `FLOAT` | 1.0 | min=0.01, max=100.0, step=0.1 |
+| optional | image | `IMAGE` | None |  |
+| optional | mask | `MASK` | None |  |
+| optional | interpolation | `LIST` |  |  |
+| optional | antialias | `BOOLEAN` | True |  |
+| optional | multiple_of | `INT` | 1 | min=1, step=1, max=1024 |
 
 ### Returns
 
 | Name | Type |
 |------|------|
 | image | `IMAGE` |
-| image | `IMAGE` |
+| mask | `MASK` |
 
 
 ??? note "Source code"
 
     ```python
-    class Cutout:
-        """Creates masked cutouts from images with both RGB and RGBA outputs.
+    class ResizeWithMegapixels:
+        """Resizes images and masks to a target megapixel count while preserving aspect ratio.
 
-        Extracts portions of an image based on a mask, providing both RGB and RGBA
-        versions of the result. Useful for isolating subjects or creating transparent
-        cutouts for compositing.
+        A specialized resizing node that targets a specific image size in megapixels rather than
+        exact dimensions. This is useful for batch processing images to a consistent size while
+        maintaining their original proportions and managing memory usage.
 
         Args:
-            image (torch.Tensor): Input image in BWHC format with values in range [0, 1]
-            mask (torch.Tensor): Binary or continuous mask in BWHC format with values in range [0, 1]
+            megapixels (float): Target size in megapixels (0.01-100.0)
+            image (torch.Tensor, optional): Input image in BWHC format with values in range [0, 1]
+            mask (torch.Tensor, optional): Input mask in BWHC format with values in range [0, 1]
+            interpolation (str): Resampling method:
+                - "bilinear": Linear interpolation (smooth)
+                - "nearest": Nearest neighbor (sharp)
+                - "bicubic": Cubic interpolation (smoother)
+                - "area": Area averaging (good for downscaling)
+            antialias (bool): Whether to apply antialiasing when downscaling
 
         Returns:
             tuple:
-                - rgb (torch.Tensor): Masked image in RGB format (BWHC)
-                - rgba (torch.Tensor): Masked image in RGBA format (BWHC)
+                - image (torch.Tensor): Resized image in BWHC format
+                - mask (torch.Tensor): Resized mask in BWHC format
 
         Raises:
-            ValueError: If either image or mask is not provided
-            ValueError: If input tensors have mismatched dimensions
+            ValueError: If neither image nor mask is provided
+            ValueError: If invalid interpolation method
             RuntimeError: If input tensors have invalid dimensions
 
         Notes:
-            - Mask values determine transparency in RGBA output
-            - RGB output has masked areas filled with black
-            - RGBA output preserves partial mask values as alpha
-            - Input image must be 3 channels (RGB)
-            - Input mask must be 1 channel
-            - Output maintains original image resolution
-            - All non-zero mask values are considered for cutout
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "image": ("IMAGE",),
-                    "mask": ("MASK",),
-                },
-            }
-
-        RETURN_TYPES = ("IMAGE", "IMAGE")
-        RETURN_NAMES = ("rgb", "rgba")
-        FUNCTION = "execute"
-        CATEGORY = IMAGE_PROCESSING_CAT
-
-        def execute(self, **kwargs):
-            image = kwargs.get("image")
-            mask = kwargs.get("mask")
-
-            if not isinstance(image, torch.Tensor) or not isinstance(mask, torch.Tensor):
-                raise ValueError("Either image or mask must be provided")
-
-            tensor_image = TensorImage.from_BWHC(image)
-            tensor_mask = TensorImage.from_BWHC(mask, image.device)
-
-            image_rgb, image_rgba = cutout(tensor_image, tensor_mask)
-
-            out_image_rgb = TensorImage(image_rgb).get_BWHC()
-            out_image_rgba = TensorImage(image_rgba).get_BWHC()
-
-            return (
-                out_image_rgb,
-                out_image_rgba,
-            )
-
-
-    ```
-
-## UpscaleImage
-
-AI-powered image upscaling with tiled processing and flexible scaling modes.
-
-A comprehensive image upscaling node that leverages AI models for high-quality image enlargement.
-Supports both factor-based rescaling and target size resizing while efficiently managing GPU
-memory through tiled processing. Compatible with various AI upscaling models and includes
-multiple resampling methods for final adjustments.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | image | `IMAGE` |  |  |
-| required | upscale_model | `<ast.Call object at 0x101332dd0>` |  |  |
-| required | mode | `LIST` |  |  |
-| required | rescale_factor | `FLOAT` | 2 | min=0.01, max=100.0, step=0.01 |
-| required | resize_size | `INT` | 1024 | min=1, max=48000, step=1 |
-| required | resampling_method | `resampling_methods` |  |  |
-| required | tiled_size | `INT` | 512 | min=128, max=2048, step=128 |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| image | `IMAGE` |
-
-
-??? note "Source code"
-
-    ```python
-    class UpscaleImage:
-        """AI-powered image upscaling with tiled processing and flexible scaling modes.
-
-        A comprehensive image upscaling node that leverages AI models for high-quality image enlargement.
-        Supports both factor-based rescaling and target size resizing while efficiently managing GPU
-        memory through tiled processing. Compatible with various AI upscaling models and includes
-        multiple resampling methods for final adjustments.
-
-        Args:
-            image (torch.Tensor): Input image tensor in BCHW format with values in range [0, 1].
-            upscale_model (str): Filename of the AI upscaling model to use.
-            mode (str): Scaling mode, either:
-                - "rescale": Scale relative to original size by a factor
-                - "resize": Scale to a specific target size
-            rescale_factor (float, optional): Scaling multiplier when using "rescale" mode.
-                Defaults to 2.0.
-            resize_size (int, optional): Target size in pixels for longest edge when using "resize" mode.
-                Defaults to 1024.
-            resampling_method (str, optional): Final resampling method for precise size adjustment.
-                Options: "bilinear", "nearest", "bicubic", "area". Defaults to "bilinear".
-            tiled_size (int, optional): Size of processing tiles in pixels. Larger tiles use more GPU memory.
-                Defaults to 512.
-
-        Returns:
-            tuple[torch.Tensor]: Single-element tuple containing:
-                - image (torch.Tensor): Upscaled image in BCHW format with values in range [0, 1]
-
-        Raises:
-            ValueError: If the upscale model is invalid or incompatible
-            RuntimeError: If GPU memory is insufficient even with minimum tile size
-            TypeError: If input tensors are of incorrect type
-
-        Notes:
-            - Models are loaded from the "upscale_models" directory
-            - Processing is done in tiles to manage GPU memory efficiently
-            - For large upscaling factors, multiple passes may be performed
-            - The aspect ratio is always preserved in "resize" mode
-            - If GPU memory is insufficient, tile size is automatically reduced
-            - Tiled processing may show slight seams with some models
-            - Final output is always clamped to [0, 1] range
-            - Model scale factor is automatically detected and respected
-            - Progress bar shows processing status for large images
+            - At least one of image or mask must be provided
+            - Output maintains the same number of channels as input
+            - Aspect ratio is always preserved
+            - Target dimensions are calculated as sqrt(megapixels * 1M * aspect_ratio)
+            - Actual output size may vary slightly due to rounding
+            - Memory usage scales linearly with megapixel count
+            - Antialiasing recommended when downscaling
         """
 
         @classmethod
         def INPUT_TYPES(cls):  # type: ignore
-            resampling_methods = ["bilinear", "nearest", "bicubic", "area"]
-
             return {
                 "required": {
-                    "image": ("IMAGE",),
-                    "upscale_model": (folder_paths.get_filename_list("upscale_models"),),
-                    "mode": (["rescale", "resize"],),
-                    "rescale_factor": ("FLOAT", {"default": 2, "min": 0.01, "max": 100.0, "step": 0.01}),
-                    "resize_size": ("INT", {"default": 1024, "min": 1, "max": 48000, "step": 1}),
-                    "resampling_method": (resampling_methods,),
-                    "tiled_size": ("INT", {"default": 512, "min": 128, "max": 2048, "step": 128}),
-                }
+                    "megapixels": (
+                        "FLOAT",
+                        {"default": 1.0, "min": 0.01, "max": 100.0, "step": 0.1},
+                    ),
+                },
+                "optional": {
+                    "image": ("IMAGE", {"default": None}),
+                    "mask": ("MASK", {"default": None}),
+                    "interpolation": (["lanczos", "bilinear", "nearest", "bicubic", "area"],),
+                    "antialias": (
+                        "BOOLEAN",
+                        {"default": True},
+                    ),
+                    "multiple_of": (
+                        "INT",
+                        {"default": 1, "min": 1, "step": 1, "max": 1024},
+                    ),
+                },
             }
 
-        RETURN_TYPES = ("IMAGE",)
-        RETURN_NAMES = ("IMAGE",)
+        RETURN_TYPES = (
+            "IMAGE",
+            "MASK",
+        )
         FUNCTION = "execute"
         CATEGORY = IMAGE_PROCESSING_CAT
+        DESCRIPTION = """
+        Resizes images based on total pixel count (megapixels) while preserving aspect ratio.
+        Instead of specifying exact dimensions, target a specific image size in megapixels.
+        Useful for batch processing to consistent quality levels or reducing memory usage.
+        """
 
-        def load_model(self, model_name):
-            model_path = folder_paths.get_full_path("upscale_models", model_name)
-            sd = comfy.utils.load_torch_file(model_path, safe_load=True)
-            if "module.layers.0.residual_group.blocks.0.norm1.weight" in sd:
-                sd = comfy.utils.state_dict_prefix_replace(sd, {"module.": ""})
-            out = ModelLoader().load_from_state_dict(sd)
+        def get_dimensions(self, megapixels: float, original_width: int = 0, original_height: int = 0) -> tuple[int, int]:
+            """Calculate target dimensions based on megapixels while preserving aspect ratio.
 
-            if not isinstance(out, ImageModelDescriptor):
-                raise ValueError("Upscale model must be a single-image model.")
+            Args:
+                megapixels (float): Target size in megapixels
+                original_width (int): Original image width (optional)
+                original_height (int): Original image height (optional)
 
-            return out
+            Returns:
+                tuple[int, int]: Target (width, height)
+            """
+            total_pixels = megapixels * 1000000
 
-        def upscale_with_model(self, **kwargs) -> torch.Tensor:
-            upscale_model = kwargs.get("upscale_model")
-            image = kwargs.get("image")
-            device = kwargs.get("device")
-            tile = kwargs.get("tile", 512)
-            overlap = kwargs.get("overlap", 32)
-
-            if upscale_model is None:
-                raise ValueError("upscale_model is required")
-            if image is None:
-                raise ValueError("image is required")
-            if device is None:
-                raise ValueError("device is required")
-            if not isinstance(tile, int):
-                raise ValueError("tile must be an integer")
-            if not isinstance(overlap, int):
-                raise ValueError("overlap must be an integer")
-            if not hasattr(upscale_model, "model"):
-                raise ValueError("upscale_model must have a model attribute")
-            if not hasattr(upscale_model, "scale"):
-                raise ValueError("upscale_model must have a scale attribute")
-            if not isinstance(image, torch.Tensor):
-                raise ValueError("image must be a torch.Tensor")
-
-            memory_required = model_management.module_size(upscale_model.model)
-            memory_required += (tile * tile * 3) * image.element_size() * max(upscale_model.scale, 1.0) * 384.0
-            memory_required += image.nelement() * image.element_size()
-            model_management.free_memory(memory_required, device)
-            in_img = image.movedim(-1, -3).to(device)
-
-            s = None
-            oom = True
-            while oom:
-                try:
-                    steps = in_img.shape[0] * comfy.utils.get_tiled_scale_steps(
-                        in_img.shape[3], in_img.shape[2], tile_x=tile, tile_y=tile, overlap=overlap
-                    )
-                    pbar = comfy.utils.ProgressBar(steps)
-                    s = comfy.utils.tiled_scale(
-                        in_img,
-                        lambda a: upscale_model(a),
-                        tile_x=tile,
-                        tile_y=tile,
-                        overlap=overlap,
-                        upscale_amount=upscale_model.scale,
-                        pbar=pbar,
-                    )
-                    oom = False
-                except model_management.OOM_EXCEPTION as e:
-                    tile //= 2
-                    if tile < 128:
-                        raise e
-
-            if not isinstance(s, torch.Tensor):
-                raise ValueError("Upscaling failed")
-            s = torch.clamp(s.movedim(-3, -1), min=0, max=1.0)  # type: ignore
-            return s
-
-        def execute(self, image, upscale_model, **kwargs):
-            # Load upscale model
-            up_model = self.load_model(upscale_model)
-            device = model_management.get_torch_device()
-            up_model.to(device)
-
-            # Get kwargs with defaults
-            mode = kwargs.get("mode", "rescale")
-            resampling_method = kwargs.get("resampling_method", "bilinear")
-            rescale_factor = kwargs.get("rescale_factor", 2)
-            resize_size = kwargs.get("resize_size", 1024)
-            tiled_size = kwargs.get("tiled_size", 512)
-
-            # target size
-            _, H, W, _ = image.shape
-            target_size = resize_size if mode == "resize" else max(H, W) * rescale_factor
-            current_size = max(H, W)
-            up_image = image
-            while current_size < target_size:
-                step = self.upscale_with_model(upscale_model=up_model, image=up_image, device=device, tile=tiled_size)
-                del up_image
-                up_image = step.to("cpu")
-                _, H, W, _ = up_image.shape
-                current_size = max(H, W)
-
-            up_model.to("cpu")
-            tensor_image = TensorImage.from_BWHC(up_image)
-
-            if mode == "resize":
-                up_image = resize(tensor_image, resize_size, resize_size, "ASPECT", resampling_method, True).get_BWHC()
+            if original_width > 0 and original_height > 0:
+                # Preserve aspect ratio if original dimensions are provided
+                aspect_ratio = original_width / original_height
+                height = math.sqrt(total_pixels / aspect_ratio)
+                width = height * aspect_ratio
             else:
-                # get the max size of the upscaled image
-                _, _, H, W = tensor_image.shape
-                upscaled_max_size = max(H, W)
+                # Default to square dimensions if no original dimensions
+                width = height = math.sqrt(total_pixels)
 
-                original_image = TensorImage.from_BWHC(image)
-                _, _, ori_H, ori_W = original_image.shape
-                original_max_size = max(ori_H, ori_W)
+            return (round(width), round(height))
 
-                # rescale_factor is the factor to multiply the original max size
-                original_target_size = rescale_factor * original_max_size
-                scale_factor = original_target_size / upscaled_max_size
+        def execute(
+            self,
+            megapixels: float = 1.0,
+            image: Optional[torch.Tensor] = None,
+            mask: Optional[torch.Tensor] = None,
+            interpolation: str = "lanczos",
+            antialias: bool = True,
+            multiple_of: int = 1,
+        ) -> tuple[torch.Tensor, torch.Tensor]:
+            if isinstance(image, torch.Tensor):
+                shape = TensorImage.from_BWHC(image).shape
 
-                up_image = rescale(tensor_image, scale_factor, resampling_method, True).get_BWHC()
+            elif isinstance(mask, torch.Tensor):
+                shape = TensorImage.from_BWHC(mask).shape
 
-            return (up_image,)
+            else:
+                raise ValueError("Either image or mask must be provided")
+
+            _, _, orig_height, orig_width = shape
+
+            target_width, target_height = self.get_dimensions(megapixels, orig_width, orig_height)
+
+            # Create a Resize instance and call its execute method
+            resize_node = Resize()
+            output_image, output_mask = resize_node.execute(
+                image=image,
+                mask=mask,
+                width=target_width,
+                height=target_height,
+                mode="ASPECT",
+                interpolation=interpolation,
+                antialias=antialias,
+                multiple_of=multiple_of,
+            )
+
+            return (output_image, output_mask)
 
     ```

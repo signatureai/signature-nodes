@@ -10,21 +10,20 @@ probability.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | height | `INT` | 1024 | min=32, step=32 |
-| required | width | `INT` | 1024 | min=32, step=32 |
-| required | min_window | `INT` | 256 | step=32 |
-| required | max_window | `INT` | 1024 | step=32 |
-| required | percent | `FLOAT` | 1.0 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
+| Group    | Name         | Type           | Default | Extras           |
+| -------- | ------------ | -------------- | ------- | ---------------- |
+| required | height       | `INT`          | 1024    | min=32, step=32  |
+| required | width        | `INT`          | 1024    | min=32, step=32  |
+| required | min_window   | `INT`          | 256     | step=32          |
+| required | max_window   | `INT`          | 1024    | step=32          |
+| required | percent      | `FLOAT`        | 1.0     | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None    |                  |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name         | Type           |
+| ------------ | -------------- |
 | augmentation | `AUGMENTATION` |
-
 
 ??? note "Source code"
 
@@ -76,104 +75,25 @@ probability.
             }
 
         RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
         FUNCTION = "execute"
         CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Performs random cropping on images with configurable dimensions and frequency.
+        Control crop window size range and target output dimensions.
+        Chain with other augmentations for diverse composition variations."""
 
         def execute(
             self,
-            **kwargs,
-        ):
-            height = kwargs.get("height") or 1024
-            width = kwargs.get("width") or 1024
-            min_window = kwargs.get("min_window") or 256
-            max_window = kwargs.get("max_window") or 1024
-            percent = kwargs.get("percent") or 1.0
-            augmentation = kwargs.get("augmentation")
+            height: int = 1024,
+            width: int = 1024,
+            min_window: int = 256,
+            max_window: int = 1024,
+            percent: float = 1.0,
+            augmentation: list | None = None,
+        ) -> tuple[list]:
             augmentation = random_crop_augmentation(height, width, min_window, max_window, percent, augmentation)
+
             return (augmentation,)
-
-
-    ```
-
-## FlipAugmentation
-
-Applies horizontal or vertical flip augmentation to images with configurable probability.
-
-This node performs random flip transformations on input images. It supports both horizontal and
-vertical flip operations with adjustable probability of application.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | flip | `LIST` | horizontal |  |
-| required | percent | `FLOAT` | 0.5 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| augmentation | `AUGMENTATION` |
-
-
-??? note "Source code"
-
-    ```python
-    class FlipAugmentation:
-        """Applies horizontal or vertical flip augmentation to images with configurable probability.
-
-        This node performs random flip transformations on input images. It supports both horizontal and
-        vertical flip operations with adjustable probability of application.
-
-        Args:
-            flip (str): Direction of flip operation, either:
-                - "horizontal": Flips image left to right
-                - "vertical": Flips image top to bottom
-            percent (float): Probability of applying the flip, from 0.0 to 1.0.
-            augmentation (AUGMENTATION, optional): Existing augmentation to chain with. Defaults to None.
-
-        Returns:
-            tuple: Contains a single element:
-                augmentation (AUGMENTATION): The configured flip augmentation operation.
-
-        Raises:
-            ValueError: If flip direction is not "horizontal" or "vertical".
-            ValueError: If percent is not between 0.0 and 1.0.
-
-        Notes:
-            - Flip direction cannot be changed after initialization
-            - Setting percent to 0.5 applies the flip to approximately half of all samples
-            - Can be chained with other augmentations through the augmentation parameter
-            - Transformations are applied consistently when used with ComposeAugmentation
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "flip": (["horizontal", "vertical"], {"default": "horizontal"}),
-                    "percent": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
-                },
-                "optional": {
-                    "augmentation": ("AUGMENTATION", {"default": None}),
-                },
-            }
-
-        RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
-        FUNCTION = "execute"
-        CATEGORY = AUGMENTATION_CAT
-
-        def execute(self, **kwargs):
-            flip = kwargs.get("flip") or "horizontal"
-            percent = kwargs.get("percent") or 0.5
-            augmentation = kwargs.get("augmentation")
-            augmentation = flip_augmentation(flip, percent, augmentation)
-            return (augmentation,)
-
-
     ```
 
 ## ComposeAugmentation
@@ -185,21 +105,20 @@ provides control over sample generation and reproducibility through seed managem
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | augmentation | `AUGMENTATION` |  |  |
-| required | samples | `INT` | 1 | min=1 |
-| required | seed | `INT` |  | max=10000000000000000 |
-| optional | image | `IMAGE` | None |  |
-| optional | mask | `MASK` | None |  |
+| Group    | Name         | Type           | Default | Extras                |
+| -------- | ------------ | -------------- | ------- | --------------------- |
+| required | augmentation | `AUGMENTATION` |         |                       |
+| required | samples      | `INT`          | 1       | min=1                 |
+| required | seed         | `INT`          |         | max=10000000000000000 |
+| optional | image        | `IMAGE`        | None    |                       |
+| optional | mask         | `MASK`         | None    |                       |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name  | Type    |
+| ----- | ------- |
 | image | `IMAGE` |
-| mask | `MASK` |
-
+| mask  | `MASK`  |
 
 ??? note "Source code"
 
@@ -260,17 +179,19 @@ provides control over sample generation and reproducibility through seed managem
             True,
             True,
         )
+        DESCRIPTION = """
+        Applies augmentations to images and masks, creating multiple variations with the same transformations.
+        Control the number of samples and use seeds for reproducible results.
+        Connect augmentation nodes to create complex transformation chains."""
 
         def execute(
             self,
-            **kwargs,
-        ):
-            augmentation = kwargs.get("augmentation") or []
-            samples = kwargs.get("samples") or 1
-            image = kwargs.get("image")
-            mask = kwargs.get("mask")
-            seed = kwargs.get("seed") or -1
-
+            augmentation: list,
+            samples: int = 1,
+            seed: int = -1,
+            image: Optional[torch.Tensor] = None,
+            mask: Optional[torch.Tensor] = None,
+        ) -> tuple[list, list]:
             # Create a dummy image if only mask is provided
             if image is None and mask is not None:
                 image = torch.zeros_like(mask)
@@ -292,69 +213,72 @@ provides control over sample generation and reproducibility through seed managem
                 total_masks = []
             node_image = [image.get_BWHC() for image in total_images]
             node_mask = [mask.get_BWHC() for mask in total_masks]
+
             return (
                 node_image,
                 node_mask,
             )
-
-
     ```
 
-## BrightnessContrastAugmentation
+## QualityAugmentation
 
-Applies brightness and contrast adjustments to images.
+Simulates image quality degradation through compression or downscaling.
 
-This node provides controls for adjusting image brightness and contrast with configurable
-limits and probability of application.
+This node provides options to reduce image quality in ways that simulate real-world
+quality loss scenarios.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | brightness_limit | `FLOAT` | 0.2 | min=0.0, max=1.0 |
-| required | contrast_limit | `FLOAT` | 0.2 | min=0.0, max=1.0 |
-| required | percent | `FLOAT` | 0.5 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
+| Group    | Name          | Type           | Default     | Extras           |
+| -------- | ------------- | -------------- | ----------- | ---------------- |
+| required | quality_type  | `LIST`         | compression |                  |
+| required | quality_limit | `INT`          | 60          | min=1, max=100   |
+| required | percent       | `FLOAT`        | 0.2         | min=0.0, max=1.0 |
+| optional | augmentation  | `AUGMENTATION` | None        |                  |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name         | Type           |
+| ------------ | -------------- |
 | augmentation | `AUGMENTATION` |
-
 
 ??? note "Source code"
 
     ```python
-    class BrightnessContrastAugmentation:
-        """Applies brightness and contrast adjustments to images.
+    class QualityAugmentation:
+        """Simulates image quality degradation through compression or downscaling.
 
-        This node provides controls for adjusting image brightness and contrast with configurable
-        limits and probability of application.
+        This node provides options to reduce image quality in ways that simulate real-world
+        quality loss scenarios.
 
         Args:
-            brightness_limit (float): Maximum brightness adjustment range (0.0-1.0)
-            contrast_limit (float): Maximum contrast adjustment range (0.0-1.0)
-            percent (float): Probability of applying the augmentation (0.0-1.0)
+            quality_type (str): Type of quality reduction:
+                - "compression": JPEG-like compression artifacts
+                - "downscale": Resolution reduction and upscaling
+            quality_limit (int): Quality parameter (1-100, lower = more degradation)
+            percent (float): Probability of applying the effect (0.0-1.0)
             augmentation (AUGMENTATION, optional): Existing augmentation to chain with
 
         Returns:
             tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
 
         Notes:
-            - Brightness adjustments are applied as multiplicative factors
-            - Contrast adjustments modify image histogram spread
+            - Compression type simulates JPEG artifacts
+            - Downscale type reduces and restores resolution
+            - Lower quality limits produce more visible artifacts
             - Can be chained with other augmentations
-            - Actual adjustment values are randomly sampled within limits
         """
 
         @classmethod
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "brightness_limit": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
-                    "contrast_limit": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
-                    "percent": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
+                    "quality_type": (
+                        ["compression", "downscale"],
+                        {"default": "compression"},
+                    ),
+                    "quality_limit": ("INT", {"default": 60, "min": 1, "max": 100}),
+                    "percent": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
                 },
                 "optional": {
                     "augmentation": ("AUGMENTATION", {"default": None}),
@@ -362,78 +286,89 @@ limits and probability of application.
             }
 
         RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
         FUNCTION = "execute"
         CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Simulates image quality degradation through compression artifacts or downscaling.
+        Control quality reduction level and application frequency.
+        Chain with other augmentations for realistic image imperfections."""
 
-        def execute(self, **kwargs):
-            brightness_limit = kwargs.get("brightness_limit") or 0.2
-            contrast_limit = kwargs.get("contrast_limit") or 0.2
-            percent = kwargs.get("percent") or 0.5
-            augmentation = kwargs.get("augmentation")
-            augmentation = brightness_contrast_augmentation(
-                brightness_limit=brightness_limit,
-                contrast_limit=contrast_limit,
+        def execute(
+            self,
+            quality_type: str = "compression",
+            quality_limit: int = 60,
+            percent: float = 0.2,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = quality_augmentation(
+                quality_type=quality_type,
+                quality_limit=quality_limit,
                 percent=percent,
                 augmentation=augmentation,
             )
             return (augmentation,)
-
-
     ```
 
-## RotationAugmentation
+## DistortionAugmentation
 
-Rotates images by random angles within specified limits.
+Applies geometric distortion effects to images.
 
-This node performs random rotation augmentation with configurable angle limits and
-application probability.
+This node provides various types of geometric distortion with configurable severity
+and application probability.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | limit | `INT` | 45 | min=0, max=180 |
-| required | percent | `FLOAT` | 0.5 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
+| Group    | Name            | Type           | Default | Extras           |
+| -------- | --------------- | -------------- | ------- | ---------------- |
+| required | distortion_type | `LIST`         | optical |                  |
+| required | severity        | `INT`          | 1       | min=1, max=5     |
+| required | percent         | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
+| optional | augmentation    | `AUGMENTATION` | None    |                  |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name         | Type           |
+| ------------ | -------------- |
 | augmentation | `AUGMENTATION` |
-
 
 ??? note "Source code"
 
     ```python
-    class RotationAugmentation:
-        """Rotates images by random angles within specified limits.
+    class DistortionAugmentation:
+        """Applies geometric distortion effects to images.
 
-        This node performs random rotation augmentation with configurable angle limits and
-        application probability.
+        This node provides various types of geometric distortion with configurable severity
+        and application probability.
 
         Args:
-            limit (int): Maximum rotation angle in degrees (0-180)
-            percent (float): Probability of applying the rotation (0.0-1.0)
+            distortion_type (str): Type of distortion to apply:
+                - "optical": Lens-like distortion
+                - "grid": Grid-based warping
+                - "elastic": Elastic deformation
+            severity (int): Intensity of the distortion effect (1-5)
+            percent (float): Probability of applying the effect (0.0-1.0)
             augmentation (AUGMENTATION, optional): Existing augmentation to chain with
 
         Returns:
             tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
 
         Notes:
-            - Rotation angles are randomly sampled between -limit and +limit
-            - Empty areas after rotation are filled with black
+            - Each distortion type produces unique geometric deformations
+            - Higher severity values create stronger distortion effects
             - Can be chained with other augmentations
-            - Original aspect ratio is preserved
+            - Maintains overall image structure while adding local deformations
         """
 
         @classmethod
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "limit": ("INT", {"default": 45, "min": 0, "max": 180}),
-                    "percent": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
+                    "distortion_type": (
+                        ["optical", "grid", "elastic"],
+                        {"default": "optical"},
+                    ),
+                    "severity": ("INT", {"default": 1, "min": 1, "max": 5}),
+                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
                 },
                 "optional": {
                     "augmentation": ("AUGMENTATION", {"default": None}),
@@ -441,18 +376,204 @@ application probability.
             }
 
         RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
         FUNCTION = "execute"
         CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Applies geometric distortion effects to images with optical, grid, or elastic deformations.
+        Control distortion intensity and application frequency.
+        Chain with other augmentations for complex transformations."""
 
-        def execute(self, **kwargs):
-            limit = kwargs.get("limit") or 45
-            percent = kwargs.get("percent") or 0.5
-            augmentation = kwargs.get("augmentation")
-            augmentation = rotation_augmentation(limit=limit, percent=percent, augmentation=augmentation)
+        def execute(
+            self,
+            distortion_type: str = "optical",
+            severity: int = 1,
+            percent: float = 0.3,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = distortion_augmentation(
+                distortion_type=distortion_type,
+                severity=severity,
+                percent=percent,
+                augmentation=augmentation,
+            )
             return (augmentation,)
+    ```
 
+## GridAugmentation
 
+Applies grid-based transformations to images.
+
+This node provides grid-based image modifications including shuffling and dropout
+effects.
+
+### Inputs
+
+| Group    | Name         | Type           | Default | Extras           |
+| -------- | ------------ | -------------- | ------- | ---------------- |
+| required | grid_type    | `LIST`         | shuffle |                  |
+| required | grid_size    | `INT`          | 3       | min=2, max=10    |
+| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None    |                  |
+
+### Returns
+
+| Name         | Type           |
+| ------------ | -------------- |
+| augmentation | `AUGMENTATION` |
+
+??? note "Source code"
+
+    ```python
+    class GridAugmentation:
+        """Applies grid-based transformations to images.
+
+        This node provides grid-based image modifications including shuffling and dropout
+        effects.
+
+        Args:
+            grid_type (str): Type of grid transformation:
+                - "shuffle": Randomly permute grid cells
+                - "dropout": Randomly remove grid cells
+            grid_size (int): Number of grid divisions (2-10)
+            percent (float): Probability of applying the effect (0.0-1.0)
+            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
+
+        Returns:
+            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
+
+        Notes:
+            - Image is divided into grid_size x grid_size cells
+            - Shuffle randomly reorders grid cells
+            - Dropout replaces cells with black
+            - Can be chained with other augmentations
+            - Maintains overall image structure while adding local variations
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "grid_type": (["shuffle", "dropout"], {"default": "shuffle"}),
+                    "grid_size": ("INT", {"default": 3, "min": 2, "max": 10}),
+                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
+                },
+                "optional": {
+                    "augmentation": ("AUGMENTATION", {"default": None}),
+                },
+            }
+
+        RETURN_TYPES = ("AUGMENTATION",)
+        FUNCTION = "execute"
+        CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Applies grid-based transformations to images with shuffle or dropout effects.
+        Control grid size and application frequency. Maintains overall image structure while adding local variations.
+        Chain with other augmentations for creative results."""
+
+        def execute(
+            self,
+            grid_type: str = "shuffle",
+            grid_size: int = 3,
+            percent: float = 0.3,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = grid_augmentation(
+                grid_type=grid_type,
+                grid_size=grid_size,
+                percent=percent,
+                augmentation=augmentation,
+            )
+            return (augmentation,)
+    ```
+
+## ShiftScaleAugmentation
+
+Applies random shifting, scaling, and rotation transformations.
+
+This node combines multiple geometric transformations with configurable ranges
+and probability.
+
+### Inputs
+
+| Group    | Name         | Type           | Default | Extras           |
+| -------- | ------------ | -------------- | ------- | ---------------- |
+| required | shift_limit  | `FLOAT`        | 0.1     | min=0.0, max=1.0 |
+| required | scale_limit  | `FLOAT`        | 0.2     | min=0.0, max=1.0 |
+| required | rotate_limit | `INT`          | 45      | min=0, max=180   |
+| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None    |                  |
+
+### Returns
+
+| Name         | Type           |
+| ------------ | -------------- |
+| augmentation | `AUGMENTATION` |
+
+??? note "Source code"
+
+    ```python
+    class ShiftScaleAugmentation:
+        """Applies random shifting, scaling, and rotation transformations.
+
+        This node combines multiple geometric transformations with configurable ranges
+        and probability.
+
+        Args:
+            shift_limit (float): Maximum shift as fraction of image size (0.0-1.0)
+            scale_limit (float): Maximum scale factor change (0.0-1.0)
+            rotate_limit (int): Maximum rotation angle in degrees (0-180)
+            percent (float): Probability of applying transformations (0.0-1.0)
+            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
+
+        Returns:
+            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
+
+        Notes:
+            - Shift moves image content within frame
+            - Scale changes overall image size
+            - Rotation angles are randomly sampled
+            - Can be chained with other augmentations
+            - All transformations are applied together when selected
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "shift_limit": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0}),
+                    "scale_limit": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
+                    "rotate_limit": ("INT", {"default": 45, "min": 0, "max": 180}),
+                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
+                },
+                "optional": {
+                    "augmentation": ("AUGMENTATION", {"default": None}),
+                },
+            }
+
+        RETURN_TYPES = ("AUGMENTATION",)
+        FUNCTION = "execute"
+        CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Applies random shifting, scaling, and rotation transformations to images.
+        Control transformation ranges and application frequency.
+        Chain with other augmentations for diverse geometric variations."""
+
+        def execute(
+            self,
+            shift_limit: float = 0.1,
+            scale_limit: float = 0.2,
+            rotate_limit: int = 45,
+            percent: float = 0.3,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = shift_scale_augmentation(
+                shift_limit=shift_limit,
+                scale_limit=scale_limit,
+                rotate_limit=rotate_limit,
+                percent=percent,
+                augmentation=augmentation,
+            )
+            return (augmentation,)
     ```
 
 ## BlurAugmentation
@@ -464,20 +585,19 @@ softening effects.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | blur_type | `LIST` | gaussian |  |
-| required | blur_limit_min | `INT` | 3 | min=3, step=3 |
-| required | blur_limit_max | `INT` | 87 | min=3, step=3 |
-| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
+| Group    | Name           | Type           | Default  | Extras           |
+| -------- | -------------- | -------------- | -------- | ---------------- |
+| required | blur_type      | `LIST`         | gaussian |                  |
+| required | blur_limit_min | `INT`          | 3        | min=3, step=3    |
+| required | blur_limit_max | `INT`          | 87       | min=3, step=3    |
+| required | percent        | `FLOAT`        | 0.3      | min=0.0, max=1.0 |
+| optional | augmentation   | `AUGMENTATION` | None     |                  |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name         | Type           |
+| ------------ | -------------- |
 | augmentation | `AUGMENTATION` |
-
 
 ??? note "Source code"
 
@@ -526,15 +646,20 @@ softening effects.
             }
 
         RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
         FUNCTION = "execute"
         CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """Adds blur effects to images with gaussian, motion, or median styles.
+        Control blur strength and application frequency. Chain with other augmentations for creative transformations."""
 
-        def execute(self, **kwargs):
-            blur_type = kwargs.get("blur_type") or "gaussian"
-            blur_limit = (kwargs.get("blur_limit_min", 3), kwargs.get("blur_limit_max", 7))
-            percent = kwargs.get("percent") or 0.3
-            augmentation = kwargs.get("augmentation")
+        def execute(
+            self,
+            blur_type: str = "gaussian",
+            blur_limit_min: int = 3,
+            blur_limit_max: int = 87,
+            percent: float = 0.3,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            blur_limit = (blur_limit_min, blur_limit_max)
             augmentation = blur_augmentation(
                 blur_type=blur_type,
                 blur_limit=blur_limit,
@@ -542,70 +667,62 @@ softening effects.
                 augmentation=augmentation,
             )
             return (augmentation,)
-
-
     ```
 
-## QualityAugmentation
+## BrightnessContrastAugmentation
 
-Simulates image quality degradation through compression or downscaling.
+Applies brightness and contrast adjustments to images.
 
-This node provides options to reduce image quality in ways that simulate real-world
-quality loss scenarios.
+This node provides controls for adjusting image brightness and contrast with configurable
+limits and probability of application.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | quality_type | `LIST` | compression |  |
-| required | quality_limit | `INT` | 60 | min=1, max=100 |
-| required | percent | `FLOAT` | 0.2 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
+| Group    | Name             | Type           | Default | Extras           |
+| -------- | ---------------- | -------------- | ------- | ---------------- |
+| required | brightness_limit | `FLOAT`        | 0.2     | min=0.0, max=1.0 |
+| required | contrast_limit   | `FLOAT`        | 0.2     | min=0.0, max=1.0 |
+| required | percent          | `FLOAT`        | 0.5     | min=0.0, max=1.0 |
+| optional | augmentation     | `AUGMENTATION` | None    |                  |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name         | Type           |
+| ------------ | -------------- |
 | augmentation | `AUGMENTATION` |
-
 
 ??? note "Source code"
 
     ```python
-    class QualityAugmentation:
-        """Simulates image quality degradation through compression or downscaling.
+    class BrightnessContrastAugmentation:
+        """Applies brightness and contrast adjustments to images.
 
-        This node provides options to reduce image quality in ways that simulate real-world
-        quality loss scenarios.
+        This node provides controls for adjusting image brightness and contrast with configurable
+        limits and probability of application.
 
         Args:
-            quality_type (str): Type of quality reduction:
-                - "compression": JPEG-like compression artifacts
-                - "downscale": Resolution reduction and upscaling
-            quality_limit (int): Quality parameter (1-100, lower = more degradation)
-            percent (float): Probability of applying the effect (0.0-1.0)
+            brightness_limit (float): Maximum brightness adjustment range (0.0-1.0)
+            contrast_limit (float): Maximum contrast adjustment range (0.0-1.0)
+            percent (float): Probability of applying the augmentation (0.0-1.0)
             augmentation (AUGMENTATION, optional): Existing augmentation to chain with
 
         Returns:
             tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
 
         Notes:
-            - Compression type simulates JPEG artifacts
-            - Downscale type reduces and restores resolution
-            - Lower quality limits produce more visible artifacts
+            - Brightness adjustments are applied as multiplicative factors
+            - Contrast adjustments modify image histogram spread
             - Can be chained with other augmentations
+            - Actual adjustment values are randomly sampled within limits
         """
 
         @classmethod
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "quality_type": (
-                        ["compression", "downscale"],
-                        {"default": "compression"},
-                    ),
-                    "quality_limit": ("INT", {"default": 60, "min": 1, "max": 100}),
-                    "percent": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
+                    "brightness_limit": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
+                    "contrast_limit": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
+                    "percent": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
                 },
                 "optional": {
                     "augmentation": ("AUGMENTATION", {"default": None}),
@@ -613,368 +730,26 @@ quality loss scenarios.
             }
 
         RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
         FUNCTION = "execute"
         CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """Adjusts image brightness and contrast during generation.
+        Control modification ranges and application frequency.
+        Chain with other augmentations for creative image variations."""
 
-        def execute(self, **kwargs):
-            quality_type = kwargs.get("quality_type") or "compression"
-            quality_limit = kwargs.get("quality_limit") or 60
-            percent = kwargs.get("percent") or 0.2
-            augmentation = kwargs.get("augmentation")
-            augmentation = quality_augmentation(
-                quality_type=quality_type,
-                quality_limit=quality_limit,
+        def execute(
+            self,
+            brightness_limit: float = 0.2,
+            contrast_limit: float = 0.2,
+            percent: float = 0.5,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = brightness_contrast_augmentation(
+                brightness_limit=brightness_limit,
+                contrast_limit=contrast_limit,
                 percent=percent,
                 augmentation=augmentation,
             )
             return (augmentation,)
-
-
-    ```
-
-## DistortionAugmentation
-
-Applies geometric distortion effects to images.
-
-This node provides various types of geometric distortion with configurable severity
-and application probability.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | distortion_type | `LIST` | optical |  |
-| required | severity | `INT` | 1 | min=1, max=5 |
-| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| augmentation | `AUGMENTATION` |
-
-
-??? note "Source code"
-
-    ```python
-    class DistortionAugmentation:
-        """Applies geometric distortion effects to images.
-
-        This node provides various types of geometric distortion with configurable severity
-        and application probability.
-
-        Args:
-            distortion_type (str): Type of distortion to apply:
-                - "optical": Lens-like distortion
-                - "grid": Grid-based warping
-                - "elastic": Elastic deformation
-            severity (int): Intensity of the distortion effect (1-5)
-            percent (float): Probability of applying the effect (0.0-1.0)
-            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
-
-        Returns:
-            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
-
-        Notes:
-            - Each distortion type produces unique geometric deformations
-            - Higher severity values create stronger distortion effects
-            - Can be chained with other augmentations
-            - Maintains overall image structure while adding local deformations
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "distortion_type": (
-                        ["optical", "grid", "elastic"],
-                        {"default": "optical"},
-                    ),
-                    "severity": ("INT", {"default": 1, "min": 1, "max": 5}),
-                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
-                },
-                "optional": {
-                    "augmentation": ("AUGMENTATION", {"default": None}),
-                },
-            }
-
-        RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
-        FUNCTION = "execute"
-        CATEGORY = AUGMENTATION_CAT
-
-        def execute(self, **kwargs):
-            distortion_type = kwargs.get("distortion_type") or "optical"
-            severity = kwargs.get("severity") or 1
-            percent = kwargs.get("percent") or 0.3
-            augmentation = kwargs.get("augmentation")
-            augmentation = distortion_augmentation(
-                distortion_type=distortion_type,
-                severity=severity,
-                percent=percent,
-                augmentation=augmentation,
-            )
-            return (augmentation,)
-
-
-    ```
-
-## ShiftScaleAugmentation
-
-Applies random shifting, scaling, and rotation transformations.
-
-This node combines multiple geometric transformations with configurable ranges
-and probability.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | shift_limit | `FLOAT` | 0.1 | min=0.0, max=1.0 |
-| required | scale_limit | `FLOAT` | 0.2 | min=0.0, max=1.0 |
-| required | rotate_limit | `INT` | 45 | min=0, max=180 |
-| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| augmentation | `AUGMENTATION` |
-
-
-??? note "Source code"
-
-    ```python
-    class ShiftScaleAugmentation:
-        """Applies random shifting, scaling, and rotation transformations.
-
-        This node combines multiple geometric transformations with configurable ranges
-        and probability.
-
-        Args:
-            shift_limit (float): Maximum shift as fraction of image size (0.0-1.0)
-            scale_limit (float): Maximum scale factor change (0.0-1.0)
-            rotate_limit (int): Maximum rotation angle in degrees (0-180)
-            percent (float): Probability of applying transformations (0.0-1.0)
-            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
-
-        Returns:
-            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
-
-        Notes:
-            - Shift moves image content within frame
-            - Scale changes overall image size
-            - Rotation angles are randomly sampled
-            - Can be chained with other augmentations
-            - All transformations are applied together when selected
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "shift_limit": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0}),
-                    "scale_limit": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0}),
-                    "rotate_limit": ("INT", {"default": 45, "min": 0, "max": 180}),
-                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
-                },
-                "optional": {
-                    "augmentation": ("AUGMENTATION", {"default": None}),
-                },
-            }
-
-        RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
-        FUNCTION = "execute"
-        CATEGORY = AUGMENTATION_CAT
-
-        def execute(self, **kwargs):
-            shift_limit = kwargs.get("shift_limit") or 0.1
-            scale_limit = kwargs.get("scale_limit") or 0.2
-            rotate_limit = kwargs.get("rotate_limit") or 45
-            percent = kwargs.get("percent") or 0.3
-            augmentation = kwargs.get("augmentation")
-            augmentation = shift_scale_augmentation(
-                shift_limit=shift_limit,
-                scale_limit=scale_limit,
-                rotate_limit=rotate_limit,
-                percent=percent,
-                augmentation=augmentation,
-            )
-            return (augmentation,)
-
-
-    ```
-
-## CutoutAugmentation
-
-Creates random rectangular cutouts in images.
-
-This node randomly removes rectangular regions from images by filling them with black,
-useful for regularization and robustness training.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | num_holes | `INT` | 8 | min=1, max=20 |
-| required | max_size | `INT` | 30 | min=1, max=100 |
-| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| augmentation | `AUGMENTATION` |
-
-
-??? note "Source code"
-
-    ```python
-    class CutoutAugmentation:
-        """Creates random rectangular cutouts in images.
-
-        This node randomly removes rectangular regions from images by filling them with black,
-        useful for regularization and robustness training.
-
-        Args:
-            num_holes (int): Number of cutout regions to create (1-20)
-            max_size (int): Maximum size of cutout regions in pixels (1-100)
-            percent (float): Probability of applying cutouts (0.0-1.0)
-            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
-
-        Returns:
-            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
-
-        Notes:
-            - Cutout positions are randomly selected
-            - Each cutout region is independently sized
-            - Regions are filled with black (zero) values
-            - Can be chained with other augmentations
-            - Useful for preventing overfitting
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "num_holes": ("INT", {"default": 8, "min": 1, "max": 20}),
-                    "max_size": ("INT", {"default": 30, "min": 1, "max": 100}),
-                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
-                },
-                "optional": {
-                    "augmentation": ("AUGMENTATION", {"default": None}),
-                },
-            }
-
-        RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
-        FUNCTION = "execute"
-        CATEGORY = AUGMENTATION_CAT
-
-        def execute(self, **kwargs):
-            num_holes = kwargs.get("num_holes") or 8
-            max_size = kwargs.get("max_size") or 30
-            percent = kwargs.get("percent") or 0.3
-            augmentation = kwargs.get("augmentation")
-            augmentation = cutout_augmentation(
-                num_holes=num_holes,
-                max_size=max_size,
-                percent=percent,
-                augmentation=augmentation,
-            )
-            return (augmentation,)
-
-
-    ```
-
-## GridAugmentation
-
-Applies grid-based transformations to images.
-
-This node provides grid-based image modifications including shuffling and dropout
-effects.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | grid_type | `LIST` | shuffle |  |
-| required | grid_size | `INT` | 3 | min=2, max=10 |
-| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| augmentation | `AUGMENTATION` |
-
-
-??? note "Source code"
-
-    ```python
-    class GridAugmentation:
-        """Applies grid-based transformations to images.
-
-        This node provides grid-based image modifications including shuffling and dropout
-        effects.
-
-        Args:
-            grid_type (str): Type of grid transformation:
-                - "shuffle": Randomly permute grid cells
-                - "dropout": Randomly remove grid cells
-            grid_size (int): Number of grid divisions (2-10)
-            percent (float): Probability of applying the effect (0.0-1.0)
-            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
-
-        Returns:
-            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
-
-        Notes:
-            - Image is divided into grid_size x grid_size cells
-            - Shuffle randomly reorders grid cells
-            - Dropout replaces cells with black
-            - Can be chained with other augmentations
-            - Maintains overall image structure while adding local variations
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "grid_type": (["shuffle", "dropout"], {"default": "shuffle"}),
-                    "grid_size": ("INT", {"default": 3, "min": 2, "max": 10}),
-                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
-                },
-                "optional": {
-                    "augmentation": ("AUGMENTATION", {"default": None}),
-                },
-            }
-
-        RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
-        FUNCTION = "execute"
-        CATEGORY = AUGMENTATION_CAT
-
-        def execute(self, **kwargs):
-            grid_type = kwargs.get("grid_type") or "shuffle"
-            grid_size = kwargs.get("grid_size") or 3
-            percent = kwargs.get("percent") or 0.3
-            augmentation = kwargs.get("augmentation")
-            augmentation = grid_augmentation(
-                grid_type=grid_type,
-                grid_size=grid_size,
-                percent=percent,
-                augmentation=augmentation,
-            )
-            return (augmentation,)
-
-
     ```
 
 ## PerspectiveAugmentation
@@ -986,19 +761,18 @@ with configurable strength and probability.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | scale | `FLOAT` | 0.05 | min=0.01, max=0.5 |
-| required | keep_size | `BOOLEAN` | True |  |
-| required | percent | `FLOAT` | 0.3 | min=0.0, max=1.0 |
-| optional | augmentation | `AUGMENTATION` | None |  |
+| Group    | Name         | Type           | Default | Extras            |
+| -------- | ------------ | -------------- | ------- | ----------------- |
+| required | scale        | `FLOAT`        | 0.05    | min=0.01, max=0.5 |
+| required | keep_size    | `BOOLEAN`      | True    |                   |
+| required | percent      | `FLOAT`        | 0.3     | min=0.0, max=1.0  |
+| optional | augmentation | `AUGMENTATION` | None    |                   |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name         | Type           |
+| ------------ | -------------- |
 | augmentation | `AUGMENTATION` |
-
 
 ??? note "Source code"
 
@@ -1040,17 +814,272 @@ with configurable strength and probability.
             }
 
         RETURN_TYPES = ("AUGMENTATION",)
-        RETURN_NAMES = ("augmentation",)
         FUNCTION = "execute"
         CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Applies perspective transformations to images, simulating viewing angle changes.
+        Control effect strength and application frequency.
+        Chain with other augmentations for realistic spatial variations."""
 
-        def execute(self, **kwargs):
-            scale = kwargs.get("scale") or 0.05
-            keep_size = kwargs.get("keep_size", True)
-            percent = kwargs.get("percent") or 0.3
-            augmentation = kwargs.get("augmentation")
+        def execute(
+            self,
+            scale: float = 0.05,
+            keep_size: bool = True,
+            percent: float = 0.3,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
             augmentation = perspective_augmentation(
                 scale=scale, keep_size=keep_size, percent=percent, augmentation=augmentation
+            )
+            return (augmentation,)
+    ```
+
+## FlipAugmentation
+
+Applies horizontal or vertical flip augmentation to images with configurable probability.
+
+This node performs random flip transformations on input images. It supports both horizontal and
+vertical flip operations with adjustable probability of application.
+
+### Inputs
+
+| Group    | Name         | Type           | Default    | Extras           |
+| -------- | ------------ | -------------- | ---------- | ---------------- |
+| required | flip         | `LIST`         | horizontal |                  |
+| required | percent      | `FLOAT`        | 0.5        | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None       |                  |
+
+### Returns
+
+| Name         | Type           |
+| ------------ | -------------- |
+| augmentation | `AUGMENTATION` |
+
+??? note "Source code"
+
+    ```python
+    class FlipAugmentation:
+        """Applies horizontal or vertical flip augmentation to images with configurable probability.
+
+        This node performs random flip transformations on input images. It supports both horizontal and
+        vertical flip operations with adjustable probability of application.
+
+        Args:
+            flip (str): Direction of flip operation, either:
+                - "horizontal": Flips image left to right
+                - "vertical": Flips image top to bottom
+            percent (float): Probability of applying the flip, from 0.0 to 1.0.
+            augmentation (AUGMENTATION, optional): Existing augmentation to chain with. Defaults to None.
+
+        Returns:
+            tuple: Contains a single element:
+                augmentation (AUGMENTATION): The configured flip augmentation operation.
+
+        Raises:
+            ValueError: If flip direction is not "horizontal" or "vertical".
+            ValueError: If percent is not between 0.0 and 1.0.
+
+        Notes:
+            - Flip direction cannot be changed after initialization
+            - Setting percent to 0.5 applies the flip to approximately half of all samples
+            - Can be chained with other augmentations through the augmentation parameter
+            - Transformations are applied consistently when used with ComposeAugmentation
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "flip": (["horizontal", "vertical"], {"default": "horizontal"}),
+                    "percent": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
+                },
+                "optional": {
+                    "augmentation": ("AUGMENTATION", {"default": None}),
+                },
+            }
+
+        RETURN_TYPES = ("AUGMENTATION",)
+        FUNCTION = "execute"
+        CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Applies horizontal or vertical flip transformations to images with adjustable probability.
+        Creates mirror-image variations of your content.
+        Chain with other augmentations for diverse image transformations."""
+
+        def execute(
+            self,
+            flip: str = "horizontal",
+            percent: float = 0.5,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = flip_augmentation(flip, percent, augmentation)
+            return (augmentation,)
+    ```
+
+## RotationAugmentation
+
+Rotates images by random angles within specified limits.
+
+This node performs random rotation augmentation with configurable angle limits and
+application probability.
+
+### Inputs
+
+| Group    | Name         | Type           | Default | Extras           |
+| -------- | ------------ | -------------- | ------- | ---------------- |
+| required | limit        | `INT`          | 45      | min=0, max=180   |
+| required | percent      | `FLOAT`        | 0.5     | min=0.0, max=1.0 |
+| optional | augmentation | `AUGMENTATION` | None    |                  |
+
+### Returns
+
+| Name         | Type           |
+| ------------ | -------------- |
+| augmentation | `AUGMENTATION` |
+
+??? note "Source code"
+
+    ```python
+    class RotationAugmentation:
+        """Rotates images by random angles within specified limits.
+
+        This node performs random rotation augmentation with configurable angle limits and
+        application probability.
+
+        Args:
+            limit (int): Maximum rotation angle in degrees (0-180)
+            percent (float): Probability of applying the rotation (0.0-1.0)
+            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
+
+        Returns:
+            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
+
+        Notes:
+            - Rotation angles are randomly sampled between -limit and +limit
+            - Empty areas after rotation are filled with black
+            - Can be chained with other augmentations
+            - Original aspect ratio is preserved
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "limit": ("INT", {"default": 45, "min": 0, "max": 180}),
+                    "percent": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
+                },
+                "optional": {
+                    "augmentation": ("AUGMENTATION", {"default": None}),
+                },
+            }
+
+        RETURN_TYPES = ("AUGMENTATION",)
+        FUNCTION = "execute"
+        CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """
+        Rotates images by random angles within specified limits.
+        Control rotation angle range and application frequency.
+        Chain with other augmentations for diverse orientation variations."""
+
+        def execute(
+            self,
+            limit: int = 45,
+            percent: float = 0.5,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = rotation_augmentation(limit=limit, percent=percent, augmentation=augmentation)
+            return (augmentation,)
+    ```
+
+## CutoutAugmentation
+
+Creates random rectangular cutouts in images.
+
+This node randomly removes rectangular regions from images by filling them with black,
+useful for regularization and robustness training.
+
+### Inputs
+
+| Group    | Name          | Type           | Default | Extras           |
+| -------- | ------------- | -------------- | ------- | ---------------- |
+| required | num_holes     | `INT`          | 8       | min=1, max=20    |
+| required | max_size      | `INT`          | 30      | min=1, max=100   |
+| required | percent       | `FLOAT`        | 0.3     | min=0.0, max=1.0 |
+| optional | min_num_holes | `INT`          | 1       | min=1, max=20    |
+| optional | min_size      | `INT`          | 1       | min=1, max=100   |
+| optional | augmentation  | `AUGMENTATION` | None    |                  |
+
+### Returns
+
+| Name         | Type           |
+| ------------ | -------------- |
+| augmentation | `AUGMENTATION` |
+
+??? note "Source code"
+
+    ```python
+    class CutoutAugmentation:
+        """Creates random rectangular cutouts in images.
+
+        This node randomly removes rectangular regions from images by filling them with black,
+        useful for regularization and robustness training.
+
+        Args:
+            num_holes (int): Number of cutout regions to create (1-20)
+            max_size (int): Maximum size of cutout regions in pixels (1-100)
+            percent (float): Probability of applying cutouts (0.0-1.0)
+            augmentation (AUGMENTATION, optional): Existing augmentation to chain with
+
+        Returns:
+            tuple[AUGMENTATION]: Single-element tuple containing the configured augmentation
+
+        Notes:
+            - Cutout positions are randomly selected
+            - Each cutout region is independently sized
+            - Regions are filled with black (zero) values
+            - Can be chained with other augmentations
+            - Useful for preventing overfitting
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "num_holes": ("INT", {"default": 8, "min": 1, "max": 20}),
+                    "max_size": ("INT", {"default": 30, "min": 1, "max": 100}),
+                    "percent": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0}),
+                },
+                "optional": {
+                    "min_num_holes": ("INT", {"default": 1, "min": 1, "max": 20}),
+                    "min_size": ("INT", {"default": 1, "min": 1, "max": 100}),
+                    "augmentation": ("AUGMENTATION", {"default": None}),
+                },
+            }
+
+        RETURN_TYPES = ("AUGMENTATION",)
+        FUNCTION = "execute"
+        CATEGORY = AUGMENTATION_CAT
+        DESCRIPTION = """Creates random black rectangular cutouts in images.
+        Control number, size, and frequency of cutouts.
+        Useful for regularization and preventing overfitting.
+        Chain with other augmentations for creative effects."""
+
+        def execute(
+            self,
+            num_holes: int = 8,
+            max_size: int = 30,
+            percent: float = 0.3,
+            min_num_holes: int = 1,
+            min_size: int = 1,
+            augmentation: Optional[list] = None,
+        ) -> tuple[list]:
+            augmentation = cutout_augmentation(
+                num_holes=num_holes,
+                max_size=max_size,
+                percent=percent,
+                min_num_holes=min_num_holes,
+                min_size=min_size,
+                augmentation=augmentation,
             )
             return (augmentation,)
 
