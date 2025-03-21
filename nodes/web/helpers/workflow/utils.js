@@ -10,7 +10,7 @@ import { saveWorkflow } from "./form/main.js";
 import { showWorkflowsList } from "./list/main.js";
 import { showNodeOrderEditor } from "./node_order/main.js";
 
-import { $el, createMenuItem, findMenuList } from "../global/main.js";
+import { $el, createMenuItem, findSignatureMenuList } from "../global/main.js";
 
 const showMessage = (message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) => {
   let dialogContent = `
@@ -334,14 +334,10 @@ const requiresAuth = async (app, next) => {
 };
 
 const setupMenu = async (app) => {
-  // Check if menu items are already added
-  if (document.querySelector('[data-signature-menu="true"]')) {
-    return true;
-  }
+  const menuList = findSignatureMenuList();
 
   // Try to find menu list for up to 10 seconds
   for (let i = 0; i < 20; i++) {
-    const menuList = findMenuList();
     if (menuList) {
       // Add separator
       const separator = $el("li", {
@@ -395,7 +391,7 @@ export {
   cleanLocalStorage,
   createMenuItem,
   deleteWorkflowFromStorage,
-  findMenuList,
+  findSignatureMenuList,
   getLoadingSpinner,
   getTotalTabs,
   requiresAuth,

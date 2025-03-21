@@ -1,10 +1,10 @@
 import { app } from "../../scripts/app.js";
-import { createMenuItem, findMenuList } from "./helpers/global/main.js";
+import { createMenuItem, findSignatureMenuList } from "./helpers/global/main.js";
 
 const ext = {
   name: "signature.feature_request",
   async init(app) {
-    const menuList = findMenuList();
+    const menuList = findSignatureMenuList();
     if (menuList) {
       menuList.appendChild(
         createMenuItem("Feature Request", "pi-file-plus", () => {
