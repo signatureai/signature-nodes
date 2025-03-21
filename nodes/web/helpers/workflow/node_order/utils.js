@@ -10,7 +10,7 @@ const createNodeItem = (node, index, nodeType) => {
       className: `draggable-node-item ${nodeType}-node`,
       "data-node-id": node.id,
       "data-original-index": index,
-      "data-original-order": node.properties.order !== undefined ? node.properties.order : "unset",
+      "data-original-order": node.properties.signature_metadata.order !== undefined ? node.properties.signature_metadata.order : "unset",
       "data-node-type": nodeType,
       style: {
         padding: "12px",
@@ -104,7 +104,7 @@ const createNodeItem = (node, index, nodeType) => {
           index + 1
         }</span>
                      <div style="font-size: 11px; color: #666;">Global: ${
-                       node.properties.order !== undefined ? node.properties.order : "unset"
+                       node.properties.signature_metadata.order !== undefined ? node.properties.signature_metadata.order : "unset"
                      }</div>`,
       }),
     ]
