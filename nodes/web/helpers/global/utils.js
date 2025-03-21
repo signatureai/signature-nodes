@@ -38,22 +38,6 @@ const $el = (tag, propsOrChildren, children) => {
   return element;
 };
 
-const findMenuList = () => {
-  // Try different possible menu list IDs
-  const possibleMenuLists = [
-    "#pv_id_9_0_list",
-    "#pv_id_10_0_list",
-    "#pv_id_12_0_list",
-    ".p-menubar-root-list", // Backup selector
-  ];
-
-  for (const selector of possibleMenuLists) {
-    const menuList = document.querySelector(selector);
-    if (menuList) return menuList;
-  }
-  return null;
-};
-
 const createMenuItem = (label, iconClass, onClick) => {
   const menuItem = $el(
     "li",
@@ -86,4 +70,95 @@ const createMenuItem = (label, iconClass, onClick) => {
   return menuItem;
 };
 
-export { $el, createMenuItem, findMenuList };
+const addSignatureMenu = () => {
+  const menuList = document.querySelector(".p-menubar-root-list");
+
+  // Create main menu item
+  const signatureMenu = $el("li", {
+    className: "p-menubar-item relative",
+    role: "menuitem",
+    "aria-label": "Signature",
+    "aria-expanded": "false",
+    "aria-haspopup": "true",
+    id: "signature-menu",
+  });
+
+  // Create dropdown content
+  const dropdownContent = $el("ul", {
+    className: "p-menubar-submenu dropdown-direction-down",
+    role: "menu",
+    style: {
+      display: "none",
+    },
+  });
+
+  // Create the main menu button
+  const menuButton = $el("div", {
+    className: "p-menubar-item-content",
+    "data-pc-section": "itemcontent",
+  });
+
+  // Create the menu link with click handler
+  const menuLink = $el("a", {
+    className: "p-menubar-item-link",
+    "data-pc-section": "itemlink",
+    href: "#",
+    onclick: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Close any other open menus first
+      document
+        .querySelectorAll('.p-menubar-item[aria-expanded="true"]')
+        .forEach((menu) => menu.setAttribute("aria-expanded", "false"));
+
+      // Toggle this menu
+      const isExpanded = signatureMenu.getAttribute("aria-expanded") === "true";
+      signatureMenu.setAttribute("aria-expanded", !isExpanded);
+      dropdownContent.style.display = isExpanded ? "none" : "flex";
+    },
+  });
+
+  const menuLabel = $el("span", {
+    className: "p-menubar-item-label",
+  });
+  menuLabel.textContent = "Signature";
+
+  // Assemble the menu
+  menuLink.appendChild(menuLabel);
+  menuButton.appendChild(menuLink);
+  signatureMenu.appendChild(menuButton);
+  signatureMenu.appendChild(dropdownContent);
+
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!signatureMenu.contains(e.target)) {
+      signatureMenu.setAttribute("aria-expanded", "false");
+      dropdownContent.style.display = "none";
+    }
+  });
+
+  // Handle escape key to close dropdown
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && signatureMenu.getAttribute("aria-expanded") === "true") {
+      signatureMenu.setAttribute("aria-expanded", "false");
+      dropdownContent.style.display = "none";
+    }
+  });
+
+  menuList.insertBefore(signatureMenu, menuList.children[2]);
+};
+
+// Call the function to add the menu
+addSignatureMenu();
+
+const findSignatureMenuList = () => {
+  const menuList = document.querySelector("#signature-menu");
+
+  const signatureMenu = Array.from(menuList.children).find((child) => child.localName === "ul");
+
+  if (signatureMenu) return signatureMenu;
+  return null;
+};
+
+export { $el, createMenuItem, findSignatureMenuList };

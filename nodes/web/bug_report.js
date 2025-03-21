@@ -1,6 +1,6 @@
 import { app } from "../../scripts/app.js";
 import { style } from "./helpers/bug_report/main.js";
-import { createMenuItem, findMenuList } from "./helpers/global/main.js";
+import { createMenuItem, findSignatureMenuList } from "./helpers/global/main.js";
 
 // Add the CSS class for the bug icon
 document.head.appendChild(style);
@@ -8,7 +8,7 @@ document.head.appendChild(style);
 const ext = {
   name: "signature.bug_report",
   async init(app) {
-    const menuList = findMenuList();
+    const menuList = findSignatureMenuList();
     if (menuList) {
       menuList.appendChild(
         createMenuItem("Bug Report", "bug-report-icon", () => {
