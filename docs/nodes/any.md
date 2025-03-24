@@ -6,16 +6,15 @@ Converts any value to a list.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | any_value | `WILDCARD` |  |  |
+| Group    | Name      | Type       | Default | Extras |
+| -------- | --------- | ---------- | ------- | ------ |
+| required | any_value | `any_type` |         |        |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name | Type   |
+| ---- | ------ |
 | list | `LIST` |
-
 
 ??? note "Source code"
 
@@ -27,7 +26,7 @@ Converts any value to a list.
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "any_value": (WILDCARD, {}),
+                    "any_value": (any_type, {}),
                 }
             }
 
@@ -47,16 +46,15 @@ Converts any value to a dictionary.
 
 ### Inputs
 
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | any_value | `WILDCARD` |  |  |
+| Group    | Name      | Type       | Default | Extras |
+| -------- | --------- | ---------- | ------- | ------ |
+| required | any_value | `any_type` |         |        |
 
 ### Returns
 
-| Name | Type |
-|------|------|
+| Name | Type   |
+| ---- | ------ |
 | dict | `DICT` |
-
 
 ??? note "Source code"
 
@@ -68,7 +66,7 @@ Converts any value to a dictionary.
         def INPUT_TYPES(cls):
             return {
                 "required": {
-                    "any_value": (WILDCARD, {}),
+                    "any_value": (any_type, {}),
                 }
             }
 

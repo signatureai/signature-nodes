@@ -1,165 +1,145 @@
 # Platform Io Nodes
 
-## InputImage
+## PlatformEnvs
 
-Processes and validates image inputs from various sources for the platform.
-
-This class handles image input processing, supporting both single and multiple images from URLs or
-base64 strings. It includes functionality for alpha channel management and mask generation.
+Retrieves organization ID and token based on the specified environment.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | title | `STRING` | Input Image |  |
-| required | subtype | `LIST` |  |  |
-| required | required | `BOOLEAN` | True |  |
-| required | include_alpha | `BOOLEAN` | False |  |
-| required | multiple | `BOOLEAN` | False |  |
-| required | value | `STRING` |  |  |
-| required | metadata | `STRING` | {} | multiline=True |
-| optional | fallback | `any_type` |  |  |
+| required | environment | `LIST` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| string | `STRING` |
+| string | `STRING` |
+
 
 ??? note "Source code"
 
     ```python
-    class InputImage:
-        """Processes and validates image inputs from various sources for the platform.
+    class PlatformEnvs:
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {
+                "required": {
+                    "environment": (["production", "staging", "develop"],),
+                },
+            }
 
-        This class handles image input processing, supporting both single and multiple images from URLs or
-        base64 strings. It includes functionality for alpha channel management and mask generation.
+        RETURN_TYPES = (
+            "STRING",
+            "STRING",
+        )
+        RETURN_NAMES = (
+            "ORG_ID",
+            "ORG_TOKEN",
+        )
+        FUNCTION = "execute"
+        CATEGORY = PLATFORM_IO_CAT
+        DESCRIPTION = """Retrieves organization ID and token based on the specified environment."""
+
+        def execute(self, **kwargs):
+            env = kwargs.get("environment") or ""
+            org_id = "ORG_ID" if env == "production" else f"{env.upper()}_ORG_ID"
+            org_token = "ORG_TOKEN" if env == "production" else f"{env.upper()}_ORG_TOKEN"
+            ORG_ID = os.environ.get(org_id)
+            ORG_TOKEN = os.environ.get(org_token)
+            return (
+                ORG_ID,
+                ORG_TOKEN,
+            )
+    ```
+
+## InputNumber
+
+Processes numeric inputs with type conversion.
+
+Handles numeric input processing with support for both integer and float values, including
+automatic type conversion based on the specified subtype.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Number |  |
+| required | subtype | `LIST` |  |  |
+| required | required | `BOOLEAN` | True |  |
+| required | value | `FLOAT` | 0.0 | max=18446744073709551615, step=0.1 |
+| required | metadata | `STRING` | {} | multiline=True |
+
+??? note "Source code"
+
+    ```python
+    class InputNumber:
+        """Processes numeric inputs with type conversion.
+
+        Handles numeric input processing with support for both integer and float values, including
+        automatic type conversion based on the specified subtype.
 
         Args:
-            title (str): Display title for the input node. Defaults to "Input Image".
-            subtype (str): Type of input - either "image" or "mask".
+            title (str): Display title for the number input. Defaults to "Input Number".
+            subtype (str): Type of number - either "float" or "int".
             required (bool): Whether the input is required. Defaults to True.
-            include_alpha (bool): Whether to preserve alpha channel. Defaults to False.
-            multiple (bool): Allow multiple image inputs. Defaults to False.
-            value (str): Image data as URL or base64 string.
+            value (float): The input numeric value. Defaults to 0.
             metadata (str): JSON string containing additional metadata. Defaults to "{}".
-            fallback (any): Optional fallback value if no input is provided.
 
         Returns:
-            tuple[list]: A tuple containing a list of processed images as torch tensors in BWHC format.
+            tuple[Union[int, float]]: A tuple containing the processed numeric value.
 
         Raises:
-            ValueError: If value is not a string, subtype is invalid, or no valid input is found.
+            ValueError: If value is not numeric or subtype is invalid.
 
         Notes:
-            - URLs must start with "http" to be recognized
-            - Multiple images can be provided as comma-separated values
-            - Alpha channels are removed by default unless include_alpha is True
-            - Mask inputs are automatically converted to grayscale
+            - Automatically converts between float and int based on subtype
+            - Maintains numeric precision during conversion
         """
 
         @classmethod
         def INPUT_TYPES(cls):  # type: ignore
             return {
                 "required": {
-                    "title": ("STRING", {"default": "Input Image"}),
-                    "subtype": (["image", "mask"],),
+                    "title": ("STRING", {"default": "Input Number"}),
+                    "subtype": (["float", "int"],),
                     "required": ("BOOLEAN", {"default": True}),
-                    "include_alpha": ("BOOLEAN", {"default": False}),
-                    "multiple": ("BOOLEAN", {"default": False}),
-                    "value": ("STRING", {"default": ""}),
+                    "value": (
+                        "FLOAT",
+                        {
+                            "default": 0.0,
+                            "min": -18446744073709551615,
+                            "max": 18446744073709551615,
+                            "step": 0.1,
+                        },
+                    ),
                     "metadata": ("STRING", {"default": "{}", "multiline": True}),
-                },
-                "optional": {
-                    "fallback": (any_type,),
                 },
             }
 
         RETURN_TYPES = (any_type,)
         FUNCTION = "execute"
         CATEGORY = PLATFORM_IO_CAT
-        OUTPUT_IS_LIST = (True,)
+        DESCRIPTION = """
+        Processes numeric inputs with type conversion.
+        Handles numeric input processing with support for both integer and float values,
+        including automatic type conversion based on the specified subtype.
+        """
 
         def execute(
             self,
-            **kwargs,
-        ) -> tuple[list[torch.Tensor]]:
-            def post_process(output: TensorImage, include_alpha: bool) -> TensorImage:
-                if output.shape[1] not in [3, 4]:
-                    if len(output.shape) == 2:  # (H,W)
-                        output = TensorImage(output.unsqueeze(0).unsqueeze(0).expand(-1, 3, -1, -1))
-                    elif len(output.shape) == 3:  # (B,H,W)
-                        output = TensorImage(output.unsqueeze(1).expand(-1, 3, -1, -1))
-                    elif len(output.shape) == 4 and output.shape[1] == 1:  # (B,1,H,W)
-                        output = TensorImage(output.expand(-1, 3, -1, -1))
-                    else:
-                        raise ValueError(f"Unsupported shape: {output.shape}")
-                else:
-                    if not include_alpha and output.shape[1] == 4:
-                        rgb = TensorImage(output[:, :3, :, :])
-                        alpha = TensorImage(output[:, -1, :, :])
-                        output, _ = cutout(rgb, alpha)
-                return output
-
-            def validate_inputs() -> tuple[str, str, bool, bool, TensorImage | None]:
-                value = kwargs.get("value", "")
-                if not isinstance(value, str):
-                    raise ValueError("Value must be a string")
-
-                subtype = kwargs.get("subtype", "image")
-                if not isinstance(subtype, str):
-                    raise ValueError("Subtype must be a string")
-
-                include_alpha = bool(kwargs.get("include_alpha", False))
-                multiple = bool(kwargs.get("multiple", False))
-                fallback = kwargs.get("fallback")
-
-                return value, subtype, include_alpha, multiple, fallback
-
-            def process_value(value: str, multiple: bool) -> list[str]:
-                if not value:
-                    return []
-                if "," in value:
-                    items = value.split(",")
-                    return items if multiple else [items[0]]
-                return [value]
-
-            def load_image(url_or_base64: str) -> TensorImage:
-                if not url_or_base64:
-                    raise ValueError("Empty input string")
-
-                if url_or_base64.startswith("http"):
-                    return TensorImage.from_web(url_or_base64)
-                try:
-                    return TensorImage.from_base64(url_or_base64)
-                except Exception as e:
-                    raise ValueError(f"Unsupported input format: {url_or_base64}") from e
-
-            value, subtype, include_alpha, multiple, fallback = validate_inputs()
-            value_list = process_value(value, multiple)
-            outputs: list[torch.Tensor] = []
-
-            # Process each input value
-            for item in value_list:
-                if isinstance(item, str):
-                    try:
-                        output = load_image(item)
-                        outputs.append(output)
-                    except ValueError as e:
-                        if not outputs:
-                            raise e
-
-            if len(outputs) == 0:
-                if fallback is None:
-                    raise ValueError("No input found and no fallback provided")
-                outputs.append(TensorImage.from_BWHC(fallback))
-
-            for i, output in enumerate(outputs):
-                if not isinstance(output, TensorImage):
-                    raise ValueError(f"Output {i} must be a TensorImage")
-
-                if subtype == "mask":
-                    outputs[i] = output.get_grayscale().get_BWHC()
-                else:
-                    outputs[i] = post_process(output, include_alpha).get_BWHC()
-            clean_memory()
-            return (outputs,)
-
-
+            title: str = "Input Number",
+            subtype: str = "float",
+            required: bool = True,
+            value: float = 0,
+            metadata: str = "{}",
+        ) -> tuple[float]:
+            if subtype == "int":
+                value = round(value)
+            elif subtype == "float":
+                value = float(value)
+            return (value,)
     ```
 
 ## InputConnector
@@ -238,30 +218,33 @@ authentication tokens and file identifiers.
         RETURN_TYPES = ("FILE",)
         FUNCTION = "execute"
         CATEGORY = PLATFORM_IO_CAT
+        DEPRECATED = True
+        DESCRIPTION = """
+        Manages file downloads from external services using authentication tokens.
+        Handles connections to external services (currently Google Drive) to download files
+        using provided authentication tokens and file identifiers.
+        """
 
-        def execute(
+        def execute(  # nosec: B107
             self,
-            **kwargs,
+            title: str = "Input Connector",
+            subtype: str = "google_drive",
+            required: bool = True,
+            override: bool = False,
+            token: str = "",
+            mime_type: str = "image/png",
+            value: str = "",
+            metadata: str = "{}",
         ):
-            value = kwargs.get("value")
-            if not isinstance(value, str):
-                raise ValueError("Value must be a string")
-            token = kwargs.get("token")
-            if not isinstance(token, str):
-                raise ValueError("Token must be a string")
-            mime_type = kwargs.get("mime_type")
-            if not isinstance(mime_type, str):
-                raise ValueError("Mime type must be a string")
-            override = kwargs.get("override")
-            if not isinstance(override, bool):
-                raise ValueError("Override must be a boolean")
             connector = GoogleConnector(token=token)
             input_folder = os.path.join(BASE_COMFY_DIR, "input")
-            data = connector.download(file_id=value, mime_type=mime_type, output_path=input_folder, override=override)
-            clean_memory()
+            data = connector.download(
+                file_id=value,
+                mime_type=mime_type,
+                output_path=input_folder,
+                override=override,
+            )
             return (data,)
-
-
     ```
 
 ## InputText
@@ -323,7 +306,7 @@ when input is empty.
             return {
                 "required": {
                     "title": ("STRING", {"default": "Input Text"}),
-                    "subtype": (["string", "positive_prompt", "negative_prompt"],),
+                    "subtype": (["string"],),
                     "required": ("BOOLEAN", {"default": True}),
                     "value": ("STRING", {"multiline": True, "default": ""}),
                     "metadata": ("STRING", {"default": "{}", "multiline": True}),
@@ -336,95 +319,23 @@ when input is empty.
         RETURN_TYPES = ("STRING",)
         FUNCTION = "execute"
         CATEGORY = PLATFORM_IO_CAT
-
-        def execute(self, **kwargs):
-            value = kwargs.get("value")
-            if not isinstance(value, str):
-                raise ValueError("Value must be a string")
-            fallback = kwargs.get("fallback")
-            if value == "":
-                value = fallback or ""
-            clean_memory()
-            return (value,)
-
-
-    ```
-
-## InputNumber
-
-Processes numeric inputs with type conversion.
-
-Handles numeric input processing with support for both integer and float values, including
-automatic type conversion based on the specified subtype.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | title | `STRING` | Input Number |  |
-| required | subtype | `LIST` |  |  |
-| required | required | `BOOLEAN` | True |  |
-| required | value | `FLOAT` | 0 | max=18446744073709551615 |
-| required | metadata | `STRING` | {} | multiline=True |
-
-??? note "Source code"
-
-    ```python
-    class InputNumber:
-        """Processes numeric inputs with type conversion.
-
-        Handles numeric input processing with support for both integer and float values, including
-        automatic type conversion based on the specified subtype.
-
-        Args:
-            title (str): Display title for the number input. Defaults to "Input Number".
-            subtype (str): Type of number - either "float" or "int".
-            required (bool): Whether the input is required. Defaults to True.
-            value (float): The input numeric value. Defaults to 0.
-            metadata (str): JSON string containing additional metadata. Defaults to "{}".
-
-        Returns:
-            tuple[Union[int, float]]: A tuple containing the processed numeric value.
-
-        Raises:
-            ValueError: If value is not numeric or subtype is invalid.
-
-        Notes:
-            - Automatically converts between float and int based on subtype
-            - Maintains numeric precision during conversion
+        DESCRIPTION = """
+        Processes text input with fallback support.
+        Handles text input processing with support for different subtypes and optional fallback values when input is empty.
         """
 
-        @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
-            return {
-                "required": {
-                    "title": ("STRING", {"default": "Input Number"}),
-                    "subtype": (["float", "int"],),
-                    "required": ("BOOLEAN", {"default": True}),
-                    "value": ("FLOAT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
-                    "metadata": ("STRING", {"default": "{}", "multiline": True}),
-                },
-            }
-
-        RETURN_TYPES = (any_type,)
-        FUNCTION = "execute"
-        CATEGORY = PLATFORM_IO_CAT
-
-        def execute(self, **kwargs):
-            value = kwargs.get("value")
-            if not isinstance(value, int) and not isinstance(value, float):
-                raise ValueError("Value must be a string")
-            subtype = kwargs.get("subtype")
-            if not isinstance(subtype, str):
-                raise ValueError("Subtype must be a string")
-            if subtype == "int":
-                value = int(value)
-            else:
-                value = float(value)
-            clean_memory()
+        def execute(
+            self,
+            title: str = "Input Text",
+            subtype: str = "string",
+            required: bool = True,
+            value: str = "",
+            metadata: str = "{}",
+            fallback: str = "",
+        ) -> tuple[str]:
+            if fallback and value == "":
+                value = fallback
             return (value,)
-
-
     ```
 
 ## InputBoolean
@@ -438,7 +349,7 @@ Handles boolean input processing with validation and type checking.
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
 | required | title | `STRING` | Input Boolean |  |
-| required | subtype | `LIST` |  |  |
+| required | subtype | `LIST` | boolean |  |
 | required | required | `BOOLEAN` | True |  |
 | required | value | `BOOLEAN` | False |  |
 | required | metadata | `STRING` | {} | multiline=True |
@@ -481,7 +392,7 @@ Handles boolean input processing with validation and type checking.
             return {
                 "required": {
                     "title": ("STRING", {"default": "Input Boolean"}),
-                    "subtype": (["boolean"],),
+                    "subtype": (["boolean"], {"default": "boolean"}),
                     "required": ("BOOLEAN", {"default": True}),
                     "value": ("BOOLEAN", {"default": False}),
                     "metadata": ("STRING", {"default": "{}", "multiline": True}),
@@ -489,18 +400,357 @@ Handles boolean input processing with validation and type checking.
             }
 
         RETURN_TYPES = ("BOOLEAN",)
-        RETURN_NAMES = ("boolean",)
         FUNCTION = "execute"
         CATEGORY = PLATFORM_IO_CAT
+        DESCRIPTION = """
+        Processes boolean inputs for the platform.
+        Handles boolean input processing with validation and type checking.
+        Returns the original boolean value without modification.
+        """
 
-        def execute(self, **kwargs):
-            value = kwargs.get("value")
-            if not isinstance(value, bool):
-                raise ValueError("Value must be a boolean")
-            clean_memory()
+        def execute(
+            self,
+            title: str = "Input Boolean",
+            subtype: str = "boolean",
+            required: bool = True,
+            value: bool = False,
+            metadata: str = "{}",
+        ) -> tuple[bool]:
             return (value,)
+    ```
+
+## WorkflowExecutionMetadata
+
+Extracts platform execution metadata from a JSON string.
+
+This node parses a JSON string to extract platform execution metadata
+including backend API host, generate service host, organisation ID,
+and client ID.
+
+Parameters:
+    json_str (str): A JSON string containing platform execution metadata.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| hidden | json_str | `STRING` | {} |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| string | `STRING` |
+| string | `STRING` |
+| string | `STRING` |
+| string | `STRING` |
+| string | `STRING` |
+| string | `STRING` |
+| string | `STRING` |
 
 
+??? note "Source code"
+
+    ```python
+    class WorkflowExecutionMetadata:
+        """
+        Extracts platform execution metadata from a JSON string.
+
+        This node parses a JSON string to extract platform execution metadata
+        including backend API host, generate service host, organisation ID,
+        and client ID.
+
+        Parameters:
+            json_str (str): A JSON string containing platform execution metadata.
+
+        Returns:
+            tuple[str, str, str, str]: A tuple containing the extracted metadata values.
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "hidden": {
+                    "json_str": (
+                        "STRING",
+                        {
+                            "default": "{}",
+                        },
+                    ),
+                },
+            }
+
+        RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
+        RETURN_NAMES = (
+            "backend_api_host",
+            "generate_service_host",
+            "organisation_id",
+            "user_id",
+            "environment",
+            "workflow_id",
+            "backend_cognito_secret",
+        )
+        FUNCTION = "execute"
+        CATEGORY = PLATFORM_IO_CAT
+        DESCRIPTION = """
+        Extracts platform execution metadata from a JSON string.
+        Parses a JSON string to extract platform execution metadata
+        including backend API host, generate service host, organisation ID,
+        and client ID.
+        """
+
+        def execute(self, json_str: str) -> tuple[str, str, str, str, str, str, str]:
+            json_dict = json.loads(json_str)
+            return (
+                json_dict.get("backend_api_host", ""),
+                json_dict.get("generate_service_host", ""),
+                json_dict.get("organisation_id", ""),
+                json_dict.get("user_id", ""),
+                json_dict.get("environment", ""),
+                json_dict.get("workflow_id", ""),
+                json_dict.get("backend_cognito_secret", ""),
+            )
+    ```
+
+## InputImage
+
+Processes and validates image inputs from various sources for the platform.
+
+This class handles image input processing, supporting both single and multiple images from URLs. It includes
+functionality for alpha channel management and mask generation.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | title | `STRING` | Input Image |  |
+| required | subtype | `LIST` | image |  |
+| required | required | `BOOLEAN` | True |  |
+| required | include_alpha | `BOOLEAN` | False |  |
+| required | multiple | `BOOLEAN` | False |  |
+| required | value | `STRING` | https://www.example.com/images/sample.jpg | multiline=True |
+| required | metadata | `STRING` | {} | multiline=True |
+| optional | fallback | `any_type` |  |  |
+
+??? note "Source code"
+
+    ```python
+    class InputImage:
+        """Processes and validates image inputs from various sources for the platform.
+
+        This class handles image input processing, supporting both single and multiple images from URLs. It includes
+        functionality for alpha channel management and mask generation.
+
+        Args:
+            title (str): Display title for the input node. Defaults to "Input Image".
+            subtype (str): Type of input - either "image" or "mask".
+            required (bool): Whether the input is required. Defaults to True.
+            include_alpha (bool): Whether to preserve alpha channel. Defaults to False.
+            multiple (bool): Allow multiple image inputs. Defaults to False.
+            value (str): Image data as URL.
+            metadata (str): JSON string containing additional metadata. Defaults to "{}".
+            fallback (any): Optional fallback value if no input is provided.
+
+        Returns:
+            tuple[list]: A tuple containing a list of processed images as torch tensors in BWHC format.
+
+        Raises:
+            ValueError: If value is not a string, subtype is invalid, or no valid input is found.
+
+        Notes:
+            - URLs must start with "http" to be recognized
+            - Multiple images can be provided as comma-separated values
+            - Alpha channels are removed by default unless include_alpha is True
+            - Mask inputs are automatically converted to grayscale
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {
+                "required": {
+                    "title": ("STRING", {"default": "Input Image"}),
+                    "subtype": (["image", "mask"], {"default": "image"}),
+                    "required": ("BOOLEAN", {"default": True}),
+                    "include_alpha": ("BOOLEAN", {"default": False}),
+                    "multiple": ("BOOLEAN", {"default": False}),
+                    "value": (
+                        "STRING",
+                        {
+                            "default": "https://www.example.com/images/sample.jpg",
+                            "multiline": True,
+                        },
+                    ),
+                    "metadata": ("STRING", {"default": "{}", "multiline": True}),
+                },
+                "optional": {
+                    "fallback": (any_type,),
+                },
+            }
+
+        RETURN_TYPES = (any_type,)
+        FUNCTION = "execute"
+        CATEGORY = PLATFORM_IO_CAT
+        OUTPUT_IS_LIST = (True,)
+        DESCRIPTION = """# InputImage Node - Your Gateway for Images in ComfyUI
+
+        ## What it Does 🎨
+        This node is your main entry point for bringing images into ComfyUI workflows. Think of it as a universal image
+        loader that can handle:
+        - Images from web URLs (anything starting with "http")
+        - Single images or multiple images at once
+        - Regular images and masks
+        - Images with or without transparency
+
+        ## How to Use It 🚀
+
+        ### Basic Settings
+        - **Title**: Just a label for your node (default: "Input Image")
+        - **Subtype**: Choose between:
+            - `image` - for regular images
+            - `mask` - for masks (automatically converts to grayscale)
+        - **Include Alpha**: Toggle transparency handling
+            - OFF: Removes transparency (default)
+            - ON: Keeps transparency channel
+        - **Multiple**: Allow multiple images
+            - OFF: Takes only first image (default)
+            - ON: Processes all provided images
+
+        ### Input Methods
+        1. Web Images: Just paste the image URL (must start with "http")
+        2. Multiple Images: With "Multiple" enabled, separate URLs with spaces
+        3. Fallback: Optional backup image if main input fails
+
+        ## Tips & Tricks 💡
+        - For batch processing, enable "Multiple" and input several URLs separated by spaces
+        - When working with masks, set "subtype" to "mask" for automatic grayscale conversion
+        - If you need transparency in your workflow, make sure to enable "Include Alpha"
+        - The node automatically handles various image formats and color spaces
+
+        ## Output
+        - Outputs images in the format ComfyUI expects (BCHW tensor format)
+        - Perfect for feeding into other ComfyUI nodes like upscalers, ControlNet, or image processors
+
+        Think of this node as your universal image importer - it handles all the technical conversion stuff so you can focus
+        on the creative aspects of your workflow! 🎨✨"""
+
+        def execute(
+            self,
+            title: str = "Input Image",
+            subtype: str = "image",
+            required: bool = True,
+            include_alpha: bool = False,
+            multiple: bool = False,
+            value: str = "",
+            metadata: str = "{}",
+            fallback: Any = None,
+        ) -> tuple[list[torch.Tensor]]:
+            def post_process(output: TensorImage, include_alpha: bool) -> TensorImage:
+                if output.shape[1] not in [3, 4]:
+                    if len(output.shape) == 2:  # (H,W)
+                        output = TensorImage(output.unsqueeze(0).unsqueeze(0).expand(-1, 3, -1, -1))
+                    elif len(output.shape) == 3:  # (B,H,W)
+                        output = TensorImage(output.unsqueeze(1).expand(-1, 3, -1, -1))
+                    elif len(output.shape) == 4 and output.shape[1] == 1:  # (B,1,H,W)
+                        output = TensorImage(output.expand(-1, 3, -1, -1))
+                    else:
+                        raise ValueError(f"Unsupported shape: {output.shape}")
+                else:
+                    if not include_alpha and output.shape[1] == 4:
+                        rgb = TensorImage(output[:, :3, :, :])
+                        alpha = TensorImage(output[:, -1, :, :])
+                        output, _ = cutout(rgb, alpha)
+                return output
+
+            def process_value(value: str, multiple: bool) -> list[str]:
+                if not value:
+                    return []
+                if " " in value:
+                    items = value.split(" ")
+                    return items if multiple else [items[0]]
+                return [value]
+
+            def load_image(url: str) -> Optional[TensorImage]:
+                if not url:
+                    raise ValueError("Empty input string")
+
+                try:
+                    if url.startswith("http"):
+                        return TensorImage.from_web(url)
+                except Exception as e:
+                    raise ValueError(f"Unsupported input format: {url}") from e
+
+            value_list = process_value(value, multiple)
+            outputs: list[torch.Tensor] = []
+
+            # Process each input value
+            for item in value_list:
+                if isinstance(item, str):
+                    try:
+                        output = load_image(item)
+                        if output is not None:
+                            outputs.append(output)
+                    except ValueError as e:
+                        if not outputs:
+                            raise e
+
+            if len(outputs) == 0:
+                if fallback is None:
+                    raise ValueError("No input found and no fallback provided")
+                outputs.append(TensorImage.from_BWHC(fallback))
+
+            for i, output in enumerate(outputs):
+                if not isinstance(output, TensorImage):
+                    raise ValueError(f"Output {i} must be a TensorImage")
+
+                if subtype == "mask":
+                    if output.shape[1] == 4:
+                        rgb = TensorImage(output[:, :3, :, :])
+                        outputs[i] = rgb_to_grayscale(rgb).get_BWHC()
+                    else:
+                        outputs[i] = output.get_BWHC()
+                else:
+                    outputs[i] = post_process(output, include_alpha).get_BWHC()
+            return (outputs,)
+    ```
+
+## Report
+
+Manages report generation and output.
+    Handles the generation and output of reports with support for various data types and formats.
+    Includes support for metadata management and output formatting.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `any_type` |  |  |
+| required | report | `STRING` |  | multiline=True |
+
+??? note "Source code"
+
+    ```python
+    class Report:
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {
+                "required": {
+                    "value": (any_type,),
+                    "report": ("STRING", {"default": "", "multiline": True}),
+                },
+            }
+
+        RETURN_TYPES = (any_type,)
+        RETURN_NAMES = ("value",)
+        FUNCTION = "execute"
+        CATEGORY = PLATFORM_IO_CAT
+        OUTPUT_NODE = True
+        DESCRIPTION = """Manages report generation and output.
+        Handles the generation and output of reports with support for various data types and formats.
+        Includes support for metadata management and output formatting."""
+
+        def execute(self, value, report):
+            data = {"type": "string", "value": report}
+            return {"ui": {"signature_report": [data]}, "result": (value,)}
     ```
 
 ## Output
@@ -569,6 +819,11 @@ strings. Includes support for thumbnail generation and metadata management.
         INPUT_IS_LIST = True
         FUNCTION = "execute"
         CATEGORY = PLATFORM_IO_CAT
+        DESCRIPTION = """
+        Manages output processing and file saving for various data types.
+        Handles the processing and saving of different output types including images, masks, numbers, and strings.
+        Includes support for thumbnail generation and metadata management.
+        """
 
         @classmethod
         def IS_CHANGED(cls, **kwargs):  # type: ignore
@@ -674,9 +929,14 @@ strings. Includes support for thumbnail generation and metadata management.
                         raise ValueError(f"Unsupported output type: {type(item)}")
                 else:
                     value_json = json.dumps(item) if main_subtype == "dict" else item
-                    results.append({"title": title, "type": main_subtype, "metadata": metadata, "value": value_json})
-            clean_memory()
+                    results.append(
+                        {
+                            "title": title,
+                            "type": main_subtype,
+                            "metadata": metadata,
+                            "value": value_json,
+                        }
+                    )
             return {"ui": {"signature_output": results}}
-
 
     ```

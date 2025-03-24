@@ -23,6 +23,9 @@ class StartTrainingRun:
                     "STRING",
                     {"default": "signature-trainings"},
                 ),
+                "training_type": (["aitoolkit", "simpletuner"], {"default": "aitoolkit"}),
+                "backend_api": ("STRING", {"default": "https://signature-api.signature-eks-staging.signature.ai"}),
+                "backend_api_secret_name": ("STRING", {"default": "staging_backend_cognito_oauth"}),
             }
         }
 
@@ -40,10 +43,20 @@ class StartTrainingRun:
         user_id: str,
         is_flux: bool,
         s3_bucket_name: str,
+        training_type: str,
+        backend_api: str,
+        backend_api_secret_name: str,
     ):
         if is_flux:
             training_id = StartTrainingRunNeurochain().start_flux_training(
-                model_id, model_version, org_id, user_id, s3_bucket_name
+                model_id,
+                model_version,
+                org_id,
+                user_id,
+                s3_bucket_name,
+                training_type,
+                backend_api,
+                backend_api_secret_name,
             )
             print(training_id)
             return (training_id,)

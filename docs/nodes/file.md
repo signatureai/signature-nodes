@@ -1,143 +1,5 @@
 # File Nodes
 
-## ImageFromWeb
-
-Fetches and converts web images to ComfyUI-compatible tensors.
-
-Downloads an image from a URL and processes it into ComfyUI's expected tensor format. Handles both RGB
-and RGBA images with automatic mask generation for transparency.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | url | `STRING` | URL HERE |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| image | `IMAGE` |
-| mask | `MASK` |
-
-
-??? note "Source code"
-
-    ```python
-    class ImageFromWeb:
-        """Fetches and converts web images to ComfyUI-compatible tensors.
-
-        Downloads an image from a URL and processes it into ComfyUI's expected tensor format. Handles both RGB
-        and RGBA images with automatic mask generation for transparency.
-
-        Args:
-            url (str): Direct URL to the image file (PNG, JPG, JPEG, WebP).
-
-        Returns:
-            tuple[torch.Tensor, torch.Tensor]:
-                - image: BWHC format tensor, normalized to [0,1] range
-                - mask: BWHC format tensor for transparency/alpha channel
-
-        Raises:
-            ValueError: If URL is invalid, inaccessible, or not a string
-            HTTPError: If image download fails
-            IOError: If image format is unsupported
-
-        Notes:
-            - Automatically converts images to float32 format
-            - RGB images get a mask of ones
-            - RGBA images use alpha channel as mask
-            - Supports standard web image formats
-            - Image dimensions are preserved
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
-            return {"required": {"url": ("STRING", {"default": "URL HERE"})}}
-
-        RETURN_TYPES = ("IMAGE", "MASK")
-        FUNCTION = "execute"
-        CATEGORY = FILE_CAT
-
-        def execute(self, **kwargs):
-            url = kwargs.get("url")
-            if not isinstance(url, str):
-                raise ValueError("URL must be a string")
-            img_arr = TensorImage.from_web(url)
-            return image_array_to_tensor(img_arr)
-
-
-    ```
-
-## ImageFromBase64
-
-Converts base64 image strings to ComfyUI-compatible tensors.
-
-Processes base64-encoded image data into tensor format suitable for ComfyUI operations. Handles
-both RGB and RGBA images with proper mask generation.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | base64 | `STRING` | BASE64 HERE |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| image | `IMAGE` |
-| mask | `MASK` |
-
-
-??? note "Source code"
-
-    ```python
-    class ImageFromBase64:
-        """Converts base64 image strings to ComfyUI-compatible tensors.
-
-        Processes base64-encoded image data into tensor format suitable for ComfyUI operations. Handles
-        both RGB and RGBA images with proper mask generation.
-
-        Args:
-            base64 (str): Raw base64-encoded image string without data URL prefix.
-
-        Returns:
-            tuple[torch.Tensor, torch.Tensor]:
-                - image: BWHC format tensor, normalized to [0,1] range
-                - mask: BWHC format tensor for transparency/alpha channel
-
-        Raises:
-            ValueError: If base64 string is invalid or not a string
-            IOError: If decoded image format is unsupported
-            binascii.Error: If base64 decoding fails
-
-        Notes:
-            - Converts decoded images to float32 format
-            - RGB images get a mask of ones
-            - RGBA images use alpha channel as mask
-            - Supports common image formats (PNG, JPG, JPEG)
-            - Original image dimensions are preserved
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
-            return {"required": {"base64": ("STRING", {"default": "BASE64 HERE"})}}
-
-        RETURN_TYPES = ("IMAGE", "MASK")
-        FUNCTION = "execute"
-        CATEGORY = FILE_CAT
-
-        def execute(self, **kwargs):
-            base64 = kwargs.get("base64")
-            if not isinstance(base64, str):
-                raise ValueError("Base64 must be a string")
-            img_arr = TensorImage.from_base64(base64)
-            return image_array_to_tensor(img_arr)
-
-
-    ```
-
 ## Base64FromImage
 
 Converts ComfyUI image tensors to base64-encoded strings.
@@ -194,16 +56,15 @@ transmission or storage in text format.
         FUNCTION = "execute"
         CATEGORY = FILE_CAT
         OUTPUT_NODE = True
+        DESCRIPTION = """
+        Converts images to base64-encoded strings (PNG format).
+        Creates text representations of images suitable for web transmission, APIs,
+        or text-based storage without data URL prefix."""
 
-        def execute(self, **kwargs):
-            image = kwargs.get("image")
-            if not isinstance(image, torch.Tensor):
-                raise ValueError("Image must be a torch.Tensor")
+        def execute(self, image: torch.Tensor) -> tuple[str]:
             images = TensorImage.from_BWHC(image)
             output = images.get_base64()
             return (output,)
-
-
     ```
 
 ## FileLoader
@@ -265,11 +126,13 @@ Handles both single files and multiple files separated by '&&'.
         RETURN_TYPES = ("FILE",)
         FUNCTION = "execute"
         CATEGORY = FILE_CAT
+        DESCRIPTION = """
+        Converts JSON-formatted strings into ComfyUI-compatible file references.
+        Handles both single and multiple files (separated by '&&').
+        Automatically prepends proper input folder paths.
+        """
 
-        def execute(self, **kwargs):
-            value = kwargs.get("value")
-            if not isinstance(value, str):
-                raise ValueError("Value must be a string")
+        def execute(self, value: str = "") -> tuple[list]:
             data = value.split("&&") if "&&" in value else [value]
             input_folder = os.path.join(BASE_COMFY_DIR, "input")
             for i, _ in enumerate(data):
@@ -282,91 +145,146 @@ Handles both single files and multiple files separated by '&&'.
                         continue
                     item["name"] = os.path.join(input_folder, name)
                     data[i] = item
-
             return (data,)
-
-
     ```
 
-## FolderLoader
+## ImageFromWeb
 
-Processes folder paths into ComfyUI-compatible file data.
+Fetches and converts web images to ComfyUI-compatible tensors.
 
-Converts folder path information into properly formatted file references for ComfyUI processing.
-Supports both single and multiple folder paths.
+Downloads an image from a URL and processes it into ComfyUI's expected tensor format. Handles both RGB
+and RGBA images with automatic mask generation for transparency.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | value | `STRING` |  |  |
+| required | url | `STRING` | URL HERE |  |
 
 ### Returns
 
 | Name | Type |
 |------|------|
-| file | `FILE` |
+| image | `IMAGE` |
+| mask | `MASK` |
 
 
 ??? note "Source code"
 
     ```python
-    class FolderLoader:
-        """Processes folder paths into ComfyUI-compatible file data.
+    class ImageFromWeb:
+        """Fetches and converts web images to ComfyUI-compatible tensors.
 
-        Converts folder path information into properly formatted file references for ComfyUI processing.
-        Supports both single and multiple folder paths.
+        Downloads an image from a URL and processes it into ComfyUI's expected tensor format. Handles both RGB
+        and RGBA images with automatic mask generation for transparency.
 
         Args:
-            value (str): JSON-formatted string containing folder path data.
+            url (str): Direct URL to the image file (PNG, JPG, JPEG, WebP).
 
         Returns:
-            tuple[list]:
-                - files: List of dictionaries with file data and updated paths
+            tuple[torch.Tensor, torch.Tensor]:
+                - image: BWHC format tensor, normalized to [0,1] range
+                - mask: BWHC format tensor for transparency/alpha channel
 
         Raises:
-            ValueError: If input is not a string
-            json.JSONDecodeError: If JSON parsing fails
-            KeyError: If required folder data fields are missing
+            ValueError: If URL is invalid, inaccessible, or not a string
+            HTTPError: If image download fails
+            IOError: If image format is unsupported
 
         Notes:
-            - Automatically prepends ComfyUI input folder path
-            - Supports multiple folders via '&&' separator
-            - Maintains folder structure information
-            - Updates all paths for ComfyUI compatibility
+            - Automatically converts images to float32 format
+            - RGB images get a mask of ones
+            - RGBA images use alpha channel as mask
+            - Supports standard web image formats
+            - Image dimensions are preserved
         """
 
         @classmethod
         def INPUT_TYPES(cls):  # type: ignore
-            return {
-                "required": {
-                    "value": ("STRING", {"default": ""}),
-                },
-            }
+            return {"required": {"url": ("STRING", {"default": "URL HERE"})}}
 
-        RETURN_TYPES = ("FILE",)
+        RETURN_TYPES = ("IMAGE", "MASK")
         FUNCTION = "execute"
         CATEGORY = FILE_CAT
+        DESCRIPTION = """
+        Downloads and converts web images to ComfyUI-compatible tensors.
+        Fetches images from URLs and processes them with automatic mask generation for transparency.
+        Supports common web image formats.
+        """
 
-        def execute(self, **kwargs):
-            value = kwargs.get("value")
-            if not isinstance(value, str):
-                raise ValueError("Value must be a string")
-            data = value.split("&&") if "&&" in value else [value]
-            input_folder = os.path.join(BASE_COMFY_DIR, "input")
-            for i, _ in enumerate(data):
-                json_str = data[i]
-                data[i] = json.loads(json_str)
-                item = data[i]
-                if isinstance(item, dict):
-                    name = item.get("name", None)
-                    if name is None:
-                        continue
-                    item["name"] = os.path.join(input_folder, name)
-                    data[i] = item
-            return (data,)
+        def execute(self, url: str = "URL HERE") -> tuple[torch.Tensor, torch.Tensor]:
+            img_arr = TensorImage.from_web(url)
+            return image_array_to_tensor(img_arr)
+    ```
+
+## ImageFromBase64
+
+Converts base64 image strings to ComfyUI-compatible tensors.
+
+Processes base64-encoded image data into tensor format suitable for ComfyUI operations. Handles
+both RGB and RGBA images with proper mask generation.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | base64 | `STRING` | BASE64 HERE | multiline=True |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| image | `IMAGE` |
+| mask | `MASK` |
 
 
+??? note "Source code"
+
+    ```python
+    class ImageFromBase64:
+        """Converts base64 image strings to ComfyUI-compatible tensors.
+
+        Processes base64-encoded image data into tensor format suitable for ComfyUI operations. Handles
+        both RGB and RGBA images with proper mask generation.
+
+        Args:
+            base64 (str): Raw base64-encoded image string without data URL prefix.
+
+        Returns:
+            tuple[torch.Tensor, torch.Tensor]:
+                - image: BWHC format tensor, normalized to [0,1] range
+                - mask: BWHC format tensor for transparency/alpha channel
+
+        Raises:
+            ValueError: If base64 string is invalid or not a string
+            IOError: If decoded image format is unsupported
+            binascii.Error: If base64 decoding fails
+
+        Notes:
+            - Converts decoded images to float32 format
+            - RGB images get a mask of ones
+            - RGBA images use alpha channel as mask
+            - Supports common image formats (PNG, JPG, JPEG)
+            - Original image dimensions are preserved
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {"required": {"base64": ("STRING", {"default": "BASE64 HERE", "multiline": True})}}
+
+        RETURN_TYPES = ("IMAGE", "MASK")
+        FUNCTION = "execute"
+        CATEGORY = FILE_CAT
+        DEPRECATED = True
+        DESCRIPTION = """
+        Converts base64-encoded image strings to ComfyUI-compatible tensors with masks.
+        Handles both RGB and RGBA images, extracting transparency as mask.
+        Note: This node is deprecated.
+        """
+
+        def execute(self, base64: str = "BASE64 HERE") -> tuple[torch.Tensor, torch.Tensor]:
+            img_arr = TensorImage.from_base64(base64)
+            return image_array_to_tensor(img_arr)
     ```
 
 ## File2ImageList
@@ -430,11 +348,12 @@ ComfyUI-compatible tensor format.
         CATEGORY = FILE_CAT
         CLASS_ID = "file_image_list"
         OUTPUT_IS_LIST = (True,)
+        DESCRIPTION = """
+        Converts file references to a list of image tensors. Processes multiple files,
+        extracting supported image formats (PNG, JPG, JPEG, TIFF, BMP) into ComfyUI-compatible format.
+        """
 
-        def execute(self, **kwargs):
-            files = kwargs.get("files")
-            if not isinstance(files, list):
-                raise ValueError("Files must be a list")
+        def execute(self, files: list[dict]) -> tuple[list[torch.Tensor]]:
             images_list = []
             for file in files:
                 mimetype = file["type"]
@@ -444,8 +363,6 @@ ComfyUI-compatible tensor format.
                     images_list.append(TensorImage.from_local(file["name"]).get_BWHC())
 
             return (images_list,)
-
-
     ```
 
 ## File2List
@@ -504,92 +421,94 @@ Processes file input data into a consistent list format for further ComfyUI oper
         FUNCTION = "execute"
         CLASS_ID = "file_list"
         CATEGORY = FILE_CAT
+        DESCRIPTION = """
+        Converts file input to a standardized list format.
+        Processes file data into a consistent structure while preserving metadata and original order.
+        Enables further list-based operations on file collections.
+        """
 
-        def execute(self, **kwargs):
-            files = kwargs.get("files")
-            if not isinstance(files, list):
-                raise ValueError("Files must be a list")
+        def execute(self, files: list[dict]) -> tuple[list[dict]]:
             return (files,)
-
-
     ```
 
-## Rotate
+## FolderLoader
 
-Rotates an image and mask by a specified angle.
+Processes folder paths into ComfyUI-compatible file data.
 
-This node provides functionality to rotate images and masks while optionally adjusting the output
-size to fit the entire rotated content.
+Converts folder path information into properly formatted file references for ComfyUI processing.
+Supports both single and multiple folder paths.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | value | `STRING` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| file | `FILE` |
+
 
 ??? note "Source code"
 
     ```python
-    class Rotate:
-        """Rotates an image and mask by a specified angle.
+    class FolderLoader:
+        """Processes folder paths into ComfyUI-compatible file data.
 
-        This node provides functionality to rotate images and masks while optionally adjusting the output
-        size to fit the entire rotated content.
-
-        Args:
-            image (torch.Tensor, optional): Input image in BWHC format
-            mask (torch.Tensor, optional): Input mask in BWHC format
-            angle (float): Rotation angle in degrees (0-360)
-            zoom_to_fit (bool): Whether to zoom to fit rotated content (default: False)
-
-        Returns:
-            tuple[torch.Tensor, torch.Tensor]: Tuple containing:
-                - Rotated image in BWHC format
-                - Rotated mask in BWHC format
-
-        Notes:
-            - At least one of image or mask must be provided
-            - Rotation is performed counterclockwise
-            - When zoom_to_fit is False, corners may be clipped
-            - When zoom_to_fit is True, output may be larger
-            - Empty areas after rotation are filled with black
-            - Maintains aspect ratio of input
-        """
-
-
-    ```
-
-## MaskGaussianBlur
-
-Applies Gaussian blur to a mask.
-
-This node performs Gaussian blur on mask inputs with configurable radius, sigma and iteration
-parameters. Useful for softening mask edges or creating smooth transitions.
-
-??? note "Source code"
-
-    ```python
-    class MaskGaussianBlur:
-        """Applies Gaussian blur to a mask.
-
-        This node performs Gaussian blur on mask inputs with configurable radius, sigma and iteration
-        parameters. Useful for softening mask edges or creating smooth transitions.
+        Converts folder path information into properly formatted file references for ComfyUI processing.
+        Supports both single and multiple folder paths.
 
         Args:
-            image (torch.Tensor): Input mask in BWHC format
-            radius (int): Blur radius in pixels. Default: 13
-                Larger values create wider blur effects
-            sigma (float): Blur strength/standard deviation. Default: 10.5
-                Controls the falloff of the blur effect
-            iterations (int): Number of blur passes to apply. Default: 1
-                Multiple passes can create stronger blur effects
-            only_outline (bool): Whether to blur only the outline. Default: False
-                When True, preserves solid areas and only blurs edges
+            value (str): JSON-formatted string containing folder path data.
 
         Returns:
-            tuple[torch.Tensor]: Single-element tuple containing:
-                - Blurred mask in BWHC format
+            tuple[list]:
+                - files: List of dictionaries with file data and updated paths
+
+        Raises:
+            ValueError: If input is not a string
+            json.JSONDecodeError: If JSON parsing fails
+            KeyError: If required folder data fields are missing
 
         Notes:
-            - Input should be a single-channel mask
-            - Output maintains the same dimensions as input
-            - Multiple iterations can create smoother results
-            - Larger radius and sigma values produce stronger blur
-            - Edge-only mode is useful for creating soft borders
+            - Automatically prepends ComfyUI input folder path
+            - Supports multiple folders via '&&' separator
+            - Maintains folder structure information
+            - Updates all paths for ComfyUI compatibility
         """
+
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {
+                "required": {
+                    "value": ("STRING", {"default": ""}),
+                },
+            }
+
+        RETURN_TYPES = ("FILE",)
+        FUNCTION = "execute"
+        CATEGORY = FILE_CAT
+        DESCRIPTION = """
+        Converts folder path information into ComfyUI-compatible file references.
+        Handles both single and multiple folders (separated by '&&').
+        Automatically prepends proper input folder paths while maintaining folder structure.
+        """
+
+        def execute(self, value: str = "") -> tuple[list]:
+            data = value.split("&&") if "&&" in value else [value]
+            input_folder = os.path.join(BASE_COMFY_DIR, "input")
+            for i, _ in enumerate(data):
+                json_str = data[i]
+                data[i] = json.loads(json_str)
+                item = data[i]
+                if isinstance(item, dict):
+                    name = item.get("name", None)
+                    if name is None:
+                        continue
+                    item["name"] = os.path.join(input_folder, name)
+                    data[i] = item
+            return (data,)
 
     ```

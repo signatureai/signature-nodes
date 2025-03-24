@@ -1,86 +1,18 @@
 # Text Nodes
 
-## TextPreview
+## TextSplit
 
-Processes and generates a preview of text inputs, supporting both strings and tensors.
+Splits text into a list of segments using a specified delimiter.
 
-This node takes a list of text inputs and generates a formatted preview string. For tensor inputs,
-it includes shape information in the preview. The node is designed to handle multiple input types
-and provide a consistent preview format.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | value | `any_type` |  |  |
-
-??? note "Source code"
-
-    ```python
-    class TextPreview:
-        """Processes and generates a preview of text inputs, supporting both strings and tensors.
-
-        This node takes a list of text inputs and generates a formatted preview string. For tensor inputs,
-        it includes shape information in the preview. The node is designed to handle multiple input types
-        and provide a consistent preview format.
-
-        Args:
-            text (Any): A list of text inputs that can be strings, tensors, or other objects that can be
-                converted to strings.
-
-        Returns:
-            dict: A dictionary containing:
-                - ui (dict): UI-specific data with the preview text under the 'text' key
-                - result (tuple): A tuple containing the generated preview string
-
-        Notes:
-            - Tensor inputs are displayed with their shape information
-            - Multiple inputs are separated by newlines
-            - None values are skipped in the preview generation
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
-            return {
-                "required": {
-                    "value": (any_type,),
-                },
-            }
-
-        INPUT_IS_LIST = True
-        RETURN_TYPES = ()
-        FUNCTION = "execute"
-        OUTPUT_NODE = True
-
-        CATEGORY = TEXT_CAT
-
-        def execute(self, **kwargs):
-            text = kwargs.get("value", [])
-            text_string = ""
-            for t in text:
-                if t is None:
-                    continue
-                if text_string != "":
-                    text_string += "\n"
-                text_string += str(t.shape) if isinstance(t, torch.Tensor) else str(t)
-            return {"ui": {"text": [text_string]}}
-
-
-    ```
-
-## TextCase
-
-Transforms text case according to specified formatting rules.
-
-A utility node that provides various case transformation options for input text, including
-lowercase, uppercase, capitalization, and title case conversion.
+A utility node that divides input text into multiple segments based on a delimiter,
+creating a list of substrings.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
 | required | text | `STRING` |  | forceInput=True |
-| required | case | `LIST` |  |  |
+| required | delimiter | `STRING` |   |  |
 
 ### Returns
 
@@ -92,56 +24,46 @@ lowercase, uppercase, capitalization, and title case conversion.
 ??? note "Source code"
 
     ```python
-    class TextCase:
-        """Transforms text case according to specified formatting rules.
+    class TextSplit:
+        """Splits text into a list of segments using a specified delimiter.
 
-        A utility node that provides various case transformation options for input text, including
-        lowercase, uppercase, capitalization, and title case conversion.
+        A utility node that divides input text into multiple segments based on a delimiter,
+        creating a list of substrings.
 
         Args:
-            text (str): The input text to be transformed. Required.
-            case (str): The case transformation to apply. Must be one of:
-                - 'lower': Convert text to lowercase
-                - 'upper': Convert text to uppercase
-                - 'capitalize': Capitalize the first character
-                - 'title': Convert text to title case
+            text (str): The input text to be split. Required.
+            delimiter (str): The character or string to use as the splitting point. Defaults to space.
 
         Returns:
-            tuple[str]: A single-element tuple containing the transformed text.
+            tuple[list[str]]: A single-element tuple containing a list of split text segments.
 
         Notes:
-            - Empty input text will result in an empty string output
-            - The transformation preserves any existing spacing and special characters
+            - Empty input text will result in a list with one empty string
+            - If the delimiter is not found, the result will be a single-element list
+            - Consecutive delimiters will result in empty strings in the output list
         """
 
         @classmethod
-        def INPUT_TYPES(cls):  # type: ignore
+        def INPUT_TYPES(cls):
             return {
                 "required": {
                     "text": ("STRING", {"forceInput": True}),
-                    "case": (["lower", "upper", "capitalize", "title"],),
+                    "delimiter": ("STRING", {"default": " "}),
                 },
             }
 
         RETURN_TYPES = ("STRING",)
         FUNCTION = "execute"
         CATEGORY = TEXT_CAT
+        OUTPUT_IS_LIST = (True,)
+        DESCRIPTION = """
+        Splits text into a list of segments using a specified delimiter.
+        Divides input text into multiple segments based on a delimiter,
+        creating a list of substrings.
+        """
 
-        def execute(self, **kwargs):
-            text = kwargs.get("text") or ""
-            case = kwargs.get("case") or "lower"
-            result = text
-            if case == "lower":
-                result = text.lower()
-            if case == "upper":
-                result = text.upper()
-            if case == "capitalize":
-                result = text.capitalize()
-            if case == "title":
-                result = text.title()
-            return (result,)
-
-
+        def execute(self, text: str, delimiter: str = " ") -> tuple[list[str]]:
+            return (text.split(delimiter),)
     ```
 
 ## TextTrim
@@ -201,152 +123,19 @@ from the beginning, end, or both sides of the text.
         RETURN_TYPES = ("STRING",)
         FUNCTION = "execute"
         CATEGORY = TEXT_CAT
-
-        def execute(self, **kwargs):
-            text = kwargs.get("text") or ""
-            trim_type = kwargs.get("trim_type") or "both"
-            if trim_type == "both":
-                return (text.strip(),)
-            if trim_type == "left":
-                return (text.lstrip(),)
-            if trim_type == "right":
-                return (text.rstrip(),)
-            return (text,)
-
-
-    ```
-
-## TextSplit
-
-Splits text into a list of segments using a specified delimiter.
-
-A utility node that divides input text into multiple segments based on a delimiter,
-creating a list of substrings.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | text | `STRING` |  | forceInput=True |
-| required | delimiter | `STRING` |   |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| string | `STRING` |
-
-
-??? note "Source code"
-
-    ```python
-    class TextSplit:
-        """Splits text into a list of segments using a specified delimiter.
-
-        A utility node that divides input text into multiple segments based on a delimiter,
-        creating a list of substrings.
-
-        Args:
-            text (str): The input text to be split. Required.
-            delimiter (str): The character or string to use as the splitting point. Defaults to space.
-
-        Returns:
-            tuple[list[str]]: A single-element tuple containing a list of split text segments.
-
-        Notes:
-            - Empty input text will result in a list with one empty string
-            - If the delimiter is not found, the result will be a single-element list
-            - Consecutive delimiters will result in empty strings in the output list
+        DESCRIPTION = """
+        Removes whitespace from text according to specified trimming rules.
+        Trims whitespace from text input, offering options to remove whitespace from the beginning,
+        end, or both sides of the text.
         """
 
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "text": ("STRING", {"forceInput": True}),
-                    "delimiter": ("STRING", {"default": " "}),
-                },
+        def execute(self, text: str, trim_type: str = "both") -> tuple[str]:
+            trim_types = {
+                "both": text.strip,
+                "left": text.lstrip,
+                "right": text.rstrip,
             }
-
-        RETURN_TYPES = ("STRING",)
-        FUNCTION = "execute"
-        CATEGORY = TEXT_CAT
-        OUTPUT_IS_LIST = (True,)
-
-        def execute(self, **kwargs):
-            text = kwargs.get("text", "")
-            delimiter = kwargs.get("delimiter", " ")
-            return (text.split(delimiter),)
-
-
-    ```
-
-## TextRegexReplace
-
-Performs pattern-based text replacement using regular expressions.
-
-A powerful text processing node that uses regex patterns to find and replace text patterns,
-supporting complex pattern matching and replacement operations.
-
-### Inputs
-
-| Group | Name | Type | Default | Extras |
-|-------|------|------|---------|--------|
-| required | text | `STRING` |  | forceInput=True |
-| required | pattern | `STRING` |  |  |
-| required | replacement | `STRING` |  |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| string | `STRING` |
-
-
-??? note "Source code"
-
-    ```python
-    class TextRegexReplace:
-        """Performs pattern-based text replacement using regular expressions.
-
-        A powerful text processing node that uses regex patterns to find and replace text patterns,
-        supporting complex pattern matching and replacement operations.
-
-        Args:
-            text (str): The input text to process. Required.
-            pattern (str): The regular expression pattern to match. Required.
-            replacement (str): The string to use as replacement for matched patterns. Required.
-
-        Returns:
-            tuple[str]: A single-element tuple containing the processed text.
-
-        Notes:
-            - Invalid regex patterns will cause errors
-            - Empty pattern or replacement strings are allowed
-            - Supports all Python regex syntax including groups and backreferences
-        """
-
-        @classmethod
-        def INPUT_TYPES(cls):
-            return {
-                "required": {
-                    "text": ("STRING", {"forceInput": True}),
-                    "pattern": ("STRING", {"default": ""}),
-                    "replacement": ("STRING", {"default": ""}),
-                },
-            }
-
-        RETURN_TYPES = ("STRING",)
-        FUNCTION = "execute"
-        CATEGORY = TEXT_CAT
-
-        def execute(self, **kwargs):
-            text = kwargs.get("text", "")
-            pattern = kwargs.get("pattern", "")
-            replacement = kwargs.get("replacement", "")
-            return (re.sub(pattern, replacement, text),)
-
-
+            return (trim_types[trim_type](),)
     ```
 
 ## TextFindReplace
@@ -407,14 +196,150 @@ another substring, using exact matching.
         RETURN_TYPES = ("STRING",)
         FUNCTION = "execute"
         CATEGORY = TEXT_CAT
+        DESCRIPTION = """
+        Performs simple text replacement without regex support.
+        Replaces all occurrences of a substring with another substring,
+        using exact matching.
+        """
 
-        def execute(self, **kwargs):
-            text = kwargs.get("text") or ""
-            find = kwargs.get("find") or ""
-            replace = kwargs.get("replace") or ""
+        def execute(self, text: str = "", find: str = "", replace: str = "") -> tuple[str]:
             return (text.replace(find, replace),)
+    ```
+
+## TextRegexReplace
+
+Performs pattern-based text replacement using regular expressions.
+
+A powerful text processing node that uses regex patterns to find and replace text patterns,
+supporting complex pattern matching and replacement operations.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  | forceInput=True |
+| required | pattern | `STRING` |  |  |
+| required | replacement | `STRING` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| string | `STRING` |
 
 
+??? note "Source code"
+
+    ```python
+    class TextRegexReplace:
+        """Performs pattern-based text replacement using regular expressions.
+
+        A powerful text processing node that uses regex patterns to find and replace text patterns,
+        supporting complex pattern matching and replacement operations.
+
+        Args:
+            text (str): The input text to process. Required.
+            pattern (str): The regular expression pattern to match. Required.
+            replacement (str): The string to use as replacement for matched patterns. Required.
+
+        Returns:
+            tuple[str]: A single-element tuple containing the processed text.
+
+        Notes:
+            - Invalid regex patterns will cause errors
+            - Empty pattern or replacement strings are allowed
+            - Supports all Python regex syntax including groups and backreferences
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):
+            return {
+                "required": {
+                    "text": ("STRING", {"forceInput": True}),
+                    "pattern": ("STRING", {"default": ""}),
+                    "replacement": ("STRING", {"default": ""}),
+                },
+            }
+
+        RETURN_TYPES = ("STRING",)
+        FUNCTION = "execute"
+        CATEGORY = TEXT_CAT
+        DESCRIPTION = """
+        Performs pattern-based text replacement using regular expressions.
+        Uses regex patterns to find and replace text patterns,
+        supporting complex pattern matching and replacement operations.
+        """
+
+        def execute(self, text: str, pattern: str = "", replacement: str = "") -> tuple[str]:
+            return (re.sub(pattern, replacement, text),)
+    ```
+
+## TextCase
+
+Transforms text case according to specified formatting rules.
+
+A utility node that provides various case transformation options for input text, including
+lowercase, uppercase, capitalization, and title case conversion.
+
+### Inputs
+
+| Group | Name | Type | Default | Extras |
+|-------|------|------|---------|--------|
+| required | text | `STRING` |  | forceInput=True |
+| required | case | `LIST` |  |  |
+
+### Returns
+
+| Name | Type |
+|------|------|
+| string | `STRING` |
+
+
+??? note "Source code"
+
+    ```python
+    class TextCase:
+        """Transforms text case according to specified formatting rules.
+
+        A utility node that provides various case transformation options for input text, including
+        lowercase, uppercase, capitalization, and title case conversion.
+
+        Args:
+            text (str): The input text to be transformed. Required.
+            case (str): The case transformation to apply. Must be one of:
+                - 'lower': Convert text to lowercase
+                - 'upper': Convert text to uppercase
+                - 'capitalize': Capitalize the first character
+                - 'title': Convert text to title case
+
+        Returns:
+            tuple[str]: A single-element tuple containing the transformed text.
+
+        Notes:
+            - Empty input text will result in an empty string output
+            - The transformation preserves any existing spacing and special characters
+        """
+
+        @classmethod
+        def INPUT_TYPES(cls):  # type: ignore
+            return {
+                "required": {
+                    "text": ("STRING", {"forceInput": True}),
+                    "case": (["lower", "upper", "capitalize", "title"],),
+                },
+            }
+
+        RETURN_TYPES = ("STRING",)
+        FUNCTION = "execute"
+        CATEGORY = TEXT_CAT
+        DESCRIPTION = """
+        Transforms text case according to specified formatting rules.
+        Provides various case transformation options for input text,
+        including lowercase, uppercase, capitalization, and title case conversion.
+        """
+
+        def execute(self, text: str, case: str = "lower") -> tuple[str]:
+            return (getattr(text, case)(),)
     ```
 
 ## TextConcatenate
@@ -472,112 +397,82 @@ without any separator between them.
         RETURN_TYPES = ("STRING",)
         FUNCTION = "execute"
         CATEGORY = TEXT_CAT
+        DESCRIPTION = """
+        Combines two text strings into a single string.
+        Joins two input strings together in sequence, without any separator between them.
+        """
 
-        def execute(self, **kwargs):
-            text1 = kwargs.get("text1", "")
-            text2 = kwargs.get("text2", "")
+        def execute(self, text1: str = "", text2: str = "") -> tuple[str]:
             return (text1 + text2,)
-
-
     ```
 
-## RenderText
+## TextPreview
 
-Renders text onto an existing image at specified coordinates.
+Processes and generates a preview of text inputs, supporting both strings and tensors.
 
-Overlays text on an input image using a specified font and position,
-returning the modified image with the rendered text.
+This node takes a list of text inputs and generates a formatted preview string. For tensor inputs,
+it includes shape information in the preview. The node is designed to handle multiple input types
+and provide a consistent preview format.
 
 ### Inputs
 
 | Group | Name | Type | Default | Extras |
 |-------|------|------|---------|--------|
-| required | image | `IMAGE` |  |  |
-| required | text | `STRING` | Text |  |
-| required | x | `INT` | 100 | min=0 |
-| required | y | `INT` | 100 | min=0 |
-| required | font_path | `STRING` |  |  |
-| required | font_size | `INT` | 300 | min=1, max=1000 |
-| required | color | `STRING` | #FFFFFF |  |
-
-### Returns
-
-| Name | Type |
-|------|------|
-| i | `I` |
-| m | `M` |
-| a | `A` |
-| g | `G` |
-| e | `E` |
-
+| required | value | `any_type` |  |  |
 
 ??? note "Source code"
 
     ```python
-    class RenderText:
-        """Renders text onto an existing image at specified coordinates.
+    class TextPreview:
+        """Processes and generates a preview of text inputs, supporting both strings and tensors.
 
-        Overlays text on an input image using a specified font and position,
-        returning the modified image with the rendered text.
+        This node takes a list of text inputs and generates a formatted preview string. For tensor inputs,
+        it includes shape information in the preview. The node is designed to handle multiple input types
+        and provide a consistent preview format.
 
         Args:
-            image (torch.Tensor): The input image to overlay text on
-            text (str): The text to render
-            x (int): X coordinate for text placement
-            y (int): Y coordinate for text placement
-            font_path (str): Path to the font file (.ttf, .otf)
-            font_size (int): Size of the font in pixels
-            color (str): Color of the text in hex format (e.g. "#FFFFFF")
+            text (Any): A list of text inputs that can be strings, tensors, or other objects that can be
+                converted to strings.
 
         Returns:
-            torch.Tensor - Modified image tensor with text overlay
+            dict: A dictionary containing:
+                - ui (dict): UI-specific data with the preview text under the 'text' key
+                - result (tuple): A tuple containing the generated preview string
+
+        Notes:
+            - Tensor inputs are displayed with their shape information
+            - Multiple inputs are separated by newlines
+            - None values are skipped in the preview generation
         """
 
         @classmethod
-        def INPUT_TYPES(cls):
+        def INPUT_TYPES(cls):  # type: ignore
             return {
                 "required": {
-                    "image": ("IMAGE",),
-                    "text": ("STRING", {"default": "Text"}),
-                    "x": ("INT", {"default": 100, "min": 0}),
-                    "y": ("INT", {"default": 100, "min": 0}),
-                    "font_path": ("STRING", {"default": ""}),
-                    "font_size": ("INT", {"default": 300, "min": 1, "max": 1000}),
-                    "color": ("STRING", {"default": "#FFFFFF"}),
-                }
+                    "value": (any_type,),
+                },
             }
 
-        RETURN_TYPES = "IMAGE"
+        INPUT_IS_LIST = True
+        RETURN_TYPES = ()
         FUNCTION = "execute"
+        OUTPUT_NODE = True
         CATEGORY = TEXT_CAT
+        DESCRIPTION = """
+        Processes and generates a preview of text inputs, supporting both strings and tensors.
+        Takes a list of text inputs and generates a formatted preview string. For tensor inputs,
+        it includes shape information in the preview. The node is designed to handle multiple input types
+        and provide a consistent preview format.
+        """
 
-        # * Fred please use the TensorImage class to manage the image
-        def execute(self, **kwargs):
-            image = kwargs.get("image")
-            text = kwargs.get("text")
-            x = kwargs.get("x")
-            y = kwargs.get("y")
-            font_path = kwargs.get("font_path")
-            font_size = kwargs.get("font_size")
-            color = kwargs.get("color")
-            input_image = Image.fromarray((image[0].cpu().numpy() * 255).astype(np.uint8))  # type: ignore
-
-            if input_image.mode != "RGBA":
-                input_image = input_image.convert("RGBA")
-
-            # Load font
-            try:
-                font = ImageFont.truetype(font_path, font_size)
-            except (OSError, ImportError):
-                font = ImageFont.load_default(size=font_size)
-
-            draw = ImageDraw.Draw(input_image)
-            draw.text((x, y), text, font=font, fill=color)
-            img_tensor = torch.from_numpy(np.array(input_image).astype(np.float32) / 255.0)
-
-            if len(img_tensor.shape) == 3:
-                img_tensor = img_tensor.unsqueeze(0)
-
-            return (img_tensor,)
+        def execute(self, value: Any = []) -> tuple[dict]:
+            text_string = ""
+            for t in value:
+                if t is None:
+                    continue
+                if text_string != "":
+                    text_string += "\n"
+                text_string += str(t.shape) if isinstance(t, torch.Tensor) else str(t)
+            return {"ui": {"text": [text_string]}}  # type: ignore
 
     ```
