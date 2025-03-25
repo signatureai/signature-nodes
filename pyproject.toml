@@ -21,6 +21,7 @@ dependencies = [
     "neurochain==2.0.1",
     "signature-flows==1.1.6",
     "signature-core==2.0.2",
+    "datasets>=3.3.2",
 ]
 
 [dependency-groups]
