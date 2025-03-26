@@ -20,7 +20,7 @@ dependencies = [
     "uuid7>=0.1.0",
     "neurochain==2.1.1",
     "signature-flows==1.1.6",
-    "signature-core==2.0.2",
+    "signature-core==2.0.3",
     "datasets>=3.3.2",
     "sam-2>=1.0",
 ]
