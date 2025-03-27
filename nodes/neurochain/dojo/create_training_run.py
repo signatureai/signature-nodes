@@ -44,7 +44,7 @@ class CreateTrainingRun:
         "STRING",
         "STRING",
     )
-    RETURN_NAMES = ("model_id", "model_version", "user_id", "org_id", "s3_bucket_name")
+    RETURN_NAMES = ("model_id", "user_id", "org_id", "s3_bucket_name")
     FUNCTION = "process"
     CATEGORY = DOJO_CAT
     OUTPUT_NODE = True
