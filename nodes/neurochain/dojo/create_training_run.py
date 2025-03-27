@@ -42,7 +42,6 @@ class CreateTrainingRun:
         "STRING",
         "STRING",
         "STRING",
-        "STRING",
     )
     RETURN_NAMES = ("model_id", "user_id", "org_id", "s3_bucket_name")
     FUNCTION = "process"
