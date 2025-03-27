@@ -81,14 +81,13 @@ class GuidedRandomCrop:
                 crop_size = random.randint(min_crop_size, max_crop_size)
 
                 # Calculate initial crop boundaries
-                half_w = crop_size // 2
-                half_h = crop_size // 2
+                dimension = crop_size // 2
 
                 # Calculate initial boundaries
-                start_x = x - half_w
-                end_x = x + half_w
-                start_y = y - half_h
-                end_y = y + half_h
+                start_x = x - dimension
+                end_x = x + dimension
+                start_y = y - dimension
+                end_y = y + dimension
 
                 # Shift the box if it goes out of bounds
                 if start_x < 0:
