@@ -55,8 +55,8 @@ class BuildLoraDataset:
             },
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("folder_path",)
+    RETURN_TYPES = ("STRING", "STRING")
+    RETURN_NAMES = ("folder_path", "cover_image_path")
     OUTPUT_NODE = True
     FUNCTION = "execute"
     CATEGORY = LORA_CAT
@@ -78,7 +78,7 @@ class BuildLoraDataset:
         prefix: Optional[str] = "",
         suffix: Optional[str] = "",
         training_backend: str = "ai-toolkit",
-    ) -> tuple[str]:
+    ) -> tuple[str, str]:
         print("dataset_name", dataset_name, type(dataset_name))
         if len(dataset_name) == 0:
             dataset_name = "dataset"
@@ -87,6 +87,7 @@ class BuildLoraDataset:
             os.mkdir(root_folder)
 
         dataset_folder = None
+        cover_image_path = None
         if training_backend == "ai-toolkit":
             uuid = uuid7str()
             dataset_folder = os.path.join(root_folder, f"{dataset_name}_{uuid}")
@@ -100,7 +101,11 @@ class BuildLoraDataset:
             for i, img in enumerate(tensor_images):
                 # timestamp to be added to the image name
 
-                TensorImage(img).save(os.path.join(images_folder, f"{dataset_name}_{i}.png"))
+                image_path = os.path.join(images_folder, f"{dataset_name}_{i}.png")
+                TensorImage(img).save(image_path)
+                if i == 0:
+                    cover_image_path = image_path
+
                 # write txt label with the same name of the image
                 with open(os.path.join(images_folder, f"{dataset_name}_{i}.txt"), "w") as f:
                     label = prefix + labels[self._counter % len(labels)] + suffix  # type: ignore
@@ -115,7 +120,10 @@ class BuildLoraDataset:
             for i, img in enumerate(tensor_images):
                 uuid = uuid7str()
                 # Save images directly to the dataset folder
-                TensorImage(img).save(os.path.join(dataset_folder, f"{dataset_name}_{uuid}.png"))
+                image_path = os.path.join(dataset_folder, f"{dataset_name}_{uuid}.png")
+                TensorImage(img).save(image_path)
+                if i == 0:
+                    cover_image_path = image_path
 
                 # Write txt label with the same name of the image
                 with open(os.path.join(dataset_folder, f"{dataset_name}_{uuid}.txt"), "w") as f:
@@ -125,4 +133,4 @@ class BuildLoraDataset:
 
                 self._counter += 1
 
-        return (str(dataset_folder),)
+        return (str(dataset_folder), str(cover_image_path))

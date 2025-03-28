@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.13' and sys_platform == 'darwin'",
@@ -2557,7 +2558,7 @@ wheels = [
 
 [[package]]
 name = "neurochain"
-version = "2.1.1"
+version = "2.1.2"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "accelerate" },
@@ -2594,12 +2595,13 @@ dependencies = [
     { name = "torchvision" },
     { name = "tqdm" },
     { name = "transformers" },
+    { name = "uuid7" },
     { name = "weaviate-client" },
     { name = "websockets" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.1/neurochain-2.1.1.tar.gz", hash = "sha256:c95a197de0c1690e24540eaffc61934d9aaf0c9e0b3114229a210221cc2c8476" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.2/neurochain-2.1.2.tar.gz", hash = "sha256:ba4319e4a6893101cd280a5f67b9c3cc16b522eef6ab9d4739ef6808e145c10a" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.1/neurochain-2.1.1-py3-none-any.whl", hash = "sha256:89f3b2ea802d158d6a85cf24d59448dc3a0e34e08ff515a13f1e0b58b20d3877" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.2/neurochain-2.1.2-py3-none-any.whl", hash = "sha256:d09bd83820d10e81824739f045f987ca0933d9229e81cafa64ac592dd6910732" },
 ]
 
 [[package]]
@@ -4226,7 +4228,7 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=0.26.2" },
     { name = "jq", specifier = ">=1.8.0" },
     { name = "matplotlib", specifier = ">=3.10.0" },
-    { name = "neurochain", specifier = "==2.1.1", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "neurochain", specifier = "==2.1.2", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.2" },

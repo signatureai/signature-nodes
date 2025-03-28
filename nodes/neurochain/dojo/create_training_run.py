@@ -33,7 +33,9 @@ class CreateTrainingRun:
                     {"default": "signature-trainings"},
                 ),
                 "api_host": ("STRING", {"default": ""}),
+                "generate_service_host": ("STRING", {"default": ""}),
                 "backend_cognito_secret_name": ("STRING", {"default": ""}),
+                "cover_image_path": ("STRING", {"default": ""}),
             }
         }
 
@@ -61,7 +63,9 @@ class CreateTrainingRun:
         license_id: str,
         s3_bucket_name: str,
         api_host: str,
+        generate_service_host: str,
         backend_cognito_secret_name: str,
+        cover_image_path: str,
     ):
         return CreateTrainingRunNeurochain.create_flux_training(
             dataset_path=dataset_path,
@@ -75,5 +79,7 @@ class CreateTrainingRun:
             license_id=license_id,
             s3_bucket_name=s3_bucket_name,
             api_host=api_host,
+            generate_service_host=generate_service_host,
             backend_cognito_secret_name=backend_cognito_secret_name,
+            cover_image_path=cover_image_path,
         )
