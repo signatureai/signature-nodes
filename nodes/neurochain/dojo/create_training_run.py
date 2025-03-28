@@ -34,6 +34,7 @@ class CreateTrainingRun:
                 ),
                 "api_host": ("STRING", {"default": ""}),
                 "backend_cognito_secret_name": ("STRING", {"default": ""}),
+                "access_level": ("LIST", {"default": []}),
             }
         }
 
@@ -62,6 +63,7 @@ class CreateTrainingRun:
         s3_bucket_name: str,
         api_host: str,
         backend_cognito_secret_name: str,
+        access_level: list[str],
     ):
         return CreateTrainingRunNeurochain.create_flux_training(
             dataset_path=dataset_path,
@@ -76,4 +78,5 @@ class CreateTrainingRun:
             s3_bucket_name=s3_bucket_name,
             api_host=api_host,
             backend_cognito_secret_name=backend_cognito_secret_name,
+            access_level=access_level,
         )
