@@ -6,11 +6,12 @@ import { applyNodeOrderChanges, createNodeItem, initDragAndDrop } from "./utils.
 const showNodeOrderEditor = () => {
   const nodes = app.graph._nodes;
   nodes.forEach((node) => {
-    if (!node.properties.signature_metadata) {
-      node.properties.signature_metadata = {};
+    const signature_metadata = node.properties.signature_metadata;
+    if (!signature_metadata) {
+      signature_metadata = {};
     }
-    if (!node.properties.signature_metadata.order) {
-      node.properties.signature_metadata.order = 0;
+    if (!signature_metadata.order) {
+      signature_metadata.order = 0;
     }
   });
   if (!nodes || nodes.length === 0) {
