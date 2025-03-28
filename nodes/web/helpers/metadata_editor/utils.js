@@ -48,9 +48,11 @@ const metadataFields = {
     ...genericMetadataFields,
   ],
   signature_output: genericMetadataFields,
+  signature_input_boolean: genericMetadataFields,
 };
 
 const nodeTypesWithMetada = [
+  "signature_input_boolean",
   "signature_input_text",
   "signature_input_number",
   "signature_input_image",

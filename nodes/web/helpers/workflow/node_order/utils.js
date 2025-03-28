@@ -10,7 +10,8 @@ const createNodeItem = (node, index, nodeType) => {
       className: `draggable-node-item ${nodeType}-node`,
       "data-node-id": node.id,
       "data-original-index": index,
-      "data-original-order": node.properties.signature_metadata.order !== undefined ? node.properties.signature_metadata.order : "unset",
+      "data-original-order":
+        node.properties.signature_metadata.order !== undefined ? node.properties.signature_metadata.order : "unset",
       "data-node-type": nodeType,
       style: {
         padding: "12px",
@@ -104,7 +105,9 @@ const createNodeItem = (node, index, nodeType) => {
           index + 1
         }</span>
                      <div style="font-size: 11px; color: #666;">Global: ${
-                       node.properties.signature_metadata.order !== undefined ? node.properties.signature_metadata.order : "unset"
+                       node.properties.signature_metadata.order !== undefined
+                         ? node.properties.signature_metadata.order
+                         : "unset"
                      }</div>`,
       }),
     ]
@@ -168,6 +171,23 @@ const processNodeItems = (items) => {
         node.properties = {};
       }
       node.properties.signature_metadata.order = index;
+      // Update metadata widget value
+      if (node.widgets) {
+        const metadataWidget = node.widgets.find((widget) => widget.name === "metadata");
+        if (metadataWidget) {
+          try {
+            const existingMetadata = JSON.parse(metadataWidget.value || "{}");
+            metadataWidget.value = JSON.stringify({ ...existingMetadata, order: index });
+            // If there's a clamp property, make sure it's an object, not a string
+            if (existingMetadata.clamp && typeof existingMetadata.clamp === "string") {
+              existingMetadata.clamp = JSON.parse(existingMetadata.clamp);
+            }
+          } catch (e) {
+            console.error("Parse/update failed:", e);
+            metadataWidget.value = JSON.stringify({ order: index });
+          }
+        }
+      }
     } else {
       console.warn(`Node with ID ${nodeId} not found in graph`);
     }
