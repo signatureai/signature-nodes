@@ -15,8 +15,10 @@ class GuidedRandomCrop:
             "required": {
                 "images": ("IMAGE",),  # List/Batch of images
                 "masks": ("MASK",),  # List/Batch of masks
-                "window_width": ("INT", {"default": 256, "min": 32, "max": 2048}),
-                "window_height": ("INT", {"default": 256, "min": 32, "max": 2048}),
+                "output_width": ("INT", {"default": 256, "min": 32, "max": 2048}),
+                "output_height": ("INT", {"default": 256, "min": 32, "max": 2048}),
+                "min_crop_size": ("INT", {"default": 128, "min": 32, "max": 2048}),
+                "max_crop_size": ("INT", {"default": 256, "min": 32, "max": 2048}),
                 "num_samples": ("INT", {"default": 4, "min": 1, "max": 200}),
             }
         }
@@ -34,7 +36,14 @@ class GuidedRandomCrop:
     """
 
     def guided_crop(
-        self, images: torch.Tensor, masks: torch.Tensor, window_width: int, window_height: int, num_samples: int
+        self,
+        images: torch.Tensor,
+        masks: torch.Tensor,
+        output_width: int = 256,
+        output_height: int = 256,
+        min_crop_size: int = 128,
+        max_crop_size: int = 256,
+        num_samples: int = 4,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Perform guided random cropping based on masks
@@ -68,16 +77,17 @@ class GuidedRandomCrop:
 
             for idx in point_indices:
                 y, x = valid_points[0][idx], valid_points[1][idx]
+                # Randomly select crop dimensions between min and max
+                crop_size = random.randint(min_crop_size, max_crop_size)
 
                 # Calculate initial crop boundaries
-                half_w = window_width // 2
-                half_h = window_height // 2
+                dimension = crop_size // 2
 
                 # Calculate initial boundaries
-                start_x = x - half_w
-                end_x = x + half_w
-                start_y = y - half_h
-                end_y = y + half_h
+                start_x = x - dimension
+                end_x = x + dimension
+                start_y = y - dimension
+                end_y = y + dimension
 
                 # Shift the box if it goes out of bounds
                 if start_x < 0:
@@ -100,9 +110,14 @@ class GuidedRandomCrop:
                     end_y = image.shape[0]
                     start_y -= offset
 
+                # Get the crop
                 crop = image[start_y:end_y, start_x:end_x]
 
-                crops.append(crop)
+                # Resize the crop to match output dimensions
+                standardized_crop = cv2.resize(crop, (output_width, output_height), interpolation=cv2.INTER_LINEAR)
+
+                # Append the standardized crop
+                crops.append(standardized_crop)
 
                 # Draw debug visualization
                 cv2.rectangle(debug_view, (start_x, start_y), (end_x, end_y), (0, 0, 1), 2)  # Blue rectangle

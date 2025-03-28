@@ -9,7 +9,6 @@ class StartTrainingRun:
         return {
             "required": {
                 "model_id": ("STRING", {"default": ""}),
-                "model_version": ("STRING", {"default": ""}),
                 "org_id": (
                     "STRING",
                     {"default": "66310e12f6ce596d498cb975"},
@@ -38,7 +37,6 @@ class StartTrainingRun:
     def process(
         self,
         model_id: str,
-        model_version: str,
         org_id: str,
         user_id: str,
         is_flux: bool,
@@ -50,7 +48,6 @@ class StartTrainingRun:
         if is_flux:
             training_id = StartTrainingRunNeurochain().start_flux_training(
                 model_id,
-                model_version,
                 org_id,
                 user_id,
                 s3_bucket_name,
