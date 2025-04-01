@@ -179,8 +179,7 @@ class InputImage:
             if subtype == "mask":
                 if output.shape[1] == 4:
                     rgb = TensorImage(output[:, :3, :, :])
-                    mask_output = rgb_to_grayscale(rgb).get_BWHC()
-                    outputs[i] = mask_output[:, :, :, 0]
+                    outputs[i] = rgb_to_grayscale(rgb).get_BWHC()
                 else:
                     outputs[i] = output.get_BWHC()
             else:
