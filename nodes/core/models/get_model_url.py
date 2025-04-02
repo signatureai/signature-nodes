@@ -6,7 +6,7 @@ import requests
 from ...categories import PLATFORM_IO_CAT
 
 
-class GetModelUrl:
+class GetModelDetails:
     @classmethod
     def INPUT_TYPES(cls):  # type: ignore
         return {
@@ -15,17 +15,18 @@ class GetModelUrl:
                 "version_uuid": ("STRING", {"forceInput": True}),
                 "backend_api_host": ("STRING", {"forceInput": True}),
                 "backend_coginto_secret": ("STRING", {"forceInput": True}),
+                "user_id": ("STRING", {"forceInput": True}),
             },
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("model_url",)
+    RETURN_TYPES = ("DICT",)
+    RETURN_NAMES = ("model_details",)
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
-    OUTPUT_NODE = True
-    DESCRIPTION = """Get the model url from the backend"""
+    DESCRIPTION = """Get the model details from the backend"""
 
-    def execute(self, model_uuid, version_uuid, backend_api_host, backend_coginto_secret):
+    def execute(self, model_uuid, version_uuid, backend_api_host, backend_coginto_secret, user_id):
+        # Move this to core in the future
         def get_secret(session, secret_name, region_name="eu-west-1"):
             client = session.client(service_name="secretsmanager", region_name=region_name)
             try:
@@ -53,13 +54,14 @@ class GetModelUrl:
         headers = {
             "accept": "application/json",
             "authorization": "Bearer {}".format(cognito_response.json()["access_token"]),
+            "X-User-Uuid": user_id,
         }
 
         response = requests.get(
             f"{backend_api_host}/api/v1_restricted/model/{model_uuid}/version/{version_uuid}",
             headers=headers,
         )
-        print("response", response.text)
+
         if response.status_code != 200:
             raise Exception(f"Error getting model url: {response.status_code}, {response}")
-        return response.text
+        return (response.json(),)
