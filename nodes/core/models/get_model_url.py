@@ -60,5 +60,5 @@ class GetModelUrl:
             headers=headers,
         )
         if response.status_code != 200:
-            raise Exception(f"Error getting model url: {response.raw}")
-        return response.json()
+            raise Exception(f"Error getting model url: {response.status_code}")
+        return response.text
