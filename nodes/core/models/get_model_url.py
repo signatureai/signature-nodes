@@ -49,7 +49,6 @@ class GetModelUrl:
             data=f"grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}&scope={client_scope}/read",
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        print(cognito_response.json())
 
         headers = {
             "accept": "application/json",
@@ -57,7 +56,9 @@ class GetModelUrl:
         }
 
         response = requests.get(
-            f"{backend_api_host}/model/{model_uuid}/version/{version_uuid}",
+            f"{backend_api_host}/api/v1_restricted/model/{model_uuid}/version/{version_uuid}",
             headers=headers,
         )
+        if response.status_code != 200:
+            raise Exception(f"Error getting model url: {response.raw}")
         return response.json()
