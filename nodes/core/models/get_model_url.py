@@ -59,6 +59,7 @@ class GetModelUrl:
             f"{backend_api_host}/api/v1_restricted/model/{model_uuid}/version/{version_uuid}",
             headers=headers,
         )
+        print("response", response.text)
         if response.status_code != 200:
-            raise Exception(f"Error getting model url: {response.status_code}")
+            raise Exception(f"Error getting model url: {response.status_code}, {response}")
         return response.text
