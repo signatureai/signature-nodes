@@ -6,11 +6,10 @@ import {
   loginRequest,
   refreshTokenRequest,
 } from "../../signature_api/main.js";
+import { $el, createMenuItem, dropdownMenuSeparator, findSignatureMenuList } from "../global/main.js";
 import { saveWorkflow } from "./form/main.js";
 import { showWorkflowsList } from "./list/main.js";
 import { showNodeOrderEditor } from "./node_order/main.js";
-
-import { $el, createMenuItem, findSignatureMenuList } from "../global/main.js";
 
 const showMessage = (message, color, detailedInfo = null, backgroundColor = "#00000000", extraBody = null) => {
   let dialogContent = `
@@ -339,13 +338,7 @@ const setupMenu = async (app) => {
   // Try to find menu list for up to 10 seconds
   for (let i = 0; i < 20; i++) {
     if (menuList) {
-      // Add separator
-      const separator = $el("li", {
-        className: "p-menubar-separator",
-        role: "separator",
-        "data-signature-menu": "true",
-      });
-      menuList.appendChild(separator);
+      menuList.appendChild(dropdownMenuSeparator);
 
       // Add Node Order Editor menu item
       const nodeOrderItem = createMenuItem("Edit Node Order", "pi-sort", () => {
