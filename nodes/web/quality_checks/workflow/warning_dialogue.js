@@ -1,4 +1,4 @@
-import { $el } from "../../helpers/global/main.js";
+import { $el, removeDialogueCloseButton } from "../../helpers/global/main.js";
 
 const showWarningDialog = async (nodeList, message, canContinue = true) => {
   return new Promise((resolve) => {
@@ -121,13 +121,7 @@ const showWarningDialog = async (nodeList, message, canContinue = true) => {
     );
 
     app.ui.dialog.show(dialogContent);
-    const modalContent = document.querySelector(".comfy-modal-content");
-    if (modalContent) {
-      const closeButton = modalContent.children.item(modalContent.children.length - 1);
-      if (closeButton) {
-        closeButton.style.display = "none";
-      }
-    }
+    removeDialogueCloseButton();
   });
 };
 
