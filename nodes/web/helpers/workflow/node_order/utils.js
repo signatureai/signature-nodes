@@ -155,6 +155,28 @@ const updateNodeOrderDisplay = (item, index) => {
   }
 };
 
+// Convert string representation of object to actual object
+const convertStringToObject = (str) => {
+  try {
+    // Remove curly braces and split by comma
+    const cleanStr = str.replace(/[{}]/g, "").trim();
+    const parts = cleanStr.split(",").map((part) => part.trim());
+
+    // Create object from parts
+    const resultObj = {};
+    parts.forEach((part) => {
+      const [key, value] = part.split(":").map((item) => item.trim());
+      // Convert value to number if it's a numeric string
+      resultObj[key] = isNaN(value) ? value : Number(value);
+    });
+
+    return resultObj;
+  } catch (e) {
+    console.error("Failed to convert string to object:", e);
+    return null;
+  }
+};
+
 const processNodeItems = (items) => {
   const newItems = items.map((item, index) => {
     let nodeId = item["data-node-id"] || item.id;
@@ -170,6 +192,9 @@ const processNodeItems = (items) => {
       if (!node.properties) {
         node.properties = {};
       }
+      if (!node.properties.signature_metadata) {
+        node.properties.signature_metadata = {};
+      }
       node.properties.signature_metadata.order = index;
       // Update metadata widget value
       if (node.widgets) {
@@ -180,11 +205,14 @@ const processNodeItems = (items) => {
             metadataWidget.value = JSON.stringify({ ...existingMetadata, order: index });
             // If there's a clamp property, make sure it's an object, not a string
             if (existingMetadata.clamp && typeof existingMetadata.clamp === "string") {
-              existingMetadata.clamp = JSON.parse(existingMetadata.clamp);
+              // Convert string representation to object using the dedicated function
+              const clampObj = convertStringToObject(existingMetadata.clamp);
+              if (clampObj) {
+                existingMetadata.clamp = clampObj;
+              }
             }
           } catch (e) {
             console.error("Parse/update failed:", e);
-            metadataWidget.value = JSON.stringify({ order: index });
           }
         }
       }
