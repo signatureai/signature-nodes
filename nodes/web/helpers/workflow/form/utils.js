@@ -116,13 +116,67 @@ const saveWorkflow = async (app) => {
         const workflowIdSelectedDiv = form.querySelector('div[data-selected="true"]');
         const workflowId = workflowIdSelectedDiv ? workflowIdSelectedDiv.getAttribute("data-workflow-id") : "";
 
+        // Get form elements
+        const nameInput = form.querySelector('input[type="text"]');
+        const descriptionInput = form.querySelector("textarea");
+        const coverImageInput = form.querySelector('input[type="file"]');
+        const imagePreview = form.querySelector("#image-preview");
+
+        // Remove any existing error messages
+        const existingErrors = form.querySelectorAll(".error-message");
+        existingErrors.forEach((error) => error.remove());
+
+        // Reset any previous error styling
+        nameInput.style.border = "1px solid #ccc";
+        descriptionInput.style.border = "1px solid #ccc";
+        coverImageInput.style.border = "1px solid #ccc";
+
+        // Validate mandatory fields
+        let hasErrors = false;
+
+        // Function to add error message below an element
+        const addErrorMessage = (element, message) => {
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "error-message";
+          errorDiv.style.color = "#ff0000";
+          errorDiv.style.fontSize = "12px";
+          errorDiv.style.marginTop = "5px";
+          errorDiv.style.marginBottom = "10px";
+          errorDiv.textContent = message;
+
+          // Insert after the element
+          element.parentNode.insertBefore(errorDiv, element.nextSibling);
+        };
+
+        if (!nameInput.value.trim()) {
+          nameInput.style.border = "1px solid #ff0000";
+          hasErrors = true;
+          addErrorMessage(nameInput, "Name is required");
+        }
+
+        if (!descriptionInput.value.trim()) {
+          descriptionInput.style.border = "1px solid #ff0000";
+          hasErrors = true;
+          addErrorMessage(descriptionInput, "Description is required");
+        }
+
+        if (!coverImageInput.files[0] && (!imagePreview.src || imagePreview.src === "")) {
+          coverImageInput.style.border = "1px solid #ff0000";
+          hasErrors = true;
+          addErrorMessage(coverImageInput, "Cover Image is required");
+        }
+
+        if (hasErrors) {
+          return;
+        }
+
         const formData = {
           baseWorkflowId: workflowId || "",
-          name: form.querySelector('input[type="text"]').value,
-          description: form.querySelector("textarea").value,
+          name: nameInput.value,
+          description: descriptionInput.value,
           type: form.querySelector("select").value,
-          coverImage: form.querySelector('input[type="file"]').files[0],
-          coverImageUrl: form.querySelector("#image-preview").src,
+          coverImage: coverImageInput.files[0],
+          coverImageUrl: imagePreview.src,
         };
         app.ui.dialog.close();
 
@@ -146,51 +200,51 @@ const saveWorkflow = async (app) => {
           return;
         }
 
-        const submitData = new FormData();
-        submitData.append("workflowUUID", formData.baseWorkflowId);
-        submitData.append("workflowName", formData.name);
-        submitData.append("workflowDescription", formData.description);
-        submitData.append("workflowType", formData.type.toLowerCase());
-        if (!formData.coverImage && formData.coverImageUrl) {
-          submitData.append("coverImageUrl", formData.coverImageUrl);
-        } else {
-          submitData.append(
-            "coverImage",
-            formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
-          );
-        }
+        // const submitData = new FormData();
+        // submitData.append("workflowUUID", formData.baseWorkflowId);
+        // submitData.append("workflowName", formData.name);
+        // submitData.append("workflowDescription", formData.description);
+        // submitData.append("workflowType", formData.type.toLowerCase());
+        // if (!formData.coverImage && formData.coverImageUrl) {
+        //   submitData.append("coverImageUrl", formData.coverImageUrl);
+        // } else {
+        //   submitData.append(
+        //     "coverImage",
+        //     formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
+        //   );
+        // }
 
-        const workflowString = JSON.stringify(workflow, null, 2);
-        const workflowBlob = new Blob([workflowString], {
-          type: "application/json;charset=UTF-8",
-        });
-        submitData.append("workflowJson", workflowBlob, "workflow.json");
+        // const workflowString = JSON.stringify(workflow, null, 2);
+        // const workflowBlob = new Blob([workflowString], {
+        //   type: "application/json;charset=UTF-8",
+        // });
+        // submitData.append("workflowJson", workflowBlob, "workflow.json");
 
-        const workflowApiString = JSON.stringify(workflow_api, null, 2);
-        const workflowApiBlob = new Blob([workflowApiString], {
-          type: "application/json;charset=UTF-8",
-        });
-        submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
+        // const workflowApiString = JSON.stringify(workflow_api, null, 2);
+        // const workflowApiBlob = new Blob([workflowApiString], {
+        //   type: "application/json;charset=UTF-8",
+        // });
+        // submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
-        const manifest = await getManifest(workflow_api);
-        const manifestBlob = new Blob([manifest], {
-          type: "application/json;charset=UTF-8",
-        });
-        submitData.append("manifest", manifestBlob, "manifest.json");
+        // const manifest = await getManifest(workflow_api);
+        // const manifestBlob = new Blob([manifest], {
+        //   type: "application/json;charset=UTF-8",
+        // });
+        // submitData.append("manifest", manifestBlob, "manifest.json");
 
-        const url = window.location.href + "flow/submit_workflow";
+        // const url = window.location.href + "flow/submit_workflow";
 
-        const response = await fetch(url, {
-          method: "POST",
-          body: submitData,
-        });
+        // const response = await fetch(url, {
+        //   method: "POST",
+        //   body: submitData,
+        // });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`${response.status} - ${errorText}`);
-        }
+        // if (!response.ok) {
+        //   const errorText = await response.text();
+        //   throw new Error(`${response.status} - ${errorText}`);
+        // }
 
-        showMessage("Workflow submitted successfully!", "#00ff00");
+        // showMessage("Workflow submitted successfully!", "#00ff00");
       } catch (error) {
         console.error("Error submitting workflow:", error);
         showMessage(error.message, "#ff0000");
