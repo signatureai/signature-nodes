@@ -2,6 +2,7 @@ import { showWarningDialog } from "./warning_dialogue.js";
 
 const bypassNodes = async (workflow, nodes_to_bypass) => {
   if (!workflow) {
+    console.log("No workflow provided");
     const result = await showWarningDialog([], {
       dialogueTitle: "⚠️ Workflow Error",
       dialogueMessage1: "Workflow with active nodes is required",
