@@ -2557,7 +2557,7 @@ wheels = [
 
 [[package]]
 name = "neurochain"
-version = "2.1.4"
+version = "2.1.5"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "accelerate" },
@@ -2598,9 +2598,9 @@ dependencies = [
     { name = "weaviate-client" },
     { name = "websockets" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.4/neurochain-2.1.4.tar.gz", hash = "sha256:46f9fa54ceb050cc795b9cf8b4609447605ee8f2e1c89444a42b0759eb5f74b8" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.5/neurochain-2.1.5.tar.gz", hash = "sha256:acac0e2d58a669999e6b763e94a88c442b3f37edea9bc97ecdd8e6a3991f5607" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.4/neurochain-2.1.4-py3-none-any.whl", hash = "sha256:4c770c5f6f965bd5d9e5662a1fcf19dc400960da7387f0c5ecc479e6cfc5ad93" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/neurochain/2.1.5/neurochain-2.1.5-py3-none-any.whl", hash = "sha256:cd9b40d596f1a12d715741716440708694fd80d51e406e8a36f7c3b6ff28035d" },
 ]
 
 [[package]]
@@ -4227,7 +4227,7 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=0.26.2" },
     { name = "jq", specifier = ">=1.8.0" },
     { name = "matplotlib", specifier = ">=3.10.0" },
-    { name = "neurochain", specifier = "==2.1.4", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "neurochain", specifier = "==2.1.5", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.2" },
