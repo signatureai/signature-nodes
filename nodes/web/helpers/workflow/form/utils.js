@@ -204,51 +204,51 @@ const saveWorkflow = async (app) => {
           return;
         }
 
-        // const submitData = new FormData();
-        // submitData.append("workflowUUID", formData.baseWorkflowId);
-        // submitData.append("workflowName", formData.name);
-        // submitData.append("workflowDescription", formData.description);
-        // submitData.append("workflowType", formData.type.toLowerCase());
-        // if (!formData.coverImage && formData.coverImageUrl) {
-        //   submitData.append("coverImageUrl", formData.coverImageUrl);
-        // } else {
-        //   submitData.append(
-        //     "coverImage",
-        //     formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
-        //   );
-        // }
+        const submitData = new FormData();
+        submitData.append("workflowUUID", formData.baseWorkflowId);
+        submitData.append("workflowName", formData.name);
+        submitData.append("workflowDescription", formData.description);
+        submitData.append("workflowType", formData.type.toLowerCase());
+        if (!formData.coverImage && formData.coverImageUrl) {
+          submitData.append("coverImageUrl", formData.coverImageUrl);
+        } else {
+          submitData.append(
+            "coverImage",
+            formData.coverImage || new File([new Blob([""], { type: "image/png" })], "default.png")
+          );
+        }
 
-        // const workflowString = JSON.stringify(workflow, null, 2);
-        // const workflowBlob = new Blob([workflowString], {
-        //   type: "application/json;charset=UTF-8",
-        // });
-        // submitData.append("workflowJson", workflowBlob, "workflow.json");
+        const workflowString = JSON.stringify(workflow, null, 2);
+        const workflowBlob = new Blob([workflowString], {
+          type: "application/json;charset=UTF-8",
+        });
+        submitData.append("workflowJson", workflowBlob, "workflow.json");
 
-        // const workflowApiString = JSON.stringify(workflow_api, null, 2);
-        // const workflowApiBlob = new Blob([workflowApiString], {
-        //   type: "application/json;charset=UTF-8",
-        // });
-        // submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
+        const workflowApiString = JSON.stringify(workflow_api, null, 2);
+        const workflowApiBlob = new Blob([workflowApiString], {
+          type: "application/json;charset=UTF-8",
+        });
+        submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
-        // const manifest = await getManifest(workflow_api);
-        // const manifestBlob = new Blob([manifest], {
-        //   type: "application/json;charset=UTF-8",
-        // });
-        // submitData.append("manifest", manifestBlob, "manifest.json");
+        const manifest = await getManifest(workflow_api);
+        const manifestBlob = new Blob([manifest], {
+          type: "application/json;charset=UTF-8",
+        });
+        submitData.append("manifest", manifestBlob, "manifest.json");
 
-        // const url = window.location.href + "flow/submit_workflow";
+        const url = window.location.href + "flow/submit_workflow";
 
-        // const response = await fetch(url, {
-        //   method: "POST",
-        //   body: submitData,
-        // });
+        const response = await fetch(url, {
+          method: "POST",
+          body: submitData,
+        });
 
-        // if (!response.ok) {
-        //   const errorText = await response.text();
-        //   throw new Error(`${response.status} - ${errorText}`);
-        // }
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`${response.status} - ${errorText}`);
+        }
 
-        // showMessage("Workflow submitted successfully!", "#00ff00");
+        showMessage("Workflow submitted successfully!", "#00ff00");
       } catch (error) {
         console.error("Error submitting workflow:", error);
         showMessage(error.message, "#ff0000");
