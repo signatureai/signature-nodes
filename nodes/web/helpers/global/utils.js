@@ -161,4 +161,20 @@ const findSignatureMenuList = () => {
   return null;
 };
 
-export { $el, createMenuItem, findSignatureMenuList };
+const removeDialogueCloseButton = () => {
+  const modalContent = document.querySelector(".comfy-modal-content");
+  if (modalContent) {
+    const closeButton = modalContent.children.item(modalContent.children.length - 1);
+    if (closeButton) {
+      closeButton.style.display = "none";
+    }
+  }
+};
+
+// Prevent default drag behavior
+const preventDefaultDrag = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
+export { $el, createMenuItem, findSignatureMenuList, preventDefaultDrag, removeDialogueCloseButton };

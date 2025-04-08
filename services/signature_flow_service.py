@@ -94,7 +94,9 @@ class SignatureFlowService:
                             logging.info(f"Processing coverImageUrl: {content}")
                             try:
                                 async with aiohttp.ClientSession() as session:
-                                    async with session.get(content, timeout=10) as response:
+                                    async with session.get(
+                                        content, timeout=aiohttp.ClientTimeout(total=10)
+                                    ) as response:
                                         logging.info(f"Cover image fetch status: {response.status}")
                                         if response.status == 200:
                                             image_data = await response.read()

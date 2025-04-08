@@ -1,3 +1,11 @@
-import { $el, createMenuItem, findSignatureMenuList } from "./utils.js";
+import { dropdownMenuSeparator } from "./style.js";
+import { $el, createMenuItem, findSignatureMenuList, preventDefaultDrag, removeDialogueCloseButton } from "./utils.js";
 
-export { $el, createMenuItem, findSignatureMenuList };
+export {
+  $el,
+  createMenuItem,
+  dropdownMenuSeparator,
+  findSignatureMenuList,
+  preventDefaultDrag,
+  removeDialogueCloseButton,
+};
