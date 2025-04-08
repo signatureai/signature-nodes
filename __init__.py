@@ -128,5 +128,7 @@ MANIFEST = {
 
 if SIGNATURE_FLOWS_AVAILABLE:
     from .services.signature_flow_service import SignatureFlowService
+    from .services.signature_model_service import SignatureModelService
 
     SignatureFlowService.setup_routes()
+    SignatureModelService.setup_routes()
