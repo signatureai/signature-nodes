@@ -1,6 +1,7 @@
 import {
   bypassNodes,
   checkNodeGroupPresence,
+  checkUnlinkedNodes,
   findNodesWithRandomizedControlAfterGenerateWidget,
 } from "../../../quality_checks/main.js";
 import { getManifest, getWorkflowById } from "../../../signature_api/main.js";
@@ -68,14 +69,17 @@ const validateWorkflow = async (app) => {
 
     // Check for nodes with randomized control_after_generate widgets
     const nodesWithControlWidget = await findNodesWithRandomizedControlAfterGenerateWidget();
+    const { workflow: workflow_with_unlinked_nodes_removed, cancelled: check_unlinked_nodes_cancelled } =
+      await checkUnlinkedNodes(initial_workflow);
 
-    if (nodesWithControlWidget && nodesWithControlWidget.cancelled) {
+    if ((nodesWithControlWidget && nodesWithControlWidget.cancelled) || check_unlinked_nodes_cancelled) {
       // Don't proceed to the next dialog
       return { cancelled: true };
     }
 
+    console.log("workflow_with_unlinked_nodes_removed", workflow_with_unlinked_nodes_removed);
     // Bypass the nodes of the list above and generate a new workflow
-    const { workflow } = await bypassNodes(initial_workflow, nodes_to_bypass);
+    const { workflow } = await bypassNodes(workflow_with_unlinked_nodes_removed, nodes_to_bypass);
     // Change the displayed graph to the one generated above and create a new workflow api
     const workflow_api = await getApiFromUpdatedWorkflow(workflow);
 

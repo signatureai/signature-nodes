@@ -1,3 +1,4 @@
+import { highlightNodes } from "../../helpers/global/main.js";
 import { showWarningDialog } from "./warning_dialogue.js";
 
 const findNodesWithRandomizedControlAfterGenerateWidget = async () => {
@@ -15,7 +16,7 @@ const findNodesWithRandomizedControlAfterGenerateWidget = async () => {
   // Highlight the nodes with red borders
   let removeHighlights = null;
   if (nodesWithRandomizedControlAfterGenerateWidget.length > 0) {
-    removeHighlights = highlightNodesWithRandomizedWidgets(nodesWithRandomizedControlAfterGenerateWidget);
+    removeHighlights = highlightNodes(nodesWithRandomizedControlAfterGenerateWidget);
 
     // If there are nodes with randomized widgets, show a warning dialog
     const result = await showWarningDialog(nodesWithRandomizedControlAfterGenerateWidget, {
@@ -38,47 +39,6 @@ const findNodesWithRandomizedControlAfterGenerateWidget = async () => {
     }
   }
   return nodesWithRandomizedControlAfterGenerateWidget;
-};
-// Function to highlight nodes with randomized control_after_generate widgets
-const highlightNodesWithRandomizedWidgets = (nodes) => {
-  if (!nodes || nodes.length === 0) return;
-
-  // Store original colors to restore later
-  const originalColors = new Map();
-
-  // Add red border to each node
-  for (const node of nodes) {
-    // Store the original border color and width
-    originalColors.set(node.id, {
-      color: node.color,
-      boxShadow: node.boxShadow,
-    });
-
-    // Set a red border
-    node.color = "#ff0000";
-    node.boxShadow = "0 0 10px #ff0000";
-
-    // Force the node to redraw
-    if (node.setDirtyCanvas) {
-      node.setDirtyCanvas(true, true);
-    }
-  }
-
-  // Return a function to remove the highlighting
-  return function removeHighlights() {
-    for (const node of nodes) {
-      const original = originalColors.get(node.id);
-      if (original) {
-        node.color = original.color;
-        node.boxShadow = original.boxShadow;
-
-        // Force the node to redraw
-        if (node.setDirtyCanvas) {
-          node.setDirtyCanvas(true, true);
-        }
-      }
-    }
-  };
 };
 
 export { findNodesWithRandomizedControlAfterGenerateWidget };
