@@ -120,13 +120,67 @@ const saveWorkflow = async (app) => {
         const workflowIdSelectedDiv = form.querySelector('div[data-selected="true"]');
         const workflowId = workflowIdSelectedDiv ? workflowIdSelectedDiv.getAttribute("data-workflow-id") : "";
 
+        // Get form elements
+        const nameInput = form.querySelector('input[type="text"]');
+        const descriptionInput = form.querySelector("textarea");
+        const coverImageInput = form.querySelector('input[type="file"]');
+        const imagePreview = form.querySelector("#image-preview");
+
+        // Remove any existing error messages
+        const existingErrors = form.querySelectorAll(".error-message");
+        existingErrors.forEach((error) => error.remove());
+
+        // Reset any previous error styling
+        nameInput.style.border = "1px solid #ccc";
+        descriptionInput.style.border = "1px solid #ccc";
+        coverImageInput.style.border = "1px solid #ccc";
+
+        // Validate mandatory fields
+        let hasErrors = false;
+
+        // Function to add error message below an element
+        const addErrorMessage = (element, message) => {
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "error-message";
+          errorDiv.style.color = "#ff0000";
+          errorDiv.style.fontSize = "12px";
+          errorDiv.style.marginTop = "5px";
+          errorDiv.style.marginBottom = "10px";
+          errorDiv.textContent = message;
+
+          // Insert after the element
+          element.parentNode.insertBefore(errorDiv, element.nextSibling);
+        };
+
+        if (!nameInput.value.trim()) {
+          nameInput.style.border = "1px solid #ff0000";
+          hasErrors = true;
+          addErrorMessage(nameInput, "Name is required");
+        }
+
+        if (!descriptionInput.value.trim()) {
+          descriptionInput.style.border = "1px solid #ff0000";
+          hasErrors = true;
+          addErrorMessage(descriptionInput, "Description is required");
+        }
+
+        if (!coverImageInput.files[0] && (!imagePreview.src || imagePreview.src === "")) {
+          coverImageInput.style.border = "1px solid #ff0000";
+          hasErrors = true;
+          addErrorMessage(coverImageInput, "Cover Image is required");
+        }
+
+        if (hasErrors) {
+          return;
+        }
+
         const formData = {
           baseWorkflowId: workflowId || "",
-          name: form.querySelector('input[type="text"]').value,
-          description: form.querySelector("textarea").value,
+          name: nameInput.value,
+          description: descriptionInput.value,
           type: form.querySelector("select").value,
-          coverImage: form.querySelector('input[type="file"]').files[0],
-          coverImageUrl: form.querySelector("#image-preview").src,
+          coverImage: coverImageInput.files[0],
+          coverImageUrl: imagePreview.src,
         };
         app.ui.dialog.close();
 
