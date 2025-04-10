@@ -67,10 +67,17 @@ const validateWorkflow = async (app) => {
     const output_nodes_types = ["signature_output"];
     const nodes_to_bypass = ["PreviewImage", "LoadImage", "signature_mask_preview", "signature_text_preview"];
 
+    // Check for blacklisted nodes
+    const { cancelled: blacklist_check_cancelled, workflow: workflow_after_blacklist_check } =
+      await checkBlacklistNodes(initial_workflow);
+    if (blacklist_check_cancelled) {
+      return { cancelled: true };
+    }
+
     // Check for nodes with randomized control_after_generate widgets
     const nodesWithControlWidget = await findNodesWithRandomizedControlAfterGenerateWidget();
     const { workflow: workflow_with_unlinked_nodes_removed, cancelled: check_unlinked_nodes_cancelled } =
-      await checkUnlinkedNodes(initial_workflow);
+      await checkUnlinkedNodes(workflow_after_blacklist_check);
 
     if ((nodesWithControlWidget && nodesWithControlWidget.cancelled) || check_unlinked_nodes_cancelled) {
       // Don't proceed to the next dialog
