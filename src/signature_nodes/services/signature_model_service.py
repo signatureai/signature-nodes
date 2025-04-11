@@ -5,7 +5,7 @@ import traceback
 
 from aiohttp import web
 
-from .. import BASE_COMFY_DIR
+from ..shared import BASE_COMFY_DIR
 
 sys.path.append(BASE_COMFY_DIR)
 import folder_paths  # type: ignore # noqa: E402
