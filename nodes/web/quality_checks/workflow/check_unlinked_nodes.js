@@ -49,11 +49,17 @@ const checkUnlinkedNodes = async (workflow) => {
       (node) => !disconnectedNodes.some((disconnectedNode) => disconnectedNode.id === node.id)
     );
 
+    const workflow_with_unlinked_nodes_removed = {
+      ...workflow,
+      nodes: filteredNodes,
+    };
+
+    // Refresh the graph with the cleaned workflow
+    app.graph.clear();
+    app.graph.configure(workflow_with_unlinked_nodes_removed);
+
     return {
-      workflow: {
-        ...workflow,
-        nodes: filteredNodes,
-      },
+      workflow: workflow_with_unlinked_nodes_removed,
       cancelled: false,
     };
   }

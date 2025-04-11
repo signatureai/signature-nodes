@@ -1,5 +1,6 @@
 import {
   bypassNodes,
+  checkBlacklistNodes,
   checkNodeGroupPresence,
   checkUnlinkedNodes,
   findNodesWithRandomizedControlAfterGenerateWidget,
@@ -67,26 +68,27 @@ const validateWorkflow = async (app) => {
     const output_nodes_types = ["signature_output"];
     const nodes_to_bypass = ["PreviewImage", "LoadImage", "signature_mask_preview", "signature_text_preview"];
 
-    // Check for blacklisted nodes
+    // Check for unlinked nodes first
+    const { workflow: workflow_with_unlinked_nodes_removed, cancelled: check_unlinked_nodes_cancelled } =
+      await checkUnlinkedNodes(initial_workflow);
+    if (check_unlinked_nodes_cancelled) {
+      return { cancelled: true };
+    }
+
+    // Then check for blacklisted nodes
     const { cancelled: blacklist_check_cancelled, workflow: workflow_after_blacklist_check } =
-      await checkBlacklistNodes(initial_workflow);
+      await checkBlacklistNodes(workflow_with_unlinked_nodes_removed);
     if (blacklist_check_cancelled) {
       return { cancelled: true };
     }
 
-    // Check for nodes with randomized control_after_generate widgets
     const nodesWithControlWidget = await findNodesWithRandomizedControlAfterGenerateWidget();
-    const { workflow: workflow_with_unlinked_nodes_removed, cancelled: check_unlinked_nodes_cancelled } =
-      await checkUnlinkedNodes(workflow_after_blacklist_check);
-
-    if ((nodesWithControlWidget && nodesWithControlWidget.cancelled) || check_unlinked_nodes_cancelled) {
-      // Don't proceed to the next dialog
+    if (nodesWithControlWidget.cancelled) {
       return { cancelled: true };
     }
 
-    console.log("workflow_with_unlinked_nodes_removed", workflow_with_unlinked_nodes_removed);
     // Bypass the nodes of the list above and generate a new workflow
-    const { workflow } = await bypassNodes(workflow_with_unlinked_nodes_removed, nodes_to_bypass);
+    const { workflow } = await bypassNodes(workflow_after_blacklist_check, nodes_to_bypass);
     // Change the displayed graph to the one generated above and create a new workflow api
     const workflow_api = await getApiFromUpdatedWorkflow(workflow);
 

@@ -1,6 +1,6 @@
 import { $el, removeDialogueCloseButton } from "../../helpers/global/main.js";
 
-const showWarningDialog = async (nodeList, message, canContinue = true) => {
+const showWarningDialog = async (nodeList, message, canContinue = true, spawnReplacementNodes = false) => {
   return new Promise((resolve) => {
     // Create a list of affected nodes
     const { dialogueTitle, dialogueMessage1, dialogueMessage2, dialogueMessage3 } = message;
@@ -89,6 +89,32 @@ const showWarningDialog = async (nodeList, message, canContinue = true) => {
                 resolve({ continue: false });
               },
             }),
+            spawnReplacementNodes
+              ? $el("button", {
+                  textContent: "Spawn Replacement Nodes",
+                  style: {
+                    padding: "10px 20px",
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    flex: "1",
+                    minWidth: "150px",
+                  },
+                  onclick: () => {
+                    const modalContent = document.querySelector(".comfy-modal-content");
+                    if (modalContent) {
+                      const closeButton = modalContent.children.item(modalContent.children.length - 1);
+                      if (closeButton) {
+                        closeButton.style.display = "block";
+                      }
+                    }
+                    app.ui.dialog.close();
+                    resolve({ continue: false, spawnReplacementNodes: true });
+                  },
+                })
+              : $el("span", {}),
             canContinue
               ? $el("button", {
                   textContent: "Continue Anyway",
