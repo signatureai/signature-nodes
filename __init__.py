@@ -110,7 +110,7 @@ def get_node_class_mappings(nodes_directory: str):
 nodes_path = join(dirname(abspath(__file__)), "src/signature_nodes")
 NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS = get_node_class_mappings(nodes_path)
 
-WEB_DIRECTORY = "./nodes/web"
+WEB_DIRECTORY = "./src/signature_nodes/web"
 NAME = "🔲 Signature Nodes"
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "MANIFEST"]
@@ -123,5 +123,7 @@ MANIFEST = {
 
 if SIGNATURE_FLOWS_AVAILABLE:
     from signature_nodes.services.signature_flow_service import SignatureFlowService
+    from signature_nodes.services.signature_model_service import SignatureModelService
 
     SignatureFlowService.setup_routes()
+    SignatureModelService.setup_routes()

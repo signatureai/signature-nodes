@@ -4160,7 +4160,7 @@ wheels = [
 
 [[package]]
 name = "signature-flows"
-version = "1.1.6"
+version = "1.2.0"
 source = { registry = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" }
 dependencies = [
     { name = "certifi" },
@@ -4174,9 +4174,9 @@ dependencies = [
     { name = "uuid7" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.1.6/signature_flows-1.1.6.tar.gz", hash = "sha256:03f481fb998f7f77d837b07558f00a63356b34e8805e38e1cfe0a154cc005ac7" }
+sdist = { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.2.0/signature_flows-1.2.0.tar.gz", hash = "sha256:4ef8dbbf5f6d30852390b779df7126ca69d3fb380069211e0713bfc8fdba9459" }
 wheels = [
-    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.1.6/signature_flows-1.1.6-py3-none-any.whl", hash = "sha256:53fa33089dc1ab7737a67283d66a665bf1c75d06f114cce41698ff796bcaade6" },
+    { url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/signature-flows/1.2.0/signature_flows-1.2.0-py3-none-any.whl", hash = "sha256:e8dfe7e4cc2f1851767f48888901ec9164d63154683673ee917727a86d5edf3c" },
 ]
 
 [[package]]
@@ -4234,7 +4234,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.2" },
     { name = "sam-2", git = "https://github.com/facebookresearch/sam2.git" },
     { name = "signature-core", specifier = "==2.0.3", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
-    { name = "signature-flows", specifier = "==1.1.6", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
+    { name = "signature-flows", specifier = "==1.2.0", index = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-west-1.amazonaws.com/pypi/signature-ml/simple/" },
     { name = "spandrel", specifier = ">=0.4.1" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "torch", specifier = ">=2.5.1" },

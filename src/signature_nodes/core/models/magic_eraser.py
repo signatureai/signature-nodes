@@ -79,7 +79,7 @@ class MagicEraser(SaveImage):
         upscale_fn = None
         loaded_upscale_model = None
         device = comfy.model_management.get_torch_device()
-        if upscale_model is not None:
+        if upscale_model is not None and upscale_model != "None":
             upscale_model_path = folder_paths.get_full_path("upscale_models", upscale_model)
             sd = comfy.utils.load_torch_file(upscale_model_path, safe_load=True)
             if "module.layers.0.residual_group.blocks.0.norm1.weight" in sd:

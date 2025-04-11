@@ -225,7 +225,7 @@ const showForm = () => {
               fontSize: "clamp(14px, 2vw, 16px)",
               color: "white",
             },
-            textContent: "Name",
+            textContent: "Name *",
           }),
           $el("input", {
             type: "text",
@@ -235,6 +235,45 @@ const showForm = () => {
               borderRadius: "4px",
               border: "1px solid #ccc",
               fontSize: "clamp(14px, 2vw, 16px)",
+            },
+            oninput: function (e) {
+              if (e.target.value.trim()) {
+                e.target.style.border = "1px solid #ccc";
+                // Remove error message if it exists
+                const errorMsg = e.target.parentNode.querySelector(".error-message");
+                if (errorMsg) {
+                  errorMsg.remove();
+                }
+              } else {
+                e.target.style.border = "1px solid #ff0000";
+                // Add error message if it doesn't exist
+                if (!e.target.parentNode.querySelector(".error-message")) {
+                  const errorDiv = document.createElement("div");
+                  errorDiv.className = "error-message";
+                  errorDiv.style.color = "#ff0000";
+                  errorDiv.style.fontSize = "12px";
+                  errorDiv.style.marginTop = "5px";
+                  errorDiv.style.marginBottom = "10px";
+                  errorDiv.textContent = "Name is required";
+                  e.target.parentNode.insertBefore(errorDiv, e.target.nextSibling);
+                }
+              }
+            },
+            onblur: function (e) {
+              if (!e.target.value.trim()) {
+                e.target.style.border = "1px solid #ff0000";
+                // Add error message if it doesn't exist
+                if (!e.target.parentNode.querySelector(".error-message")) {
+                  const errorDiv = document.createElement("div");
+                  errorDiv.className = "error-message";
+                  errorDiv.style.color = "#ff0000";
+                  errorDiv.style.fontSize = "12px";
+                  errorDiv.style.marginTop = "5px";
+                  errorDiv.style.marginBottom = "10px";
+                  errorDiv.textContent = "Name is required";
+                  e.target.parentNode.insertBefore(errorDiv, e.target.nextSibling);
+                }
+              }
             },
           }),
         ]),
@@ -247,7 +286,7 @@ const showForm = () => {
               fontSize: "clamp(14px, 2vw, 16px)",
               color: "white",
             },
-            textContent: "Description",
+            textContent: "Description *",
           }),
           $el("textarea", {
             style: {
@@ -257,6 +296,45 @@ const showForm = () => {
               border: "1px solid #ccc",
               minHeight: "clamp(100px, 20vh, 150px)",
               fontSize: "clamp(14px, 2vw, 16px)",
+            },
+            oninput: function (e) {
+              if (e.target.value.trim()) {
+                e.target.style.border = "1px solid #ccc";
+                // Remove error message if it exists
+                const errorMsg = e.target.parentNode.querySelector(".error-message");
+                if (errorMsg) {
+                  errorMsg.remove();
+                }
+              } else {
+                e.target.style.border = "1px solid #ff0000";
+                // Add error message if it doesn't exist
+                if (!e.target.parentNode.querySelector(".error-message")) {
+                  const errorDiv = document.createElement("div");
+                  errorDiv.className = "error-message";
+                  errorDiv.style.color = "#ff0000";
+                  errorDiv.style.fontSize = "12px";
+                  errorDiv.style.marginTop = "5px";
+                  errorDiv.style.marginBottom = "10px";
+                  errorDiv.textContent = "Description is required";
+                  e.target.parentNode.insertBefore(errorDiv, e.target.nextSibling);
+                }
+              }
+            },
+            onblur: function (e) {
+              if (!e.target.value.trim()) {
+                e.target.style.border = "1px solid #ff0000";
+                // Add error message if it doesn't exist
+                if (!e.target.parentNode.querySelector(".error-message")) {
+                  const errorDiv = document.createElement("div");
+                  errorDiv.className = "error-message";
+                  errorDiv.style.color = "#ff0000";
+                  errorDiv.style.fontSize = "12px";
+                  errorDiv.style.marginTop = "5px";
+                  errorDiv.style.marginBottom = "10px";
+                  errorDiv.textContent = "Description is required";
+                  e.target.parentNode.insertBefore(errorDiv, e.target.nextSibling);
+                }
+              }
             },
           }),
         ]),
@@ -300,7 +378,7 @@ const showForm = () => {
               fontSize: "clamp(14px, 2vw, 16px)",
               color: "white",
             },
-            textContent: "Cover Image",
+            textContent: "Cover Image *",
           }),
           $el("div", { style: { marginBottom: "10px" } }, [
             $el("input", {
@@ -320,9 +398,47 @@ const showForm = () => {
                     if (preview) {
                       preview.src = e.target.result;
                       preview.style.display = "block";
+                      e.target.style.border = "1px solid #ccc";
+                      // Remove error message if it exists
+                      const errorMsg = e.target.parentNode.querySelector(".error-message");
+                      if (errorMsg) {
+                        errorMsg.remove();
+                      }
                     }
                   };
                   reader.readAsDataURL(file);
+                } else {
+                  e.target.style.border = "1px solid #ff0000";
+                  // Add error message if it doesn't exist
+                  if (!e.target.parentNode.querySelector(".error-message")) {
+                    const errorDiv = document.createElement("div");
+                    errorDiv.className = "error-message";
+                    errorDiv.style.color = "#ff0000";
+                    errorDiv.style.fontSize = "12px";
+                    errorDiv.style.marginTop = "5px";
+                    errorDiv.style.marginBottom = "10px";
+                    errorDiv.textContent = "Cover Image is required";
+                    e.target.parentNode.insertBefore(errorDiv, e.target.nextSibling);
+                  }
+                }
+              },
+              onblur: function (e) {
+                if (!e.target.files[0]) {
+                  const preview = document.getElementById("image-preview");
+                  if (!preview || !preview.src || preview.src === "") {
+                    e.target.style.border = "1px solid #ff0000";
+                    // Add error message if it doesn't exist
+                    if (!e.target.parentNode.querySelector(".error-message")) {
+                      const errorDiv = document.createElement("div");
+                      errorDiv.className = "error-message";
+                      errorDiv.style.color = "#ff0000";
+                      errorDiv.style.fontSize = "12px";
+                      errorDiv.style.marginTop = "5px";
+                      errorDiv.style.marginBottom = "10px";
+                      errorDiv.textContent = "Cover Image is required";
+                      e.target.parentNode.insertBefore(errorDiv, e.target.nextSibling);
+                    }
+                  }
                 }
               },
             }),
@@ -339,6 +455,16 @@ const showForm = () => {
             }),
           ]),
         ]),
+        // Required fields note
+        $el("p", {
+          style: {
+            textAlign: "center",
+            marginBottom: "20px",
+            color: "#ffffff",
+            fontSize: "clamp(12px, 1.5vw, 14px)",
+          },
+          textContent: "* Required fields",
+        }),
         // Submit button
         $el("div", {
           innerHTML: `
