@@ -6,7 +6,8 @@ import re
 from os import walk
 from os.path import abspath, dirname, join, sep
 
-from .src.signature_nodes.env import env
+from signature_nodes.env import env
+
 from .utils import parallel_for
 
 logger = logging.getLogger(__name__)
