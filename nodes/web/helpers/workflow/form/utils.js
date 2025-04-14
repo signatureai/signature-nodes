@@ -112,6 +112,77 @@ const validateWorkflow = async (app) => {
   }
 };
 
+const uploadModelToS3 = async (modelName, modelData) => {
+  try {
+    const formData = new FormData();
+    // Send the path and checksum, not the file blob
+    formData.append("model_path", modelData.path);
+    formData.append("checksum", modelData.checksum);
+    formData.append("filename", modelName); // Also send the original filename
+    formData.append("type", "model"); // Keep type if needed by backend logic
+
+    console.log(`Uploading model: ${modelName} from path: ${modelData.path} with checksum: ${modelData.checksum}`);
+
+    const response = await fetch("/upload/s3-model", {
+      method: "POST",
+      body: formData, // Sending as form data
+    });
+
+    // Check if the response indicates an error
+    if (!response.ok) {
+      // Specifically handle the 409 Conflict for name mismatch
+      if (response.status === 409) {
+        try {
+          const errorResult = await response.json(); // Parse the detailed error from backend
+          return errorResult; // Return the structured error object
+        } catch (parseError) {
+          // Fallback if JSON parsing fails
+          const errorText = await response.text(); // Read text as fallback
+          throw new Error(`Failed to upload model ${modelName}: ${response.status} - ${errorText}`);
+        }
+      } else {
+        // Handle other non-OK responses
+        const errorText = await response.text();
+        throw new Error(`Failed to upload model ${modelName}: ${errorText}`); // Throw generic error
+      }
+    }
+
+    // If response is OK, parse the success/exists JSON
+    const result = await response.json();
+    console.log(`Upload check successful for ${modelName}:`, result);
+    return result;
+  } catch (error) {
+    // Catch network errors or errors thrown above
+    console.error(`Error processing model ${modelName} for S3:`, error);
+    // Ensure the error propagated retains useful info if possible, otherwise re-throw
+    throw error;
+  }
+};
+
+const uploadModelsToS3 = async (models) => {
+  const uploadResults = [];
+  for (const [modelName, modelData] of Object.entries(models)) {
+    try {
+      const result = await uploadModelToS3(modelName, modelData);
+      // Backend now returns different statuses
+      if (result.status === "success") {
+        uploadResults.push({ modelName, success: true, status: "uploaded", result });
+      } else if (result.status === "exists") {
+        uploadResults.push({ modelName, success: true, status: "exists", result });
+      } else if (result.status === "error" && result.error_type === "name_mismatch") {
+        uploadResults.push({ modelName, success: false, status: "name_mismatch", error: result });
+      } else {
+        // Handle unexpected backend responses
+        uploadResults.push({ modelName, success: false, status: "unknown_error", error: result });
+      }
+    } catch (error) {
+      // Catch fetch errors or errors thrown by uploadModelToS3
+      uploadResults.push({ modelName, success: false, status: "fetch_error", error });
+    }
+  }
+  return uploadResults; // Return detailed results
+};
+
 const saveWorkflow = async (app) => {
   try {
     const { cancelled, workflow, workflow_api } = await validateWorkflow(app);
@@ -213,6 +284,43 @@ const saveWorkflow = async (app) => {
           return;
         }
 
+        if (manifestData.models && Object.keys(manifestData.models).length > 0) {
+          showMessage("Checking models in S3...", "#ffffff", null, "#00000000", getLoadingSpinner("#00ff00"));
+
+          const uploadResults = await uploadModelsToS3(manifestData.models);
+          const errors = uploadResults.filter((result) => !result.success);
+          const successfulOps = uploadResults.filter((result) => result.success);
+
+          if (errors.length > 0) {
+            let errorTitle = "Model Errors Found:";
+            let detailedErrorMessages = "";
+
+            errors.forEach((err) => {
+              if (err.status === "name_mismatch") {
+                detailedErrorMessages += `- ${err.modelName}: Has incorrect name. Expected: ${err.error.expected_name}\n`;
+              } else if (err.status === "fetch_error") {
+                detailedErrorMessages += `- ${err.modelName}: Upload failed (${
+                  err.error.message || "Network error"
+                })\n`;
+              } else {
+                detailedErrorMessages += `- ${err.modelName}: Unknown error during processing (${JSON.stringify(
+                  err.error
+                )})\n`;
+              }
+            });
+
+            showMessage(errorTitle, "#ff0000", detailedErrorMessages);
+            return; // Stop the process if there are errors
+          }
+
+          // Report success (including existing files)
+          const uploadedCount = successfulOps.filter((r) => r.status === "uploaded").length;
+          const existedCount = successfulOps.filter((r) => r.status === "exists").length;
+          showMessage(`Model check complete. Uploaded: ${uploadedCount}, Already Existed: ${existedCount}`, "#00ff00");
+        } else {
+          console.log("No models found in manifest to upload.");
+        }
+
         const submitData = new FormData();
         submitData.append("workflowUUID", formData.baseWorkflowId);
         submitData.append("workflowName", formData.name);
@@ -239,8 +347,7 @@ const saveWorkflow = async (app) => {
         });
         submitData.append("workflowApi", workflowApiBlob, "workflow-api.json");
 
-        const manifest = await getManifest(workflow_api);
-        const manifestBlob = new Blob([manifest], {
+        const manifestBlob = new Blob([manifestResponse], {
           type: "application/json;charset=UTF-8",
         });
         submitData.append("manifest", manifestBlob, "manifest.json");
