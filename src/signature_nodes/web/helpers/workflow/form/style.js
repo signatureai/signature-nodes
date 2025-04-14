@@ -154,8 +154,6 @@ const showForm = () => {
 
               // Existing scroll event listener code...
               optionsListContainer.addEventListener("scroll", async () => {
-                console.log("isLoading", isLoading);
-                console.log("hasMore", hasMore);
                 if (isLoading || !hasMore) return;
 
                 const scrolledToBottom =

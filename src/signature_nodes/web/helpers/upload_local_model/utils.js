@@ -191,7 +191,7 @@ const uploadButton = $el("button", {
       formData.append("overwrite", "true");
 
       try {
-        const response = await fetch("/upload/model", {
+        const response = await fetch("/upload/local-model", {
           method: "POST",
           body: formData,
         });
