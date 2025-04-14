@@ -22,13 +22,14 @@ class StartTrainingRun:
                     {"default": "signature-trainings"},
                 ),
                 "training_target": (["runpod", "batch"], {"default": "runpod"}),
+                "runpod_endpoint_id": ("STRING", {"default": "4zl0zcg2r1alpi"}),
                 "backend_api": ("STRING", {"default": "https://signature-api.signature-eks-staging.signature.ai"}),
                 "backend_api_secret_name": ("STRING", {"default": "staging_backend_cognito_oauth"}),
             }
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("train_id",)
+    RETURN_NAMES = ("return_message",)
     FUNCTION = "process"
     CATEGORY = DOJO_CAT
     OUTPUT_NODE = True
@@ -40,17 +41,18 @@ class StartTrainingRun:
         user_id: str,
         s3_bucket_name: str,
         training_target: str,
+        runpod_endpoint_id: str,
         backend_api: str,
         backend_api_secret_name: str,
     ):
-        training_id = StartTrainingRunNeurochain().start_flux_training(
+        return_message = StartTrainingRunNeurochain().start_flux_training(
             model_id,
             org_id,
             user_id,
             s3_bucket_name,
             training_target,
+            runpod_endpoint_id,
             backend_api,
             backend_api_secret_name,
         )
-        print(training_id)
-        return (training_id,)
+        return (return_message,)

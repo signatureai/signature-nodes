@@ -31,7 +31,7 @@ class WorkflowExecutionMetadata:
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
     RETURN_NAMES = (
         "backend_api_host",
         "generate_service_host",
@@ -40,6 +40,7 @@ class WorkflowExecutionMetadata:
         "environment",
         "workflow_id",
         "backend_cognito_secret",
+        "runpod_endpoint_id",
     )
     FUNCTION = "execute"
     CATEGORY = PLATFORM_IO_CAT
@@ -50,7 +51,7 @@ class WorkflowExecutionMetadata:
     and client ID.
     """
 
-    def execute(self, json_str: str) -> tuple[str, str, str, str, str, str, str]:
+    def execute(self, json_str: str) -> tuple[str, str, str, str, str, str, str, str]:
         json_dict = json.loads(json_str)
         return (
             json_dict.get("backend_api_host", ""),
@@ -60,4 +61,5 @@ class WorkflowExecutionMetadata:
             json_dict.get("environment", ""),
             json_dict.get("workflow_id", ""),
             json_dict.get("backend_cognito_secret", ""),
+            json_dict.get("runpod_endpoint_id", ""),
         )
