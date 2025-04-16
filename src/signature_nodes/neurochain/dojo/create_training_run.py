@@ -3,6 +3,7 @@ from neurochain.dojo.create_training_run import (
 )
 
 from ...categories import DOJO_CAT
+from ...shared import settings
 
 
 class CreateTrainingRun:
@@ -82,4 +83,5 @@ class CreateTrainingRun:
             generate_service_host=generate_service_host,
             backend_cognito_secret_name=backend_cognito_secret_name,
             cover_image_path=cover_image_path,
+            correlation_id=settings.correlation_id,
         )

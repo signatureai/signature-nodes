@@ -1,6 +1,7 @@
 from neurochain.dojo.start_training_run import StartTrainingRun as StartTrainingRunNeurochain
 
 from ...categories import DOJO_CAT
+from ...shared import settings
 
 
 class StartTrainingRun:
@@ -54,5 +55,6 @@ class StartTrainingRun:
             runpod_endpoint_id,
             backend_api,
             backend_api_secret_name,
+            settings.correlation_id,
         )
         return (return_message,)

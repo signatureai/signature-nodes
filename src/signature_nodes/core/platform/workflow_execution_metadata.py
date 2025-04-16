@@ -1,6 +1,9 @@
 import json
 
+from uuid_extensions import uuid7str
+
 from ...categories import PLATFORM_IO_CAT
+from ...shared import settings
 
 
 class WorkflowExecutionMetadata:
@@ -53,6 +56,8 @@ class WorkflowExecutionMetadata:
 
     def execute(self, json_str: str) -> tuple[str, str, str, str, str, str, str, str]:
         json_dict = json.loads(json_str)
+        settings.correlation_id = json_dict.get("correlation_id", uuid7str())
+
         return (
             json_dict.get("backend_api_host", ""),
             json_dict.get("generate_service_host", ""),
