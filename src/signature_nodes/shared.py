@@ -1,6 +1,8 @@
 import os
 import sys
 
+from uuid_extensions import uuid7str
+
 MAX_INT: int = sys.maxsize
 MAX_FLOAT: float = sys.float_info.max
 BASE_COMFY_DIR: str = os.path.dirname(os.path.realpath(__file__)).split("custom_nodes")[0]
@@ -50,3 +52,10 @@ class AnyType(str):
 
 
 any_type = AnyType("*")
+
+
+class GlobalSettings:
+    correlation_id: str = uuid7str()
+
+
+settings = GlobalSettings()
