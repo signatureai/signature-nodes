@@ -130,12 +130,3 @@ jobs:
                 body: comment
               });
             }
-
-      - name: Upload scan results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-scan-results
-          path: |
-            safety-results.json
-            pylint-results.json
