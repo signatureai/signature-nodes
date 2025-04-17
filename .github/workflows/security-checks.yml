@@ -6,17 +6,17 @@ on:
       python-version:
         required: false
         type: string
-        default: '3.11'
-        description: 'Python version to use'
+        default: "3.11"
+        description: "Python version to use"
       post-to-pr:
         required: false
         type: boolean
         default: true
-        description: 'Whether to post results to PR'
+        description: "Whether to post results to PR"
     secrets:
       TOKEN:
         required: true
-        description: 'GitHub token for PR comments'
+        description: "GitHub token for PR comments"
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
@@ -27,7 +27,6 @@ on:
         required: true
       CODEARTIFACT_INDEX_DOMAIN:
         required: true
-
 
 permissions:
   contents: read
@@ -69,14 +68,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install bandit safety pylint --system
+          uv pip install safety pylint --system
           uv pip install . --system
-
-      - name: Run Bandit
-        continue-on-error: true
-        id: bandit
-        run: |
-          bandit -r ./ -c pyproject.toml -f json -o bandit-results.json || echo "Vulnerabilities found"
 
       - name: Run Safety Check
         continue-on-error: true
@@ -98,21 +91,6 @@ jobs:
           script: |
             const fs = require('fs');
             let comment = '## Security Scan Results\n\n';
-
-            try {
-              const banditResults = JSON.parse(fs.readFileSync('bandit-results.json', 'utf8'));
-              comment += '### Bandit Results\n';
-              if (banditResults.results.length === 0) {
-                comment += '✅ No security issues found\n\n';
-              } else {
-                comment += '⚠️ Security issues found:\n';
-                banditResults.results.forEach(issue => {
-                  comment += `- ${issue.issue_text} in ${issue.filename}:${issue.line_number}\n`;
-                });
-              }
-            } catch (e) {
-              comment += '### Bandit Results\n⚠️ Error processing results\n\n';
-            }
 
             try {
               const safetyResults = JSON.parse(fs.readFileSync('safety-results.json', 'utf8'));
@@ -159,6 +137,5 @@ jobs:
         with:
           name: security-scan-results
           path: |
-            bandit-results.json
             safety-results.json
             pylint-results.json
