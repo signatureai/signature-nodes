@@ -125,13 +125,13 @@ The documentation will be available at `http://localhost:8000`.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-
 # **Working with AWS CodeArtifact**
+
 The process is documented on [his Notion page](https://www.notion.so/ML-Team-Setup-Ways-of-Working-134dce05f47a800d99ebe36e36a1da85?pvs=4#196dce05f47a80128633e9783c20da9a).
 
 # **Git Flow Usage Guide**
 
-[[Setup Reference](https://skoch.github.io/Git-Workflow/)]  [[Usage Reference](https://skoch.github.io/Git-Workflow/with-gitflow.html)]
+[[Setup Reference](https://skoch.github.io/Git-Workflow/)] [[Usage Reference](https://skoch.github.io/Git-Workflow/with-gitflow.html)]
 
 Git Flow is a branching model that helps teams manage feature development, releases, and hotfixes in a systematic way.
 
@@ -208,7 +208,7 @@ This action:
 ### **Start a Release**
 
 ```markdown
-git fetch --tags  # Check existing tags first
+git fetch --tags # Check existing tags first
 git flow release start 1.0
 ```
 
@@ -232,7 +232,6 @@ git push origin main
 git push origin develop
 git push --tags
 ```
-
 
 This action:
 
