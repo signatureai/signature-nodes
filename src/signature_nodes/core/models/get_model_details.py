@@ -16,6 +16,7 @@ class GetModelDetails:
                 "backend_api_host": ("STRING", {"forceInput": True}),
                 "backend_coginto_secret": ("STRING", {"forceInput": True}),
                 "user_id": ("STRING", {"forceInput": True}),
+                "org_id": ("STRING", {"forceInput": True}),
             },
         }
 
@@ -25,7 +26,7 @@ class GetModelDetails:
     CATEGORY = PLATFORM_IO_CAT
     DESCRIPTION = """Get the model details from the backend"""
 
-    def execute(self, model_uuid, version_uuid, backend_api_host, backend_coginto_secret, user_id):
+    def execute(self, model_uuid, version_uuid, backend_api_host, backend_coginto_secret, user_id, org_id):
         # Move this to core in the future
         def get_secret(session, secret_name, region_name="eu-west-1"):
             client = session.client(service_name="secretsmanager", region_name=region_name)
@@ -55,6 +56,7 @@ class GetModelDetails:
             "accept": "application/json",
             "authorization": "Bearer {}".format(cognito_response.json()["access_token"]),
             "X-User-Uuid": user_id,
+            "X-Organisation-Uuid": org_id,
         }
 
         response = requests.get(

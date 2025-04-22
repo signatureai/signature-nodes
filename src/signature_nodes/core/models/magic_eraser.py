@@ -7,7 +7,7 @@ from comfy_extras.nodes_upscale_model import ImageUpscaleWithModel  # type: igno
 from nodes import SaveImage  # type: ignore  # type: ignore
 from signature_core.img.tensor_image import TensorImage
 from signature_core.models.lama import Lama
-from spandrel import ModelLoader
+from spandrel import ModelLoader  # type: ignore
 
 from ...categories import MODELS_CAT
 
