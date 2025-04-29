@@ -67,8 +67,6 @@ assert_used.skips = ["**/test_*.py"]
 requires = ["setuptools>=68.0.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["nodes", "services"]
 
 [tool.uv.sources]
 neurochain = { index = "signature" }
@@ -82,5 +80,9 @@ url = "https://signature-ml-packages-production-992382511592.d.codeartifact.eu-w
 explicit = true
 publish = false
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = {find = {where = ["src"]}}
+
 [tool.setuptools.dynamic]
-version = {attr = "version.__version__"}
+version = {attr = "signature_nodes.version.__version__"}

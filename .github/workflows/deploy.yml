@@ -65,7 +65,7 @@ jobs:
       - name: Get latest version
         id: get_version
         run: |
-          LATEST_TAG=$(git describe --tags --match "v*" --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_TAG=$(git for-each-ref --sort=creatordate --format '%(refname:strip=2)' refs/tags | tail -1 2>/dev/null || echo "v0.0.0")
 
           # LATEST_TAG="v1.0.0.dev10" # for testing
 
